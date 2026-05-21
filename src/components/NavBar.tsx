@@ -1,9 +1,12 @@
 import { useTranslation } from 'react-i18next'
 import { Shield } from 'lucide-react'
 
+const LANGS = ['en', 'pt', 'es'] as const
+const LABELS: Record<string, string> = { en: 'EN', pt: 'PT', es: 'ES' }
+
 export default function NavBar() {
   const { t, i18n } = useTranslation()
-  const toggle = () => i18n.changeLanguage(i18n.language.startsWith('pt') ? 'en' : 'pt')
+  const current = LANGS.find(l => i18n.language.startsWith(l)) ?? 'en'
 
   return (
     <nav className="fixed top-0 inset-x-0 z-50 bg-bg-base/80 backdrop-blur border-b border-border">
@@ -17,12 +20,22 @@ export default function NavBar() {
           <a href="#springboot" className="hover:text-spring transition-colors">{t('nav.springboot')}</a>
           <a href="#dotnet"     className="hover:text-dotnet  transition-colors">{t('nav.dotnet')}</a>
           <a href="#compare"    className="hover:text-conjur-cyan transition-colors">{t('nav.compare')}</a>
-          <button
-            onClick={toggle}
-            className="badge bg-border text-slate-300 hover:bg-conjur-cyan/20 hover:text-conjur-cyan transition-colors cursor-pointer"
-          >
-            {t('nav.lang')}
-          </button>
+
+          <div className="flex items-center gap-1">
+            {LANGS.map(lang => (
+              <button
+                key={lang}
+                onClick={() => i18n.changeLanguage(lang)}
+                className={`px-2 py-0.5 rounded text-xs font-semibold transition-colors ${
+                  current === lang
+                    ? 'bg-conjur-cyan/20 text-conjur-cyan border border-conjur-cyan/30'
+                    : 'text-slate-500 hover:text-slate-300'
+                }`}
+              >
+                {LABELS[lang]}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </nav>
