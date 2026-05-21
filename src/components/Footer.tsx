@@ -50,9 +50,9 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="https://github.com/cyberark" target="_blank" rel="noopener"
+                <a href="https://github.com/panwidira" target="_blank" rel="noopener"
                   className="text-xs text-slate-400 hover:text-conjur-cyan transition-colors flex items-center gap-1.5">
-                  <Github size={10} /> CyberArk GitHub
+                  <Github size={10} /> PANW|IDIRA GitHub
                 </a>
               </li>
             </ul>
@@ -67,7 +67,7 @@ export default function Footer() {
             <span className="text-slate-600">&amp;</span>{' '}
             <span className="text-dotnet">.NET</span>{' '}
             <span className="text-slate-600">+</span>{' '}
-            <span className="text-conjur-cyan">CyberArk Conjur</span>
+            <span className="text-conjur-cyan">PANW|IDIRA Conjur</span>
           </p>
         </div>
       </div>
