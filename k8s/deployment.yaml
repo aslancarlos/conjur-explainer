@@ -15,6 +15,8 @@ spec:
       labels:
         app: conjur-explainer
     spec:
+      imagePullSecrets:
+        - name: dockerhub-pull
       containers:
         - name: conjur-explainer
           image: aslancarlos/conjur-explainer:latest
