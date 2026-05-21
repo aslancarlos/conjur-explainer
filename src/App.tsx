@@ -4,6 +4,7 @@ import ProblemSection from './components/ProblemSection'
 import ArchitectureDiagram from './components/ArchitectureDiagram'
 import SpringBootSection from './components/SpringBootSection'
 import DotNetSection from './components/DotNetSection'
+import GitHubActionsSection from './components/GitHubActionsSection'
 import ComparisonTable from './components/ComparisonTable'
 import Footer from './components/Footer'
 
@@ -17,6 +18,7 @@ export default function App() {
         <ArchitectureDiagram />
         <SpringBootSection />
         <DotNetSection />
+        <GitHubActionsSection />
         <ComparisonTable />
       </main>
       <Footer />
