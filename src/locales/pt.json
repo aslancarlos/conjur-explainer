@@ -1,0 +1,122 @@
+{
+  "nav": {
+    "home": "Início",
+    "springboot": "Spring Boot",
+    "dotnet": ".NET",
+    "compare": "Comparar",
+    "lang": "EN"
+  },
+  "hero": {
+    "eyebrow": "CyberArk Conjur · Kubernetes · DevSecOps",
+    "title": "Gestão de Segredos",
+    "titleAccent": "em Ação",
+    "subtitle": "Duas aplicações. Dois padrões de integração. Zero credenciais no código. Explore como Spring Boot e .NET buscam segredos dinamicamente do CyberArk Conjur no Kubernetes.",
+    "cta_spring": "Demo Spring Boot",
+    "cta_dotnet": "Demo .NET",
+    "cta_explore": "Explorar padrões ↓"
+  },
+  "problem": {
+    "badge": "O Problema",
+    "title": "Credenciais no código são uma bomba-relógio",
+    "items": [
+      { "icon": "alert", "title": "Credenciais no código-fonte", "desc": "Senhas de banco no git aparecem em dumps de vazamento, forks antigos e logs de CI." },
+      { "icon": "clock", "title": "Sem rotação", "desc": "Credenciais estáticas nunca são rotacionadas. Uma senha vazada = acesso permanente até intervenção manual." },
+      { "icon": "eye", "title": "Sem trilha de auditoria", "desc": "Quem acessou qual segredo, quando? Sem um secrets manager, é impossível saber." }
+    ],
+    "solution_badge": "A Solução",
+    "solution_title": "Segredos dinâmicos com CyberArk Conjur",
+    "solution_desc": "O Conjur autentica workloads usando a identidade Kubernetes deles (JWT) — não senhas. Segredos são buscados em tempo de execução, cacheados brevemente e rotacionados automaticamente. Nenhum segredo toca seu código."
+  },
+  "architecture": {
+    "badge": "Arquitetura",
+    "title": "Como o Conjur se encaixa no Kubernetes",
+    "nodes": {
+      "k8s": "Cluster Kubernetes",
+      "app": "Pod da Aplicação",
+      "jwt": "JWT da Service Account",
+      "conjur": "Conjur Cloud",
+      "authn": "authn-jwt",
+      "secrets": "Cofre de Segredos",
+      "db": "Banco MySQL"
+    },
+    "flow": [
+      "O pod inicia — o Kubernetes projeta um token JWT de curta duração no sistema de arquivos do pod",
+      "A aplicação (ou Secrets Provider) autentica com o Conjur usando o JWT",
+      "O Conjur valida a identidade contra sua política e retorna um token de API de curta duração",
+      "A aplicação usa o token para buscar segredos específicos (db_host, db_user, db_password)",
+      "A aplicação conecta ao MySQL usando as credenciais obtidas",
+      "As credenciais ficam em cache na memória — renovadas automaticamente antes de expirar"
+    ]
+  },
+  "springboot": {
+    "badge": "Padrão 1",
+    "title": "Spring Boot",
+    "titleAccent": "Autenticação JWT Direta",
+    "label": "authn-jwt / SDK Java",
+    "desc": "O Spring Boot integra diretamente com a API REST do Conjur. Lê o JWT do Kubernetes, autentica com o Conjur e busca os segredos na inicialização — com cache em memória de 5 minutos.",
+    "steps": [
+      { "n": "1", "title": "Lê o token JWT", "code": "String jwt = System.getenv(\"JWT\");\n// fallback: Files.readString(Path.of(\"/var/run/secrets/tokens/jwt\"))", "color": "cyan" },
+      { "n": "2", "title": "Autentica com o Conjur", "code": "POST /api/authn-jwt/eks-latam/conjur/authenticate\nContent-Type: application/x-www-form-urlencoded\nAccept-Encoding: base64\nBody: jwt=<jwt-codificado>", "color": "gold" },
+      { "n": "3", "title": "Busca os segredos", "code": "GET /api/secrets/conjur/variable/data/vault/.../username\nGET /api/secrets/conjur/variable/data/vault/.../password\nGET /api/secrets/conjur/variable/data/vault/.../address\nAuthorization: Token token=\"<api-token>\"", "color": "cyan" },
+      { "n": "4", "title": "Cache e conexão", "code": "// Cache de 5 min com double-checked locking\nCredentials creds = credentialService.currentCredentials();\nString url = \"jdbc:mysql://\" + creds.host() + \":3306/userdb\";\nConnection conn = DriverManager.getConnection(url, creds.username(), creds.password());", "color": "spring" }
+    ],
+    "live_badge": "Endpoint ao vivo",
+    "live_title": "Status das credenciais",
+    "live_note": "Valores mascarados — os segredos reais nunca chegam à interface",
+    "features": [
+      { "title": "API Direta", "desc": "Chama a API REST do Conjur diretamente em Java — sem sidecar" },
+      { "title": "Cache TTL", "desc": "SimpleTtlCache com double-checked locking — uma chamada ao Conjur a cada 5 minutos" },
+      { "title": "JWT auto-renovado", "desc": "O Kubernetes renova o JWT projetado; o Conjur valida em cada autenticação" },
+      { "title": "Erros tipados", "desc": "JwtNotFoundException, ConjurAuthException, SecretFetchException com códigos HTTP" }
+    ],
+    "cta": "Abrir Dashboard →"
+  },
+  "dotnet": {
+    "badge": "Padrão 2",
+    "title": ".NET",
+    "titleAccent": "Secrets Provider para Kubernetes",
+    "label": "Sidecar K8s / Zero código",
+    "desc": "A aplicação .NET não tem nenhum código Conjur. Um sidecar CyberArk Secrets Provider cuida da autenticação e injeta as credenciais como Kubernetes Secrets — lidas pela aplicação como variáveis de ambiente.",
+    "steps": [
+      { "n": "1", "title": "Sidecar do Secrets Provider inicia", "code": "# No spec do Deployment K8s:\ncontainers:\n- name: cyberark-secrets-provider-for-k8s\n  image: cyberark/secrets-provider-for-k8s:latest\n  env:\n  - name: CONJUR_AUTHN_LOGIN\n    value: host/conjur/authn-k8s/...", "color": "purple" },
+      { "n": "2", "title": "Provider autentica com o Conjur", "code": "# O provider lê o JWT da service account automaticamente\n# Autentica via authn-k8s ou authn-jwt\n# Busca: db_user, db_password, db_host", "color": "gold" },
+      { "n": "3", "title": "Segredos gravados no K8s Secret", "code": "# Provider atualiza o Kubernetes Secret 'db-dotnet'\napiVersion: v1\nkind: Secret\nmetadata:\n  name: db-dotnet\ndata:\n  username: <base64>\n  password: <base64>\n  address: <base64>", "color": "purple" },
+      { "n": "4", "title": ".NET lê variáveis de ambiente — sem código Conjur", "code": "// A aplicação .NET lê variáveis de ambiente padrão\nstring dbUser = Environment.GetEnvironmentVariable(\"DB_USER\");\nstring dbPass = Environment.GetEnvironmentVariable(\"DB_PASSWORD\");\nstring dbHost = Environment.GetEnvironmentVariable(\"DB_HOST\");\n// Só isso. Zero integração com Conjur no código da app.", "color": "cyan" }
+    ],
+    "features": [
+      { "title": "Zero código", "desc": "A aplicação .NET não sabe que o Conjur existe — lê variáveis de ambiente normais" },
+      { "title": "Padrão Sidecar", "desc": "Secrets Provider roda como sidecar, sincronizando segredos continuamente" },
+      { "title": "Modo K8s Secrets", "desc": "Provider grava em um K8s Secret; app recebe via secretKeyRef no deployment" },
+      { "title": "Qualquer linguagem", "desc": "Funciona com Java, Go, Python, Ruby — sem alterações de SDK" }
+    ],
+    "cta": "Abrir App .NET →"
+  },
+  "compare": {
+    "badge": "Comparação",
+    "title": "Qual padrão se encaixa no seu caso?",
+    "subtitle": "Ambos os padrões usam identidade JWT do Kubernetes — sem credenciais estáticas, sem senhas de service account.",
+    "col_feature": "Funcionalidade",
+    "col_spring": "Spring Boot (authn-jwt)",
+    "col_dotnet": ".NET (Secrets Provider)",
+    "rows": [
+      { "feature": "Modelo de integração", "spring": "Chamadas REST diretas no código da app", "dotnet": "Sidecar — zero código na app", "springIcon": "text", "dotnetIcon": "text" },
+      { "feature": "Dependência de linguagem", "spring": "Cliente HTTP Java / SDK", "dotnet": "Qualquer linguagem (env vars)", "springIcon": "text", "dotnetIcon": "check" },
+      { "feature": "Entrega de credenciais", "spring": "Objetos Java em memória", "dotnet": "K8s Secrets / variáveis de ambiente", "springIcon": "text", "dotnetIcon": "text" },
+      { "feature": "TTL / rotação", "spring": "App gerencia cache de 5 min", "dotnet": "Provider sincroniza automaticamente", "springIcon": "text", "dotnetIcon": "check" },
+      { "feature": "Granularidade de auditoria", "spring": "Cada busca visível no log do Conjur", "dotnet": "Somente autenticação do provider", "springIcon": "check", "dotnetIcon": "text" },
+      { "feature": "Inicialização com falha de auth", "spring": "Exceção tipada, pod continua", "dotnet": "Pod não inicia se fetch falhar", "springIcon": "check", "dotnetIcon": "minus" },
+      { "feature": "Esforço de migração", "spring": "Requer integração com SDK", "dotnet": "Drop-in — sem alterações no código", "springIcon": "minus", "dotnetIcon": "check" }
+    ],
+    "spring_best_for_title": "Spring Boot authn-jwt — Melhor para",
+    "spring_best_for_desc": "Apps que precisam de controle fino, refresh dinâmico de credenciais ou múltiplos fluxos de autenticação. Ideal quando você controla o código Java e quer total observabilidade.",
+    "dotnet_best_for_title": ".NET Secrets Provider — Melhor para",
+    "dotnet_best_for_desc": "Migrações lift-and-shift, serviços poliglotas ou times que querem zero dependência de SDK. Funciona igualmente para Java, Go, Python, Ruby e .NET."
+  },
+  "footer": {
+    "desc": "Um demo Kubernetes ao vivo mostrando dois padrões de integração com CyberArk Conjur — JWT direto e o sidecar Secrets Provider.",
+    "apps": "Apps ao Vivo",
+    "resources": "Recursos",
+    "copyright": "© 2025 Aslan Ramos · Solution Engineer, CyberArk LATAM",
+    "built_with": "Construído com"
+  }
+}
