@@ -3,6 +3,7 @@
     "home": "Home",
     "springboot": "Spring Boot",
     "dotnet": ".NET",
+    "gha": "GitHub Actions",
     "compare": "Compare",
     "lang": "PT"
   },
@@ -90,6 +91,42 @@
       { "title": "Any language", "desc": "Works for any app — Java, Go, Python, Ruby — without SDK changes" }
     ],
     "cta": "Open .NET App →"
+  },
+  "gha": {
+    "badge": "Pattern 3",
+    "title": "GitHub Actions",
+    "titleAccent": "JWT / OIDC",
+    "label": "OIDC / Zero stored credentials",
+    "desc": "GitHub Actions pipelines authenticate with PANW|IDIRA Conjur using GitHub's built-in OIDC JWT — no API keys, no stored passwords. The workflow's identity (repository + workflow name) is the credential.",
+    "flow_title": "Authentication flow",
+    "stages_title": "Workshop stages",
+    "steps": [
+      { "n": "1", "title": "Enable OIDC token generation", "code": "permissions:\n  id-token: write   # allow GitHub to issue OIDC JWT\n  contents: read\n\njobs:\n  demo:\n    runs-on: self-hosted", "color": "gh" },
+      { "n": "2", "title": "Call the Conjur action", "code": "- name: Retrieve secrets from Conjur\n  uses: aslancarlos/workshop-action@main\n  with:\n    url: ${{ secrets.CONJUR_URL }}\n    authn_id: ${{ secrets.CONJUR_SERVICE_ID }}\n    secrets: >\n      data/vault/db/username|DB_USER;\n      data/vault/db/password|DB_PASS;\n      data/vault/db/address|DB_HOST", "color": "gold" },
+      { "n": "3", "title": "Conjur policy enforces identity", "code": "# Conjur host must have matching annotations:\nannotations:\n  authn-jwt/github/repository: aslancarlos/workshop-action\n  authn-jwt/github/workflow:   workshop-action\n# Any other repo or workflow = access denied", "color": "cyan" },
+      { "n": "4", "title": "Secrets injected as masked env vars", "code": "- name: Connect to database\n  run: |\n    mysql -h \"$DB_HOST\" \\\n          -u \"$DB_USER\" \\\n          -p\"$DB_PASS\" \\\n          userdb -e \"SELECT * FROM users LIMIT 5;\"\n# DB_USER / DB_PASS are auto-masked in all logs", "color": "spring" }
+    ],
+    "stages": [
+      { "n": "01", "title": "JWT Auth & Secret Retrieval — GitHub's OIDC JWT authenticates directly with Conjur, no API keys" },
+      { "n": "02", "title": "Multiple Secrets & Masking — fetch several secrets at once; values are auto-masked in logs" },
+      { "n": "03", "title": "Database Connection — live MySQL connection using Conjur-fetched credentials" },
+      { "n": "04", "title": "Hardcoded vs Conjur — hardcoded password fails, Conjur credential succeeds" },
+      { "n": "05", "title": "Least Privilege — authorized path succeeds, unauthorized path is denied by policy" },
+      { "n": "06", "title": "Real Query & Data — end-to-end: Conjur delivers creds → query runs → data returned" },
+      { "n": "07", "title": "Credential Rotation — rotate in Privilege Cloud, re-run pipeline unchanged, new password works" },
+      { "n": "08", "title": "Environment Promotion — dev → staging → prod with human approval gate on production" },
+      { "n": "09", "title": "SSH Deploy with Key from Conjur — key retrieved, used, deleted; never stored on runner" },
+      { "n": "10", "title": "Docker Registry Login — registry credentials from Conjur, docker login with --password-stdin" },
+      { "n": "11", "title": "Audit Trail — query Conjur audit API and display last 20 secret fetch events" }
+    ],
+    "features": [
+      { "title": "Zero stored secrets", "desc": "No credentials in GitHub Secrets, runner env, or repository files" },
+      { "title": "OIDC identity", "desc": "GitHub's JWT binds to repo + workflow — any other caller is denied" },
+      { "title": "Least privilege", "desc": "Conjur policy controls exactly which secrets each workflow can access" },
+      { "title": "Full audit trail", "desc": "Every secret fetch logged in Conjur — who, what, when, from which workflow" }
+    ],
+    "cta_repo": "View Workshop Repo",
+    "cta_workflow": "See Workflow YAML"
   },
   "compare": {
     "badge": "Comparison",

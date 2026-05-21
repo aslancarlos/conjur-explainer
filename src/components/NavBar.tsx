@@ -19,7 +19,8 @@ export default function NavBar() {
         <div className="flex items-center gap-6 text-sm text-slate-400">
           <a href="#springboot" className="hover:text-spring transition-colors">{t('nav.springboot')}</a>
           <a href="#dotnet"     className="hover:text-dotnet  transition-colors">{t('nav.dotnet')}</a>
-          <a href="#compare"    className="hover:text-conjur-cyan transition-colors">{t('nav.compare')}</a>
+          <a href="#gha"        className="hover:text-gh transition-colors hidden sm:block">{t('nav.gha')}</a>
+          <a href="#compare"    className="hover:text-conjur-cyan transition-colors hidden md:block">{t('nav.compare')}</a>
 
           <div className="flex items-center gap-1">
             {LANGS.map(lang => (

@@ -3,6 +3,7 @@
     "home": "Inicio",
     "springboot": "Spring Boot",
     "dotnet": ".NET",
+    "gha": "GitHub Actions",
     "compare": "Comparar"
   },
   "hero": {
@@ -89,6 +90,42 @@
       { "title": "Cualquier lenguaje", "desc": "Funciona con Java, Go, Python, Ruby — sin cambios de SDK" }
     ],
     "cta": "Abrir App .NET →"
+  },
+  "gha": {
+    "badge": "Patrón 3",
+    "title": "GitHub Actions",
+    "titleAccent": "JWT / OIDC",
+    "label": "OIDC / Cero credenciales almacenadas",
+    "desc": "Los pipelines de GitHub Actions se autentican con PANW|IDIRA Conjur usando el JWT OIDC nativo de GitHub — sin API keys ni contraseñas almacenadas. La identidad del workflow (repositorio + nombre del workflow) es la credencial.",
+    "flow_title": "Flujo de autenticación",
+    "stages_title": "Etapas del workshop",
+    "steps": [
+      { "n": "1", "title": "Habilitar generación de token OIDC", "code": "permissions:\n  id-token: write   # permite a GitHub emitir JWT OIDC\n  contents: read\n\njobs:\n  demo:\n    runs-on: self-hosted", "color": "gh" },
+      { "n": "2", "title": "Llamar a la action de Conjur", "code": "- name: Obtener secretos de Conjur\n  uses: aslancarlos/workshop-action@main\n  with:\n    url: ${{ secrets.CONJUR_URL }}\n    authn_id: ${{ secrets.CONJUR_SERVICE_ID }}\n    secrets: >\n      data/vault/db/username|DB_USER;\n      data/vault/db/password|DB_PASS;\n      data/vault/db/address|DB_HOST", "color": "gold" },
+      { "n": "3", "title": "La policy de Conjur valida la identidad", "code": "# El host de Conjur necesita anotaciones coincidentes:\nannotations:\n  authn-jwt/github/repository: aslancarlos/workshop-action\n  authn-jwt/github/workflow:   workshop-action\n# Cualquier otro repo o workflow = acceso denegado", "color": "cyan" },
+      { "n": "4", "title": "Secretos inyectados como env vars enmascaradas", "code": "- name: Conectar a la base de datos\n  run: |\n    mysql -h \"$DB_HOST\" \\\n          -u \"$DB_USER\" \\\n          -p\"$DB_PASS\" \\\n          userdb -e \"SELECT * FROM users LIMIT 5;\"\n# DB_USER / DB_PASS se enmascaran automáticamente en los logs", "color": "spring" }
+    ],
+    "stages": [
+      { "n": "01", "title": "Auth JWT y Obtención de Secretos — JWT OIDC de GitHub autentica directamente con Conjur, sin API keys" },
+      { "n": "02", "title": "Múltiples Secretos y Enmascaramiento — obtén varios secretos a la vez; valores enmascarados en logs" },
+      { "n": "03", "title": "Conexión a Base de Datos — conexión MySQL en vivo usando credenciales obtenidas de Conjur" },
+      { "n": "04", "title": "Hardcoded vs Conjur — contraseña hardcoded falla, credencial de Conjur funciona" },
+      { "n": "05", "title": "Least Privilege — ruta autorizada funciona, ruta no autorizada es denegada por la policy" },
+      { "n": "06", "title": "Query Real y Datos — end-to-end: Conjur entrega credenciales → query ejecuta → datos retornados" },
+      { "n": "07", "title": "Rotación de Credenciales — rota en Privilege Cloud, re-ejecuta el pipeline sin cambios" },
+      { "n": "08", "title": "Promoción de Entornos — dev → staging → prod con aprobación humana en producción" },
+      { "n": "09", "title": "Deploy SSH con Clave de Conjur — clave obtenida, usada y eliminada; nunca almacenada en el runner" },
+      { "n": "10", "title": "Docker Registry Login — credenciales de Conjur, docker login con --password-stdin" },
+      { "n": "11", "title": "Rastro de Auditoría — consultar API de auditoría de Conjur y mostrar los últimos 20 eventos" }
+    ],
+    "features": [
+      { "title": "Cero secretos almacenados", "desc": "Sin credenciales en GitHub Secrets, entorno del runner o archivos del repositorio" },
+      { "title": "Identidad OIDC", "desc": "JWT de GitHub vinculado a repo + workflow — cualquier otro llamador es denegado" },
+      { "title": "Least Privilege", "desc": "La policy de Conjur controla exactamente qué secretos puede acceder cada workflow" },
+      { "title": "Rastro de auditoría", "desc": "Cada fetch de secreto registrado en Conjur — quién, qué, cuándo, desde qué workflow" }
+    ],
+    "cta_repo": "Ver Repositorio del Workshop",
+    "cta_workflow": "Ver Workflow YAML"
   },
   "compare": {
     "badge": "Comparación",
