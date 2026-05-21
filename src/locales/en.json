@@ -7,10 +7,10 @@
     "lang": "PT"
   },
   "hero": {
-    "eyebrow": "CyberArk Conjur · Kubernetes · DevSecOps",
+    "eyebrow": "PANW|IDIRA · Conjur · Kubernetes · DevSecOps",
     "title": "Secrets Management",
     "titleAccent": "in Action",
-    "subtitle": "Two apps. Two integration patterns. Zero hardcoded credentials. Explore how Spring Boot and .NET retrieve secrets dynamically from CyberArk Conjur running on Kubernetes.",
+    "subtitle": "Two apps. Two integration patterns. Zero hardcoded credentials. Explore how Spring Boot and .NET retrieve secrets dynamically from PANW|IDIRA Conjur running on Kubernetes.",
     "cta_spring": "Spring Boot Demo",
     "cta_dotnet": ".NET Demo",
     "cta_explore": "Explore patterns ↓"
@@ -24,7 +24,7 @@
       { "icon": "eye", "title": "No audit trail", "desc": "Who accessed what secret, when? Without a secrets manager, you have no idea." }
     ],
     "solution_badge": "The Solution",
-    "solution_title": "Dynamic secrets with CyberArk Conjur",
+    "solution_title": "Dynamic secrets with PANW|IDIRA Conjur",
     "solution_desc": "Conjur authenticates workloads using their Kubernetes identity (JWT) — not passwords. Secrets are fetched at runtime, cached briefly, and rotated automatically. No secret ever touches your code."
   },
   "architecture": {
@@ -76,9 +76,9 @@
     "title": ".NET",
     "titleAccent": "Secrets Provider for Kubernetes",
     "label": "K8s Sidecar / Zero-code",
-    "desc": "The .NET app has zero Conjur code. A CyberArk Secrets Provider sidecar container handles authentication and injects credentials as Kubernetes Secrets — which the app reads as standard environment variables.",
+    "desc": "The .NET app has zero Conjur code. A PANW|IDIRA Secrets Provider sidecar container handles authentication and injects credentials as Kubernetes Secrets — which the app reads as standard environment variables.",
     "steps": [
-      { "n": "1", "title": "Secrets Provider sidecar starts", "code": "# In K8s Deployment spec:\ncontainers:\n- name: cyberark-secrets-provider-for-k8s\n  image: cyberark/secrets-provider-for-k8s:latest\n  env:\n  - name: CONJUR_AUTHN_LOGIN\n    value: host/conjur/authn-k8s/...", "color": "purple" },
+      { "n": "1", "title": "Secrets Provider sidecar starts", "code": "# In K8s Deployment spec:\ncontainers:\n- name: panwidira-secrets-provider-for-k8s\n  image: panwidira/secrets-provider-for-k8s:latest\n  env:\n  - name: CONJUR_AUTHN_LOGIN\n    value: host/conjur/authn-k8s/...", "color": "purple" },
       { "n": "2", "title": "Provider authenticates with Conjur", "code": "# Provider reads service account JWT automatically\n# Authenticates via authn-k8s or authn-jwt\n# Fetches: db_user, db_password, db_host", "color": "gold" },
       { "n": "3", "title": "Secrets written to K8s Secret", "code": "# Provider updates Kubernetes Secret 'db-dotnet'\napiVersion: v1\nkind: Secret\nmetadata:\n  name: db-dotnet\ndata:\n  username: <base64>\n  password: <base64>\n  address: <base64>", "color": "purple" },
       { "n": "4", "title": ".NET reads env vars — no Conjur code", "code": "// .NET app reads standard environment variables\nstring dbUser = Environment.GetEnvironmentVariable(\"DB_USER\");\nstring dbPass = Environment.GetEnvironmentVariable(\"DB_PASSWORD\");\nstring dbHost = Environment.GetEnvironmentVariable(\"DB_HOST\");\n// That's it. Zero Conjur integration in app code.", "color": "cyan" }
@@ -113,10 +113,10 @@
     "dotnet_best_for_desc": "Lift-and-shift migrations, polyglot services, or teams wanting zero SDK dependency. Works identically for Java, Go, Python, Ruby, and .NET."
   },
   "footer": {
-    "desc": "A live Kubernetes demo showing two CyberArk Conjur secrets integration patterns — direct JWT auth and the Secrets Provider sidecar.",
+    "desc": "A live Kubernetes demo showing two PANW|IDIRA Conjur secrets integration patterns — direct JWT auth and the Secrets Provider sidecar.",
     "apps": "Live Apps",
     "resources": "Resources",
-    "copyright": "© 2025 Aslan Ramos · Solution Engineer, CyberArk LATAM",
+    "copyright": "© 2026 Aslan Ramos · SME - Machine Identity Security, PANW|IDIRA",
     "built_with": "Built with"
   }
 }
