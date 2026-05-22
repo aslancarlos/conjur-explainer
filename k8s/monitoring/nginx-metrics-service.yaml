@@ -1,0 +1,25 @@
+---
+# ClusterIP Service that exposes the nginx-ingress controller's Prometheus
+# metrics port (10254). The controller exposes metrics at /metrics on this
+# port via its internal Go process; the Lua request-stats module sends data
+# to the controller via a Unix socket so no app changes are needed.
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-internal-metrics
+  namespace: ingress-nginx
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: nginx-internal
+    app.kubernetes.io/component: controller
+spec:
+  type: ClusterIP
+  ports:
+    - name: metrics
+      port: 10254
+      targetPort: 10254
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: nginx-internal
+    app.kubernetes.io/component: controller
