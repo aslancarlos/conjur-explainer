@@ -1,230 +1,579 @@
-import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Server, Key, Database, Lock, Shield, Layers } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Play, Pause, RotateCcw } from 'lucide-react'
 
-// ── sub-components ────────────────────────────────────────────────────
+// ─── color palette ────────────────────────────────────────────────────────────
 
-function GNode({
-  icon: Icon, color, border, bg, title, desc, tag, delay, inView,
-}: {
-  icon: React.ElementType; color: string; border: string; bg: string
-  title: string; desc: string; tag?: string; delay: number; inView: boolean
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.4, delay }}
-      className={`rounded-xl border ${border} ${bg} p-4 flex items-start gap-3 w-full`}
-    >
-      <div className={`flex-shrink-0 w-9 h-9 rounded-xl border ${border} flex items-center justify-center`}>
-        <Icon size={16} className={color} />
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <p className={`text-sm font-semibold ${color}`}>{title}</p>
-          {tag && (
-            <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${border} ${color} ${bg}`}>{tag}</span>
-          )}
-        </div>
-        <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">{desc}</p>
-      </div>
-    </motion.div>
-  )
+type CK = 'spring' | 'gold' | 'cyan' | 'slate'
+
+const C: Record<CK, { stroke: string; text: string; border: string; bg: string }> = {
+  spring: { stroke: '#6db33f', text: '#86efac', border: 'rgba(109,179,63,0.4)',  bg: 'rgba(109,179,63,0.12)' },
+  gold:   { stroke: '#f59e0b', text: '#fcd34d', border: 'rgba(245,158,11,0.4)',  bg: 'rgba(245,158,11,0.08)' },
+  cyan:   { stroke: '#00b4e0', text: '#67e8f9', border: 'rgba(0,180,224,0.4)',   bg: 'rgba(0,180,224,0.10)' },
+  slate:  { stroke: '#64748b', text: '#94a3b8', border: 'rgba(100,116,139,0.35)', bg: 'rgba(15,30,48,0.7)' },
 }
 
-function VStep({ step, label, delay, inView }: {
-  step: string; label: string; delay: number; inView: boolean
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scaleY: 0 }}
-      animate={inView ? { opacity: 1, scaleY: 1 } : {}}
-      transition={{ duration: 0.25, delay }}
-      className="flex flex-col items-center gap-0.5 py-1 origin-top"
-    >
-      <div className="w-px h-4 bg-slate-700" />
-      <div className="flex items-center gap-1.5 px-2">
-        <span className="text-[10px] font-bold font-mono text-conjur-gold bg-conjur-gold/10 border border-conjur-gold/30 px-1.5 py-0.5 rounded whitespace-nowrap">
-          {step}
-        </span>
-        <span className="text-[11px] text-slate-500 text-center leading-tight">{label}</span>
-      </div>
-      <div className="w-px h-4 bg-slate-700" />
-      <div className="w-0 h-0 border-l-[4px] border-r-[4px] border-t-[5px] border-l-transparent border-r-transparent border-t-slate-600" />
-    </motion.div>
-  )
+// ─── graph data ───────────────────────────────────────────────────────────────
+//
+// ViewBox: 0 0 820 460
+// Cluster boundary:  x=8,  y=8,  w=804, h=314  (bottom y=322)
+// App Pod boundary:  x=18, y=30, w=222, h=190   (bottom y=220)
+// External separator: y=340
+// MySQL:             y=376 (outside cluster)
+//
+// Node centers / connection points:
+//   container  cx=128,cy=73  right=(228,73) bottom=(128,104)
+//   jwt        cx=128,cy=183 right=(228,183) top=(128,154)
+//   sm         cx=445,cy=98  left=(338,98)  right=(552,98) bottom=(445,148)
+//   k8sapi     cx=706,cy=95  left=(608,95)
+//   vault      cx=445,cy=285 top=(445,254) bottom=(445,316)
+//   mysql      cx=445,cy=407 top=(445,376)
+
+interface N {
+  id: string; x: number; y: number; w: number; h: number
+  label: string; sub: string; ck: CK; feat?: boolean; external?: boolean
+}
+interface E {
+  id: string; d: string; ck: CK; tag?: string; lx?: number; ly?: number
 }
 
-// ── main component ─────────────────────────────────────────────────────
+const NODES: N[] = [
+  { id:'container', x:28,  y:42,  w:200, h:62,  label:'App Container',    sub:'Spring Boot · .NET · ESO',                    ck:'cyan'   },
+  { id:'jwt',       x:28,  y:154, w:200, h:58,  label:'Service Account JWT', sub:'/var/run/secrets/tokens/jwt',               ck:'gold'   },
+  { id:'sm',        x:338, y:48,  w:214, h:100, label:'Secrets Manager',   sub:'latamlab.secretsmgr.cyberark.cloud',          ck:'gold', feat:true },
+  { id:'k8sapi',   x:608, y:64,  w:196, h:62,  label:'K8s API Server',   sub:'JWT validation',                               ck:'slate'  },
+  { id:'vault',     x:338, y:254, w:214, h:62,  label:'Secrets Vault',    sub:'data/vault/dev-demo-aslan/…',                  ck:'cyan'   },
+  { id:'mysql',     x:338, y:376, w:214, h:62,  label:'MySQL Database',   sub:'mysql.demo.local',                               ck:'spring', external:true },
+]
+
+const EDGES: E[] = [
+  // Step 1 — K8s projects JWT into pod filesystem
+  { id:'jwt-proj', d:'M 128,104 L 128,154',                          ck:'gold',  tag:'projected',    lx:156, ly:132 },
+  // Step 2 — App sends JWT to Secrets Manager for authentication
+  { id:'auth-sm',  d:'M 228,183 C 283,183 283,98 338,98',            ck:'gold',  tag:'JWT',           lx:268, ly:148 },
+  // Step 3a — SM asks K8s API Server to validate the JWT
+  { id:'sm-k8',    d:'M 552,88 L 608,88',                            ck:'gold',  tag:'verify',        lx:580, ly:79  },
+  // Step 3b — K8s API Server confirms the workload identity
+  { id:'k8-sm',    d:'M 608,107 L 552,107',                          ck:'slate', tag:'✓ ok',          lx:580, ly:120 },
+  // Step 3c — SM returns a short-lived API token to the app
+  { id:'sm-app',   d:'M 338,80 C 283,80 283,64 228,64',              ck:'cyan',  tag:'API token',     lx:268, ly:71  },
+  // Step 4 — App uses API token to fetch secrets from vault
+  { id:'sm-vt',    d:'M 445,148 L 445,254',                          ck:'cyan',  tag:'fetch secrets', lx:464, ly:203 },
+  // Step 5 — Credentials used to connect to external database
+  { id:'vt-db',    d:'M 445,316 L 445,376',                          ck:'spring', tag:'connect',      lx:464, ly:348 },
+]
+
+// ─── step definitions ─────────────────────────────────────────────────────────
+
+const RAW: { nodes: string[]; edges: string[]; hi: string[] }[] = [
+  // s1 — K8s projects JWT into pod
+  { nodes:['container','jwt'],  edges:['jwt-proj'],                       hi:['container','jwt','jwt-proj'] },
+  // s2 — App authenticates with Secrets Manager
+  { nodes:['sm'],               edges:['auth-sm'],                        hi:['container','jwt','auth-sm','sm'] },
+  // s3 — SM verifies identity with K8s API, issues API token
+  { nodes:['k8sapi'],           edges:['sm-k8','k8-sm','sm-app'],         hi:['sm','k8sapi','sm-k8','k8-sm','sm-app','container'] },
+  // s4 — App fetches secrets from vault using the API token
+  { nodes:['vault'],            edges:['sm-vt'],                          hi:['sm','vault','sm-vt','container'] },
+  // s5 — App connects to external MySQL database
+  { nodes:['mysql'],            edges:['vt-db'],                          hi:['vault','mysql','vt-db'] },
+  // s6 — All visible; credentials cached in memory
+  { nodes:[],                   edges:[],                                  hi:['container','jwt','jwt-proj','auth-sm','sm','sm-k8','k8-sm','k8sapi','sm-app','sm-vt','vault','vt-db','mysql'] },
+]
+
+// build cumulative visibility sets once at module level
+const CUM = RAW.reduce<{ nodes: Set<string>; edges: Set<string> }[]>((acc, s) => {
+  const prev = acc[acc.length - 1] ?? { nodes: new Set<string>(), edges: new Set<string>() }
+  acc.push({ nodes: new Set([...prev.nodes, ...s.nodes]), edges: new Set([...prev.edges, ...s.edges]) })
+  return acc
+}, [])
+
+const TOTAL = RAW.length
+const AUTO_MS = 4000
+
+// ─── component ────────────────────────────────────────────────────────────────
 
 export default function ArchitectureDiagram() {
   const { t } = useTranslation()
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
+  const [step, setStep] = useState(0)
+  const [playing, setPlaying] = useState(true)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const go = useCallback((d: 1 | -1) =>
+    setStep(s => Math.max(0, Math.min(TOTAL - 1, s + d))), [])
+
+  // keyboard navigation (pauses auto-play)
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') { go(1);  setPlaying(false) }
+      if (e.key === 'ArrowLeft')  { go(-1); setPlaying(false) }
+    }
+    window.addEventListener('keydown', h)
+    return () => window.removeEventListener('keydown', h)
+  }, [go])
+
+  // auto-advance: stops at last step
+  useEffect(() => {
+    if (timerRef.current) clearInterval(timerRef.current)
+    if (!playing) return
+    timerRef.current = setInterval(() => {
+      setStep(s => {
+        if (s >= TOTAL - 1) { setPlaying(false); return s }
+        return s + 1
+      })
+    }, AUTO_MS)
+    return () => { if (timerRef.current) clearInterval(timerRef.current) }
+  }, [playing])
+
+  const vis    = CUM[step]
+  const hi     = new Set(RAW[step].hi)
+  const isLast = step === TOTAL - 1
+
+  const titles = t('architecture.step_titles', { returnObjects: true }) as string[]
+  const descs  = t('architecture.flow',        { returnObjects: true }) as string[]
+
+  const handlePlayPause = () => {
+    if (playing) {
+      setPlaying(false)
+    } else {
+      if (step >= TOTAL - 1) setStep(0)
+      setPlaying(true)
+    }
+  }
 
   return (
-    <section id="architecture" ref={ref} className="py-24 px-6 bg-bg-muted/40">
-      <div className="max-w-5xl mx-auto space-y-12">
+    <section id="architecture" className="py-24 px-6 bg-bg-muted/40">
+      <div className="max-w-5xl mx-auto space-y-10">
 
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
-          className="text-center space-y-3"
-        >
+        {/* ── header ── */}
+        <div className="text-center space-y-3">
           <span className="badge bg-conjur-gold/10 text-conjur-gold border border-conjur-gold/20">
             {t('architecture.badge')}
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold">{t('architecture.title')}</h2>
-        </motion.div>
-
-        {/* ── GRAPH ── */}
-        <div className="max-w-3xl mx-auto">
-
-          {/* ── K8s Cluster boundary ── */}
-          <motion.div
-            initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.4, delay: 0.1 }}
-            className="relative rounded-2xl border border-dashed border-slate-600/50 p-5 space-y-0"
-          >
-            <span className="absolute -top-2.5 left-5 bg-bg-muted px-2 text-[10px] font-mono text-slate-600">
-              Kubernetes Cluster
-            </span>
-
-            {/* ── App Pod boundary ── */}
-            <div className="relative rounded-xl border border-dashed border-conjur-cyan/25 p-4">
-              <span className="absolute -top-2 left-3 bg-bg-muted px-1.5 text-[10px] font-mono text-conjur-cyan/50">
-                App Pod
-              </span>
-
-              <GNode
-                icon={Layers}
-                color="text-conjur-cyan" border="border-conjur-cyan/30" bg="bg-conjur-cyan/5"
-                title="App Container" desc="Spring Boot / .NET — authenticates with Conjur or reads env vars from Secrets Provider"
-                delay={0.2} inView={inView}
-              />
-
-              {/* Pod-internal connector: App → JWT */}
-              <div className="flex justify-center py-1.5">
-                <div className="flex flex-col items-center">
-                  <div className="w-px h-3 bg-slate-700/60" />
-                  <div className="w-0 h-0 border-l-[3px] border-r-[3px] border-t-[4px] border-l-transparent border-r-transparent border-t-slate-700" />
-                </div>
-              </div>
-
-              <GNode
-                icon={Key}
-                color="text-conjur-gold" border="border-conjur-gold/30" bg="bg-conjur-gold/5"
-                title="Service Account JWT" desc="Short-lived token auto-projected by Kubernetes into /var/run/secrets/tokens/jwt"
-                delay={0.3} inView={inView}
-              />
-            </div>
-
-            {/* ── Step ①: JWT → Conjur ── */}
-            <VStep step="①" label="Authenticate — send JWT to Conjur endpoint" delay={0.4} inView={inView} />
-
-            {/* ── Conjur Cloud row + K8s API side branch ── */}
-            <div className="flex items-center gap-3">
-
-              {/* Conjur node (fills available width) */}
-              <div className="flex-1 min-w-0">
-                <GNode
-                  icon={Shield}
-                  color="text-conjur-gold" border="border-conjur-gold/30" bg="bg-conjur-gold/5"
-                  title="Conjur Cloud" tag="authn-jwt/eks-latam"
-                  desc="Receives JWT, calls K8s API to verify workload identity, then issues a short-lived API token"
-                  delay={0.5} inView={inView}
-                />
-              </div>
-
-              {/* K8s API side branch — sm+ */}
-              <motion.div
-                initial={{ opacity: 0, x: 14 }} animate={inView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.4, delay: 0.58 }}
-                className="hidden sm:flex flex-col items-center flex-shrink-0 gap-0.5"
-              >
-                {/* → ② */}
-                <div className="flex items-center gap-1 self-start">
-                  <div className="w-5 border-t border-dashed border-conjur-gold/35" />
-                  <div className="w-0 h-0 border-t-[3px] border-b-[3px] border-l-[4px] border-t-transparent border-b-transparent border-l-conjur-gold/45" />
-                  <span className="text-[9px] font-bold font-mono text-conjur-gold/60 ml-0.5">②</span>
-                </div>
-
-                {/* K8s API node */}
-                <div className="rounded-xl border border-border bg-bg-card p-3 w-40">
-                  <div className="flex items-center gap-1.5 mb-1.5">
-                    <div className="w-6 h-6 rounded-lg border border-border bg-bg-base flex items-center justify-center flex-shrink-0">
-                      <Server size={12} className="text-slate-400" />
-                    </div>
-                    <span className="text-[11px] font-semibold text-slate-200">K8s API Server</span>
-                  </div>
-                  <p className="text-[10px] text-slate-500 leading-relaxed">Verifies service account JWT against cluster identity</p>
-                  <div className="mt-1.5 flex items-center gap-1">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse-slow" />
-                    <span className="text-[9px] text-slate-600">identity confirmed</span>
-                  </div>
-                </div>
-
-                {/* ← ③ */}
-                <div className="flex items-center gap-1 self-start">
-                  <span className="text-[9px] font-bold font-mono text-conjur-gold/60 mr-0.5">③</span>
-                  <div className="w-0 h-0 border-t-[3px] border-b-[3px] border-r-[4px] border-t-transparent border-b-transparent border-r-conjur-gold/45" />
-                  <div className="w-5 border-t border-dashed border-conjur-gold/35" />
-                </div>
-              </motion.div>
-            </div>
-
-            {/* K8s API — mobile fallback */}
-            <motion.div
-              initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.4, delay: 0.58 }}
-              className="sm:hidden mt-2 ml-3 flex items-start gap-2 rounded-lg border border-border bg-bg-card p-2.5"
-            >
-              <Server size={13} className="text-slate-400 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="text-[11px] font-semibold text-slate-300">K8s API Server</p>
-                <p className="text-[10px] text-slate-500 mt-0.5">② validate JWT identity · ③ identity confirmed</p>
-              </div>
-            </motion.div>
-
-            {/* ── Step ④: API token back to App ── */}
-            <VStep step="④" label="Short-lived Conjur API token returned to app" delay={0.68} inView={inView} />
-
-            {/* ── Secrets Vault ── */}
-            <GNode
-              icon={Lock}
-              color="text-conjur-cyan" border="border-conjur-cyan/30" bg="bg-conjur-cyan/5"
-              title="Conjur Secrets Vault" tag="REST API"
-              desc="App uses API token to fetch db_user, db_password, db_host — cached in memory for 5 minutes"
-              delay={0.78} inView={inView}
-            />
-
-            {/* ── Step ⑤ ⑥: fetch + return ── */}
-            <VStep step="⑤ ⑥" label="Fetch secrets → credentials returned to app memory" delay={0.88} inView={inView} />
-
-            {/* ── App with credentials ── */}
-            <GNode
-              icon={Layers}
-              color="text-conjur-cyan" border="border-conjur-cyan/30" bg="bg-conjur-cyan/5"
-              title="App Container" desc="Now holds db_user, db_password, db_host — in memory, never written to disk or logs"
-              delay={0.93} inView={inView}
-            />
-          </motion.div>
-
-          {/* ── Step ⑦: outside cluster, connect to DB ── */}
-          <VStep step="⑦" label="Connect to database with dynamic credentials" delay={0.98} inView={inView} />
-
-          {/* ── MySQL Database (outside cluster) ── */}
-          <GNode
-            icon={Database}
-            color="text-spring" border="border-spring/30" bg="bg-spring/5"
-            title="MySQL Database" desc="Connections authenticated with runtime credentials — no hardcoded passwords in source, config, or CI/CD"
-            delay={1.03} inView={inView}
-          />
-
         </div>
+
+        {/* ── card ── */}
+        <div className="rounded-2xl border border-border bg-bg-card overflow-hidden">
+
+          {/* step header bar */}
+          <div className="border-b border-border px-5 py-3.5 flex items-center gap-3">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={step}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2 }}
+                className="flex-1 min-w-0"
+              >
+                <p className="text-[10px] font-mono text-conjur-gold/60 mb-0.5">
+                  {t('architecture.step_of', { current: step + 1, total: TOTAL })}
+                </p>
+                <p className="text-sm font-semibold text-white leading-snug">
+                  {titles[step]}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              <button
+                onClick={handlePlayPause}
+                className="p-1.5 rounded-lg border border-border text-slate-400 hover:text-conjur-gold hover:border-conjur-gold/40 transition-colors"
+                aria-label={playing ? 'Pause' : 'Play'}
+              >
+                {playing ? <Pause size={13} /> : <Play size={13} />}
+              </button>
+              <button
+                onClick={() => { go(-1); setPlaying(false) }}
+                disabled={step === 0}
+                className="p-1.5 rounded-lg border border-border text-slate-400 hover:text-white hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
+                aria-label="Previous step"
+              >
+                <ChevronLeft size={15} />
+              </button>
+              <button
+                onClick={() => { go(1); setPlaying(false) }}
+                disabled={step === TOTAL - 1}
+                className="p-1.5 rounded-lg border border-border text-slate-400 hover:text-white hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
+                aria-label="Next step"
+              >
+                <ChevronRight size={15} />
+              </button>
+              <button
+                onClick={() => { setStep(0); setPlaying(true) }}
+                className="p-1.5 rounded-lg border border-border text-slate-500 hover:text-conjur-gold hover:border-conjur-gold/40 transition-colors"
+                aria-label="Restart"
+                title="Restart"
+              >
+                <RotateCcw size={13} />
+              </button>
+            </div>
+          </div>
+
+          {/* progress dots */}
+          <div className="flex items-center justify-center gap-2 pt-3 pb-1">
+            {Array.from({ length: TOTAL }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => { setStep(i); setPlaying(false) }}
+                aria-label={`Go to step ${i + 1}`}
+                className="rounded-full transition-all duration-300"
+                style={{
+                  width:      i === step ? 22 : 6,
+                  height:     6,
+                  background: i === step   ? '#f59e0b'
+                            : i <  step   ? 'rgba(245,158,11,0.35)'
+                            :               'rgba(100,116,139,0.3)',
+                }}
+              />
+            ))}
+          </div>
+
+          {/* ── SVG diagram ── */}
+          <div className="px-4 pt-3 pb-2 overflow-x-auto">
+            <svg
+              viewBox="0 0 820 460"
+              style={{ minWidth: 540, width: '100%' }}
+              role="img"
+              aria-label={t('architecture.badge')}
+            >
+              <defs>
+                {(Object.keys(C) as CK[]).map(k => (
+                  <marker key={k} id={`arch-ah-${k}`}
+                    markerWidth="7" markerHeight="7"
+                    refX="6.5" refY="3.5" orient="auto"
+                  >
+                    <path d="M 0 1 L 7 3.5 L 0 6 z" fill={C[k].stroke} />
+                  </marker>
+                ))}
+                <filter id="arch-glow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="5" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+
+              {/* ── Kubernetes Cluster boundary ── */}
+              <rect x="8" y="8" width="804" height="314" rx="14"
+                fill="rgba(9,18,32,0.5)"
+                stroke="rgba(100,116,139,0.25)"
+                strokeWidth="1.5"
+                strokeDasharray="8 5"
+              />
+              <text x="24" y="24" fontSize="10"
+                fill="rgba(100,116,139,0.5)"
+                fontFamily="JetBrains Mono, monospace"
+                fontWeight="600"
+                letterSpacing="0.3"
+              >
+                Kubernetes Cluster
+              </text>
+
+              {/* ── App Pod boundary — appears with container node ── */}
+              <motion.rect x="18" y="30" width="222" height="190" rx="10"
+                fill="rgba(0,180,224,0.03)"
+                stroke="rgba(0,180,224,0.18)"
+                strokeWidth="1"
+                strokeDasharray="5 4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: vis.nodes.has('container') ? 1 : 0 }}
+                transition={{ duration: 0.4 }}
+              />
+              <motion.text x="30" y="46" fontSize="9"
+                fill="rgba(0,180,224,0.4)"
+                fontFamily="JetBrains Mono, monospace"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: vis.nodes.has('container') ? 1 : 0 }}
+                transition={{ duration: 0.4, delay: 0.15 }}
+              >
+                App Pod
+              </motion.text>
+
+              {/* ── External zone: separator line + label ── */}
+              <motion.line x1="8" y1="340" x2="812" y2="340"
+                stroke="rgba(100,116,139,0.18)"
+                strokeWidth="1"
+                strokeDasharray="4 4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: vis.nodes.has('mysql') ? 1 : 0 }}
+                transition={{ duration: 0.5 }}
+              />
+              <motion.text x="24" y="356" fontSize="9"
+                fill="rgba(100,116,139,0.38)"
+                fontFamily="JetBrains Mono, monospace"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: vis.nodes.has('mysql') ? 1 : 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
+                external · outside cluster
+              </motion.text>
+
+              {/* ── edges ── */}
+              {EDGES.map(e => {
+                const show   = vis.edges.has(e.id)
+                const active = hi.has(e.id) || isLast
+                return (
+                  <g key={e.id}>
+                    <motion.path
+                      d={e.d}
+                      stroke={C[e.ck].stroke}
+                      strokeWidth={active ? 2.2 : 1.5}
+                      fill="none"
+                      markerEnd={`url(#arch-ah-${e.ck})`}
+                      initial={{ pathLength: 0, opacity: 0 }}
+                      animate={{
+                        pathLength: show ? 1   : 0,
+                        opacity:    show ? (active ? 1 : 0.18) : 0,
+                      }}
+                      transition={{ duration: 0.7, ease: 'easeInOut' }}
+                    />
+                    {e.tag != null && (
+                      <motion.text
+                        x={e.lx} y={e.ly}
+                        fill={C[e.ck].stroke}
+                        fontSize="9"
+                        textAnchor="middle"
+                        fontFamily="JetBrains Mono, monospace"
+                        fontWeight="500"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: show ? (active ? 0.9 : 0.2) : 0 }}
+                        transition={{ delay: show ? 0.5 : 0, duration: 0.3 }}
+                      >
+                        {e.tag}
+                      </motion.text>
+                    )}
+                  </g>
+                )
+              })}
+
+              {/* ── nodes ── */}
+              {NODES.map(n => {
+                const show   = vis.nodes.has(n.id)
+                const active = hi.has(n.id) || isLast
+                const c      = C[n.ck]
+
+                return (
+                  <motion.g
+                    key={n.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: show ? 1 : 0, y: show ? 0 : 10 }}
+                    transition={{ duration: 0.45, ease: 'easeOut' }}
+                  >
+                    {/* glow ring for Secrets Manager when active */}
+                    {n.feat && active && (
+                      <motion.rect
+                        x={n.x - 7} y={n.y - 7}
+                        width={n.w + 14} height={n.h + 14}
+                        rx="17"
+                        fill="none"
+                        stroke={c.stroke}
+                        strokeWidth="1"
+                        filter="url(#arch-glow)"
+                        animate={{ strokeOpacity: [0.15, 0.55, 0.15] }}
+                        transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+                      />
+                    )}
+
+                    {/* card background */}
+                    <rect
+                      x={n.x} y={n.y} width={n.w} height={n.h} rx="10"
+                      fill={active ? c.bg : 'rgba(10,20,36,0.8)'}
+                      stroke={c.border}
+                      strokeWidth={active ? 1.5 : 0.75}
+                      strokeOpacity={active ? 1 : 0.28}
+                    />
+
+                    {/* "external" badge on MySQL */}
+                    {n.external && (
+                      <>
+                        <rect
+                          x={n.x + n.w - 62} y={n.y + 6}
+                          width={54} height={14} rx="4"
+                          fill="rgba(109,179,63,0.12)"
+                          stroke="rgba(109,179,63,0.35)"
+                          strokeWidth="0.75"
+                        />
+                        <text
+                          x={n.x + n.w - 35} y={n.y + 17}
+                          fontSize="7.5"
+                          textAnchor="middle"
+                          fill="#6db33f"
+                          fontFamily="JetBrains Mono, monospace"
+                          fontWeight="600"
+                        >
+                          external
+                        </text>
+                      </>
+                    )}
+
+                    {/* primary label */}
+                    <text
+                      x={n.x + 14} y={n.y + (n.feat ? 26 : 24)}
+                      fill={active ? c.text : 'rgba(148,163,184,0.3)'}
+                      fontSize={n.feat ? 12 : 11}
+                      fontWeight="600"
+                      fontFamily="Inter, system-ui, sans-serif"
+                    >
+                      {n.label}
+                    </text>
+
+                    {/* sub label */}
+                    <text
+                      x={n.x + 14} y={n.y + (n.feat ? 46 : 40)}
+                      fill={active ? 'rgba(148,163,184,0.5)' : 'rgba(148,163,184,0.15)'}
+                      fontSize="8"
+                      fontFamily="JetBrains Mono, monospace"
+                    >
+                      {n.sub}
+                    </text>
+
+                    {/* authn-jwt tag inside Secrets Manager */}
+                    {n.feat && (
+                      <motion.g
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: show ? (active ? 1 : 0.3) : 0 }}
+                        transition={{ duration: 0.4, delay: 0.2 }}
+                      >
+                        <rect
+                          x={n.x + 14} y={n.y + 60}
+                          width={74} height={16} rx="4"
+                          fill="rgba(245,158,11,0.12)"
+                          stroke="rgba(245,158,11,0.3)"
+                          strokeWidth="0.75"
+                        />
+                        <text
+                          x={n.x + 51} y={n.y + 72}
+                          fontSize="8.5"
+                          textAnchor="middle"
+                          fill="#fcd34d"
+                          fontFamily="JetBrains Mono, monospace"
+                          fontWeight="500"
+                        >
+                          authn-jwt
+                        </text>
+                      </motion.g>
+                    )}
+
+                    {/* live pulse dot on Secrets Manager */}
+                    {n.feat && (
+                      <motion.circle
+                        cx={n.x + n.w - 16} cy={n.y + 16} r="4"
+                        fill={c.stroke}
+                        animate={active
+                          ? { opacity: [0.4, 1, 0.4], r: [3, 4.5, 3] }
+                          : { opacity: 0.15, r: 3 }}
+                        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                      />
+                    )}
+
+                    {/* "cached ✓" badge on App Container at the last step */}
+                    {n.id === 'container' && isLast && (
+                      <motion.g
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.4, delay: 0.2 }}
+                      >
+                        <rect
+                          x={n.x + n.w - 66} y={n.y + n.h - 20}
+                          width={58} height={14} rx="4"
+                          fill="rgba(0,180,224,0.15)"
+                          stroke="rgba(0,180,224,0.4)"
+                          strokeWidth="0.75"
+                        />
+                        <text
+                          x={n.x + n.w - 37} y={n.y + n.h - 9}
+                          fontSize="7.5"
+                          textAnchor="middle"
+                          fill="#67e8f9"
+                          fontFamily="JetBrains Mono, monospace"
+                          fontWeight="600"
+                        >
+                          cached ✓
+                        </text>
+                      </motion.g>
+                    )}
+
+                    {/* JWT "short-lived" tag on the jwt node */}
+                    {n.id === 'jwt' && (
+                      <motion.g
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: show ? (active ? 0.9 : 0.25) : 0 }}
+                        transition={{ duration: 0.4, delay: 0.25 }}
+                      >
+                        <rect
+                          x={n.x + n.w - 74} y={n.y + n.h - 20}
+                          width={66} height={14} rx="4"
+                          fill="rgba(245,158,11,0.1)"
+                          stroke="rgba(245,158,11,0.28)"
+                          strokeWidth="0.75"
+                        />
+                        <text
+                          x={n.x + n.w - 41} y={n.y + n.h - 9}
+                          fontSize="7.5"
+                          textAnchor="middle"
+                          fill="#fcd34d"
+                          fontFamily="JetBrains Mono, monospace"
+                          fontWeight="500"
+                        >
+                          short-lived
+                        </text>
+                      </motion.g>
+                    )}
+                  </motion.g>
+                )
+              })}
+
+              {/* ── step number callout circle (top-right corner of active node) ── */}
+              <motion.g key={`step-bubble-${step}`}
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0 }}
+                transition={{ duration: 0.3, type: 'spring', stiffness: 300, damping: 20 }}
+              >
+                {/* Cluster badge in top-right */}
+                <circle cx="794" cy="22" r="14" fill="rgba(245,158,11,0.15)" stroke="rgba(245,158,11,0.4)" strokeWidth="1" />
+                <text x="794" y="27" textAnchor="middle" fontSize="12" fontWeight="700"
+                  fill="#fcd34d" fontFamily="Inter, system-ui, sans-serif">
+                  {step + 1}
+                </text>
+              </motion.g>
+            </svg>
+          </div>
+
+          {/* ── step description ── */}
+          <div className="px-5 pb-2 pt-1 min-h-[64px] border-t border-border/50 mt-1">
+            <AnimatePresence mode="wait">
+              <motion.div key={step}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.22 }}
+                className="pt-3"
+              >
+                <p className="text-sm text-slate-300 leading-relaxed">
+                  {descs[step]}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* ── progress bar ── */}
+          <div className="mx-5 mb-4 mt-3 h-0.5 bg-bg-base/60 rounded-full overflow-hidden">
+            <motion.div
+              className="h-full rounded-full bg-conjur-gold/60"
+              animate={{ width: `${((step + 1) / TOTAL) * 100}%` }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
+            />
+          </div>
+        </div>
+
+        {/* ── keyboard hint ── */}
+        <p className="text-center text-xs text-slate-700 select-none">
+          {t('architecture.keyboard_hint')}
+        </p>
       </div>
     </section>
   )
