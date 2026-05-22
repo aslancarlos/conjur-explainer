@@ -1,33 +1,50 @@
+import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
 import NavBar from './components/NavBar'
-import Hero from './components/Hero'
-import ProblemSection from './components/ProblemSection'
-import ArchitectureDiagram from './components/ArchitectureDiagram'
+import Footer from './components/Footer'
+import HomePage from './pages/HomePage'
 import SpringBootSection from './components/SpringBootSection'
 import DotNetSection from './components/DotNetSection'
 import GitHubActionsSection from './components/GitHubActionsSection'
 import ESOShopSection from './components/ESOShopSection'
 import IntegrationFlow from './components/IntegrationFlow'
-import LiveToolsSection from './components/LiveToolsSection'
 import ComparisonTable from './components/ComparisonTable'
-import Footer from './components/Footer'
+import LiveToolsSection from './components/LiveToolsSection'
 
-export default function App() {
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => { window.scrollTo(0, 0) }, [pathname])
+  return null
+}
+
+function Layout() {
   return (
     <div className="min-h-screen bg-bg-base text-slate-200">
       <NavBar />
-      <main>
-        <Hero />
-        <ProblemSection />
-        <ArchitectureDiagram />
-        <SpringBootSection />
-        <DotNetSection />
-        <GitHubActionsSection />
-        <ESOShopSection />
-        <IntegrationFlow />
-        <LiveToolsSection />
-        <ComparisonTable />
+      <ScrollToTop />
+      <main className="pt-14">
+        <Outlet />
       </main>
       <Footer />
     </div>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/"               element={<HomePage />} />
+          <Route path="/spring-boot"    element={<SpringBootSection />} />
+          <Route path="/dotnet"         element={<DotNetSection />} />
+          <Route path="/github-actions" element={<GitHubActionsSection />} />
+          <Route path="/eso-shop"       element={<ESOShopSection />} />
+          <Route path="/flow"           element={<IntegrationFlow />} />
+          <Route path="/compare"        element={<ComparisonTable />} />
+          <Route path="/tools"          element={<LiveToolsSection />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }

@@ -27,6 +27,21 @@ npx tsc --noEmit
 
 ## Architecture decisions
 
+**Multi-page routing with React Router v6** — the app uses `BrowserRouter` + `Routes` + a `Layout` route. Each section is a standalone page, not a scroll-section. The `Layout` component uses `<Outlet />` and wraps all pages with `NavBar`, `Footer`, and `ScrollToTop`. `main` has `pt-14` to offset the fixed navbar.
+
+| Route | Component |
+|---|---|
+| `/` | `HomePage` (Hero + Problem + Architecture) |
+| `/spring-boot` | `SpringBootSection` |
+| `/dotnet` | `DotNetSection` |
+| `/github-actions` | `GitHubActionsSection` |
+| `/eso-shop` | `ESOShopSection` |
+| `/flow` | `IntegrationFlow` |
+| `/compare` | `ComparisonTable` |
+| `/tools` | `LiveToolsSection` |
+
+**NavBar uses dropdown menus** — two dropdowns: "Integrations" (app patterns) and "Tools" (flow/compare/dashboards). State-based (`useState`) not CSS hover, so they close on route change and outside click. `DropItem` interface drives both PATTERNS and TOOLS arrays. All labels come from i18n keys including sub-descriptions (e.g., `nav.springboot_sub`).
+
 **`vite.config.ts` has `base: '/'`** — the app is served at the domain root (`demo.minha.cloud/`). Do not change this. If `base` were set to a sub-path, all asset paths and client-side navigation would break.
 
 **nginx `try_files` for SPA routing** — `nginx.conf` uses `try_files $uri $uri/ /index.html`. This is what makes deep-link refreshes work. Do not remove it.
@@ -104,7 +119,7 @@ kubectl rollout restart deployment/nginx-internal-ingress-nginx-controller -n in
 - **Do not commit `dist/`** — it is produced by the Docker build stage and excluded by `.gitignore` and `.dockerignore`.
 - **Do not set `base` in `vite.config.ts` to a sub-path** — the app is at the domain root; a sub-path base would break asset resolution.
 - **Do not hardcode live service URLs in components** — use absolute paths (`/springboot/checkit`) so they work regardless of the browser's current route.
-- **Do not add a `<Router>` or client-side routing library** — this is a single scrollable page. Navigation is anchor-based (`#springboot`, `#dotnet`, etc.).
+- **Do not add a second `<BrowserRouter>`** — one already exists in `App.tsx`. Adding another nests routers and breaks all navigation.
 
 ## Shared CSS classes (src/index.css)
 
