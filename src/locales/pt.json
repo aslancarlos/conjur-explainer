@@ -16,7 +16,9 @@
     "compare": "Comparar Padrões",
     "compare_sub": "Comparação de 4 padrões",
     "livetools": "Dashboards ao Vivo",
-    "livetools_sub": "Grafana, K8s, monitores de app"
+    "livetools_sub": "Grafana, K8s, monitores de app",
+    "controller": "App Controller",
+    "controller_sub": "Iniciar / parar deployments"
   },
   "hero": {
     "eyebrow": "Palo Alto Networks | IDIRA · Secrets Manager · Kubernetes · ESO · DevSecOps",
@@ -263,7 +265,10 @@
     "dotnet_desc": "App .NET ao vivo lendo credenciais do banco de um K8s Secret injetado pelo sidecar Secrets Provider.",
     "esoshop_title": "ESO Shop",
     "esoshop_badge": "Padrão 4 · Ao Vivo",
-    "esoshop_desc": "App Node.js de e-commerce usando External Secrets Operator para sincronizar credenciais do Secrets Manager em K8s Secrets."
+    "esoshop_desc": "App Node.js de e-commerce usando External Secrets Operator para sincronizar credenciais do Secrets Manager em K8s Secrets.",
+    "controller_title": "App Controller",
+    "controller_badge": "Controle de Custos",
+    "controller_desc": "Inicie e pare deployments Kubernetes em múltiplos namespaces para reduzir custos do cluster quando os apps não estão em uso."
   },
   "footer": {
     "desc": "Um demo Kubernetes ao vivo com quatro padrões de integração com Palo Alto Networks | IDIRA Secrets Manager: JWT direto (Spring Boot), sidecar Secrets Provider (.NET), GitHub OIDC e External Secrets Operator (ESO Shop).",
