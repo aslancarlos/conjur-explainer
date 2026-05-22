@@ -13,6 +13,7 @@ import LiveToolsSection from './components/LiveToolsSection'
 import DualAccountsPage from './pages/DualAccountsPage'
 import JwtPage from './pages/JwtPage'
 import SecretsHubPage from './pages/SecretsHubPage'
+import JenkinsPage from './pages/JenkinsPage'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -49,6 +50,7 @@ export default function App() {
           <Route path="/dualaccounts"   element={<DualAccountsPage />} />
           <Route path="/jwt"            element={<JwtPage />} />
           <Route path="/secretshub"    element={<SecretsHubPage />} />
+          <Route path="/jenkins"       element={<JenkinsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
