@@ -22,7 +22,8 @@
     "dualaccounts": "Dual Accounts",
     "dualaccounts_sub": "Rotación de credenciales sin downtime",
     "jwt": "Autenticación JWT",
-    "jwt_sub": "Cómo funciona la autenticación JWT de workloads"
+    "jwt_sub": "Cómo funciona la autenticación JWT de workloads",
+    "examples": "Ejemplos"
   },
   "hero": {
     "eyebrow": "Palo Alto Networks | IDIRA · Secrets Manager · Kubernetes · ESO · DevSecOps",
