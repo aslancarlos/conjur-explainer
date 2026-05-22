@@ -18,6 +18,7 @@ const INTEGRATIONS: DropItem[] = [
   { to: '/dualaccounts', labelKey: 'nav.dualaccounts', subKey: 'nav.dualaccounts_sub', color: 'text-conjur-gold' },
   { to: '/jwt',          labelKey: 'nav.jwt',           subKey: 'nav.jwt_sub',          color: 'text-gh'          },
   { to: '/secretshub',   labelKey: 'nav.secretshub',    subKey: 'nav.secretshub_sub',   color: 'text-dotnet'      },
+  { to: '/jenkins',      labelKey: 'nav.jenkins',       subKey: 'nav.jenkins_sub',      color: 'text-spring'      },
 ]
 
 const EXAMPLES: DropItem[] = [
