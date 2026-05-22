@@ -12,6 +12,7 @@ import ComparisonTable from './components/ComparisonTable'
 import LiveToolsSection from './components/LiveToolsSection'
 import DualAccountsPage from './pages/DualAccountsPage'
 import JwtPage from './pages/JwtPage'
+import SecretsHubPage from './pages/SecretsHubPage'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -47,6 +48,7 @@ export default function App() {
           <Route path="/tools"           element={<LiveToolsSection />} />
           <Route path="/dualaccounts"   element={<DualAccountsPage />} />
           <Route path="/jwt"            element={<JwtPage />} />
+          <Route path="/secretshub"    element={<SecretsHubPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
