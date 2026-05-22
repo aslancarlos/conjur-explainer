@@ -20,6 +20,7 @@ const PATTERNS: DropItem[] = [
   { to: '/github-actions', labelKey: 'nav.gha',             subKey: 'nav.gha_sub',           color: 'text-gh'     },
   { to: '/eso-shop',       labelKey: 'nav.esoshop',         subKey: 'nav.esoshop_sub',       color: 'text-eso'    },
   { to: '/dualaccounts',   labelKey: 'nav.dualaccounts',    subKey: 'nav.dualaccounts_sub',  color: 'text-conjur-gold' },
+  { to: '/jwt',            labelKey: 'nav.jwt',             subKey: 'nav.jwt_sub',           color: 'text-gh'          },
 ]
 
 const TOOLS: DropItem[] = [
