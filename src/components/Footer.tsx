@@ -20,6 +20,12 @@ export default function Footer() {
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{t('footer.apps')}</p>
             <ul className="space-y-2">
               <li>
+                <a href="/dashboard/" target="_blank" rel="noopener"
+                  className="text-xs text-slate-400 hover:text-conjur-cyan transition-colors flex items-center gap-1.5">
+                  <ExternalLink size={10} /> Kubernetes Dashboard
+                </a>
+              </li>
+              <li>
                 <a href="/springboot/dashboard" target="_blank" rel="noopener"
                   className="text-xs text-slate-400 hover:text-spring transition-colors flex items-center gap-1.5">
                   <ExternalLink size={10} /> Spring Boot Dashboard
@@ -29,6 +35,18 @@ export default function Footer() {
                 <a href="/dotnet/usuarios" target="_blank" rel="noopener"
                   className="text-xs text-slate-400 hover:text-dotnet transition-colors flex items-center gap-1.5">
                   <ExternalLink size={10} /> .NET Usuarios
+                </a>
+              </li>
+              <li>
+                <a href="/k8s-eso/" target="_blank" rel="noopener"
+                  className="text-xs text-slate-400 hover:text-eso transition-colors flex items-center gap-1.5">
+                  <ExternalLink size={10} /> ESO Shop
+                </a>
+              </li>
+              <li>
+                <a href="/k8s-eso/dashboard" target="_blank" rel="noopener"
+                  className="text-xs text-slate-400 hover:text-eso transition-colors flex items-center gap-1.5">
+                  <ExternalLink size={10} /> ESO Shop Dashboard
                 </a>
               </li>
               <li>

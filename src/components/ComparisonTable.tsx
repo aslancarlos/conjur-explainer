@@ -3,32 +3,44 @@ import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Check, Minus } from 'lucide-react'
 
+interface Row {
+  feature: string
+  spring: string; springIcon: string
+  dotnet: string; dotnetIcon: string
+  gha: string;    ghaIcon: string
+  eso: string;    esoIcon: string
+}
+
+interface BestFor { title: string; desc: string }
+
+const renderCell = (value: string, icon: string) => {
+  if (icon === 'check') return (
+    <span className="inline-flex items-center gap-1 text-spring font-medium text-xs sm:text-sm">
+      <Check size={13} /> {value}
+    </span>
+  )
+  if (icon === 'minus') return (
+    <span className="inline-flex items-center gap-1 text-slate-500 text-xs sm:text-sm">
+      <Minus size={13} /> {value}
+    </span>
+  )
+  return <span className="text-slate-300 text-xs sm:text-sm">{value}</span>
+}
+
 export default function ComparisonTable() {
   const { t } = useTranslation()
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
 
-  const rows = t('compare.rows', { returnObjects: true }) as Array<{
-    feature: string
-    spring: string
-    dotnet: string
-    springIcon: string
-    dotnetIcon: string
-  }>
+  const rows = t('compare.rows', { returnObjects: true }) as Row[]
+  const bestFor = t('compare.best_for', { returnObjects: true }) as BestFor[]
 
-  const renderCell = (value: string, icon: string) => {
-    if (icon === 'check') return (
-      <span className="inline-flex items-center gap-1.5 text-spring font-medium">
-        <Check size={14} /> {value}
-      </span>
-    )
-    if (icon === 'minus') return (
-      <span className="inline-flex items-center gap-1.5 text-slate-500">
-        <Minus size={14} /> {value}
-      </span>
-    )
-    return <span className="text-slate-300">{value}</span>
-  }
+  const cols = [
+    { key: 'spring', labelKey: 'compare.col_spring', color: 'text-spring',  dot: 'bg-spring'  },
+    { key: 'dotnet', labelKey: 'compare.col_dotnet', color: 'text-dotnet',  dot: 'bg-dotnet'  },
+    { key: 'gha',    labelKey: 'compare.col_gha',    color: 'text-gh',      dot: 'bg-gh'      },
+    { key: 'eso',    labelKey: 'compare.col_eso',    color: 'text-eso',     dot: 'bg-eso'     },
+  ] as const
 
   return (
     <section id="compare" ref={ref} className="py-24 px-6 bg-bg-muted/40">
@@ -51,24 +63,20 @@ export default function ComparisonTable() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="overflow-x-auto rounded-2xl border border-border"
         >
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[700px]">
             <thead>
               <tr className="border-b border-border bg-bg-card">
-                <th className="text-left px-6 py-4 text-slate-400 font-medium w-1/3">
+                <th className="text-left px-5 py-4 text-slate-400 font-medium w-[22%]">
                   {t('compare.col_feature')}
                 </th>
-                <th className="text-left px-6 py-4 w-1/3">
-                  <span className="inline-flex items-center gap-2 text-spring font-semibold">
-                    <span className="w-2 h-2 rounded-full bg-spring" />
-                    {t('compare.col_spring')}
-                  </span>
-                </th>
-                <th className="text-left px-6 py-4 w-1/3">
-                  <span className="inline-flex items-center gap-2 text-dotnet font-semibold">
-                    <span className="w-2 h-2 rounded-full bg-dotnet" />
-                    {t('compare.col_dotnet')}
-                  </span>
-                </th>
+                {cols.map(c => (
+                  <th key={c.key} className="text-left px-4 py-4 w-[19.5%]">
+                    <span className={`inline-flex items-center gap-2 ${c.color} font-semibold text-xs sm:text-sm`}>
+                      <span className={`w-2 h-2 rounded-full ${c.dot} flex-shrink-0`} />
+                      {t(c.labelKey)}
+                    </span>
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
@@ -76,31 +84,36 @@ export default function ComparisonTable() {
                 <motion.tr
                   key={i}
                   initial={{ opacity: 0, x: -12 }} animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.35, delay: 0.3 + i * 0.07 }}
+                  transition={{ duration: 0.35, delay: 0.3 + i * 0.06 }}
                   className={`border-b border-border/50 ${i % 2 === 0 ? 'bg-bg-base' : 'bg-bg-card/40'} hover:bg-bg-card transition-colors`}
                 >
-                  <td className="px-6 py-4 font-medium text-white">{row.feature}</td>
-                  <td className="px-6 py-4">{renderCell(row.spring, row.springIcon)}</td>
-                  <td className="px-6 py-4">{renderCell(row.dotnet, row.dotnetIcon)}</td>
+                  <td className="px-5 py-3.5 font-medium text-white text-xs sm:text-sm">{row.feature}</td>
+                  <td className="px-4 py-3.5">{renderCell(row.spring, row.springIcon)}</td>
+                  <td className="px-4 py-3.5">{renderCell(row.dotnet, row.dotnetIcon)}</td>
+                  <td className="px-4 py-3.5">{renderCell(row.gha,    row.ghaIcon)}</td>
+                  <td className="px-4 py-3.5">{renderCell(row.eso,    row.esoIcon)}</td>
                 </motion.tr>
               ))}
             </tbody>
           </table>
         </motion.div>
 
+        {/* Best-for cards — 4 columns */}
         <motion.div
           initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.7 }}
-          className="grid sm:grid-cols-2 gap-6"
+          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5"
         >
-          <div className="section-card border-spring/20 space-y-2">
-            <p className="text-sm font-semibold text-spring">{t('compare.spring_best_for_title')}</p>
-            <p className="text-sm text-slate-400">{t('compare.spring_best_for_desc')}</p>
-          </div>
-          <div className="section-card border-dotnet/20 space-y-2">
-            <p className="text-sm font-semibold text-dotnet">{t('compare.dotnet_best_for_title')}</p>
-            <p className="text-sm text-slate-400">{t('compare.dotnet_best_for_desc')}</p>
-          </div>
+          {bestFor.map((b, i) => {
+            const border = ['border-spring/20', 'border-dotnet/20', 'border-gh/20', 'border-eso/20'][i]
+            const color  = ['text-spring', 'text-dotnet', 'text-gh', 'text-eso'][i]
+            return (
+              <div key={i} className={`section-card ${border} space-y-2`}>
+                <p className={`text-sm font-semibold ${color}`}>{b.title}</p>
+                <p className="text-xs text-slate-400 leading-relaxed">{b.desc}</p>
+              </div>
+            )
+          })}
         </motion.div>
 
       </div>

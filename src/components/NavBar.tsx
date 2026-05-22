@@ -20,7 +20,10 @@ export default function NavBar() {
           <a href="#springboot" className="hover:text-spring transition-colors">{t('nav.springboot')}</a>
           <a href="#dotnet"     className="hover:text-dotnet  transition-colors">{t('nav.dotnet')}</a>
           <a href="#gha"        className="hover:text-gh transition-colors hidden sm:block">{t('nav.gha')}</a>
-          <a href="#compare"    className="hover:text-conjur-cyan transition-colors hidden md:block">{t('nav.compare')}</a>
+          <a href="#esoshop"    className="hover:text-eso transition-colors hidden md:block">{t('nav.esoshop')}</a>
+          <a href="#flow"       className="hover:text-conjur-gold transition-colors hidden lg:block">{t('nav.flow')}</a>
+          <a href="#livetools"  className="hover:text-conjur-cyan transition-colors hidden lg:block">{t('nav.livetools')}</a>
+          <a href="#compare"    className="hover:text-conjur-gold transition-colors hidden lg:block">{t('nav.compare')}</a>
 
           <div className="flex items-center gap-1">
             {LANGS.map(lang => (
