@@ -14,13 +14,16 @@ interface DropItem {
   color?: string
 }
 
-const PATTERNS: DropItem[] = [
-  { to: '/spring-boot',    labelKey: 'nav.springboot',     subKey: 'nav.springboot_sub',    color: 'text-spring' },
-  { to: '/dotnet',         labelKey: 'nav.dotnet',          subKey: 'nav.dotnet_sub',        color: 'text-dotnet' },
-  { to: '/github-actions', labelKey: 'nav.gha',             subKey: 'nav.gha_sub',           color: 'text-gh'     },
-  { to: '/eso-shop',       labelKey: 'nav.esoshop',         subKey: 'nav.esoshop_sub',       color: 'text-eso'    },
-  { to: '/dualaccounts',   labelKey: 'nav.dualaccounts',    subKey: 'nav.dualaccounts_sub',  color: 'text-conjur-gold' },
-  { to: '/jwt',            labelKey: 'nav.jwt',             subKey: 'nav.jwt_sub',           color: 'text-gh'          },
+const INTEGRATIONS: DropItem[] = [
+  { to: '/dualaccounts', labelKey: 'nav.dualaccounts', subKey: 'nav.dualaccounts_sub', color: 'text-conjur-gold' },
+  { to: '/jwt',          labelKey: 'nav.jwt',           subKey: 'nav.jwt_sub',          color: 'text-gh'          },
+]
+
+const EXAMPLES: DropItem[] = [
+  { to: '/spring-boot',    labelKey: 'nav.springboot', subKey: 'nav.springboot_sub', color: 'text-spring' },
+  { to: '/dotnet',         labelKey: 'nav.dotnet',      subKey: 'nav.dotnet_sub',     color: 'text-dotnet' },
+  { to: '/github-actions', labelKey: 'nav.gha',         subKey: 'nav.gha_sub',        color: 'text-gh'     },
+  { to: '/eso-shop',       labelKey: 'nav.esoshop',     subKey: 'nav.esoshop_sub',    color: 'text-eso'    },
 ]
 
 const TOOLS: DropItem[] = [
@@ -33,6 +36,31 @@ const TOOLS: DropItem[] = [
 const dropVariants = {
   hidden:  { opacity: 0, y: -6, scale: 0.97 },
   visible: { opacity: 1, y: 0,  scale: 1    },
+}
+
+function DropdownMenu({ items, activeColor = 'text-conjur-cyan' }: { items: DropItem[], activeColor?: string }) {
+  const { t } = useTranslation()
+  const location = useLocation()
+  const isActive = (to: string) => location.pathname === to
+  return (
+    <>
+      {items.map(item => (
+        <Link
+          key={item.to}
+          to={item.to}
+          className={`flex items-center gap-3 px-4 py-3 transition-colors hover:bg-white/5 ${isActive(item.to) ? 'bg-white/5' : ''}`}
+        >
+          <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${item.color?.replace('text-', 'bg-') ?? 'bg-slate-500'}`} />
+          <div className="min-w-0">
+            <div className={`text-sm font-semibold ${isActive(item.to) ? (item.color ?? activeColor) : 'text-slate-200'}`}>
+              {t(item.labelKey)}
+            </div>
+            <div className="text-xs text-slate-500 mt-0.5 truncate">{t(item.subKey)}</div>
+          </div>
+        </Link>
+      ))}
+    </>
+  )
 }
 
 export default function NavBar() {
@@ -63,6 +91,36 @@ export default function NavBar() {
 
   const isActive = (to: string) => location.pathname === to
 
+  const desktopMenuBtn = (key: string, items: DropItem[], label: string) => (
+    <div className="relative">
+      <button
+        onClick={() => toggle(key)}
+        className={`flex items-center gap-1 px-3 py-1.5 rounded-lg transition-colors ${
+          openMenu === key || items.some(p => isActive(p.to))
+            ? 'text-white bg-white/5'
+            : 'text-slate-400 hover:text-white hover:bg-white/5'
+        }`}
+      >
+        {label}
+        <ChevronDown size={13} className={`transition-transform ${openMenu === key ? 'rotate-180' : ''}`} />
+      </button>
+      <AnimatePresence>
+        {openMenu === key && (
+          <motion.div
+            variants={dropVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            transition={{ duration: 0.15, ease: 'easeOut' }}
+            className="absolute top-full left-0 mt-2 w-72 bg-bg-card border border-border rounded-xl shadow-2xl overflow-hidden"
+          >
+            <DropdownMenu items={items} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+
   return (
     <nav
       ref={navRef}
@@ -80,61 +138,10 @@ export default function NavBar() {
 
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-1 text-sm">
+          {desktopMenuBtn('integrations', INTEGRATIONS, t('nav.integrations'))}
+          {desktopMenuBtn('examples', EXAMPLES, t('nav.examples'))}
 
-          {/* Integrations dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => toggle('patterns')}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-lg transition-colors ${
-                openMenu === 'patterns' || PATTERNS.some(p => isActive(p.to))
-                  ? 'text-white bg-white/5'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
-              }`}
-            >
-              {t('nav.integrations')}
-              <ChevronDown
-                size={13}
-                className={`transition-transform ${openMenu === 'patterns' ? 'rotate-180' : ''}`}
-              />
-            </button>
-
-            <AnimatePresence>
-              {openMenu === 'patterns' && (
-                <motion.div
-                  variants={dropVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  transition={{ duration: 0.15, ease: 'easeOut' }}
-                  className="absolute top-full left-0 mt-2 w-72 bg-bg-card border border-border rounded-xl shadow-2xl overflow-hidden"
-                >
-                  {PATTERNS.map(item => (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      className={`flex items-center gap-3 px-4 py-3 transition-colors hover:bg-white/5 ${
-                        isActive(item.to) ? 'bg-white/5' : ''
-                      }`}
-                    >
-                      <div
-                        className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                          item.color?.replace('text-', 'bg-') ?? 'bg-slate-500'
-                        }`}
-                      />
-                      <div className="min-w-0">
-                        <div className={`text-sm font-semibold ${isActive(item.to) ? item.color : 'text-slate-200'}`}>
-                          {t(item.labelKey)}
-                        </div>
-                        <div className="text-xs text-slate-500 mt-0.5 truncate">{t(item.subKey)}</div>
-                      </div>
-                    </Link>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Tools dropdown */}
+          {/* Tools dropdown (uses <a> for external items) */}
           <div className="relative">
             <button
               onClick={() => toggle('tools')}
@@ -145,12 +152,8 @@ export default function NavBar() {
               }`}
             >
               {t('nav.tools')}
-              <ChevronDown
-                size={13}
-                className={`transition-transform ${openMenu === 'tools' ? 'rotate-180' : ''}`}
-              />
+              <ChevronDown size={13} className={`transition-transform ${openMenu === 'tools' ? 'rotate-180' : ''}`} />
             </button>
-
             <AnimatePresence>
               {openMenu === 'tools' && (
                 <motion.div
@@ -227,13 +230,27 @@ export default function NavBar() {
               <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest px-2 pb-1">
                 {t('nav.integrations')}
               </p>
-              {PATTERNS.map(item => (
+              {INTEGRATIONS.map(item => (
                 <Link
                   key={item.to}
                   to={item.to}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                    isActive(item.to) ? 'bg-white/5' : 'hover:bg-white/5'
-                  }`}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive(item.to) ? 'bg-white/5' : 'hover:bg-white/5'}`}
+                >
+                  <div className={`w-1.5 h-1.5 rounded-full ${item.color?.replace('text-', 'bg-') ?? 'bg-slate-500'}`} />
+                  <span className={`text-sm font-medium ${isActive(item.to) ? item.color : 'text-slate-300'}`}>
+                    {t(item.labelKey)}
+                  </span>
+                </Link>
+              ))}
+
+              <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest px-2 pt-3 pb-1">
+                {t('nav.examples')}
+              </p>
+              {EXAMPLES.map(item => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive(item.to) ? 'bg-white/5' : 'hover:bg-white/5'}`}
                 >
                   <div className={`w-1.5 h-1.5 rounded-full ${item.color?.replace('text-', 'bg-') ?? 'bg-slate-500'}`} />
                   <span className={`text-sm font-medium ${isActive(item.to) ? item.color : 'text-slate-300'}`}>
