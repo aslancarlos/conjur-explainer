@@ -32,7 +32,7 @@ const NODES: N[] = [
   { id:'dotnet', x:16,  y:110, w:164, h:58, label:'.NET 8',          sub:'authn-jwt/eks-latam',                 ck:'dotnet' },
   { id:'gha',    x:16,  y:196, w:164, h:58, label:'GitHub Actions',  sub:'OIDC → JWT',                          ck:'gh'     },
   { id:'eso',    x:16,  y:282, w:164, h:58, label:'ESO Shop',         sub:'External Secrets Operator',          ck:'eso'    },
-  { id:'conjur', x:354, y:142, w:194, h:82, label:'Conjur Cloud',     sub:'latamlab.secretsmgr.cyberark.cloud', ck:'gold', feat:true },
+  { id:'conjur', x:354, y:142, w:194, h:82, label:'Secrets Manager',  sub:'latamlab.secretsmgr.cyberark.cloud', ck:'gold', feat:true },
   { id:'k8sapi', x:618, y:155, w:168, h:58, label:'K8s API Server',  sub:'JWT validation',                      ck:'slate'  },
   { id:'vault',  x:484, y:334, w:166, h:58, label:'Secrets Vault',   sub:'data/vault/dev-demo-aslan/…',         ck:'cyan'   },
   { id:'db',     x:698, y:334, w:154, h:58, label:'MySQL',            sub:'mysql.demo.local',                      ck:'spring' },
