@@ -10,6 +10,7 @@ import ESOShopSection from './components/ESOShopSection'
 import IntegrationFlow from './components/IntegrationFlow'
 import ComparisonTable from './components/ComparisonTable'
 import LiveToolsSection from './components/LiveToolsSection'
+import DualAccountsPage from './pages/DualAccountsPage'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -42,7 +43,8 @@ export default function App() {
           <Route path="/eso-shop"       element={<ESOShopSection />} />
           <Route path="/flow"           element={<IntegrationFlow />} />
           <Route path="/compare"        element={<ComparisonTable />} />
-          <Route path="/tools"          element={<LiveToolsSection />} />
+          <Route path="/tools"           element={<LiveToolsSection />} />
+          <Route path="/dualaccounts"   element={<DualAccountsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

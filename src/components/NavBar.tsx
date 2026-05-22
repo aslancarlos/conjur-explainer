@@ -15,10 +15,11 @@ interface DropItem {
 }
 
 const PATTERNS: DropItem[] = [
-  { to: '/spring-boot',    labelKey: 'nav.springboot',    subKey: 'nav.springboot_sub', color: 'text-spring' },
-  { to: '/dotnet',         labelKey: 'nav.dotnet',         subKey: 'nav.dotnet_sub',    color: 'text-dotnet' },
-  { to: '/github-actions', labelKey: 'nav.gha',            subKey: 'nav.gha_sub',       color: 'text-gh'     },
-  { to: '/eso-shop',       labelKey: 'nav.esoshop',        subKey: 'nav.esoshop_sub',   color: 'text-eso'    },
+  { to: '/spring-boot',    labelKey: 'nav.springboot',     subKey: 'nav.springboot_sub',    color: 'text-spring' },
+  { to: '/dotnet',         labelKey: 'nav.dotnet',          subKey: 'nav.dotnet_sub',        color: 'text-dotnet' },
+  { to: '/github-actions', labelKey: 'nav.gha',             subKey: 'nav.gha_sub',           color: 'text-gh'     },
+  { to: '/eso-shop',       labelKey: 'nav.esoshop',         subKey: 'nav.esoshop_sub',       color: 'text-eso'    },
+  { to: '/dualaccounts',   labelKey: 'nav.dualaccounts',    subKey: 'nav.dualaccounts_sub',  color: 'text-conjur-gold' },
 ]
 
 const TOOLS: DropItem[] = [
