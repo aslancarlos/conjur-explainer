@@ -1,7 +1,7 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ExternalLink, LayoutDashboard, ShoppingCart, BarChart2, Leaf, Code2, Monitor } from 'lucide-react'
+import { ExternalLink, LayoutDashboard, ShoppingCart, BarChart2, Leaf, Code2, Monitor, Power } from 'lucide-react'
 
 interface Tool {
   icon: React.ElementType
@@ -87,6 +87,18 @@ const TOOLS: Tool[] = [
     descKey: 'livetools.esoshop_desc',
     badgeKey: 'livetools.esoshop_badge',
     href: '/k8s-eso/',
+    ctaKey: 'livetools.open',
+  },
+  {
+    icon: Power,
+    color: 'text-conjur-red',
+    border: 'border-conjur-red/30',
+    bg: 'bg-conjur-red/5',
+    dot: 'bg-conjur-red',
+    titleKey: 'livetools.controller_title',
+    descKey: 'livetools.controller_desc',
+    badgeKey: 'livetools.controller_badge',
+    href: '/controller',
     ctaKey: 'livetools.open',
   },
 ]

@@ -8,6 +8,7 @@ const LANGS = ['en', 'pt', 'es'] as const
 
 interface DropItem {
   to: string
+  href?: string   // set for external services that bypass React Router
   labelKey: string
   subKey: string
   color?: string
@@ -21,9 +22,10 @@ const PATTERNS: DropItem[] = [
 ]
 
 const TOOLS: DropItem[] = [
-  { to: '/flow',    labelKey: 'nav.flow',      subKey: 'nav.flow_sub'      },
-  { to: '/compare', labelKey: 'nav.compare',   subKey: 'nav.compare_sub'   },
-  { to: '/tools',   labelKey: 'nav.livetools', subKey: 'nav.livetools_sub' },
+  { to: '/flow',       labelKey: 'nav.flow',        subKey: 'nav.flow_sub'        },
+  { to: '/compare',    labelKey: 'nav.compare',      subKey: 'nav.compare_sub'     },
+  { to: '/tools',      labelKey: 'nav.livetools',    subKey: 'nav.livetools_sub'   },
+  { to: '/controller', href: '/controller', labelKey: 'nav.controller', subKey: 'nav.controller_sub' },
 ]
 
 const dropVariants = {
@@ -157,23 +159,23 @@ export default function NavBar() {
                   transition={{ duration: 0.15, ease: 'easeOut' }}
                   className="absolute top-full left-0 mt-2 w-64 bg-bg-card border border-border rounded-xl shadow-2xl overflow-hidden"
                 >
-                  {TOOLS.map(item => (
-                    <Link
-                      key={item.to}
-                      to={item.to}
-                      className={`flex items-center gap-3 px-4 py-3 transition-colors hover:bg-white/5 ${
-                        isActive(item.to) ? 'bg-white/5' : ''
-                      }`}
-                    >
-                      <div className="w-1.5 h-1.5 rounded-full shrink-0 bg-conjur-cyan/60" />
-                      <div className="min-w-0">
-                        <div className={`text-sm font-semibold ${isActive(item.to) ? 'text-conjur-cyan' : 'text-slate-200'}`}>
-                          {t(item.labelKey)}
+                  {TOOLS.map(item => {
+                    const cls = `flex items-center gap-3 px-4 py-3 transition-colors hover:bg-white/5 ${isActive(item.to) ? 'bg-white/5' : ''}`
+                    const inner = (
+                      <>
+                        <div className="w-1.5 h-1.5 rounded-full shrink-0 bg-conjur-cyan/60" />
+                        <div className="min-w-0">
+                          <div className={`text-sm font-semibold ${isActive(item.to) ? 'text-conjur-cyan' : 'text-slate-200'}`}>
+                            {t(item.labelKey)}
+                          </div>
+                          <div className="text-xs text-slate-500 mt-0.5 truncate">{t(item.subKey)}</div>
                         </div>
-                        <div className="text-xs text-slate-500 mt-0.5 truncate">{t(item.subKey)}</div>
-                      </div>
-                    </Link>
-                  ))}
+                      </>
+                    )
+                    return item.href
+                      ? <a key={item.to} href={item.href} className={cls}>{inner}</a>
+                      : <Link key={item.to} to={item.to} className={cls}>{inner}</Link>
+                  })}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -241,20 +243,20 @@ export default function NavBar() {
               <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest px-2 pt-3 pb-1">
                 {t('nav.tools')}
               </p>
-              {TOOLS.map(item => (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                    isActive(item.to) ? 'bg-white/5' : 'hover:bg-white/5'
-                  }`}
-                >
-                  <div className="w-1.5 h-1.5 rounded-full bg-conjur-cyan/60" />
-                  <span className={`text-sm font-medium ${isActive(item.to) ? 'text-conjur-cyan' : 'text-slate-300'}`}>
-                    {t(item.labelKey)}
-                  </span>
-                </Link>
-              ))}
+              {TOOLS.map(item => {
+                const cls = `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${isActive(item.to) ? 'bg-white/5' : 'hover:bg-white/5'}`
+                const inner = (
+                  <>
+                    <div className="w-1.5 h-1.5 rounded-full bg-conjur-cyan/60" />
+                    <span className={`text-sm font-medium ${isActive(item.to) ? 'text-conjur-cyan' : 'text-slate-300'}`}>
+                      {t(item.labelKey)}
+                    </span>
+                  </>
+                )
+                return item.href
+                  ? <a key={item.to} href={item.href} className={cls}>{inner}</a>
+                  : <Link key={item.to} to={item.to} className={cls}>{inner}</Link>
+              })}
 
               <div className="flex items-center gap-2 px-2 pt-3">
                 {LANGS.map(lang => (
