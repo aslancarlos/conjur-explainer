@@ -18,6 +18,7 @@ export default {
         spring: '#6db33f',
         dotnet: '#7b5cf6',
         gh:     '#1f6feb',
+        eso:    '#f97316',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

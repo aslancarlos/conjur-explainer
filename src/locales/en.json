@@ -4,16 +4,20 @@
     "springboot": "Spring Boot",
     "dotnet": ".NET",
     "gha": "GitHub Actions",
+    "esoshop": "ESO Shop",
+    "livetools": "Live Tools",
     "compare": "Compare",
+    "flow": "Flow",
     "lang": "PT"
   },
   "hero": {
-    "eyebrow": "PANW|IDIRA · Conjur · Kubernetes · DevSecOps",
+    "eyebrow": "PANW|IDIRA · Conjur · Kubernetes · ESO · DevSecOps",
     "title": "Secrets Management",
     "titleAccent": "in Action",
-    "subtitle": "Two apps. Two integration patterns. Zero hardcoded credentials. Explore how Spring Boot and .NET retrieve secrets dynamically from PANW|IDIRA Conjur running on Kubernetes.",
+    "subtitle": "Four integration patterns. Zero hardcoded credentials. Spring Boot (direct JWT), .NET (Secrets Provider sidecar), GitHub Actions (OIDC), and a K8s-native ecommerce app using External Secrets Operator — all fetching credentials live from PANW|IDIRA Conjur.",
     "cta_spring": "Spring Boot Demo",
     "cta_dotnet": ".NET Demo",
+    "cta_eso": "ESO Shop Demo",
     "cta_explore": "Explore patterns ↓"
   },
   "problem": {
@@ -128,29 +132,169 @@
     "cta_repo": "View Workshop Repo",
     "cta_workflow": "See Workflow YAML"
   },
+  "esoshop": {
+    "badge": "Pattern 4",
+    "title": "ESO Shop",
+    "titleAccent": "External Secrets Operator",
+    "label": "ESO / K8s-native / Zero app code",
+    "desc": "A live Node.js ecommerce app that uses the External Secrets Operator to sync credentials from PANW|IDIRA Conjur into a Kubernetes Secret — with a Python operator watching for secret changes and triggering zero-downtime rolling restarts automatically.",
+    "steps": [
+      { "n": "1", "title": "ExternalSecret declares what to sync", "code": "apiVersion: external-secrets.io/v1\nkind: ExternalSecret\nmetadata:\n  name: eso-shop-db-creds\nspec:\n  refreshInterval: 1m\n  secretStoreRef:\n    name: conjur-store\n    kind: ClusterSecretStore\n  data:\n    - secretKey: DB_USER\n      remoteRef:\n        key: data/vault/dev-demo-aslan/dbuser_dual/username\n    - secretKey: DB_PASS\n      remoteRef:\n        key: data/vault/dev-demo-aslan/dbuser_dual/password\n    - secretKey: DB_HOST\n      remoteRef:\n        key: data/vault/dev-demo-aslan/dbuser_dual/address", "color": "eso" },
+      { "n": "2", "title": "ClusterSecretStore authenticates with Conjur", "code": "# ESO uses springboot-app ServiceAccount JWT\n# to authenticate via Conjur authn-jwt/eks-latam\nprovider:\n  conjur:\n    url: https://latamlab.secretsmgr.cyberark.cloud\n    auth:\n      jwt:\n        account: conjur\n        serviceID: eks-latam\n        serviceAccountRef:\n          name: springboot-app\n          namespace: conjur\n          audiences: [conjur]", "color": "gold" },
+      { "n": "3", "title": "K8s Secret created — app reads env vars", "code": "# ESO creates and keeps the Secret in sync\n# App deployment references it:\nenvFrom:\n  - secretRef:\n      name: eso-shop-db-creds\n# App reads DB_USER, DB_PASS, DB_HOST\n# as standard environment variables — zero Conjur code", "color": "cyan" },
+      { "n": "4", "title": "Python operator watches and restarts", "code": "# Operator streams secret watch events\nfor event in w.stream(v1.list_namespaced_secret, ...):\n    rv = event['object'].metadata.resource_version\n    if rv != last_rv:   # secret was updated by ESO\n        trigger_restart()  # patch deployment annotation\n# Rolling restart: maxUnavailable=0, minReadySeconds=15\n# PodDisruptionBudget: minAvailable=2 of 3 replicas", "color": "purple" }
+    ],
+    "live_badge": "Live endpoint",
+    "live_title": "ESO Shop health",
+    "live_note": "DB user shown as-is — no plaintext passwords exposed",
+    "features": [
+      { "title": "ESO sync", "desc": "External Secrets Operator syncs Conjur → K8s Secret every 60 seconds" },
+      { "title": "Zero app code", "desc": "Node.js app reads standard env vars — no Conjur SDK or sidecar" },
+      { "title": "Auto-restart", "desc": "Python operator detects secret updates via Kubernetes Watch API and triggers rolling restarts" },
+      { "title": "Zero downtime", "desc": "maxUnavailable: 0 + PodDisruptionBudget ensures at least 2 of 3 pods serve traffic at all times" }
+    ],
+    "cta_shop": "Open ESO Shop",
+    "cta_dashboard": "Live Dashboard",
+    "cta_grafana": "Grafana",
+    "operator_badge": "Kubernetes Operator",
+    "operator_title": "Python operator: watch secret → rolling restart",
+    "operator_desc": "A custom Python controller running in-cluster watches the eso-shop-db-creds secret via the Kubernetes Watch API. When ESO updates the secret (after syncing a rotated credential from Conjur), the operator detects the resourceVersion change and patches the deployment with a new annotation — triggering a rolling restart with zero downtime.",
+    "operator_steps": [
+      { "n": "1", "title": "Watch Stream", "desc": "Streams list_namespaced_secret with field_selector on the target secret name — no polling." },
+      { "n": "2", "title": "Detect Change", "desc": "On MODIFIED event, compares resourceVersion. Only acts when it actually changed — ignores spurious events." },
+      { "n": "3", "title": "Rolling Restart", "desc": "Patches deployment annotation eso-operator/restartedAt. Kubernetes rolls pods one by one with maxUnavailable: 0." }
+    ]
+  },
+  "flow": {
+    "badge": "Integration Flow",
+    "title": "How Conjur authenticates workloads",
+    "subtitle": "A step-by-step look at the JWT authentication and secret retrieval flow shared by all four integration patterns.",
+    "step_of": "Step {{current}} of {{total}}",
+    "keyboard_hint": "← → arrow keys to navigate",
+    "aria_label": "Conjur integration flow diagram",
+    "s1_title": "App identities",
+    "s1_desc": "Four clients with distinct Kubernetes identities: Spring Boot, .NET 8, GitHub Actions, and ESO Shop. Each authenticates independently using its own ServiceAccount JWT (or OIDC token for GitHub Actions).",
+    "s2_title": "Conjur Cloud appears",
+    "s2_desc": "CyberArk Conjur Cloud is the central identity broker and secrets vault, running at latamlab.secretsmgr.cyberark.cloud. All four patterns authenticate to this single control plane.",
+    "s3_title": "Identity verification via K8s API",
+    "s3_desc": "Conjur does not trust JWTs blindly — it forwards each token to the Kubernetes API Server for validation. The API Server confirms the token is genuine and bound to a real ServiceAccount.",
+    "s4_title": "Spring Boot authenticates",
+    "s4_desc": "Spring Boot sends its Kubernetes ServiceAccount JWT to Conjur's authn-jwt/eks-latam endpoint. Conjur validates the identity against its policy and returns a short-lived API token.",
+    "s5_title": ".NET authenticates via sidecar",
+    "s5_desc": "The PANW|IDIRA Secrets Provider sidecar — not the .NET app itself — authenticates with Conjur using JWT. The application never handles any credential exchange directly.",
+    "s6_title": "GitHub Actions authenticates via OIDC",
+    "s6_desc": "GitHub Actions uses its native OIDC token instead of a Kubernetes JWT. Conjur validates the workflow identity: repository name and workflow name must match the policy exactly.",
+    "s7_title": "ESO Shop authenticates via operator",
+    "s7_desc": "The External Secrets Operator authenticates to Conjur using the eso-shop-sa ServiceAccount JWT. It syncs credentials into a Kubernetes Secret every 60 seconds — the app reads only env vars.",
+    "s8_title": "Secrets retrieved from vault",
+    "s8_desc": "Once identity is confirmed, Conjur retrieves the requested secrets from its internal vault: DB_USER, DB_PASS, and DB_HOST from the data/vault/dev-demo-aslan/dbuser_dual path.",
+    "s9_title": "Database connected — full flow complete",
+    "s9_desc": "Credentials reach the application as environment variables. The app connects to MySQL using dynamic, Conjur-managed credentials. No secret ever touches source code or a container image."
+  },
   "compare": {
     "badge": "Comparison",
-    "title": "Which pattern fits your use case?",
-    "subtitle": "Both approaches use Kubernetes JWT identity — no static credentials, no service account passwords.",
+    "title": "Four patterns — which fits your use case?",
+    "subtitle": "All four use Kubernetes or OIDC identity — no static credentials, no hardcoded passwords.",
     "col_feature": "Feature",
-    "col_spring": "Spring Boot (authn-jwt)",
-    "col_dotnet": ".NET (Secrets Provider)",
+    "col_spring": "Spring Boot",
+    "col_dotnet": ".NET",
+    "col_gha": "GitHub Actions",
+    "col_eso": "ESO Shop",
     "rows": [
-      { "feature": "Integration model", "spring": "Direct REST calls from app code", "dotnet": "Sidecar — zero app code", "springIcon": "text", "dotnetIcon": "text" },
-      { "feature": "Language dependency", "spring": "Java HTTP client / SDK", "dotnet": "Any language (env vars)", "springIcon": "text", "dotnetIcon": "check" },
-      { "feature": "Credential delivery", "spring": "In-memory Java objects", "dotnet": "K8s Secrets / env vars", "springIcon": "text", "dotnetIcon": "text" },
-      { "feature": "TTL / rotation", "spring": "App manages 5-min cache", "dotnet": "Provider syncs automatically", "springIcon": "text", "dotnetIcon": "check" },
-      { "feature": "Audit granularity", "spring": "Per-secret fetch in Conjur log", "dotnet": "Provider-level auth only", "springIcon": "check", "dotnetIcon": "text" },
-      { "feature": "Startup on auth failure", "spring": "Typed exception, pod still starts", "dotnet": "Pod won't start if fetch fails", "springIcon": "check", "dotnetIcon": "minus" },
-      { "feature": "Migration effort", "spring": "Requires SDK integration", "dotnet": "Drop-in — no code changes", "springIcon": "minus", "dotnetIcon": "check" }
+      {
+        "feature": "Integration model",
+        "spring": "Direct REST from app code", "springIcon": "text",
+        "dotnet": "Sidecar, zero app code",   "dotnetIcon": "text",
+        "gha": "OIDC, CI workflow only",       "ghaIcon": "text",
+        "eso": "ESO operator, zero app code",  "esoIcon": "text"
+      },
+      {
+        "feature": "Language / runtime",
+        "spring": "Java (HTTP client / SDK)", "springIcon": "text",
+        "dotnet": "Any language (env vars)",  "dotnetIcon": "check",
+        "gha": "Any CI runner",               "ghaIcon": "check",
+        "eso": "Any language (env vars)",     "esoIcon": "check"
+      },
+      {
+        "feature": "Credential delivery",
+        "spring": "In-memory Java objects",   "springIcon": "text",
+        "dotnet": "K8s Secret → env vars",    "dotnetIcon": "text",
+        "gha": "Masked env vars in runner",   "ghaIcon": "text",
+        "eso": "K8s Secret → env vars",       "esoIcon": "text"
+      },
+      {
+        "feature": "Auto-rotation",
+        "spring": "App manages 5-min cache",         "springIcon": "text",
+        "dotnet": "Provider syncs automatically",    "dotnetIcon": "check",
+        "gha": "Re-run pipeline after rotation",     "ghaIcon": "text",
+        "eso": "ESO syncs every 60s + auto-restart", "esoIcon": "check"
+      },
+      {
+        "feature": "Audit granularity",
+        "spring": "Per-secret fetch in Conjur", "springIcon": "check",
+        "dotnet": "Provider-level auth only",   "dotnetIcon": "text",
+        "gha": "Per-workflow in Conjur",         "ghaIcon": "check",
+        "eso": "Provider-level auth only",       "esoIcon": "text"
+      },
+      {
+        "feature": "Works without K8s",
+        "spring": "No — requires pod JWT",   "springIcon": "minus",
+        "dotnet": "No — requires pod JWT",   "dotnetIcon": "minus",
+        "gha": "Yes — GitHub OIDC",          "ghaIcon": "check",
+        "eso": "No — K8s-native only",       "esoIcon": "minus"
+      },
+      {
+        "feature": "Zero-downtime rotation",
+        "spring": "TTL cache hides gap",          "springIcon": "text",
+        "dotnet": "Sidecar re-injects, pod stays","dotnetIcon": "check",
+        "gha": "N/A — stateless pipeline",        "ghaIcon": "text",
+        "eso": "Operator rolling restart (0 down)","esoIcon": "check"
+      },
+      {
+        "feature": "Migration effort",
+        "spring": "SDK integration required",    "springIcon": "minus",
+        "dotnet": "Drop-in — no code changes",   "dotnetIcon": "check",
+        "gha": "Add one workflow step",          "ghaIcon": "check",
+        "eso": "ExternalSecret YAML only",       "esoIcon": "check"
+      }
     ],
-    "spring_best_for_title": "Spring Boot authn-jwt — Best for",
-    "spring_best_for_desc": "Apps that need fine-grained control, dynamic credential refresh, or multiple auth flows. Ideal when you own the Java codebase and want full observability.",
-    "dotnet_best_for_title": ".NET Secrets Provider — Best for",
-    "dotnet_best_for_desc": "Lift-and-shift migrations, polyglot services, or teams wanting zero SDK dependency. Works identically for Java, Go, Python, Ruby, and .NET."
+    "best_for": [
+      { "title": "Spring Boot — Best for", "desc": "Java services needing fine-grained control, dynamic refresh, and per-secret audit visibility directly in app code." },
+      { "title": ".NET — Best for", "desc": "Lift-and-shift migrations and polyglot services where zero SDK changes are required — any language reads env vars." },
+      { "title": "GitHub Actions — Best for", "desc": "CI/CD pipelines and deploy workflows outside Kubernetes — no cluster needed, identity comes from GitHub OIDC." },
+      { "title": "ESO Shop — Best for", "desc": "Cloud-native apps on Kubernetes wanting secret rotation with automatic rolling restarts and zero application code changes." }
+    ]
+  },
+  "livetools": {
+    "badge": "Live Tools",
+    "title": "Everything running in this cluster",
+    "subtitle": "All dashboards and apps live at demo.minha.cloud — accessible now, no setup required.",
+    "live": "live",
+    "open": "Open →",
+    "k8s_title": "Kubernetes Dashboard",
+    "k8s_badge": "Read-only · Skip login",
+    "k8s_desc": "Full cluster visibility — pods, deployments, services, secrets, CPU/memory graphs — in read-only mode. No credentials needed: click Skip to explore. Admin token available for write access.",
+    "k8s_features": ["Read-only via Skip login", "CPU & memory graphs per pod", "Secrets visible, no write access", "Admin token for full access"],
+    "k8s_cta": "Open Kubernetes Dashboard",
+    "k8s_login": "Skip for read-only · token for admin",
+    "grafana_title": "Grafana",
+    "grafana_badge": "Metrics & Monitoring",
+    "grafana_desc": "Prometheus + Grafana stack with cluster metrics, pod resource usage, and custom dashboards.",
+    "eso_title": "ESO Shop Dashboard",
+    "eso_badge": "Live Monitor",
+    "eso_desc": "Real-time view of pods, DB status, secret revision, and operator-triggered rolling restarts for the ESO Shop app.",
+    "spring_title": "Spring Boot Dashboard",
+    "spring_badge": "Pattern 1 · Live",
+    "spring_desc": "Shows the current Conjur-fetched credentials (masked) and cache age for the Spring Boot demo app.",
+    "dotnet_title": ".NET App",
+    "dotnet_badge": "Pattern 2 · Live",
+    "dotnet_desc": "Live .NET ecommerce app reading DB credentials from a K8s Secret injected by the Secrets Provider sidecar.",
+    "esoshop_title": "ESO Shop",
+    "esoshop_badge": "Pattern 4 · Live",
+    "esoshop_desc": "Node.js ecommerce app using External Secrets Operator to sync Conjur credentials into Kubernetes Secrets."
   },
   "footer": {
-    "desc": "A live Kubernetes demo showing two PANW|IDIRA Conjur secrets integration patterns — direct JWT auth and the Secrets Provider sidecar.",
+    "desc": "A live Kubernetes demo showing four PANW|IDIRA Conjur secrets integration patterns: direct JWT (Spring Boot), Secrets Provider sidecar (.NET), GitHub OIDC, and External Secrets Operator (ESO Shop).",
     "apps": "Live Apps",
     "resources": "Resources",
     "copyright": "© 2026 Aslan Ramos · SME - Machine Identity Security, PANW|IDIRA",
