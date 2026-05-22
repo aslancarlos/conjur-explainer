@@ -52,6 +52,10 @@ If you forget `returnObjects: true`, i18next returns a comma-joined string inste
 | `tailwind.config.js` | All color tokens live here. Add new pattern colors here before using them in components. |
 | `src/index.css` | Shared component classes: `.section-card`, `.badge`, `.code-block`, `.step-connector`. Check here before creating new CSS. |
 | `k8s/kubernetes-dashboard.yaml` | Large multi-resource, multi-namespace manifest. Contains the real skip-login RBAC and the nginx proxy ConfigMap. Do not regenerate the admin-user token secret — it is already bound. |
+| `k8s/monitoring/nginx-metrics-service.yaml` | ClusterIP Service exposing port 10254 on the nginx-internal controller pod. Required for Prometheus to reach the metrics endpoint. |
+| `k8s/monitoring/nginx-servicemonitor.yaml` | ServiceMonitor (namespace: `monitoring`, label `release: prometheus`) that tells the Prometheus operator to scrape `nginx-internal-metrics:10254/metrics` every 30 s. |
+| `k8s/monitoring/grafana-dashboard-access.yaml` | ConfigMap with `grafana_dashboard: "1"` label. The Grafana sidecar auto-loads it into `/tmp/dashboards/nginx-access.json`. Dashboard UID: `nginx-access-demo`. |
+| `src/components/IntegrationFlow.tsx` | Animated SVG graph showing the 9-step JWT auth + secret retrieval flow. Uses Framer Motion `pathLength` 0→1 edge drawing, cumulative visibility sets built at module level, keyboard ← → navigation. |
 
 ## Adding a new pattern section
 
@@ -69,6 +73,29 @@ If you forget `returnObjects: true`, i18next returns a comma-joined string inste
 All three locale files (`en.json`, `pt.json`, `es.json`) must stay in sync — add the key to all three at the same time. If a value is an array of objects, use the same shape across all three files.
 
 Keys that return objects or arrays must be read with `returnObjects: true`. Plain string keys do not need it.
+
+## Monitoring (nginx-ingress access metrics)
+
+The nginx-internal controller was patched to expose HTTP request metrics to Prometheus. These are the manifests and the one-time cluster change required:
+
+```bash
+# Apply once — creates the metrics Service and ServiceMonitor
+kubectl apply -f k8s/monitoring/nginx-metrics-service.yaml
+kubectl apply -f k8s/monitoring/nginx-servicemonitor.yaml
+kubectl apply -f k8s/monitoring/grafana-dashboard-access.yaml
+```
+
+The `--enable-metrics=true` flag was added to the nginx-ingress controller deployment. If the controller is ever redeployed from Helm without this flag, re-patch:
+```bash
+kubectl patch deployment -n ingress-nginx nginx-internal-ingress-nginx-controller \
+  --type=json \
+  -p='[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--enable-metrics=true"}]'
+kubectl rollout restart deployment/nginx-internal-ingress-nginx-controller -n ingress-nginx
+```
+
+**Label note:** kube-prometheus-stack relabels the `service` metric label with the scrape target name (`nginx-internal-metrics`). The original backend K8s service names are in `exported_service`. All PromQL in the dashboard uses `exported_service`.
+
+**Grafana:** Dashboard "demo.minha.cloud — Access Dashboard" (UID `nginx-access-demo`) is auto-provisioned. Access at `/grafana`.
 
 ## What not to do
 

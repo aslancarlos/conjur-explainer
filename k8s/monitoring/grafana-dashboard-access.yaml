@@ -1,0 +1,382 @@
+---
+# Grafana dashboard for HTTP access metrics at demo.minha.cloud.
+# The grafana-sc-dashboard sidecar watches ALL namespaces for ConfigMaps
+# with grafana_dashboard=1 and hot-loads them into /tmp/dashboards.
+#
+# NOTE: kube-prometheus-stack relabels the nginx metric's "service" label with
+# the scrape target name. The original backend K8s service names are preserved
+# in "exported_service" — all PromQL here uses that label.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-nginx-access
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  nginx-access.json: |
+    {
+      "annotations": { "list": [] },
+      "description": "HTTP access metrics for all services at demo.minha.cloud via nginx-internal ingress",
+      "editable": true,
+      "graphTooltip": 1,
+      "id": null,
+      "links": [],
+      "panels": [
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+          "id": 100,
+          "title": "Overview",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "mappings": [],
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
+              "unit": "short"
+            }
+          },
+          "gridPos": { "h": 4, "w": 6, "x": 0, "y": 1 },
+          "id": 1,
+          "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false }, "textMode": "auto" },
+          "title": "Total Requests (window)",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "sum(increase(nginx_ingress_controller_requests{controller_class=\"k8s.io/ingress-nginx\"}[$__range]))",
+              "instant": true,
+              "legendFormat": "requests"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "mappings": [],
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "blue", "value": null }] },
+              "unit": "reqps"
+            }
+          },
+          "gridPos": { "h": 4, "w": 6, "x": 6, "y": 1 },
+          "id": 2,
+          "options": { "colorMode": "background", "graphMode": "area", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+          "title": "Request Rate (5m avg)",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "sum(rate(nginx_ingress_controller_requests{controller_class=\"k8s.io/ingress-nginx\"}[5m]))",
+              "legendFormat": "req/s"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  { "color": "green", "value": null },
+                  { "color": "yellow", "value": 1 },
+                  { "color": "red", "value": 5 }
+                ]
+              },
+              "unit": "percent"
+            }
+          },
+          "gridPos": { "h": 4, "w": 6, "x": 12, "y": 1 },
+          "id": 3,
+          "options": { "colorMode": "background", "graphMode": "area", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+          "title": "Error Rate 5xx",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "sum(rate(nginx_ingress_controller_requests{controller_class=\"k8s.io/ingress-nginx\",status=~\"5..\"}[5m])) / sum(rate(nginx_ingress_controller_requests{controller_class=\"k8s.io/ingress-nginx\"}[5m])) * 100",
+              "legendFormat": "5xx %"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "thresholds" },
+              "mappings": [],
+              "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
+              "unit": "s"
+            }
+          },
+          "gridPos": { "h": 4, "w": 6, "x": 18, "y": 1 },
+          "id": 4,
+          "options": { "colorMode": "background", "graphMode": "none", "justifyMode": "center", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
+          "title": "Latency p95 (all services)",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.95, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{controller_class=\"k8s.io/ingress-nginx\"}[5m])) by (le))",
+              "legendFormat": "p95"
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+          "id": 101,
+          "title": "Traffic by Service",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "fieldConfig": {
+            "defaults": { "custom": { "lineWidth": 2, "fillOpacity": 8, "spanNulls": false }, "unit": "reqps" },
+            "overrides": [
+              { "matcher": { "id": "byName", "options": "conjur-explainer" }, "properties": [{ "id": "color", "value": { "fixedColor": "#00b4e0", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "sprinboot-service" }, "properties": [{ "id": "color", "value": { "fixedColor": "#6db33f", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "dotnet-app" }, "properties": [{ "id": "color", "value": { "fixedColor": "#7b5cf6", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "eso-shop" }, "properties": [{ "id": "color", "value": { "fixedColor": "#f97316", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "grafana-proxy" }, "properties": [{ "id": "color", "value": { "fixedColor": "#f59e0b", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "dashboard-proxy" }, "properties": [{ "id": "color", "value": { "fixedColor": "#94a3b8", "mode": "fixed" } }] }
+            ]
+          },
+          "gridPos": { "h": 9, "w": 24, "x": 0, "y": 6 },
+          "id": 10,
+          "options": {
+            "legend": { "calcs": ["mean", "max", "sum"], "displayMode": "table", "placement": "right", "showLegend": true },
+            "tooltip": { "mode": "multi", "sort": "desc" }
+          },
+          "title": "Request Rate by Service (req/s)",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "sum(rate(nginx_ingress_controller_requests{controller_class=\"k8s.io/ingress-nginx\"}[5m])) by (exported_service)",
+              "legendFormat": "{{exported_service}}"
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 15 },
+          "id": 102,
+          "title": "HTTP Status Codes",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "fieldConfig": {
+            "defaults": { "unit": "short", "custom": { "hideFrom": { "tooltip": false, "viz": false, "legend": false } } },
+            "overrides": [
+              { "matcher": { "id": "byRegexp", "options": "^2" }, "properties": [{ "id": "color", "value": { "fixedColor": "#73bf69", "mode": "fixed" } }] },
+              { "matcher": { "id": "byRegexp", "options": "^3" }, "properties": [{ "id": "color", "value": { "fixedColor": "#5794f2", "mode": "fixed" } }] },
+              { "matcher": { "id": "byRegexp", "options": "^4" }, "properties": [{ "id": "color", "value": { "fixedColor": "#f59e0b", "mode": "fixed" } }] },
+              { "matcher": { "id": "byRegexp", "options": "^5" }, "properties": [{ "id": "color", "value": { "fixedColor": "#f2495c", "mode": "fixed" } }] }
+            ]
+          },
+          "gridPos": { "h": 9, "w": 8, "x": 0, "y": 16 },
+          "id": 20,
+          "options": {
+            "displayLabels": ["name", "percent"],
+            "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "values": ["value", "percent"] },
+            "pieType": "pie",
+            "tooltip": { "mode": "single", "sort": "none" }
+          },
+          "title": "Status Code Distribution (window)",
+          "type": "piechart",
+          "targets": [
+            {
+              "expr": "sum(increase(nginx_ingress_controller_requests{controller_class=\"k8s.io/ingress-nginx\"}[$__range])) by (status)",
+              "instant": true,
+              "legendFormat": "{{status}}"
+            }
+          ]
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "fieldConfig": {
+            "defaults": { "custom": { "lineWidth": 2, "fillOpacity": 10, "spanNulls": false }, "unit": "reqps" },
+            "overrides": [
+              { "matcher": { "id": "byName", "options": "2xx" }, "properties": [{ "id": "color", "value": { "fixedColor": "#73bf69", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "3xx" }, "properties": [{ "id": "color", "value": { "fixedColor": "#5794f2", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "4xx" }, "properties": [{ "id": "color", "value": { "fixedColor": "#f59e0b", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "5xx" }, "properties": [{ "id": "color", "value": { "fixedColor": "#f2495c", "mode": "fixed" } }] }
+            ]
+          },
+          "gridPos": { "h": 9, "w": 16, "x": 8, "y": 16 },
+          "id": 21,
+          "options": {
+            "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "right", "showLegend": true },
+            "tooltip": { "mode": "multi", "sort": "desc" }
+          },
+          "title": "Status Code Rate Over Time",
+          "type": "timeseries",
+          "targets": [
+            { "expr": "sum(rate(nginx_ingress_controller_requests{controller_class=\"k8s.io/ingress-nginx\",status=~\"2..\"}[5m]))", "legendFormat": "2xx" },
+            { "expr": "sum(rate(nginx_ingress_controller_requests{controller_class=\"k8s.io/ingress-nginx\",status=~\"3..\"}[5m]))", "legendFormat": "3xx" },
+            { "expr": "sum(rate(nginx_ingress_controller_requests{controller_class=\"k8s.io/ingress-nginx\",status=~\"4..\"}[5m]))", "legendFormat": "4xx" },
+            { "expr": "sum(rate(nginx_ingress_controller_requests{controller_class=\"k8s.io/ingress-nginx\",status=~\"5..\"}[5m]))", "legendFormat": "5xx" }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 25 },
+          "id": 103,
+          "title": "Latency",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "fieldConfig": {
+            "defaults": { "custom": { "lineWidth": 2, "fillOpacity": 5, "spanNulls": false }, "unit": "s" },
+            "overrides": [
+              { "matcher": { "id": "byName", "options": "conjur-explainer p95" }, "properties": [{ "id": "color", "value": { "fixedColor": "#00b4e0", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "sprinboot-service p95" }, "properties": [{ "id": "color", "value": { "fixedColor": "#6db33f", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "dotnet-app p95" }, "properties": [{ "id": "color", "value": { "fixedColor": "#7b5cf6", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "eso-shop p95" }, "properties": [{ "id": "color", "value": { "fixedColor": "#f97316", "mode": "fixed" } }] },
+              { "matcher": { "id": "byName", "options": "grafana-proxy p95" }, "properties": [{ "id": "color", "value": { "fixedColor": "#f59e0b", "mode": "fixed" } }] }
+            ]
+          },
+          "gridPos": { "h": 9, "w": 24, "x": 0, "y": 26 },
+          "id": 30,
+          "options": {
+            "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "right", "showLegend": true },
+            "tooltip": { "mode": "multi", "sort": "desc" }
+          },
+          "title": "Request Latency p95 & p50 by Service",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.95, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{controller_class=\"k8s.io/ingress-nginx\"}[5m])) by (le, exported_service))",
+              "legendFormat": "{{exported_service}} p95"
+            },
+            {
+              "expr": "histogram_quantile(0.50, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{controller_class=\"k8s.io/ingress-nginx\"}[5m])) by (le, exported_service))",
+              "legendFormat": "{{exported_service}} p50"
+            }
+          ]
+        },
+        {
+          "collapsed": false,
+          "gridPos": { "h": 1, "w": 24, "x": 0, "y": 35 },
+          "id": 104,
+          "title": "Per-Service Summary",
+          "type": "row"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "$datasource" },
+          "fieldConfig": {
+            "defaults": { "custom": { "align": "auto", "cellOptions": { "type": "auto" } } },
+            "overrides": [
+              {
+                "matcher": { "id": "byName", "options": "Req/s (5m)" },
+                "properties": [
+                  { "id": "unit", "value": "reqps" },
+                  { "id": "custom.cellOptions", "value": { "type": "color-text" } },
+                  { "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "text", "value": null }, { "color": "green", "value": 0.01 }] } }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "Error Rate 5xx" },
+                "properties": [
+                  { "id": "unit", "value": "percent" },
+                  { "id": "custom.cellOptions", "value": { "type": "color-background" } },
+                  { "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 1 }, { "color": "red", "value": 5 }] } }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "p95 Latency" },
+                "properties": [
+                  { "id": "unit", "value": "s" },
+                  { "id": "custom.cellOptions", "value": { "type": "color-text" } },
+                  { "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 0.5 }, { "color": "red", "value": 2 }] } }
+                ]
+              },
+              {
+                "matcher": { "id": "byName", "options": "Total Requests" },
+                "properties": [{ "id": "unit", "value": "short" }]
+              }
+            ]
+          },
+          "gridPos": { "h": 10, "w": 24, "x": 0, "y": 36 },
+          "id": 40,
+          "options": {
+            "footer": { "show": false },
+            "showHeader": true,
+            "sortBy": [{ "desc": true, "displayName": "Req/s (5m)" }]
+          },
+          "title": "Service Summary Table",
+          "type": "table",
+          "transformations": [
+            { "id": "merge", "options": {} },
+            {
+              "id": "organize",
+              "options": {
+                "renameByName": {
+                  "Value #A": "Req/s (5m)",
+                  "Value #B": "Error Rate 5xx",
+                  "Value #C": "p95 Latency",
+                  "Value #D": "Total Requests",
+                  "exported_service": "Service"
+                }
+              }
+            }
+          ],
+          "targets": [
+            {
+              "expr": "sum(rate(nginx_ingress_controller_requests{controller_class=\"k8s.io/ingress-nginx\"}[5m])) by (exported_service)",
+              "instant": true,
+              "legendFormat": "{{exported_service}}",
+              "refId": "A"
+            },
+            {
+              "expr": "sum(rate(nginx_ingress_controller_requests{controller_class=\"k8s.io/ingress-nginx\",status=~\"5..\"}[5m])) by (exported_service) / sum(rate(nginx_ingress_controller_requests{controller_class=\"k8s.io/ingress-nginx\"}[5m])) by (exported_service) * 100",
+              "instant": true,
+              "legendFormat": "{{exported_service}}",
+              "refId": "B"
+            },
+            {
+              "expr": "histogram_quantile(0.95, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{controller_class=\"k8s.io/ingress-nginx\"}[5m])) by (le, exported_service))",
+              "instant": true,
+              "legendFormat": "{{exported_service}}",
+              "refId": "C"
+            },
+            {
+              "expr": "sum(increase(nginx_ingress_controller_requests{controller_class=\"k8s.io/ingress-nginx\"}[$__range])) by (exported_service)",
+              "instant": true,
+              "legendFormat": "{{exported_service}}",
+              "refId": "D"
+            }
+          ]
+        }
+      ],
+      "refresh": "30s",
+      "schemaVersion": 38,
+      "tags": ["nginx", "ingress", "demo.minha.cloud", "access"],
+      "templating": {
+        "list": [
+          {
+            "current": {},
+            "hide": 0,
+            "includeAll": false,
+            "label": "Datasource",
+            "name": "datasource",
+            "options": [],
+            "query": "prometheus",
+            "refresh": 1,
+            "type": "datasource"
+          }
+        ]
+      },
+      "time": { "from": "now-1h", "to": "now" },
+      "timepicker": {},
+      "timezone": "browser",
+      "title": "demo.minha.cloud — Access Dashboard",
+      "uid": "nginx-access-demo",
+      "version": 1
+    }

@@ -1,0 +1,368 @@
+---
+# ServiceAccount used by the dashboard itself
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+---
+# ServiceAccount for admin token login (demo use)
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+---
+# Long-lived token for admin-user
+apiVersion: v1
+kind: Secret
+metadata:
+  name: admin-user-token
+  namespace: kubernetes-dashboard
+  annotations:
+    kubernetes.io/service-account.name: admin-user
+type: kubernetes.io/service-account-token
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-dashboard-admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: admin-user
+    namespace: kubernetes-dashboard
+---
+# Read-only cluster access for the dashboard SA (skip-login users get this identity)
+# Built-in 'view' role = get/list/watch on nearly all resources, no write, no secrets
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-dashboard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+  - kind: ServiceAccount
+    name: kubernetes-dashboard
+    namespace: kubernetes-dashboard
+---
+# Read-only secrets access (excluded from built-in view intentionally)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubernetes-dashboard-secrets-readonly
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-dashboard-secrets-readonly
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubernetes-dashboard-secrets-readonly
+subjects:
+  - kind: ServiceAccount
+    name: kubernetes-dashboard
+    namespace: kubernetes-dashboard
+---
+# Separate binding for metrics.k8s.io (not included in built-in view)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubernetes-dashboard-metrics
+rules:
+  - apiGroups: ["metrics.k8s.io"]
+    resources: ["pods", "nodes"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-dashboard-metrics
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubernetes-dashboard-metrics
+subjects:
+  - kind: ServiceAccount
+    name: kubernetes-dashboard
+    namespace: kubernetes-dashboard
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["get"]
+  - apiGroups: [""]
+    resources: ["services/proxy"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kubernetes-dashboard
+subjects:
+  - kind: ServiceAccount
+    name: kubernetes-dashboard
+    namespace: kubernetes-dashboard
+---
+# CSRF key secret (dashboard auto-creates one if missing, but we pre-create to avoid race)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kubernetes-dashboard-csrf
+  namespace: kubernetes-dashboard
+type: Opaque
+data:
+  csrf: ""
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kubernetes-dashboard-key-holder
+  namespace: kubernetes-dashboard
+type: Opaque
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubernetes-dashboard-settings
+  namespace: kubernetes-dashboard
+data: {}
+---
+# Metrics scraper deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard-metrics-scraper
+  namespace: kubernetes-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dashboard-metrics-scraper
+  template:
+    metadata:
+      labels:
+        app: dashboard-metrics-scraper
+    spec:
+      serviceAccountName: kubernetes-dashboard
+      containers:
+        - name: dashboard-metrics-scraper
+          image: kubernetesui/metrics-scraper:v1.0.9
+          ports:
+            - containerPort: 8000
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1001
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp-volume
+      volumes:
+        - emptyDir: {}
+          name: tmp-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard-metrics-scraper
+  namespace: kubernetes-dashboard
+spec:
+  selector:
+    app: dashboard-metrics-scraper
+  ports:
+    - port: 8000
+      targetPort: 8000
+---
+# Main dashboard deployment — HTTP mode, sub-path /dashboard/
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubernetes-dashboard
+  template:
+    metadata:
+      labels:
+        app: kubernetes-dashboard
+    spec:
+      serviceAccountName: kubernetes-dashboard
+      containers:
+        - name: kubernetes-dashboard
+          image: kubernetesui/dashboard:v2.7.0
+          ports:
+            - containerPort: 9090   # HTTP port (insecure mode)
+          args:
+            - --namespace=kubernetes-dashboard
+            - --enable-skip-login
+            - --enable-insecure-login
+            - --metrics-provider=sidecar
+            - --sidecar-host=http://dashboard-metrics-scraper:8000
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 9090
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1001
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp-volume
+      volumes:
+        - emptyDir: {}
+          name: tmp-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+spec:
+  selector:
+    app: kubernetes-dashboard
+  ports:
+    - port: 9090
+      targetPort: 9090
+---
+# Nginx proxy in conjur namespace — handles path rewrite + base-href injection
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashboard-proxy-conf
+  namespace: conjur
+data:
+  default.conf: |
+    server {
+        listen 80;
+
+        # Redirect bare /dashboard to trailing-slash form
+        location = /dashboard {
+            return 301 /dashboard/;
+        }
+
+        location /dashboard/ {
+            rewrite ^/dashboard/(.*)$ /$1 break;
+            proxy_pass http://kubernetes-dashboard.kubernetes-dashboard.svc.cluster.local:9090;
+            proxy_set_header Host              $host;
+            proxy_set_header X-Real-IP         $remote_addr;
+            proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            # Decompress upstream so sub_filter can scan text
+            proxy_set_header Accept-Encoding   "";
+            # Inject base href so the SPA resolves all relative URLs under /dashboard/
+            sub_filter '<head>' '<head><base href="/dashboard/">';
+            sub_filter_once on;
+            sub_filter_types text/html;
+            proxy_read_timeout 3600;
+            proxy_send_timeout 3600;
+        }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard-proxy
+  namespace: conjur
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dashboard-proxy
+  template:
+    metadata:
+      labels:
+        app: dashboard-proxy
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: conf
+              mountPath: /etc/nginx/conf.d
+              readOnly: true
+      volumes:
+        - name: conf
+          configMap:
+            name: dashboard-proxy-conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard-proxy
+  namespace: conjur
+spec:
+  selector:
+    app: dashboard-proxy
+  ports:
+    - port: 80
+      targetPort: 80
+---
+# Ingress — no rewrite needed, proxy handles it
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kubernetes-dashboard-ingress
+  namespace: conjur
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+spec:
+  ingressClassName: nginx-internal
+  tls:
+    - hosts:
+        - demo.minha.cloud
+      secretName: k8scert
+  rules:
+    - host: demo.minha.cloud
+      http:
+        paths:
+          - path: /dashboard
+            pathType: Prefix
+            backend:
+              service:
+                name: dashboard-proxy
+                port:
+                  number: 80
