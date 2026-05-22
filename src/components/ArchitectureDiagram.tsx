@@ -16,13 +16,13 @@ const C: Record<CK, { stroke: string; text: string; border: string; bg: string }
 
 // ─── layout (ViewBox 0 0 820 460) ────────────────────────────────────────────
 //
-// ┌──── Kubernetes Cluster (x=8,y=8 → x=498,y=318) ──────┐
-// │  ┌─── App Pod ──────────────┐  [K8s API Server]       │   ┌── Conjur Cloud · SaaS ──────┐
-// │  │  [App Container]          │  x=308,y=114,w=168,h=62 │   │ [Secrets Manager]            │
-// │  │  [Service Account JWT]    │                          │   │ x=568,y=54,w=232,h=96        │
-// │  └──────────────────────────┘                          │   │ [Secrets Vault]              │
-// └────────────────────────────────────────────────────────┘   │ x=568,y=182,w=232,h=62       │
-//                                                              └──────────────────────────────┘
+// ┌──── Kubernetes Cluster (x=8,y=8 → x=498,y=328) ─────────────────────────┐  ┌── Conjur Cloud · SaaS ──┐
+// │  ┌─── App Pod ──────────────┐  [K8s API Server]                          │  │ [Secrets Manager]        │
+// │  │  [App Container]          │  x=308,y=114,w=168,h=62                   │  │ x=568,y=54,w=232,h=96    │
+// │  │  [Service Account JWT]    │                                            │  └──────────────────────────┘
+// │  └──────────────────────────┘  [Secrets Vault]                           │
+// │                                x=308,y=240,w=168,h=62                    │
+// └────────────────────────────────────────────────────────────────────────────┘
 // ─ ─ ─ external · outside cluster ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
 // [MySQL] x=300,y=382,w=186,h=62
 //
@@ -31,7 +31,7 @@ const C: Record<CK, { stroke: string; text: string; border: string; bg: string }
 //   jwt        cx=127,cy=179  right=(226,179) top=(127,150)
 //   k8sapi     cx=392,cy=145  left=(308,145)  right=(476,145)
 //   sm         cx=684,cy=102  left=(568,102)  right=(800,102) bottom=(684,150)
-//   vault      cx=684,cy=213  top=(684,182)   left=(568,213)
+//   vault      cx=392,cy=271  top=(392,240)   left=(308,271)
 //   mysql      cx=393,cy=413  top=(393,382)
 
 interface N {
@@ -49,7 +49,8 @@ const NODES: N[] = [
   { id:'k8sapi',   x:308, y:114, w:168, h:62,  label:'K8s API Server',      sub:'JWT validation',                        ck:'slate'            },
   // ── outside cluster — Conjur Cloud SaaS ───────────────────────────────────
   { id:'sm',        x:568, y:54,  w:232, h:96,  label:'Secrets Manager',     sub:'latamlab.secretsmgr.cyberark.cloud',    ck:'gold', feat:true   },
-  { id:'vault',     x:568, y:182, w:232, h:62,  label:'Secrets Vault',       sub:'data/vault/dev-demo-aslan/…',           ck:'cyan'             },
+  // ── inside Kubernetes cluster — Secrets Vault ─────────────────────────────
+  { id:'vault',     x:308, y:240, w:168, h:62,  label:'Secrets Vault',       sub:'data/vault/dev-demo-aslan/…',           ck:'cyan'             },
   // ── external database ──────────────────────────────────────────────────────
   { id:'mysql',     x:300, y:382, w:186, h:62,  label:'MySQL Database',      sub:'mysql.demo.local',                        ck:'spring', external:true },
 ]
@@ -65,10 +66,10 @@ const EDGES: E[] = [
   { id:'k8-sm',    d:'M 476,162 C 522,162 522,116 568,116',          ck:'slate',  tag:'✓ ok',          lx:521, ly:144 },
   // Step 3c — SM returns a short-lived API token to the app
   { id:'sm-app',   d:'M 568,72 C 396,72 396,64 226,64',              ck:'cyan',   tag:'API token',     lx:382, ly:64  },
-  // Step 4 — SM retrieves credentials from its internal vault
-  { id:'sm-vt',    d:'M 684,150 L 684,182',                          ck:'cyan',   tag:'fetch',         lx:706, ly:168 },
+  // Step 4 — SM retrieves credentials from vault inside K8s cluster
+  { id:'sm-vt',    d:'M 684,150 C 684,210 392,200 392,240',          ck:'cyan',   tag:'fetch',         lx:540, ly:198 },
   // Step 5 — App Container connects to MySQL using retrieved credentials
-  { id:'app-db',   d:'M 127,104 C 260,104 393,250 393,382',          ck:'spring', tag:'connect',       lx:335, ly:254 },
+  { id:'app-db',   d:'M 127,104 C 260,104 393,280 393,382',          ck:'spring', tag:'connect',       lx:320, ly:208 },
 ]
 
 // ─── step definitions (6 steps matching architecture.flow) ───────────────────
@@ -235,8 +236,8 @@ export default function ArchitectureDiagram() {
                 </filter>
               </defs>
 
-              {/* ══ Kubernetes Cluster boundary (App Pod + K8s API inside) ═══════════ */}
-              <rect x="8" y="8" width="490" height="310" rx="14"
+              {/* ══ Kubernetes Cluster boundary (App Pod + K8s API + Vault inside) ══ */}
+              <rect x="8" y="8" width="490" height="320" rx="14"
                 fill="rgba(9,18,32,0.5)" stroke="rgba(100,116,139,0.25)"
                 strokeWidth="1.5" strokeDasharray="8 5" />
               <text x="24" y="24" fontSize="10" fill="rgba(100,116,139,0.5)"
@@ -259,8 +260,8 @@ export default function ArchitectureDiagram() {
                 App Pod
               </motion.text>
 
-              {/* ══ Conjur Cloud SaaS boundary (SM + Vault outside cluster) ══════════ */}
-              <motion.rect x="556" y="32" width="256" height="224" rx="14"
+              {/* ══ Conjur Cloud SaaS boundary (SM only — outside cluster) ════════════ */}
+              <motion.rect x="556" y="32" width="256" height="130" rx="14"
                 fill="rgba(245,158,11,0.025)" stroke="rgba(245,158,11,0.22)"
                 strokeWidth="1" strokeDasharray="6 4"
                 initial={{ opacity: 0 }}
