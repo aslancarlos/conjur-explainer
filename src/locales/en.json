@@ -59,7 +59,17 @@
       "App uses the API token to fetch specific secrets (db_host, db_user, db_password)",
       "App connects to MySQL using the retrieved credentials",
       "Credentials are cached in memory — refreshed automatically before TTL expires"
-    ]
+    ],
+    "step_titles": [
+      "K8s Projects the Service Account JWT",
+      "App Authenticates with Secrets Manager",
+      "Identity Verified — API Token Issued",
+      "Secrets Fetched from Vault",
+      "Database Connection Established",
+      "Credentials Cached & Auto-Refreshed"
+    ],
+    "step_of": "Step {{current}} of {{total}}",
+    "keyboard_hint": "← → arrow keys to navigate"
   },
   "springboot": {
     "badge": "Pattern 1",

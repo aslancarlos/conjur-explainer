@@ -59,7 +59,17 @@
       "La app usa el token de API para obtener secretos específicos (db_host, db_user, db_password)",
       "La app se conecta a MySQL usando las credenciales obtenidas",
       "Las credenciales se cachean en memoria — se renuevan automáticamente antes de que expire el TTL"
-    ]
+    ],
+    "step_titles": [
+      "K8s Proyecta el JWT de la Service Account",
+      "App se Autentica con Secrets Manager",
+      "Identidad Verificada — Token de API Emitido",
+      "Secretos Obtenidos de la Bóveda",
+      "Conexión a Base de Datos Establecida",
+      "Credenciales en Caché & Auto-Renovadas"
+    ],
+    "step_of": "Paso {{current}} de {{total}}",
+    "keyboard_hint": "← → teclas de flecha para navegar"
   },
   "springboot": {
     "badge": "Patrón 1",

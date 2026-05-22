@@ -59,7 +59,17 @@
       "A aplicação usa o token para buscar segredos específicos (db_host, db_user, db_password)",
       "A aplicação conecta ao MySQL usando as credenciais obtidas",
       "As credenciais ficam em cache na memória — renovadas automaticamente antes de expirar"
-    ]
+    ],
+    "step_titles": [
+      "K8s Projeta o JWT da Service Account",
+      "App Autentica com o Secrets Manager",
+      "Identidade Verificada — Token de API Emitido",
+      "Segredos Buscados do Cofre",
+      "Conexão com Banco de Dados Estabelecida",
+      "Credenciais em Cache & Auto-Renovadas"
+    ],
+    "step_of": "Passo {{current}} de {{total}}",
+    "keyboard_hint": "← → teclas de seta para navegar"
   },
   "springboot": {
     "badge": "Padrão 1",
