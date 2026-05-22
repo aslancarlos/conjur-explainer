@@ -56,7 +56,8 @@
       "O pod inicia — o Kubernetes projeta um token JWT de curta duração no sistema de arquivos do pod",
       "A aplicação (ou Secrets Provider) autentica com o Secrets Manager usando o JWT",
       "O Secrets Manager valida a identidade contra sua política e retorna um token de API de curta duração",
-      "A aplicação usa o token para buscar segredos específicos (db_host, db_user, db_password)",
+      "O Secrets Vault entrega as credenciais solicitadas ao Secrets Manager, que aplica as políticas de autorização",
+      "O App Container lê os valores dos segredos diretamente do Secrets Vault usando o token de API",
       "A aplicação conecta ao MySQL usando as credenciais obtidas",
       "As credenciais ficam em cache na memória — renovadas automaticamente antes de expirar"
     ],
@@ -64,7 +65,8 @@
       "K8s Projeta o JWT da Service Account",
       "App Autentica com o Secrets Manager",
       "Identidade Verificada — Token de API Emitido",
-      "Segredos Buscados do Cofre",
+      "Vault Entrega Segredos ao Manager",
+      "App Lê Segredos do Vault",
       "Conexão com Banco de Dados Estabelecida",
       "Credenciais em Cache & Auto-Renovadas"
     ],

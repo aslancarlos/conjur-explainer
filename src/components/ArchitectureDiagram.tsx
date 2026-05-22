@@ -66,13 +66,15 @@ const EDGES: E[] = [
   { id:'k8-sm',    d:'M 476,162 C 522,162 522,116 568,116',          ck:'slate',  tag:'✓ ok',          lx:521, ly:144 },
   // Step 3c — SM returns a short-lived API token to the app
   { id:'sm-app',   d:'M 568,72 C 396,72 396,64 226,64',              ck:'cyan',   tag:'API token',     lx:382, ly:64  },
-  // Step 4 — SM retrieves credentials from vault inside K8s cluster
-  { id:'sm-vt',    d:'M 684,150 C 684,210 392,200 392,240',          ck:'cyan',   tag:'fetch',         lx:540, ly:198 },
-  // Step 5 — App Container connects to MySQL using retrieved credentials
+  // Step 4 — Secrets Vault surfaces credentials to Secrets Manager (Vault → SM)
+  { id:'sm-vt',    d:'M 392,240 C 392,200 684,210 684,150',          ck:'cyan',   tag:'secrets',       lx:540, ly:198 },
+  // Step 5 — App Container reads secret values directly from Secrets Vault
+  { id:'app-vt',   d:'M 226,73 C 280,73 308,200 308,271',            ck:'cyan',   tag:'read',          lx:260, ly:142 },
+  // Step 6 — App Container connects to MySQL using retrieved credentials
   { id:'app-db',   d:'M 127,104 C 260,104 393,280 393,382',          ck:'spring', tag:'connect',       lx:320, ly:208 },
 ]
 
-// ─── step definitions (6 steps matching architecture.flow) ───────────────────
+// ─── step definitions (7 steps matching architecture.flow) ───────────────────
 
 const RAW: { nodes: string[]; edges: string[]; hi: string[] }[] = [
   // s1 — Kubernetes projects JWT into the App Pod filesystem
@@ -81,12 +83,14 @@ const RAW: { nodes: string[]; edges: string[]; hi: string[] }[] = [
   { nodes:['sm'],              edges:['auth-sm'],               hi:['container','jwt','auth-sm','sm']                          },
   // s3 — SM verifies identity with K8s API; returns API token to app
   { nodes:['k8sapi'],          edges:['sm-k8','k8-sm','sm-app'],hi:['sm','k8sapi','sm-k8','k8-sm','sm-app','container']        },
-  // s4 — SM fetches credentials from its internal vault
+  // s4 — Secrets Vault provides credentials to Secrets Manager (Vault → SM)
   { nodes:['vault'],           edges:['sm-vt'],                 hi:['sm','vault','sm-vt']                                      },
-  // s5 — App Container connects to MySQL with retrieved credentials
+  // s5 (new) — App Container reads secret values directly from Secrets Vault
+  { nodes:[],                  edges:['app-vt'],                hi:['container','vault','app-vt']                              },
+  // s6 — App Container connects to MySQL with retrieved credentials
   { nodes:['mysql'],           edges:['app-db'],                hi:['container','mysql','app-db']                              },
-  // s6 — All visible; credentials cached in memory, auto-refreshed
-  { nodes:[],                  edges:[],                        hi:['container','jwt','jwt-proj','auth-sm','sm','sm-k8','k8-sm','k8sapi','sm-app','sm-vt','vault','app-db','mysql'] },
+  // s7 — All visible; credentials cached in memory, auto-refreshed
+  { nodes:[],                  edges:[],                        hi:['container','jwt','jwt-proj','auth-sm','sm','sm-k8','k8-sm','k8sapi','sm-app','sm-vt','vault','app-vt','app-db','mysql'] },
 ]
 
 const CUM = RAW.reduce<{ nodes: Set<string>; edges: Set<string> }[]>((acc, s) => {
