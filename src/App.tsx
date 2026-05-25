@@ -14,6 +14,7 @@ import DualAccountsPage from './pages/DualAccountsPage'
 import JwtPage from './pages/JwtPage'
 import SecretsHubPage from './pages/SecretsHubPage'
 import JenkinsPage from './pages/JenkinsPage'
+import PolicyPage from './pages/PolicyPage'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -51,6 +52,7 @@ export default function App() {
           <Route path="/jwt"            element={<JwtPage />} />
           <Route path="/secretshub"    element={<SecretsHubPage />} />
           <Route path="/jenkins"       element={<JenkinsPage />} />
+          <Route path="/policy"        element={<PolicyPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
