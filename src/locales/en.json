@@ -163,7 +163,18 @@
       { "title": "Full audit trail", "desc": "Every secret fetch logged in Secrets Manager — who, what, when, from which workflow" }
     ],
     "cta_repo": "View Workshop Repo",
-    "cta_workflow": "See Workflow YAML"
+    "cta_workflow": "See Workflow YAML",
+    "runner": {
+      "title": "Live workflow run",
+      "btn_run": "Run workflow now",
+      "btn_running": "Running…",
+      "view_on_github": "Open in GitHub",
+      "pending": "Workflow dispatched — GitHub hasn't reported the new run yet. It will appear here in a few seconds; press Run again if it doesn't.",
+      "hint": "Click Run to dispatch the workshop on GitHub. Each row updates every 3 seconds while the run is in flight. Backed by aslancarlos/workshop-action — rate-limited to 1 run per IP every 10 minutes.",
+      "err_rate_limited": "You triggered a run recently — please wait ~{{wait}} before triggering another.",
+      "err_global_cap": "Daily run cap reached for this demo. Try again tomorrow or open the repo on GitHub.",
+      "err_generic": "Couldn't start the run: {{msg}}"
+    }
   },
   "esoshop": {
     "badge": "Pattern 4",

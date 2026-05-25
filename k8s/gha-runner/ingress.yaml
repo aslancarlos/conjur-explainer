@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gha-runner
+  namespace: conjur
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: nginx-internal
+  tls:
+    - hosts:
+        - demo.minha.cloud
+      secretName: k8scert
+  rules:
+    - host: demo.minha.cloud
+      http:
+        paths:
+          - path: /api/gha
+            pathType: Prefix
+            backend:
+              service:
+                name: gha-runner
+                port:
+                  number: 80
