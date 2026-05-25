@@ -248,23 +248,18 @@ export default function PolicyPage() {
 
               {YAML.map((ln, idx) => {
                 const n        = idx + 1
-                const baseY    = 50
-                const lineH    = 17
-                const y        = baseY + idx * lineH
+                const baseY    = 52
+                const lineH    = 18
+                const y        = baseY + idx * lineH    // visual centre of the line
                 const isVis    = visible.has(n)
                 const isHi     = lit.has(n)
                 const hiCk     = ln.ck ?? 'slate'
                 return (
                   <g key={n}>
-                    {/* line-number gutter */}
-                    <text x={26} y={y} fontSize="8" fontFamily="JetBrains Mono, monospace"
-                      fill="rgba(100,116,139,0.45)" textAnchor="end">
-                      {n}
-                    </text>
-                    {/* highlight band */}
+                    {/* highlight band — drawn first so text sits on top */}
                     <AnimatePresence>
                       {isHi && (
-                        <motion.rect x={32} y={y - 11} width={350} height={15} rx={3}
+                        <motion.rect x={32} y={y - 8} width={350} height={16} rx={3}
                           fill={C[hiCk].bg}
                           stroke={C[hiCk].border} strokeWidth={0.5}
                           initial={{ opacity:0, x:24 }}
@@ -273,9 +268,16 @@ export default function PolicyPage() {
                           transition={{ duration:0.28 }} />
                       )}
                     </AnimatePresence>
-                    {/* the code itself */}
+                    {/* line-number gutter, vertically centred on the band */}
+                    <text x={26} y={y} fontSize="8" fontFamily="JetBrains Mono, monospace"
+                      fill="rgba(100,116,139,0.45)" textAnchor="end"
+                      dominantBaseline="central">
+                      {n}
+                    </text>
+                    {/* code line, vertically centred on the band */}
                     <motion.text x={38 + ln.indent * 5.6} y={y} fontSize="10"
                       fontFamily="JetBrains Mono, monospace"
+                      dominantBaseline="central"
                       fill={isHi ? C[hiCk].text : isVis ? '#cbd5e1' : 'rgba(148,163,184,0.18)'}
                       animate={{ opacity: isVis ? 1 : 0.35 }}
                       transition={{ duration:0.3 }}
