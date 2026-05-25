@@ -4,14 +4,32 @@
 
 Images must target `linux/amd64` — the EKS nodes do not run ARM.
 
+### Frontend
+
 ```bash
-# Build + push
 docker build --platform linux/amd64 -t aslancarlos/conjur-explainer:latest .
 docker push aslancarlos/conjur-explainer:latest
-
-# Deploy
 kubectl rollout restart deployment/conjur-explainer -n conjur
-kubectl rollout status deployment/conjur-explainer -n conjur
+kubectl rollout status  deployment/conjur-explainer -n conjur
+```
+
+### gha-runner backend
+
+```bash
+docker build --platform linux/amd64 -t aslancarlos/gha-runner:latest gha-runner/
+docker push aslancarlos/gha-runner:latest
+kubectl rollout restart deployment/gha-runner -n conjur
+kubectl rollout status  deployment/gha-runner -n conjur
+```
+
+The `gha-runner` deployment expects `Secret/gha-runner-token` (key `token`,
+value: a fine-grained PAT with Actions: Read/Write on
+`aslancarlos/workshop-action`). To rotate:
+
+```bash
+kubectl create secret generic gha-runner-token -n conjur \
+  --from-literal=token=ghp_xxx --dry-run=client -o yaml | kubectl apply -f -
+kubectl rollout restart deployment/gha-runner -n conjur
 ```
 
 Local dev:
@@ -76,6 +94,10 @@ If you forget `returnObjects: true`, i18next returns a comma-joined string inste
 | `k8s/monitoring/nginx-servicemonitor.yaml` | ServiceMonitor (namespace: `monitoring`, label `release: prometheus`) that tells the Prometheus operator to scrape `nginx-internal-metrics:10254/metrics` every 30 s. |
 | `k8s/monitoring/grafana-dashboard-access.yaml` | ConfigMap with `grafana_dashboard: "1"` label. The Grafana sidecar auto-loads it into `/tmp/dashboards/nginx-access.json`. Dashboard UID: `nginx-access-demo`. |
 | `src/components/IntegrationFlow.tsx` | Animated SVG graph showing the 9-step JWT auth + secret retrieval flow. Uses Framer Motion `pathLength` 0→1 edge drawing, cumulative visibility sets built at module level, keyboard ← → navigation. |
+| `src/components/GhaLiveRunner.tsx` | Live "Run workflow" button on `/github-actions`. POSTs to `/api/gha/run` then polls `/api/gha/runs/:id` every 3 s. Renders each job with a status icon (queued/running/success/failed/skipped/cancelled). Backed by the `gha-runner` Go service — see `gha-runner/`. |
+| `gha-runner/main.go` | Small Go HTTP proxy that holds the GitHub PAT server-side. Exposes `/api/gha/healthz`, `POST /api/gha/run` (dispatches `workflow_dispatch`, then polls GitHub to discover the new run ID), `GET /api/gha/runs/:id` (run + jobs/steps). In-memory rate limit: 1 trigger / IP / 10 min, global 20 runs / UTC day. Origin check pinned to `https://demo.minha.cloud`. |
+| `gha-runner/Dockerfile` | Distroless static binary, runs as `nonroot`. Build with `docker build --platform linux/amd64 -t aslancarlos/gha-runner:latest gha-runner/`. |
+| `k8s/gha-runner/` | Deployment, Service and Ingress (`/api/gha` prefix) for the runner. Requires a Secret called `gha-runner-token` in `conjur` namespace with key `token` — see `k8s/gha-runner/README.md`. |
 
 ## Adding a new pattern section
 

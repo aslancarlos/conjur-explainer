@@ -2,6 +2,7 @@ import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ExternalLink, GitBranch, Github, ShieldCheck } from 'lucide-react'
+import GhaLiveRunner from './GhaLiveRunner'
 
 const colorMap: Record<string, string> = {
   cyan:   'text-conjur-cyan border-conjur-cyan/30 bg-conjur-cyan/5',
@@ -127,31 +128,12 @@ export default function GitHubActionsSection() {
               </div>
             </motion.div>
 
-            {/* Workshop stages grid */}
+            {/* Workshop stages — live runner */}
             <motion.div
               initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.5 }}
-              className="section-card border-gh/20 space-y-3"
             >
-              <div className="flex items-center justify-between">
-                <h4 className="font-semibold text-white text-sm">{t('gha.stages_title')}</h4>
-                <span className="badge bg-gh/10 text-gh border border-gh/20 text-xs">11 stages</span>
-              </div>
-              <div className="grid grid-cols-1 gap-1.5">
-                {stages.map((s, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: 8 }} animate={inView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ duration: 0.3, delay: 0.55 + i * 0.04 }}
-                    className="flex items-start gap-2.5 rounded-lg bg-bg-base/60 px-3 py-2"
-                  >
-                    <span className="text-[10px] font-bold font-mono text-gh bg-gh/10 border border-gh/20 rounded px-1.5 py-0.5 flex-shrink-0 mt-0.5">
-                      {s.n}
-                    </span>
-                    <span className="text-xs text-slate-300 leading-relaxed">{s.title}</span>
-                  </motion.div>
-                ))}
-              </div>
+              <GhaLiveRunner stages={stages} />
             </motion.div>
 
             {/* Features */}

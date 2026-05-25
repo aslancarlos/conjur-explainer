@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gha-runner
+  namespace: conjur
+  labels:
+    app: gha-runner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gha-runner
+  template:
+    metadata:
+      labels:
+        app: gha-runner
+    spec:
+      imagePullSecrets:
+        - name: dockerhub-pull
+      containers:
+        - name: gha-runner
+          image: aslancarlos/gha-runner:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: REPO_OWNER
+              value: aslancarlos
+            - name: REPO_NAME
+              value: workshop-action
+            - name: WORKFLOW_FILE
+              value: main.yml
+            - name: WORKFLOW_REF
+              value: main
+            - name: ALLOWED_ORIGIN
+              value: https://demo.minha.cloud
+            - name: GH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: gha-runner-token
+                  key: token
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "20m"
+            limits:
+              memory: "64Mi"
+              cpu: "100m"
+          readinessProbe:
+            httpGet:
+              path: /api/gha/healthz
+              port: 8080
+            initialDelaySeconds: 2
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/gha/healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 30

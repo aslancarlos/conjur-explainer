@@ -163,7 +163,18 @@
       { "title": "Trilha de auditoria", "desc": "Cada busca de segredo registrada no Secrets Manager — quem, o quê, quando, de qual workflow" }
     ],
     "cta_repo": "Ver Repositório do Workshop",
-    "cta_workflow": "Ver Workflow YAML"
+    "cta_workflow": "Ver Workflow YAML",
+    "runner": {
+      "title": "Execução ao vivo",
+      "btn_run": "Executar workflow",
+      "btn_running": "Executando…",
+      "view_on_github": "Abrir no GitHub",
+      "pending": "Workflow disparado — o GitHub ainda não devolveu o novo run. Aparece aqui em alguns segundos; clique em Executar de novo se não aparecer.",
+      "hint": "Clique em Executar para disparar o workshop no GitHub. Cada linha atualiza a cada 3 segundos enquanto a execução roda. Apoiado por aslancarlos/workshop-action — limite de 1 execução por IP a cada 10 minutos.",
+      "err_rate_limited": "Você disparou uma execução recentemente — aguarde ~{{wait}} antes de disparar outra.",
+      "err_global_cap": "Cota diária deste demo atingida. Tente amanhã ou abra o repositório no GitHub.",
+      "err_generic": "Não foi possível iniciar a execução: {{msg}}"
+    }
   },
   "esoshop": {
     "badge": "Padrão 4",

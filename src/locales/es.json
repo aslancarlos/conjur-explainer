@@ -163,7 +163,18 @@
       { "title": "Rastro de auditoría", "desc": "Cada fetch de secreto registrado en Secrets Manager — quién, qué, cuándo, desde qué workflow" }
     ],
     "cta_repo": "Ver Repositorio del Workshop",
-    "cta_workflow": "Ver Workflow YAML"
+    "cta_workflow": "Ver Workflow YAML",
+    "runner": {
+      "title": "Ejecución en vivo",
+      "btn_run": "Ejecutar workflow",
+      "btn_running": "Ejecutando…",
+      "view_on_github": "Abrir en GitHub",
+      "pending": "Workflow despachado — GitHub todavía no devolvió la nueva ejecución. Aparece aquí en unos segundos; pulsa Ejecutar de nuevo si no aparece.",
+      "hint": "Pulsa Ejecutar para disparar el workshop en GitHub. Cada fila se actualiza cada 3 segundos mientras la ejecución corre. Respaldado por aslancarlos/workshop-action — límite de 1 ejecución por IP cada 10 minutos.",
+      "err_rate_limited": "Disparaste una ejecución recientemente — espera ~{{wait}} antes de disparar otra.",
+      "err_global_cap": "Cuota diaria de este demo alcanzada. Intenta mañana o abre el repositorio en GitHub.",
+      "err_generic": "No se pudo iniciar la ejecución: {{msg}}"
+    }
   },
   "esoshop": {
     "badge": "Patrón 4",
