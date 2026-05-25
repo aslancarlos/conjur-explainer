@@ -39,6 +39,11 @@ npx tsc --noEmit
 | `/flow` | `IntegrationFlow` |
 | `/compare` | `ComparisonTable` |
 | `/tools` | `LiveToolsSection` |
+| `/dualaccounts` | `DualAccountsPage` |
+| `/jwt` | `JwtPage` |
+| `/secretshub` | `SecretsHubPage` |
+| `/jenkins` | `JenkinsPage` |
+| `/policy` | `PolicyPage` (Conjur policy structure + branches walkthrough) |
 
 **NavBar uses dropdown menus** — two dropdowns: "Integrations" (app patterns) and "Tools" (flow/compare/dashboards). State-based (`useState`) not CSS hover, so they close on route change and outside click. `DropItem` interface drives both PATTERNS and TOOLS arrays. All labels come from i18n keys including sub-descriptions (e.g., `nav.springboot_sub`).
 
