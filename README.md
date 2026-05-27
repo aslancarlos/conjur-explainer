@@ -1,5 +1,7 @@
 # conjur-explainer
 
+[![build](https://github.com/aslancarlos/conjur-explainer/actions/workflows/build.yml/badge.svg)](https://github.com/aslancarlos/conjur-explainer/actions/workflows/build.yml) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+
 Interactive single-page application that explains and demonstrates **CyberArk Conjur Cloud** machine identity and secrets management across four real integration patterns — all live and accessible from the same page.
 
 Live at: `https://demo.minha.cloud/`
