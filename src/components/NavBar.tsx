@@ -30,10 +30,11 @@ const EXAMPLES: DropItem[] = [
 ]
 
 const TOOLS: DropItem[] = [
-  { to: '/flow',       labelKey: 'nav.flow',        subKey: 'nav.flow_sub'        },
-  { to: '/compare',    labelKey: 'nav.compare',      subKey: 'nav.compare_sub'     },
-  { to: '/tools',      labelKey: 'nav.livetools',    subKey: 'nav.livetools_sub'   },
-  { to: '/controller', href: '/controller', labelKey: 'nav.controller', subKey: 'nav.controller_sub' },
+  { to: '/flow',         labelKey: 'nav.flow',         subKey: 'nav.flow_sub'         },
+  { to: '/compare',      labelKey: 'nav.compare',      subKey: 'nav.compare_sub'      },
+  { to: '/tools',        labelKey: 'nav.livetools',    subKey: 'nav.livetools_sub'    },
+  { to: '/jwt-validator', labelKey: 'nav.jwtvalidator', subKey: 'nav.jwtvalidator_sub' },
+  { to: '/controller',   href: '/controller', labelKey: 'nav.controller',   subKey: 'nav.controller_sub' },
 ]
 
 const dropVariants = {

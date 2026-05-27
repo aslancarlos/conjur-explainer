@@ -12,6 +12,7 @@ import ComparisonTable from './components/ComparisonTable'
 import LiveToolsSection from './components/LiveToolsSection'
 import DualAccountsPage from './pages/DualAccountsPage'
 import JwtPage from './pages/JwtPage'
+import JwtValidatorPage from './pages/JwtValidatorPage'
 import SecretsHubPage from './pages/SecretsHubPage'
 import JenkinsPage from './pages/JenkinsPage'
 import PolicyPage from './pages/PolicyPage'
@@ -50,6 +51,7 @@ export default function App() {
           <Route path="/tools"           element={<LiveToolsSection />} />
           <Route path="/dualaccounts"   element={<DualAccountsPage />} />
           <Route path="/jwt"            element={<JwtPage />} />
+          <Route path="/jwt-validator"  element={<JwtValidatorPage />} />
           <Route path="/secretshub"    element={<SecretsHubPage />} />
           <Route path="/jenkins"       element={<JenkinsPage />} />
           <Route path="/policy"        element={<PolicyPage />} />
