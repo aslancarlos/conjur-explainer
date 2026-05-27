@@ -19,6 +19,8 @@
     "livetools_sub": "Grafana, K8s, monitores de app",
     "controller": "App Controller",
     "controller_sub": "Iniciar / detener deployments",
+    "jwtvalidator": "JWT Validator API",
+    "jwtvalidator_sub": "Endpoint de validación en vivo",
     "dualaccounts": "Dual Accounts",
     "dualaccounts_sub": "Rotación de credenciales sin downtime",
     "jwt": "Autenticación JWT",
@@ -45,9 +47,21 @@
     "badge": "El Problema",
     "title": "Las credenciales en el código son una bomba de tiempo",
     "items": [
-      { "icon": "alert", "title": "Credenciales en el código fuente", "desc": "Las contraseñas de base de datos en repositorios git se filtran en volcados de brechas, forks antiguos y logs de CI." },
-      { "icon": "clock", "title": "Sin rotación", "desc": "Las credenciales estáticas nunca rotan. Una contraseña filtrada = acceso permanente hasta intervención manual." },
-      { "icon": "eye", "title": "Sin rastro de auditoría", "desc": "¿Quién accedió a qué secreto y cuándo? Sin un gestor de secretos, es imposible saberlo." }
+      {
+        "icon": "alert",
+        "title": "Credenciales en el código fuente",
+        "desc": "Las contraseñas de base de datos en repositorios git se filtran en volcados de brechas, forks antiguos y logs de CI."
+      },
+      {
+        "icon": "clock",
+        "title": "Sin rotación",
+        "desc": "Las credenciales estáticas nunca rotan. Una contraseña filtrada = acceso permanente hasta intervención manual."
+      },
+      {
+        "icon": "eye",
+        "title": "Sin rastro de auditoría",
+        "desc": "¿Quién accedió a qué secreto y cuándo? Sin un gestor de secretos, es imposible saberlo."
+      }
     ],
     "solution_badge": "La Solución",
     "solution_title": "Secretos dinámicos con Palo Alto Networks | IDIRA Secrets Manager",
@@ -93,19 +107,51 @@
     "label": "authn-jwt / Java SDK",
     "desc": "La app Spring Boot se integra directamente con la API REST de Secrets Manager. Lee el JWT de Kubernetes, se autentica con Secrets Manager y obtiene los secretos al inicio — con caché en memoria de 5 minutos.",
     "steps": [
-      { "n": "1", "title": "Leer el token JWT", "code": "String jwt = System.getenv(\"JWT\");\n// fallback: Files.readString(Path.of(\"/var/run/secrets/tokens/jwt\"))", "color": "cyan" },
-      { "n": "2", "title": "Autenticar con Secrets Manager", "code": "POST /api/authn-jwt/eks-latam/conjur/authenticate\nContent-Type: application/x-www-form-urlencoded\nAccept-Encoding: base64\nBody: jwt=<jwt-codificado>", "color": "gold" },
-      { "n": "3", "title": "Obtener secretos", "code": "GET /api/secrets/conjur/variable/data/vault/.../username\nGET /api/secrets/conjur/variable/data/vault/.../password\nGET /api/secrets/conjur/variable/data/vault/.../address\nAuthorization: Token token=\"<api-token>\"", "color": "cyan" },
-      { "n": "4", "title": "Caché y conexión", "code": "// Caché de 5 min con double-checked locking\nCredentials creds = credentialService.currentCredentials();\nString url = \"jdbc:mysql://\" + creds.host() + \":3306/userdb\";\nConnection conn = DriverManager.getConnection(url, creds.username(), creds.password());", "color": "spring" }
+      {
+        "n": "1",
+        "title": "Leer el token JWT",
+        "code": "String jwt = System.getenv(\"JWT\");\n// fallback: Files.readString(Path.of(\"/var/run/secrets/tokens/jwt\"))",
+        "color": "cyan"
+      },
+      {
+        "n": "2",
+        "title": "Autenticar con Secrets Manager",
+        "code": "POST /api/authn-jwt/eks-latam/conjur/authenticate\nContent-Type: application/x-www-form-urlencoded\nAccept-Encoding: base64\nBody: jwt=<jwt-codificado>",
+        "color": "gold"
+      },
+      {
+        "n": "3",
+        "title": "Obtener secretos",
+        "code": "GET /api/secrets/conjur/variable/data/vault/.../username\nGET /api/secrets/conjur/variable/data/vault/.../password\nGET /api/secrets/conjur/variable/data/vault/.../address\nAuthorization: Token token=\"<api-token>\"",
+        "color": "cyan"
+      },
+      {
+        "n": "4",
+        "title": "Caché y conexión",
+        "code": "// Caché de 5 min con double-checked locking\nCredentials creds = credentialService.currentCredentials();\nString url = \"jdbc:mysql://\" + creds.host() + \":3306/userdb\";\nConnection conn = DriverManager.getConnection(url, creds.username(), creds.password());",
+        "color": "spring"
+      }
     ],
     "live_badge": "Endpoint en vivo",
     "live_title": "Estado de credenciales",
     "live_note": "Valores enmascarados — los secretos reales nunca llegan a la UI",
     "features": [
-      { "title": "API Directa", "desc": "Llama a la API REST de Secrets Manager directamente desde Java — sin sidecar" },
-      { "title": "Caché TTL", "desc": "SimpleTtlCache con double-checked locking — una llamada a Secrets Manager cada 5 minutos" },
-      { "title": "JWT auto-renovado", "desc": "Kubernetes rota el JWT proyectado; Secrets Manager lo valida en cada autenticación" },
-      { "title": "Errores tipados", "desc": "JwtNotFoundException, AuthException, SecretFetchException con códigos HTTP" }
+      {
+        "title": "API Directa",
+        "desc": "Llama a la API REST de Secrets Manager directamente desde Java — sin sidecar"
+      },
+      {
+        "title": "Caché TTL",
+        "desc": "SimpleTtlCache con double-checked locking — una llamada a Secrets Manager cada 5 minutos"
+      },
+      {
+        "title": "JWT auto-renovado",
+        "desc": "Kubernetes rota el JWT proyectado; Secrets Manager lo valida en cada autenticación"
+      },
+      {
+        "title": "Errores tipados",
+        "desc": "JwtNotFoundException, AuthException, SecretFetchException con códigos HTTP"
+      }
     ],
     "cta": "Abrir Dashboard →"
   },
@@ -116,16 +162,48 @@
     "label": "Sidecar K8s / Cero código",
     "desc": "La app .NET no tiene ningún código Secrets Manager. Un sidecar Palo Alto Networks | IDIRA Secrets Provider gestiona la autenticación e inyecta las credenciales como Kubernetes Secrets — que la app lee como variables de entorno estándar.",
     "steps": [
-      { "n": "1", "title": "Sidecar del Secrets Provider inicia", "code": "# En el spec del Deployment K8s:\ncontainers:\n- name: panwidira-secrets-provider-for-k8s\n  image: panwidira/secrets-provider-for-k8s:latest\n  env:\n  - name: CONJUR_AUTHN_LOGIN\n    value: host/conjur/authn-k8s/...", "color": "purple" },
-      { "n": "2", "title": "El Provider se autentica con Secrets Manager", "code": "# El provider lee el JWT de la service account automáticamente\n# Se autentica vía authn-k8s o authn-jwt\n# Obtiene: db_user, db_password, db_host", "color": "gold" },
-      { "n": "3", "title": "Secretos escritos en K8s Secret", "code": "# Provider actualiza el Kubernetes Secret 'db-dotnet'\napiVersion: v1\nkind: Secret\nmetadata:\n  name: db-dotnet\ndata:\n  username: <base64>\n  password: <base64>\n  address: <base64>", "color": "purple" },
-      { "n": "4", "title": ".NET lee variables de entorno — sin código del Secrets Manager", "code": "// La app .NET lee variables de entorno estándar\nstring dbUser = Environment.GetEnvironmentVariable(\"DB_USER\");\nstring dbPass = Environment.GetEnvironmentVariable(\"DB_PASSWORD\");\nstring dbHost = Environment.GetEnvironmentVariable(\"DB_HOST\");\n// Eso es todo. Cero integración con Conjur en el código.", "color": "cyan" }
+      {
+        "n": "1",
+        "title": "Sidecar del Secrets Provider inicia",
+        "code": "# En el spec del Deployment K8s:\ncontainers:\n- name: panwidira-secrets-provider-for-k8s\n  image: panwidira/secrets-provider-for-k8s:latest\n  env:\n  - name: CONJUR_AUTHN_LOGIN\n    value: host/conjur/authn-k8s/...",
+        "color": "purple"
+      },
+      {
+        "n": "2",
+        "title": "El Provider se autentica con Secrets Manager",
+        "code": "# El provider lee el JWT de la service account automáticamente\n# Se autentica vía authn-k8s o authn-jwt\n# Obtiene: db_user, db_password, db_host",
+        "color": "gold"
+      },
+      {
+        "n": "3",
+        "title": "Secretos escritos en K8s Secret",
+        "code": "# Provider actualiza el Kubernetes Secret 'db-dotnet'\napiVersion: v1\nkind: Secret\nmetadata:\n  name: db-dotnet\ndata:\n  username: <base64>\n  password: <base64>\n  address: <base64>",
+        "color": "purple"
+      },
+      {
+        "n": "4",
+        "title": ".NET lee variables de entorno — sin código del Secrets Manager",
+        "code": "// La app .NET lee variables de entorno estándar\nstring dbUser = Environment.GetEnvironmentVariable(\"DB_USER\");\nstring dbPass = Environment.GetEnvironmentVariable(\"DB_PASSWORD\");\nstring dbHost = Environment.GetEnvironmentVariable(\"DB_HOST\");\n// Eso es todo. Cero integración con Conjur en el código.",
+        "color": "cyan"
+      }
     ],
     "features": [
-      { "title": "Cero código", "desc": "La app .NET no sabe que Secrets Manager existe — lee variables de entorno normales" },
-      { "title": "Patrón Sidecar", "desc": "Secrets Provider corre como sidecar, sincronizando secretos continuamente" },
-      { "title": "Modo K8s Secrets", "desc": "El Provider escribe en un K8s Secret; la app recibe vía secretKeyRef en el deployment" },
-      { "title": "Cualquier lenguaje", "desc": "Funciona con Java, Go, Python, Ruby — sin cambios de SDK" }
+      {
+        "title": "Cero código",
+        "desc": "La app .NET no sabe que Secrets Manager existe — lee variables de entorno normales"
+      },
+      {
+        "title": "Patrón Sidecar",
+        "desc": "Secrets Provider corre como sidecar, sincronizando secretos continuamente"
+      },
+      {
+        "title": "Modo K8s Secrets",
+        "desc": "El Provider escribe en un K8s Secret; la app recibe vía secretKeyRef en el deployment"
+      },
+      {
+        "title": "Cualquier lenguaje",
+        "desc": "Funciona con Java, Go, Python, Ruby — sin cambios de SDK"
+      }
     ],
     "cta": "Abrir App .NET →"
   },
@@ -138,29 +216,94 @@
     "flow_title": "Flujo de autenticación",
     "stages_title": "Etapas del workshop",
     "steps": [
-      { "n": "1", "title": "Habilitar generación de token OIDC", "code": "permissions:\n  id-token: write   # permite a GitHub emitir JWT OIDC\n  contents: read\n\njobs:\n  demo:\n    runs-on: self-hosted", "color": "gh" },
-      { "n": "2", "title": "Llamar a la action de Secrets Manager", "code": "- name: Obtener secretos de Conjur\n  uses: aslancarlos/workshop-action@main\n  with:\n    url: ${{ secrets.CONJUR_URL }}\n    authn_id: ${{ secrets.CONJUR_SERVICE_ID }}\n    secrets: >\n      data/vault/db/username|DB_USER;\n      data/vault/db/password|DB_PASS;\n      data/vault/db/address|DB_HOST", "color": "gold" },
-      { "n": "3", "title": "La policy de Secrets Manager valida la identidad", "code": "# El host de Conjur necesita anotaciones coincidentes:\nannotations:\n  authn-jwt/github/repository: aslancarlos/workshop-action\n  authn-jwt/github/workflow:   workshop-action\n# Cualquier otro repo o workflow = acceso denegado", "color": "cyan" },
-      { "n": "4", "title": "Secretos inyectados como env vars enmascaradas", "code": "- name: Conectar a la base de datos\n  run: |\n    mysql -h \"$DB_HOST\" \\\n          -u \"$DB_USER\" \\\n          -p\"$DB_PASS\" \\\n          userdb -e \"SELECT * FROM users LIMIT 5;\"\n# DB_USER / DB_PASS se enmascaran automáticamente en los logs", "color": "spring" }
+      {
+        "n": "1",
+        "title": "Habilitar generación de token OIDC",
+        "code": "permissions:\n  id-token: write   # permite a GitHub emitir JWT OIDC\n  contents: read\n\njobs:\n  demo:\n    runs-on: self-hosted",
+        "color": "gh"
+      },
+      {
+        "n": "2",
+        "title": "Llamar a la action de Secrets Manager",
+        "code": "- name: Obtener secretos de Conjur\n  uses: aslancarlos/workshop-action@main\n  with:\n    url: ${{ secrets.CONJUR_URL }}\n    authn_id: ${{ secrets.CONJUR_SERVICE_ID }}\n    secrets: >\n      data/vault/db/username|DB_USER;\n      data/vault/db/password|DB_PASS;\n      data/vault/db/address|DB_HOST",
+        "color": "gold"
+      },
+      {
+        "n": "3",
+        "title": "La policy de Secrets Manager valida la identidad",
+        "code": "# El host de Conjur necesita anotaciones coincidentes:\nannotations:\n  authn-jwt/github/repository: aslancarlos/workshop-action\n  authn-jwt/github/workflow:   workshop-action\n# Cualquier otro repo o workflow = acceso denegado",
+        "color": "cyan"
+      },
+      {
+        "n": "4",
+        "title": "Secretos inyectados como env vars enmascaradas",
+        "code": "- name: Conectar a la base de datos\n  run: |\n    mysql -h \"$DB_HOST\" \\\n          -u \"$DB_USER\" \\\n          -p\"$DB_PASS\" \\\n          userdb -e \"SELECT * FROM users LIMIT 5;\"\n# DB_USER / DB_PASS se enmascaran automáticamente en los logs",
+        "color": "spring"
+      }
     ],
     "stages": [
-      { "n": "01", "title": "Auth JWT y Obtención de Secretos — JWT OIDC de GitHub autentica directamente con Secrets Manager, sin API keys" },
-      { "n": "02", "title": "Múltiples Secretos y Enmascaramiento — obtén varios secretos a la vez; valores enmascarados en logs" },
-      { "n": "03", "title": "Conexión a Base de Datos — conexión MySQL en vivo usando credenciales obtenidas de Secrets Manager" },
-      { "n": "04", "title": "Hardcoded vs Secrets Manager — contraseña hardcoded falla, credencial de Secrets Manager funciona" },
-      { "n": "05", "title": "Least Privilege — ruta autorizada funciona, ruta no autorizada es denegada por la policy" },
-      { "n": "06", "title": "Query Real y Datos — end-to-end: Secrets Manager entrega credenciales → query ejecuta → datos retornados" },
-      { "n": "07", "title": "Rotación de Credenciales — rota en Privilege Cloud, re-ejecuta el pipeline sin cambios" },
-      { "n": "08", "title": "Promoción de Entornos — dev → staging → prod con aprobación humana en producción" },
-      { "n": "09", "title": "Deploy SSH con Clave de Secrets Manager — clave obtenida, usada y eliminada; nunca almacenada en el runner" },
-      { "n": "10", "title": "Docker Registry Login — credenciales de Secrets Manager, docker login con --password-stdin" },
-      { "n": "11", "title": "Rastro de Auditoría — consultar API de auditoría de Secrets Manager y mostrar los últimos 20 eventos" }
+      {
+        "n": "01",
+        "title": "Auth JWT y Obtención de Secretos — JWT OIDC de GitHub autentica directamente con Secrets Manager, sin API keys"
+      },
+      {
+        "n": "02",
+        "title": "Múltiples Secretos y Enmascaramiento — obtén varios secretos a la vez; valores enmascarados en logs"
+      },
+      {
+        "n": "03",
+        "title": "Conexión a Base de Datos — conexión MySQL en vivo usando credenciales obtenidas de Secrets Manager"
+      },
+      {
+        "n": "04",
+        "title": "Hardcoded vs Secrets Manager — contraseña hardcoded falla, credencial de Secrets Manager funciona"
+      },
+      {
+        "n": "05",
+        "title": "Least Privilege — ruta autorizada funciona, ruta no autorizada es denegada por la policy"
+      },
+      {
+        "n": "06",
+        "title": "Query Real y Datos — end-to-end: Secrets Manager entrega credenciales → query ejecuta → datos retornados"
+      },
+      {
+        "n": "07",
+        "title": "Rotación de Credenciales — rota en Privilege Cloud, re-ejecuta el pipeline sin cambios"
+      },
+      {
+        "n": "08",
+        "title": "Promoción de Entornos — dev → staging → prod con aprobación humana en producción"
+      },
+      {
+        "n": "09",
+        "title": "Deploy SSH con Clave de Secrets Manager — clave obtenida, usada y eliminada; nunca almacenada en el runner"
+      },
+      {
+        "n": "10",
+        "title": "Docker Registry Login — credenciales de Secrets Manager, docker login con --password-stdin"
+      },
+      {
+        "n": "11",
+        "title": "Rastro de Auditoría — consultar API de auditoría de Secrets Manager y mostrar los últimos 20 eventos"
+      }
     ],
     "features": [
-      { "title": "Cero secretos almacenados", "desc": "Sin credenciales en GitHub Secrets, entorno del runner o archivos del repositorio" },
-      { "title": "Identidad OIDC", "desc": "JWT de GitHub vinculado a repo + workflow — cualquier otro llamador es denegado" },
-      { "title": "Least Privilege", "desc": "La policy de Secrets Manager controla exactamente qué secretos puede acceder cada workflow" },
-      { "title": "Rastro de auditoría", "desc": "Cada fetch de secreto registrado en Secrets Manager — quién, qué, cuándo, desde qué workflow" }
+      {
+        "title": "Cero secretos almacenados",
+        "desc": "Sin credenciales en GitHub Secrets, entorno del runner o archivos del repositorio"
+      },
+      {
+        "title": "Identidad OIDC",
+        "desc": "JWT de GitHub vinculado a repo + workflow — cualquier otro llamador es denegado"
+      },
+      {
+        "title": "Least Privilege",
+        "desc": "La policy de Secrets Manager controla exactamente qué secretos puede acceder cada workflow"
+      },
+      {
+        "title": "Rastro de auditoría",
+        "desc": "Cada fetch de secreto registrado en Secrets Manager — quién, qué, cuándo, desde qué workflow"
+      }
     ],
     "cta_repo": "Ver Repositorio del Workshop",
     "cta_workflow": "Ver Workflow YAML",
@@ -183,19 +326,51 @@
     "label": "ESO / nativo K8s / Cero código en la app",
     "desc": "Una app Node.js de e-commerce en vivo que usa el External Secrets Operator para sincronizar credenciales de Palo Alto Networks | IDIRA Secrets Manager en un Kubernetes Secret — con un operador Python que monitorea cambios en el secret y dispara rolling restarts con cero downtime automáticamente.",
     "steps": [
-      { "n": "1", "title": "ExternalSecret declara qué sincronizar", "code": "apiVersion: external-secrets.io/v1\nkind: ExternalSecret\nmetadata:\n  name: eso-shop-db-creds\nspec:\n  refreshInterval: 1m\n  secretStoreRef:\n    name: conjur-store\n    kind: ClusterSecretStore\n  data:\n    - secretKey: DB_USER\n      remoteRef:\n        key: data/vault/dev-demo-aslan/dbuser_dual/username\n    - secretKey: DB_PASS\n      remoteRef:\n        key: data/vault/dev-demo-aslan/dbuser_dual/password\n    - secretKey: DB_HOST\n      remoteRef:\n        key: data/vault/dev-demo-aslan/dbuser_dual/address", "color": "eso" },
-      { "n": "2", "title": "ClusterSecretStore autentica con Secrets Manager", "code": "# ESO usa el JWT de la ServiceAccount springboot-app\n# para autenticarse vía Conjur authn-jwt/eks-latam\nprovider:\n  conjur:\n    url: https://latamlab.secretsmgr.cyberark.cloud\n    auth:\n      jwt:\n        account: conjur\n        serviceID: eks-latam\n        serviceAccountRef:\n          name: springboot-app\n          namespace: conjur\n          audiences: [conjur]", "color": "gold" },
-      { "n": "3", "title": "K8s Secret creado — app lee variables de entorno", "code": "# ESO crea y mantiene el Secret sincronizado\n# El deployment lo referencia:\nenvFrom:\n  - secretRef:\n      name: eso-shop-db-creds\n# App lee DB_USER, DB_PASS, DB_HOST\n# como variables de entorno estándar — cero código Conjur", "color": "cyan" },
-      { "n": "4", "title": "Operador Python monitorea y reinicia", "code": "# Operador hace stream del watch del secret\nfor event in w.stream(v1.list_namespaced_secret, ...):\n    rv = event['object'].metadata.resource_version\n    if rv != last_rv:   # secret actualizado por ESO\n        trigger_restart()  # patch en la anotación del deployment\n# Rolling restart: maxUnavailable=0, minReadySeconds=15\n# PodDisruptionBudget: minAvailable=2 de 3 réplicas", "color": "purple" }
+      {
+        "n": "1",
+        "title": "ExternalSecret declara qué sincronizar",
+        "code": "apiVersion: external-secrets.io/v1\nkind: ExternalSecret\nmetadata:\n  name: eso-shop-db-creds\nspec:\n  refreshInterval: 1m\n  secretStoreRef:\n    name: conjur-store\n    kind: ClusterSecretStore\n  data:\n    - secretKey: DB_USER\n      remoteRef:\n        key: data/vault/dev-demo-aslan/dbuser_dual/username\n    - secretKey: DB_PASS\n      remoteRef:\n        key: data/vault/dev-demo-aslan/dbuser_dual/password\n    - secretKey: DB_HOST\n      remoteRef:\n        key: data/vault/dev-demo-aslan/dbuser_dual/address",
+        "color": "eso"
+      },
+      {
+        "n": "2",
+        "title": "ClusterSecretStore autentica con Secrets Manager",
+        "code": "# ESO usa el JWT de la ServiceAccount springboot-app\n# para autenticarse vía Conjur authn-jwt/eks-latam\nprovider:\n  conjur:\n    url: https://latamlab.secretsmgr.cyberark.cloud\n    auth:\n      jwt:\n        account: conjur\n        serviceID: eks-latam\n        serviceAccountRef:\n          name: springboot-app\n          namespace: conjur\n          audiences: [conjur]",
+        "color": "gold"
+      },
+      {
+        "n": "3",
+        "title": "K8s Secret creado — app lee variables de entorno",
+        "code": "# ESO crea y mantiene el Secret sincronizado\n# El deployment lo referencia:\nenvFrom:\n  - secretRef:\n      name: eso-shop-db-creds\n# App lee DB_USER, DB_PASS, DB_HOST\n# como variables de entorno estándar — cero código Conjur",
+        "color": "cyan"
+      },
+      {
+        "n": "4",
+        "title": "Operador Python monitorea y reinicia",
+        "code": "# Operador hace stream del watch del secret\nfor event in w.stream(v1.list_namespaced_secret, ...):\n    rv = event['object'].metadata.resource_version\n    if rv != last_rv:   # secret actualizado por ESO\n        trigger_restart()  # patch en la anotación del deployment\n# Rolling restart: maxUnavailable=0, minReadySeconds=15\n# PodDisruptionBudget: minAvailable=2 de 3 réplicas",
+        "color": "purple"
+      }
     ],
     "live_badge": "Endpoint en vivo",
     "live_title": "Salud del ESO Shop",
     "live_note": "Usuario de BD mostrado directamente — sin contraseñas en texto plano",
     "features": [
-      { "title": "Sync ESO", "desc": "External Secrets Operator sincroniza Secrets Manager → K8s Secret cada 60 segundos" },
-      { "title": "Cero código", "desc": "App Node.js lee variables de entorno estándar — sin SDK de Secrets Manager ni sidecar" },
-      { "title": "Auto-restart", "desc": "Operador Python detecta actualizaciones del secret vía Kubernetes Watch API y dispara rolling restarts" },
-      { "title": "Cero downtime", "desc": "maxUnavailable: 0 + PodDisruptionBudget garantiza al menos 2 de 3 pods respondiendo en todo momento" }
+      {
+        "title": "Sync ESO",
+        "desc": "External Secrets Operator sincroniza Secrets Manager → K8s Secret cada 60 segundos"
+      },
+      {
+        "title": "Cero código",
+        "desc": "App Node.js lee variables de entorno estándar — sin SDK de Secrets Manager ni sidecar"
+      },
+      {
+        "title": "Auto-restart",
+        "desc": "Operador Python detecta actualizaciones del secret vía Kubernetes Watch API y dispara rolling restarts"
+      },
+      {
+        "title": "Cero downtime",
+        "desc": "maxUnavailable: 0 + PodDisruptionBudget garantiza al menos 2 de 3 pods respondiendo en todo momento"
+      }
     ],
     "cta_shop": "Abrir ESO Shop",
     "cta_dashboard": "Dashboard en Vivo",
@@ -204,9 +379,21 @@
     "operator_title": "Operador Python: monitorea secret → rolling restart",
     "operator_desc": "Un controlador Python personalizado corriendo en el clúster monitorea el secret eso-shop-db-creds vía Kubernetes Watch API. Cuando ESO actualiza el secret (tras sincronizar una credencial rotada de Secrets Manager), el operador detecta el cambio en resourceVersion y parchea el deployment con una nueva anotación — disparando un rolling restart con cero downtime.",
     "operator_steps": [
-      { "n": "1", "title": "Watch Stream", "desc": "Hace stream de list_namespaced_secret con field_selector en el nombre del secret objetivo — sin polling." },
-      { "n": "2", "title": "Detecta Cambio", "desc": "En evento MODIFIED, compara el resourceVersion. Solo actúa cuando realmente cambió — ignora eventos espúrios." },
-      { "n": "3", "title": "Rolling Restart", "desc": "Parchea la anotación eso-operator/restartedAt del deployment. Kubernetes rota los pods uno a uno con maxUnavailable: 0." }
+      {
+        "n": "1",
+        "title": "Watch Stream",
+        "desc": "Hace stream de list_namespaced_secret con field_selector en el nombre del secret objetivo — sin polling."
+      },
+      {
+        "n": "2",
+        "title": "Detecta Cambio",
+        "desc": "En evento MODIFIED, compara el resourceVersion. Solo actúa cuando realmente cambió — ignora eventos espúrios."
+      },
+      {
+        "n": "3",
+        "title": "Rolling Restart",
+        "desc": "Parchea la anotación eso-operator/restartedAt del deployment. Kubernetes rota los pods uno a uno con maxUnavailable: 0."
+      }
     ]
   },
   "flow": {
@@ -245,20 +432,112 @@
     "col_gha": "GitHub Actions",
     "col_eso": "ESO Shop",
     "rows": [
-      { "feature": "Modelo de integración", "spring": "REST directo en el código", "springIcon": "text", "dotnet": "Sidecar, cero código", "dotnetIcon": "text", "gha": "OIDC, solo pipeline CI", "ghaIcon": "text", "eso": "Operador ESO, cero código", "esoIcon": "text" },
-      { "feature": "Lenguaje / runtime", "spring": "Java (SDK / HTTP)", "springIcon": "text", "dotnet": "Cualquier lenguaje", "dotnetIcon": "check", "gha": "Cualquier runner CI", "ghaIcon": "check", "eso": "Cualquier lenguaje", "esoIcon": "check" },
-      { "feature": "Entrega de credenciales", "spring": "Objetos Java en memoria", "springIcon": "text", "dotnet": "K8s Secret → env vars", "dotnetIcon": "text", "gha": "Env vars enmascaradas en runner", "ghaIcon": "text", "eso": "K8s Secret → env vars", "esoIcon": "text" },
-      { "feature": "Rotación automática", "spring": "App gestiona caché 5 min", "springIcon": "text", "dotnet": "Provider sincroniza automáticamente", "dotnetIcon": "check", "gha": "Re-ejecutar pipeline tras rotación", "ghaIcon": "text", "eso": "ESO sincroniza 60s + restart automático", "esoIcon": "check" },
-      { "feature": "Granularidad de auditoría", "spring": "Por secret en log de Secrets Manager", "springIcon": "check", "dotnet": "Solo auth del provider", "dotnetIcon": "text", "gha": "Por workflow en Secrets Manager", "ghaIcon": "check", "eso": "Solo auth del provider", "esoIcon": "text" },
-      { "feature": "Funciona sin K8s", "spring": "No — requiere JWT del pod", "springIcon": "minus", "dotnet": "No — requiere JWT del pod", "dotnetIcon": "minus", "gha": "Sí — OIDC de GitHub", "ghaIcon": "check", "eso": "No — nativo K8s", "esoIcon": "minus" },
-      { "feature": "Rotación sin downtime", "spring": "Caché TTL oculta el gap", "springIcon": "text", "dotnet": "Sidecar re-inyecta, pod continúa", "dotnetIcon": "check", "gha": "N/A — pipeline stateless", "ghaIcon": "text", "eso": "Rolling restart (0 downtime)", "esoIcon": "check" },
-      { "feature": "Esfuerzo de migración", "spring": "Integración con SDK obligatoria", "springIcon": "minus", "dotnet": "Drop-in — cero código", "dotnetIcon": "check", "gha": "Un step en el workflow", "ghaIcon": "check", "eso": "Solo el YAML ExternalSecret", "esoIcon": "check" }
+      {
+        "feature": "Modelo de integración",
+        "spring": "REST directo en el código",
+        "springIcon": "text",
+        "dotnet": "Sidecar, cero código",
+        "dotnetIcon": "text",
+        "gha": "OIDC, solo pipeline CI",
+        "ghaIcon": "text",
+        "eso": "Operador ESO, cero código",
+        "esoIcon": "text"
+      },
+      {
+        "feature": "Lenguaje / runtime",
+        "spring": "Java (SDK / HTTP)",
+        "springIcon": "text",
+        "dotnet": "Cualquier lenguaje",
+        "dotnetIcon": "check",
+        "gha": "Cualquier runner CI",
+        "ghaIcon": "check",
+        "eso": "Cualquier lenguaje",
+        "esoIcon": "check"
+      },
+      {
+        "feature": "Entrega de credenciales",
+        "spring": "Objetos Java en memoria",
+        "springIcon": "text",
+        "dotnet": "K8s Secret → env vars",
+        "dotnetIcon": "text",
+        "gha": "Env vars enmascaradas en runner",
+        "ghaIcon": "text",
+        "eso": "K8s Secret → env vars",
+        "esoIcon": "text"
+      },
+      {
+        "feature": "Rotación automática",
+        "spring": "App gestiona caché 5 min",
+        "springIcon": "text",
+        "dotnet": "Provider sincroniza automáticamente",
+        "dotnetIcon": "check",
+        "gha": "Re-ejecutar pipeline tras rotación",
+        "ghaIcon": "text",
+        "eso": "ESO sincroniza 60s + restart automático",
+        "esoIcon": "check"
+      },
+      {
+        "feature": "Granularidad de auditoría",
+        "spring": "Por secret en log de Secrets Manager",
+        "springIcon": "check",
+        "dotnet": "Solo auth del provider",
+        "dotnetIcon": "text",
+        "gha": "Por workflow en Secrets Manager",
+        "ghaIcon": "check",
+        "eso": "Solo auth del provider",
+        "esoIcon": "text"
+      },
+      {
+        "feature": "Funciona sin K8s",
+        "spring": "No — requiere JWT del pod",
+        "springIcon": "minus",
+        "dotnet": "No — requiere JWT del pod",
+        "dotnetIcon": "minus",
+        "gha": "Sí — OIDC de GitHub",
+        "ghaIcon": "check",
+        "eso": "No — nativo K8s",
+        "esoIcon": "minus"
+      },
+      {
+        "feature": "Rotación sin downtime",
+        "spring": "Caché TTL oculta el gap",
+        "springIcon": "text",
+        "dotnet": "Sidecar re-inyecta, pod continúa",
+        "dotnetIcon": "check",
+        "gha": "N/A — pipeline stateless",
+        "ghaIcon": "text",
+        "eso": "Rolling restart (0 downtime)",
+        "esoIcon": "check"
+      },
+      {
+        "feature": "Esfuerzo de migración",
+        "spring": "Integración con SDK obligatoria",
+        "springIcon": "minus",
+        "dotnet": "Drop-in — cero código",
+        "dotnetIcon": "check",
+        "gha": "Un step en el workflow",
+        "ghaIcon": "check",
+        "eso": "Solo el YAML ExternalSecret",
+        "esoIcon": "check"
+      }
     ],
     "best_for": [
-      { "title": "Spring Boot — Ideal para", "desc": "Servicios Java con control granular, refresco dinámico y visibilidad por secret en el log de Secrets Manager." },
-      { "title": ".NET — Ideal para", "desc": "Migraciones lift-and-shift y servicios políglotas donde no se requieren cambios de SDK." },
-      { "title": "GitHub Actions — Ideal para", "desc": "Pipelines CI/CD fuera de Kubernetes — sin clúster necesario, identidad viene del OIDC de GitHub." },
-      { "title": "ESO Shop — Ideal para", "desc": "Apps cloud-native en Kubernetes que necesitan rotación de secretos con rolling restarts automáticos y cero código en la aplicación." }
+      {
+        "title": "Spring Boot — Ideal para",
+        "desc": "Servicios Java con control granular, refresco dinámico y visibilidad por secret en el log de Secrets Manager."
+      },
+      {
+        "title": ".NET — Ideal para",
+        "desc": "Migraciones lift-and-shift y servicios políglotas donde no se requieren cambios de SDK."
+      },
+      {
+        "title": "GitHub Actions — Ideal para",
+        "desc": "Pipelines CI/CD fuera de Kubernetes — sin clúster necesario, identidad viene del OIDC de GitHub."
+      },
+      {
+        "title": "ESO Shop — Ideal para",
+        "desc": "Apps cloud-native en Kubernetes que necesitan rotación de secretos con rolling restarts automáticos y cero código en la aplicación."
+      }
     ]
   },
   "livetools": {
@@ -270,7 +549,12 @@
     "k8s_title": "Kubernetes Dashboard",
     "k8s_badge": "Solo lectura · Skip login",
     "k8s_desc": "Visibilidad total del clúster — pods, deployments, services, secrets, gráficos CPU/memoria — en modo solo lectura. Sin credenciales: haz clic en Skip para explorar. Token admin disponible para acceso de escritura.",
-    "k8s_features": ["Solo lectura vía Skip login", "Gráficos CPU y memoria por pod", "Secrets visibles, sin escritura", "Token admin para acceso total"],
+    "k8s_features": [
+      "Solo lectura vía Skip login",
+      "Gráficos CPU y memoria por pod",
+      "Secrets visibles, sin escritura",
+      "Token admin para acceso total"
+    ],
     "k8s_cta": "Abrir Kubernetes Dashboard",
     "k8s_login": "Skip para lectura · token para admin",
     "grafana_title": "Grafana",
@@ -504,5 +788,44 @@
     "resources": "Recursos",
     "copyright": "© 2026 Aslan Ramos · SME - Machine Identity Security, Palo Alto Networks | IDIRA",
     "built_with": "Construido con"
+  },
+  "jwtv": {
+    "badge": "API en vivo · /api",
+    "title": "JWT Validator API",
+    "subtitle": "Servicio de validación de JWT enchufable corriendo en el clúster. Recibe tokens por HTTPS, verifica la firma contra el JWKS del emisor, valida claims estándar y específicas del proveedor, y devuelve una respuesta estructurada.",
+    "feat1_title": "Verificación por proveedor",
+    "feat1_desc": "Soporte inicial para Microsoft Entra ID (single-tenant, tokens v2.0). Nuevos IdPs entran vía una interfaz TokenVerifier — sin tocar la capa de rutas.",
+    "feat2_title": "Validación estricta de claims",
+    "feat2_desc": "Valida firma, issuer, audience, expiración, not-before, vínculo al tenant y algoritmo. El JWKS se cachea en memoria con TTL — llamadas repetidas solo cuestan la verificación de firma.",
+    "feat3_title": "Contrato de error estable",
+    "feat3_desc": "Cada rechazo devuelve un código legible por máquina (token_expired, invalid_signature, invalid_audience, …) y una razón humana — fácil de mapear a decisiones de política upstream.",
+    "endpoints_title": "Endpoints",
+    "table_method": "Método",
+    "table_path": "Ruta",
+    "table_desc": "Descripción",
+    "ep_health": "Probe de liveness. Devuelve 200 con un payload simple de estado.",
+    "ep_config": "Devuelve la config del proveedor cargada: tenant, audience, issuer y JWKS URI.",
+    "ep_verify": "Valida un JWT enviado en el body. Devuelve 200 con los claims si éxito, o 401 con code+reason si falla.",
+    "ep_docs": "Swagger UI generado por el schema de FastAPI.",
+    "checks_title": "Validaciones ejecutadas en cada token",
+    "claim_iss": "Issuer coincide con el endpoint v2.0 de Entra para el tenant configurado.",
+    "claim_aud": "Audience coincide con el Application ID URI de la API (api://<client-id>).",
+    "claim_exp": "El token aún no expiró (con pequeña tolerancia para skew de reloj).",
+    "claim_nbf": "El token ya es válido (claim nbf no está en el futuro).",
+    "claim_iat": "El token fue emitido en el pasado — issued_at es obligatorio.",
+    "claim_tid": "Claim tid de Entra coincide con el tenant ID configurado.",
+    "claim_sig": "Firma verificada con la clave del JWKS cuyo kid coincide con el header del JWT.",
+    "try_title": "Pruébalo",
+    "try_subtitle": "Pega un JWT abajo y envía. El token solo sale de tu navegador como body del POST /api/verify abajo.",
+    "try_button": "Validar token",
+    "result_valid": "Token válido",
+    "result_invalid": "Token rechazado",
+    "deploy_title": "Deployment",
+    "deploy_provider": "Provider",
+    "deploy_tenant": "Tenant ID",
+    "deploy_audience": "Audience",
+    "deploy_issuer": "Issuer",
+    "deploy_jwks": "JWKS URI",
+    "deploy_namespace": "Namespace K8s"
   }
 }
