@@ -34,14 +34,27 @@
     "policy_sub": "Como a política YAML do Secrets Manager é estruturada"
   },
   "hero": {
-    "eyebrow": "Palo Alto Networks | IDIRA · Secrets Manager · Kubernetes · ESO · DevSecOps",
+    "eyebrow": "Live · Produção · Tenant LATAMLab",
     "title": "Gestão de Segredos",
     "titleAccent": "em Ação",
     "subtitle": "Quatro padrões de integração. Zero credenciais no código. Spring Boot (JWT direto), .NET (sidecar Secrets Provider), GitHub Actions (OIDC) e um e-commerce nativo K8s com External Secrets Operator — todos buscando credenciais ao vivo do Palo Alto Networks | IDIRA Secrets Manager.",
     "cta_spring": "Demo Spring Boot",
     "cta_dotnet": "Demo .NET",
     "cta_eso": "Demo ESO Shop",
-    "cta_explore": "Explorar padrões ↓"
+    "cta_explore": "Explorar padrões ↓",
+    "logoStripLabel": "Cargas federadas · mesmo ponto de confiança",
+    "stat1_unit": "cargas",
+    "stat1_label": "Spring · .NET · Actions · ESO",
+    "stat2_unit": "secrets manager",
+    "stat2_label": "latamlab.secretsmgr.idira.cloud",
+    "stat3_unit": "em repouso",
+    "stat3_label": "Segredos em imagens ou repositórios",
+    "stat4_unit": "auth",
+    "stat4_label": "authn-jwt · trust federado",
+    "promise_eyebrow": "A promessa",
+    "promise_claim_pre": "Credenciais estáticas em código, imagens, env vars ou CI secrets.",
+    "promise_claim_mark": "Cada carga fala com o IDIRA usando a própria identidade.",
+    "promise_detail": "Isso não é um roadmap nem um PDF de vendor. É infraestrutura rodando: quatro apps live, a policy que escopa, a arquitetura que prova, e o código aberto por trás de cada peça. No tenant LATAMLab. Federado com GitHub, AWS e Kubernetes."
   },
   "problem": {
     "badge": "O Problema",
@@ -827,5 +840,11 @@
     "deploy_issuer": "Issuer",
     "deploy_jwks": "JWKS URI",
     "deploy_namespace": "Namespace K8s"
+  },
+  "promise": {
+    "eyebrow": "A promessa",
+    "claim_pre": "Credenciais estáticas em código, imagens, env vars ou CI secrets.",
+    "claim_mark": "Cada carga fala com o IDIRA usando a própria identidade.",
+    "detail": "Isso não é um roadmap nem um PDF de vendor. É infraestrutura rodando: quatro apps live, a policy que escopa, a arquitetura que prova, e o código aberto por trás de cada peça. No tenant LATAMLab. Federado com GitHub, AWS e Kubernetes."
   }
 }

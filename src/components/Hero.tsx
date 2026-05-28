@@ -1,90 +1,182 @@
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import { ArrowDown, ExternalLink } from 'lucide-react'
+import { ArrowDown, ArrowRight, ExternalLink } from 'lucide-react'
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 24 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, delay },
+  transition: { duration: 0.7, delay, ease: [0.2, 0.7, 0.2, 1] },
 })
 
+/**
+ * IDIRA Hero — modeled after paloaltonetworks.com/idira.
+ *
+ * Structure:
+ *   eyebrow pill  → h-display with iridescent <em> word
+ *                 → lede paragraph
+ *                 → diagonal-cut CTA pair
+ *                 → logo strip (federated workloads)
+ *                 → 4-up stat strip
+ *
+ * Visual signatures (constant in both themes — hero is always deep navy):
+ *   - radial-gradient mesh, animated 25s
+ *   - subtle dot grid, masked-radial
+ *   - iridescent shimmer text (cyan → blue → magenta → orange)
+ *   - clip-path diagonal cuts on primary CTAs
+ */
 export default function Hero() {
   const { t } = useTranslation()
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-20 pb-16 overflow-hidden">
-      {/* Background glow */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-conjur-cyan/5 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-spring/5 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-dotnet/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/3 left-1/2 -translate-x-1/2 w-64 h-64 bg-eso/5 rounded-full blur-3xl" />
-      </div>
+    <section className="relative overflow-hidden bg-idira-deep text-white">
+      {/* ── Iridescent mesh ─────────────────────────────────────── */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 hero-mesh"
+      />
+      {/* ── Dot grid mask ───────────────────────────────────────── */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 hero-grid" />
 
-      <div className="relative max-w-4xl mx-auto text-center space-y-6">
-        <motion.p {...fadeUp(0.1)} className="badge bg-conjur-cyan/10 text-conjur-cyan border border-conjur-cyan/20">
-          {t('hero.eyebrow')}
-        </motion.p>
-
-        <motion.h1 {...fadeUp(0.2)} className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
-          {t('hero.title')}{' '}
-          <span className="bg-gradient-to-r from-conjur-cyan via-conjur-gold via-spring to-eso bg-clip-text text-transparent">
-            {t('hero.titleAccent')}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 pt-28 pb-32 lg:pt-32 lg:pb-40">
+        {/* Eyebrow */}
+        <motion.div
+          {...fadeUp(0.1)}
+          className="inline-flex items-center gap-2.5 text-[12px] font-mono uppercase tracking-[0.12em] text-idira-cyan bg-[rgba(0,212,255,0.12)] px-3.5 py-2 rounded-full"
+        >
+          <span className="relative inline-flex">
+            <span className="w-1.5 h-1.5 rounded-full bg-idira-cyan" />
+            <span className="absolute -inset-1 rounded-full bg-idira-cyan/30 animate-ping" />
           </span>
+          {t('hero.eyebrow')}
+        </motion.div>
+
+        {/* Headline */}
+        <motion.h1
+          {...fadeUp(0.2)}
+          className="mt-8 max-w-[18ch] font-semibold leading-[0.92] tracking-[-0.04em] text-[clamp(48px,8.5vw,116px)]"
+        >
+          {t('hero.title')}{' '}
+          <em className="not-italic idira-shimmer">
+            {t('hero.titleAccent')}
+          </em>
+          <span className="text-idira-orange">.</span>
         </motion.h1>
 
-        <motion.p {...fadeUp(0.3)} className="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+        {/* Lede */}
+        <motion.p
+          {...fadeUp(0.3)}
+          className="mt-7 max-w-[60ch] text-[clamp(17px,1.4vw,20px)] leading-[1.55] text-slate-300"
+        >
           {t('hero.subtitle')}
         </motion.p>
 
-        <motion.div {...fadeUp(0.4)} className="flex flex-wrap gap-4 justify-center pt-4">
+        {/* CTAs — diagonal-cut primary + ghost on-deep */}
+        <motion.div {...fadeUp(0.4)} className="mt-10 flex flex-wrap gap-3.5">
           <a
             href="/springboot/dashboard"
             target="_blank"
             rel="noopener"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-spring text-white font-semibold hover:bg-spring/80 transition-colors"
+            className="idira-cta idira-cta-primary"
           >
-            {t('hero.cta_spring')} <ExternalLink size={14} />
+            <span>{t('hero.cta_spring')}</span>
+            <ArrowRight size={16} className="idira-cta-arrow" />
           </a>
           <a
             href="/dotnet/usuarios"
             target="_blank"
             rel="noopener"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-dotnet text-white font-semibold hover:bg-dotnet/80 transition-colors"
+            className="idira-cta idira-cta-on-deep"
           >
-            {t('hero.cta_dotnet')} <ExternalLink size={14} />
+            <span>{t('hero.cta_dotnet')}</span>
+            <ExternalLink size={14} className="idira-cta-arrow" />
           </a>
           <a
             href="/k8s-eso/"
             target="_blank"
             rel="noopener"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-eso text-white font-semibold hover:bg-eso/80 transition-colors"
+            className="idira-cta idira-cta-on-deep"
           >
-            {t('hero.cta_eso')} <ExternalLink size={14} />
+            <span>{t('hero.cta_eso')}</span>
+            <ExternalLink size={14} className="idira-cta-arrow" />
           </a>
         </motion.div>
 
-        <motion.a
-          {...fadeUp(0.6)}
-          href="#problem"
-          className="inline-flex flex-col items-center gap-2 text-slate-500 hover:text-conjur-cyan transition-colors mt-8"
+        {/* Logo / federated workloads strip */}
+        <motion.div
+          {...fadeUp(0.55)}
+          className="mt-20 pt-8 border-t border-white/10"
         >
-          <span className="text-sm">{t('hero.cta_explore')}</span>
-          <ArrowDown size={16} className="animate-bounce" />
+          <div className="text-[11.5px] font-mono uppercase tracking-[0.16em] text-slate-400 mb-5">
+            {t('hero.logoStripLabel')}
+          </div>
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-x-8 gap-y-4 items-center">
+            {[
+              'Spring Boot',
+              '.NET 8',
+              'GitHub Actions',
+              'ESO',
+              'Kubernetes',
+              'SPIFFE/SPIRE',
+            ].map(label => (
+              <div
+                key={label}
+                className="text-[15px] font-semibold tracking-[-0.01em] text-white/85"
+              >
+                {label}
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Stat strip (4-up) */}
+        <motion.div
+          {...fadeUp(0.65)}
+          className="mt-12 grid grid-cols-2 lg:grid-cols-4 border border-white/10 rounded-2xl overflow-hidden bg-white/[0.02] backdrop-blur-sm"
+        >
+          <StatCell value="04" unit={t('hero.stat1_unit')} label={t('hero.stat1_label')} />
+          <StatCell value="01" unit={t('hero.stat2_unit')} label={t('hero.stat2_label')} />
+          <StatCell value="00" unit={t('hero.stat3_unit')} label={t('hero.stat3_label')} accent />
+          <StatCell value="JWT" unit={t('hero.stat4_unit')} label={t('hero.stat4_label')} />
+        </motion.div>
+
+        {/* Scroll hint */}
+        <motion.a
+          {...fadeUp(0.8)}
+          href="#problem"
+          className="mt-16 inline-flex items-center gap-2 text-[12.5px] font-mono uppercase tracking-[0.1em] text-slate-400 hover:text-idira-cyan transition-colors"
+        >
+          {t('hero.cta_explore')}
+          <ArrowDown size={14} className="animate-bounce" aria-hidden="true" />
         </motion.a>
       </div>
-
-      {/* Floating tech badges */}
-      <div className="absolute bottom-12 left-6 hidden lg:flex flex-col gap-2 text-xs text-slate-600">
-        {['Spring Boot 3.5', '.NET 8', 'GitHub Actions'].map(label => (
-          <span key={label} className="badge bg-bg-card border-border text-slate-500">{label}</span>
-        ))}
-      </div>
-      <div className="absolute bottom-12 right-6 hidden lg:flex flex-col gap-2 text-xs text-slate-600">
-        {['ESO v2.1', 'Node.js 20', 'Conjur Cloud'].map(label => (
-          <span key={label} className="badge bg-bg-card border-border text-slate-500">{label}</span>
-        ))}
-      </div>
     </section>
+  )
+}
+
+function StatCell({
+  value,
+  unit,
+  label,
+  accent = false,
+}: {
+  value: string
+  unit: string
+  label: string
+  accent?: boolean
+}) {
+  return (
+    <div className="p-6 lg:p-7 border-r border-b last:border-r-0 [&:nth-child(2n)]:border-r-0 lg:[&:nth-child(2n)]:border-r lg:last:border-r-0 [&:nth-child(n+3)]:border-b-0 lg:[&]:border-b-0 border-white/10">
+      <div className="flex items-baseline gap-2.5 leading-none tabular-nums">
+        <span
+          className={`font-bold tracking-[-0.04em] text-[clamp(36px,4.6vw,56px)] ${
+            accent ? 'text-idira-orange' : 'text-white'
+          }`}
+        >
+          {value}
+        </span>
+        <span className="text-[13.5px] font-mono text-slate-400">{unit}</span>
+      </div>
+      <div className="mt-3 text-[13px] font-mono text-slate-400">{label}</div>
+    </div>
   )
 }
