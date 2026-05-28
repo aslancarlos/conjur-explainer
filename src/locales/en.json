@@ -34,14 +34,27 @@
     "policy_sub": "How Secrets Manager policy YAML is structured"
   },
   "hero": {
-    "eyebrow": "Palo Alto Networks | IDIRA · Secrets Manager · Kubernetes · ESO · DevSecOps",
+    "eyebrow": "Live · Production · LATAMLab Tenant",
     "title": "Secrets Management",
     "titleAccent": "in Action",
     "subtitle": "Four integration patterns. Zero hardcoded credentials. Spring Boot (direct JWT), .NET (Secrets Provider sidecar), GitHub Actions (OIDC), and a K8s-native ecommerce app using External Secrets Operator — all fetching credentials live from Palo Alto Networks | IDIRA Secrets Manager.",
     "cta_spring": "Spring Boot Demo",
     "cta_dotnet": ".NET Demo",
     "cta_eso": "ESO Shop Demo",
-    "cta_explore": "Explore patterns ↓"
+    "cta_explore": "Explore patterns ↓",
+    "logoStripLabel": "Federated workloads · same trust anchor",
+    "stat1_unit": "workloads",
+    "stat1_label": "Spring · .NET · Actions · ESO",
+    "stat2_unit": "secrets manager",
+    "stat2_label": "latamlab.secretsmgr.idira.cloud",
+    "stat3_unit": "at rest",
+    "stat3_label": "Secrets baked into images or repos",
+    "stat4_unit": "auth",
+    "stat4_label": "authn-jwt · federated trust",
+    "promise_eyebrow": "The promise",
+    "promise_claim_pre": "Static credentials in source, images, env vars or CI secrets.",
+    "promise_claim_mark": "Every workload talks to IDIRA with its own identity.",
+    "promise_detail": "This is not a roadmap or a vendor PDF. It is running infrastructure: four live apps you can hit right now, the policy that scopes them, the architecture that proves it, and the open-source code behind every piece. Built on the LATAMLab tenant. Federated to GitHub, AWS and Kubernetes."
   },
   "problem": {
     "badge": "The Problem",
@@ -827,5 +840,11 @@
     "deploy_issuer": "Issuer",
     "deploy_jwks": "JWKS URI",
     "deploy_namespace": "K8s namespace"
+  },
+  "promise": {
+    "eyebrow": "The promise",
+    "claim_pre": "Static credentials in source, images, env vars or CI secrets.",
+    "claim_mark": "Every workload talks to IDIRA with its own identity.",
+    "detail": "This is not a roadmap or a vendor PDF. It is running infrastructure: four live apps you can hit right now, the policy that scopes them, the architecture that proves it, and the open-source code behind every piece. Built on the LATAMLab tenant. Federated to GitHub, AWS and Kubernetes."
   }
 }
