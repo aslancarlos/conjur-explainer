@@ -5,6 +5,8 @@
 Interactive single-page application that explains and demonstrates **IDIRA Secrets Manager** machine identity across four real integration patterns — all live and accessible from the same page.
 
 > **2026-05-27 — rebrand & theme** · Visual language now follows [paloaltonetworks.com/idira](https://www.paloaltonetworks.com/idira): Onest typography + IBM Plex Mono, IDIRA palette (`#0067ff` blue / `#fa582d` orange / iridescent gradient), **dark + light theme** with user toggle in the nav (persists to `localStorage`, falls back to `prefers-color-scheme`). Skip-to-content link, visible focus rings, and `prefers-reduced-motion` support added (WCAG 2.4.1 / 2.3.3). See [`src/lib/useTheme.ts`](src/lib/useTheme.ts) and [`src/components/ThemeToggle.tsx`](src/components/ThemeToggle.tsx).
+> 
+> Full design + UX + theme docs: [`docs/IDIRA-REDESIGN.md`](docs/IDIRA-REDESIGN.md).
 
 Live at: `https://demo.minha.cloud/`
 
@@ -104,19 +106,26 @@ The SPA itself has no backend. All live status widgets call sibling services thr
 
 ## Design tokens
 
-Custom colors defined in `tailwind.config.js`, used throughout all components:
+After the 2026-05-27 IDIRA reskin (see [`docs/IDIRA-REDESIGN.md`](docs/IDIRA-REDESIGN.md)), surface colors are theme-aware CSS variables and the accents follow the IDIRA palette. Defined in `tailwind.config.js` + `src/index.css`:
 
-| Token | Hex | Usage |
-|---|---|---|
-| `conjur-red` | `#d92b3a` | CyberArk brand red |
-| `conjur-cyan` | `#00b4e0` | Conjur brand, primary highlights |
-| `conjur-gold` | `#f59e0b` | Accents, comparison table |
-| `spring` | `#6db33f` | Spring Boot section |
-| `dotnet` | `#7b5cf6` | .NET section |
-| `gh` | `#1f6feb` | GitHub Actions section |
-| `eso` | `#f97316` | ESO Shop section |
-| `bg-base` | `#050d1a` | Page background |
-| `bg-card` | `#0c1828` | Card backgrounds |
+| Token | Hex (current) | Was | Usage |
+|---|---|---|---|
+| `idira-blue`  | `#0067ff` | new | Primary CTA, links, focus ring |
+| `idira-orange`| `#fa582d` | new | Danger / warning / PANW signature |
+| `idira-magenta`| `#ff2d8a` | new | Hero gradient mid-stop |
+| `idira-cyan`  | `#00d4ff` | new | "Live" indicators, on-deep accents |
+| `idira-gold`  | `#ffb800` | new | Gradient tail |
+| `idira-deep`  | `#001236` | new | Hero / promise band background |
+| `conjur-red` *(legacy)* | `#fa582d` | `#d92b3a` | Re-pointed to IDIRA orange |
+| `conjur-cyan` *(legacy)* | `#00d4ff` | `#00b4e0` | Re-pointed to IDIRA cyan |
+| `conjur-gold` *(legacy)* | `#ffb800` | `#f59e0b` | Re-pointed to IDIRA gold |
+| `spring`      | `#2d8a3e` | `#6db33f` | Spring Boot section |
+| `dotnet`      | `#6048d6` | `#7b5cf6` | .NET section |
+| `gh`          | `#0067ff` | `#1f6feb` | GitHub Actions section |
+| `eso`         | `#fa582d` | `#f97316` | ESO Shop section |
+| `bg.base` / `bg-bg` | `var(--rgb-bg)` | static `#050d1a` | Page background (theme-aware) |
+| `bg.card` / `bg-surface` | `var(--rgb-surface)` | static `#0c1828` | Card backgrounds (theme-aware) |
+| `border` / `line`   | `var(--rgb-line)` | static `#1a3050` | Borders, dividers (theme-aware) |
 
 ---
 
