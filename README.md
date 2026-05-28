@@ -2,7 +2,9 @@
 
 [![build](https://github.com/aslancarlos/conjur-explainer/actions/workflows/build.yml/badge.svg)](https://github.com/aslancarlos/conjur-explainer/actions/workflows/build.yml) [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-Interactive single-page application that explains and demonstrates **CyberArk Conjur Cloud** machine identity and secrets management across four real integration patterns — all live and accessible from the same page.
+Interactive single-page application that explains and demonstrates **IDIRA Secrets Manager** machine identity across four real integration patterns — all live and accessible from the same page.
+
+> **2026-05-27 — rebrand & theme** · Visual language now follows [paloaltonetworks.com/idira](https://www.paloaltonetworks.com/idira): Onest typography + IBM Plex Mono, IDIRA palette (`#0067ff` blue / `#fa582d` orange / iridescent gradient), **dark + light theme** with user toggle in the nav (persists to `localStorage`, falls back to `prefers-color-scheme`). Skip-to-content link, visible focus rings, and `prefers-reduced-motion` support added (WCAG 2.4.1 / 2.3.3). See [`src/lib/useTheme.ts`](src/lib/useTheme.ts) and [`src/components/ThemeToggle.tsx`](src/components/ThemeToggle.tsx).
 
 Live at: `https://demo.minha.cloud/`
 
@@ -10,14 +12,14 @@ Live at: `https://demo.minha.cloud/`
 
 ## What this demonstrates
 
-Each section of the page maps to a running workload that authenticates to Conjur Cloud via JWT and retrieves database credentials at runtime. No secrets are hardcoded or baked into images.
+Each section of the page maps to a running workload that authenticates to IDIRA Secrets Manager via JWT and retrieves database credentials at runtime. No secrets are hardcoded or baked into images.
 
 | Pattern | Workload | Path |
 |---|---|---|
-| Spring Boot + Conjur SDK | Java app with `@Value` injection | `/springboot/dashboard` |
-| .NET + Conjur SDK | C# app with `IConfiguration` injection | `/dotnet/usuarios` |
+| Spring Boot + Secrets Manager SDK | Java app with `@Value` injection | `/springboot/dashboard` |
+| .NET + Secrets Manager SDK | C# app with `IConfiguration` injection | `/dotnet/usuarios` |
 | GitHub Actions + OIDC | CI/CD pipeline via `conjur-action` | External repo |
-| ESO + Conjur Cloud | Node.js app via External Secrets Operator | `/k8s-eso/` |
+| ESO + IDIRA | Node.js app via External Secrets Operator | `/k8s-eso/` |
 
 The page also links to live observability tools: Grafana, Kubernetes Dashboard, and the ESO Shop live dashboard.
 
