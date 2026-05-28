@@ -19,8 +19,8 @@ spec:
         - name: dockerhub-pull
       containers:
         - name: conjur-explainer
-          image: aslancarlos/conjur-explainer:latest
-          imagePullPolicy: Always
+          image: aslancarlos/conjur-explainer:sha-ba9945f
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
           resources:
