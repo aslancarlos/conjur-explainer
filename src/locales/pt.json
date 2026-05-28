@@ -31,7 +31,7 @@
     "jenkins": "Jenkins",
     "jenkins_sub": "Injeção de credenciais zero em pipelines CI/CD",
     "policy": "Políticas & Branches",
-    "policy_sub": "Como a política YAML do Conjur é estruturada"
+    "policy_sub": "Como a política YAML do Secrets Manager é estruturada"
   },
   "hero": {
     "eyebrow": "Palo Alto Networks | IDIRA · Secrets Manager · Kubernetes · ESO · DevSecOps",
@@ -183,7 +183,7 @@
       {
         "n": "4",
         "title": ".NET lê variáveis de ambiente — sem código do Secrets Manager",
-        "code": "// A aplicação .NET lê variáveis de ambiente padrão\nstring dbUser = Environment.GetEnvironmentVariable(\"DB_USER\");\nstring dbPass = Environment.GetEnvironmentVariable(\"DB_PASSWORD\");\nstring dbHost = Environment.GetEnvironmentVariable(\"DB_HOST\");\n// Só isso. Zero integração com Conjur no código da app.",
+        "code": "// A aplicação .NET lê variáveis de ambiente padrão\nstring dbUser = Environment.GetEnvironmentVariable(\"DB_USER\");\nstring dbPass = Environment.GetEnvironmentVariable(\"DB_PASSWORD\");\nstring dbHost = Environment.GetEnvironmentVariable(\"DB_HOST\");\n// Só isso. Zero integração com Secrets Manager no código da app.",
         "color": "cyan"
       }
     ],
@@ -225,13 +225,13 @@
       {
         "n": "2",
         "title": "Chamar a action do Secrets Manager",
-        "code": "- name: Buscar segredos do Conjur\n  uses: aslancarlos/workshop-action@main\n  with:\n    url: ${{ secrets.CONJUR_URL }}\n    authn_id: ${{ secrets.CONJUR_SERVICE_ID }}\n    secrets: >\n      data/vault/db/username|DB_USER;\n      data/vault/db/password|DB_PASS;\n      data/vault/db/address|DB_HOST",
+        "code": "- name: Buscar segredos do Secrets Manager\n  uses: aslancarlos/workshop-action@main\n  with:\n    url: ${{ secrets.CONJUR_URL }}\n    authn_id: ${{ secrets.CONJUR_SERVICE_ID }}\n    secrets: >\n      data/vault/db/username|DB_USER;\n      data/vault/db/password|DB_PASS;\n      data/vault/db/address|DB_HOST",
         "color": "gold"
       },
       {
         "n": "3",
         "title": "Policy do Secrets Manager valida identidade",
-        "code": "# O host Conjur precisa de anotações correspondentes:\nannotations:\n  authn-jwt/github/repository: aslancarlos/workshop-action\n  authn-jwt/github/workflow:   workshop-action\n# Qualquer outro repo ou workflow = acesso negado",
+        "code": "# O host Secrets Manager precisa de anotações correspondentes:\nannotations:\n  authn-jwt/github/repository: aslancarlos/workshop-action\n  authn-jwt/github/workflow:   workshop-action\n# Qualquer outro repo ou workflow = acesso negado",
         "color": "cyan"
       },
       {
@@ -335,13 +335,13 @@
       {
         "n": "2",
         "title": "ClusterSecretStore autentica com o Secrets Manager",
-        "code": "# ESO usa o JWT da ServiceAccount springboot-app\n# para autenticar via Conjur authn-jwt/eks-latam\nprovider:\n  conjur:\n    url: https://latamlab.secretsmgr.cyberark.cloud\n    auth:\n      jwt:\n        account: conjur\n        serviceID: eks-latam\n        serviceAccountRef:\n          name: springboot-app\n          namespace: conjur\n          audiences: [conjur]",
+        "code": "# ESO usa o JWT da ServiceAccount springboot-app\n# para autenticar via Secrets Manager authn-jwt/eks-latam\nprovider:\n  conjur:\n    url: https://latamlab.secretsmgr.cyberark.cloud\n    auth:\n      jwt:\n        account: conjur\n        serviceID: eks-latam\n        serviceAccountRef:\n          name: springboot-app\n          namespace: conjur\n          audiences: [conjur]",
         "color": "gold"
       },
       {
         "n": "3",
         "title": "K8s Secret criado — app lê variáveis de ambiente",
-        "code": "# ESO cria e mantém o Secret sincronizado\n# O deployment referencia o secret:\nenvFrom:\n  - secretRef:\n      name: eso-shop-db-creds\n# App lê DB_USER, DB_PASS, DB_HOST\n# como variáveis de ambiente normais — zero código Conjur",
+        "code": "# ESO cria e mantém o Secret sincronizado\n# O deployment referencia o secret:\nenvFrom:\n  - secretRef:\n      name: eso-shop-db-creds\n# App lê DB_USER, DB_PASS, DB_HOST\n# como variáveis de ambiente normais — zero código Secrets Manager",
         "color": "cyan"
       },
       {
@@ -579,10 +579,10 @@
   "dual": {
     "badge": "Como Funciona",
     "title": "Rotação de Credenciais Sem Downtime",
-    "subtitle": "Duas contas, uma sempre ativa. Uma animação passo a passo mostrando como o Dual Accounts da CyberArk garante que o Credential Provider sempre sirva uma credencial válida — mesmo durante a rotação de senhas.",
+    "subtitle": "Duas contas, uma sempre ativa. Uma animação passo a passo mostrando como o Dual Accounts da IDIRA garante que o Credential Provider sempre sirva uma credencial válida — mesmo durante a rotação de senhas.",
     "step_of": "Passo {{current}} de {{total}}",
     "keyboard_hint": "← → teclas de seta · Espaço para play/pause",
-    "node_vault": "CyberArk Vault",
+    "node_vault": "IDIRA Vault",
     "node_app": "Aplicação",
     "node_app_sub": "solicita credenciais",
     "node_cp": "Credential Provider",
@@ -661,12 +661,12 @@
     "key2_title": "Identidade Criptográfica",
     "key2_desc": "O JWT é assinado pela chave privada RSA do K8s API Server. O Secrets Manager verifica esta assinatura contra o JWKS público antes de confiar em qualquer claim. A identidade não pode ser forjada — apenas o cluster K8s real pode produzir uma assinatura válida.",
     "key3_title": "Policy como Código",
-    "key3_desc": "Cada mapeamento de claim para identidade é declarado em YAML de policy do Conjur e versionado. Anotações em recursos host definem exatamente quais namespace, ServiceAccount e labels de pod são obrigatórios. Altere a policy para conceder ou revogar acesso — sem rotação de credenciais."
+    "key3_desc": "Cada mapeamento de claim para identidade é declarado em YAML de policy do Secrets Manager e versionado. Anotações em recursos host definem exatamente quais namespace, ServiceAccount e labels de pod são obrigatórios. Altere a policy para conceder ou revogar acesso — sem rotação de credenciais."
   },
   "secretshub": {
     "badge": "Secrets Hub",
-    "title": "Como Funciona o CyberArk Secrets Hub",
-    "subtitle": "O Secrets Hub conecta o CyberArk Privilege Cloud com os armazenamentos nativos de segredos — AWS Secrets Manager, Azure Key Vault e GCP Secret Manager — para que os desenvolvedores continuem usando APIs nativas enquanto as equipes de segurança mantêm controle centralizado e rotação automática.",
+    "title": "Como Funciona o IDIRA Secrets Hub",
+    "subtitle": "O Secrets Hub conecta o IDIRA Privilege Cloud com os armazenamentos nativos de segredos — AWS Secrets Manager, Azure Key Vault e GCP Secret Manager — para que os desenvolvedores continuem usando APIs nativas enquanto as equipes de segurança mantêm controle centralizado e rotação automática.",
     "step_of": "Passo {{current}} de {{total}}",
     "keyboard_hint": "← → setas · Espaço para play/pause",
     "s1_title": "Secrets Hub — Visão Geral dos Quatro Atores",
@@ -680,41 +680,41 @@
     "s5_title": "Criar uma Sync Policy",
     "s5_desc": "Uma Sync Policy é a regra que vincula um PAM Safe (origem) a um ou mais target cloud secret stores. Você define: qual Safe sincronizar (o tipo de filtro é PAM_SAFE), quais target stores receber os segredos, e quais propriedades incluir (somente senha ou todas as propriedades). Uma política pode enviar para múltiplos targets simultaneamente. Políticas ficam ativas imediatamente e podem ser gerenciadas via UI, API ou provider Terraform.",
     "s6_title": "Sincronização Inicial — Segredos do PAM nos Cloud Stores",
-    "s6_desc": "O Secrets Hub lê os segredos do PAM Safe configurado e os escreve em cada target store definido na sync policy. Cada segredo sincronizado aparece no AWS SM, Azure KV e GCP SM marcado com 'Sourced by CyberArk'. A partir desse momento, desenvolvedores e workloads podem ler segredos do seu armazenamento nativo usando seus SDKs existentes — nada muda no código da aplicação.",
+    "s6_desc": "O Secrets Hub lê os segredos do PAM Safe configurado e os escreve em cada target store definido na sync policy. Cada segredo sincronizado aparece no AWS SM, Azure KV e GCP SM marcado com 'Sourced by IDIRA'. A partir desse momento, desenvolvedores e workloads podem ler segredos do seu armazenamento nativo usando seus SDKs existentes — nada muda no código da aplicação.",
     "s7_title": "CPM Rotaciona → Secrets Hub Re-Sincroniza Automaticamente",
     "s7_desc": "Quando o CPM rotaciona uma credencial no PAM (agendada ou sob demanda), o Secrets Hub detecta a mudança no próximo ciclo de sincronização. Lê o novo valor do segredo do PAM e envia a versão atualizada para todos os target stores. AWS SM, Azure KV e GCP SM recebem a credencial nova. Workloads que leem dos stores nativos automaticamente obtêm o valor rotacionado — sem reinicialização, sem redeploy.",
     "s8_title": "Desenvolvedores Leem dos Stores Nativos — Zero Mudanças",
-    "s8_desc": "Desenvolvedores e workloads usam as APIs nativas do cloud store exatamente como antes. Uma função Lambda chamando secretsmanager.get_secret_value(), um pod K8s lendo do Azure Key Vault via driver CSI, um serviço Cloud Run usando a API GCP Secret Manager — todos funcionam identicamente. Sem SDK do CyberArk, sem agente, sem proxy. Equipes de segurança ganham gestão centralizada e rotação; desenvolvedores ganham experiência nativa.",
+    "s8_desc": "Desenvolvedores e workloads usam as APIs nativas do cloud store exatamente como antes. Uma função Lambda chamando secretsmanager.get_secret_value(), um pod K8s lendo do Azure Key Vault via driver CSI, um serviço Cloud Run usando a API GCP Secret Manager — todos funcionam identicamente. Sem SDK do IDIRA, sem agente, sem proxy. Equipes de segurança ganham gestão centralizada e rotação; desenvolvedores ganham experiência nativa.",
     "key1_title": "Zero Fricção para Desenvolvedores",
     "key1_desc": "Desenvolvedores continuam usando as APIs nativas do AWS SM, Azure KV ou GCP SM — os mesmos SDKs, o mesmo código, os mesmos padrões de IAM. O Secrets Hub é invisível para eles. A adoção não exige mudanças na aplicação, novas dependências ou retreinamento.",
     "key2_title": "Fonte Única da Verdade",
-    "key2_desc": "Todos os segredos se originam e são rotacionados pelo CyberArk Privilege Cloud. O CPM aplica cronogramas de rotação, complexidade de senha e reconciliação. Cada acesso e rotação é registrado. Uma trilha de auditoria cobre segredos consumidos nos três provedores cloud simultaneamente.",
+    "key2_desc": "Todos os segredos se originam e são rotacionados pelo IDIRA Privilege Cloud. O CPM aplica cronogramas de rotação, complexidade de senha e reconciliação. Cada acesso e rotação é registrado. Uma trilha de auditoria cobre segredos consumidos nos três provedores cloud simultaneamente.",
     "key3_title": "Sincronização Multi-Cloud em Uma Política",
     "key3_desc": "Uma única sync policy pode enviar os segredos de um PAM Safe para o AWS SM, Azure KV e GCP SM simultaneamente. Quando o CPM rotaciona a credencial, os três cloud stores são atualizados no mesmo ciclo de sincronização. Sem scripts customizados por cloud, sem drift, sem segredos obsoletos em nenhum ambiente.",
     "arch_title": "Arquitetura em Resumo",
     "arch1_title": "Source Secret Store",
-    "arch1_desc": "CyberArk Privilege Cloud (PAM) ou PAM Self-Hosted. Segredos ficam em Safes. CPM gerencia rotação. Secrets Hub lê com membresia de menor privilégio.",
+    "arch1_desc": "IDIRA Privilege Cloud (PAM) ou PAM Self-Hosted. Segredos ficam em Safes. CPM gerencia rotação. Secrets Hub lê com membresia de menor privilégio.",
     "arch2_title": "Serviço Secrets Hub",
-    "arch2_desc": "Componente SaaS da CyberArk Identity Security Platform. Executa o loop de sincronização scan-diff-push-verify. Nenhum segredo é armazenado no próprio Secrets Hub.",
+    "arch2_desc": "Componente SaaS da IDIRA Identity Security Platform. Executa o loop de sincronização scan-diff-push-verify. Nenhum segredo é armazenado no próprio Secrets Hub.",
     "arch3_title": "Target Secret Stores",
-    "arch3_desc": "AWS Secrets Manager, Azure Key Vault, GCP Secret Manager ou HashiCorp Vault. A confiança é estabelecida via IAM nativo da cloud (sem credenciais armazenadas). Segredos sincronizados são marcados com 'Sourced by CyberArk'.",
+    "arch3_desc": "AWS Secrets Manager, Azure Key Vault, GCP Secret Manager ou HashiCorp Vault. A confiança é estabelecida via IAM nativo da cloud (sem credenciais armazenadas). Segredos sincronizados são marcados com 'Sourced by IDIRA'.",
     "arch4_title": "Policy Engine de Sincronização",
     "arch4_desc": "Políticas vinculam um PAM Safe (filtro: PAM_SAFE) a um ou mais targets. Configurável via UI, API REST ou provider Terraform. Suporte a deployments AWS multi-região e cross-account."
   },
   "jenkins": {
     "badge": "Integração Jenkins",
-    "title": "Como o Jenkins Busca Segredos do CyberArk",
-    "subtitle": "O Conjur Credentials Plugin permite que pipelines do Jenkins recuperem segredos do Secrets Manager em tempo de execução usando autenticação JWT — sem API keys no Jenkins, sem credenciais no Jenkinsfile, sem segredos no código-fonte.",
+    "title": "Como o Jenkins Busca Segredos do IDIRA",
+    "subtitle": "O Secrets Manager Credentials Plugin permite que pipelines do Jenkins recuperem segredos do Secrets Manager em tempo de execução usando autenticação JWT — sem API keys no Jenkins, sem credenciais no Jenkinsfile, sem segredos no código-fonte.",
     "step_of": "Passo {{current}} de {{total}}",
     "keyboard_hint": "← → setas · Espaço para play/pause",
     "s1_title": "Integração Jenkins — Visão Geral dos Cinco Componentes",
-    "s1_desc": "Cinco componentes trabalham juntos: o Jenkins Server executando pipelines CI/CD com o Conjur Credentials Plugin instalado, o JWKS Endpoint exposto pelo próprio Jenkins para verificação de chaves JWT, o Secrets Manager com seu webservice JWT Authenticator (authn-jwt/jenkins), e o Secrets Vault armazenando os valores reais dos segredos. Nenhuma credencial hardcoded existe em nenhum lugar deste fluxo.",
+    "s1_desc": "Cinco componentes trabalham juntos: o Jenkins Server executando pipelines CI/CD com o Secrets Manager Credentials Plugin instalado, o JWKS Endpoint exposto pelo próprio Jenkins para verificação de chaves JWT, o Secrets Manager com seu webservice JWT Authenticator (authn-jwt/jenkins), e o Secrets Vault armazenando os valores reais dos segredos. Nenhuma credencial hardcoded existe em nenhum lugar deste fluxo.",
     "s2_title": "Configuração Única pelos Admins",
-    "s2_desc": "Dois admins configuram a integração uma única vez. O admin do Jenkins instala o Conjur Credentials Plugin (v3.x, requer Jenkins 2.455+), depois em Manage Jenkins → System define a URL do Conjur, nome da conta e JWT Auth Webservice ID (authn-jwt/jenkins). O admin do Secrets Manager cria a política do autenticador JWT com as variáveis: jwks-uri (apontando para o endpoint JWKS do Jenkins), token-app-property, issuer, audience (cyberark-conjur), depois define identidades de host do pipeline com anotações (jenkins_pronoun: Pipeline, jenkins_full_name: Project1/pipeline) e concede acesso via blocos !permit.",
+    "s2_desc": "Dois admins configuram a integração uma única vez. O admin do Jenkins instala o Secrets Manager Credentials Plugin (v3.x, requer Jenkins 2.455+), depois em Manage Jenkins → System define a URL do Secrets Manager, nome da conta e JWT Auth Webservice ID (authn-jwt/jenkins). O admin do Secrets Manager cria a política do autenticador JWT com as variáveis: jwks-uri (apontando para o endpoint JWKS do Jenkins), token-app-property, issuer, audience (cyberark-conjur), depois define identidades de host do pipeline com anotações (jenkins_pronoun: Pipeline, jenkins_full_name: Project1/pipeline) e concede acesso via blocos !permit.",
     "s3_title": "Desenvolvedor Aciona o Pipeline",
-    "s3_desc": "Um desenvolvedor faz push de código ou aciona manualmente uma build do Jenkins. O Jenkinsfile está no controle de versão. Ele declara credenciais via withCredentials([conjurSecretCredential(credentialsId: 'DB_PWD', variable: 'DB_PASSWORD')]) — somente o ID da credencial do Jenkins aparece no código. O caminho real do segredo no Secrets Manager, a URL do Conjur e o valor do segredo estão completamente ausentes do Jenkinsfile.",
+    "s3_desc": "Um desenvolvedor faz push de código ou aciona manualmente uma build do Jenkins. O Jenkinsfile está no controle de versão. Ele declara credenciais via withCredentials([conjurSecretCredential(credentialsId: 'DB_PWD', variable: 'DB_PASSWORD')]) — somente o ID da credencial do Jenkins aparece no código. O caminho real do segredo no Secrets Manager, a URL do Secrets Manager e o valor do segredo estão completamente ausentes do Jenkinsfile.",
     "s4_title": "withCredentials Ativa o Plugin — JWT Gerado",
-    "s4_desc": "Quando a execução do pipeline chega ao bloco withCredentials, o Conjur Credentials Plugin é ativado. Ele gera um JWT de curta duração (válido apenas 2 minutos) assinado pela chave RSA privada do próprio Jenkins. O JWT contém: iss (URL do Jenkins), aud (cyberark-conjur), sub (jenkins_full_name do pipeline, ex: Project1/pipeline) e exp (agora + 120 segundos). Este JWT é a credencial de identidade do pipeline — não há API key para armazenar, rotacionar ou vazar.",
+    "s4_desc": "Quando a execução do pipeline chega ao bloco withCredentials, o Secrets Manager Credentials Plugin é ativado. Ele gera um JWT de curta duração (válido apenas 2 minutos) assinado pela chave RSA privada do próprio Jenkins. O JWT contém: iss (URL do Jenkins), aud (cyberark-conjur), sub (jenkins_full_name do pipeline, ex: Project1/pipeline) e exp (agora + 120 segundos). Este JWT é a credencial de identidade do pipeline — não há API key para armazenar, rotacionar ou vazar.",
     "s5_title": "Plugin → Secrets Manager + Verificação JWKS",
     "s5_desc": "O plugin envia o JWT via POST para o endpoint authn-jwt/jenkins do Secrets Manager. O Secrets Manager lê a variável de política jwks-uri e busca o JSON Web Key Set do endpoint JWKS do Jenkins (https://jenkins/jwtauth/conjur-jwk-set). Usando a chave pública RSA retornada, verifica criptograficamente a assinatura do JWT — confirmando que o token foi genuinamente emitido por esta instância Jenkins. Os claims padrão são então validados: exp (não expirado), iss (corresponde ao issuer configurado), aud (corresponde a cyberark-conjur).",
     "s6_title": "Identidade Resolvida — Verificação de Política — Acesso ao Vault",
@@ -724,25 +724,25 @@
     "s8_title": "Pipeline Executa — Todos os Segredos Mascarados nos Logs",
     "s8_desc": "Os passos do pipeline dentro do withCredentials executam com os valores reais dos segredos disponíveis como variáveis de ambiente. Comandos shell, scripts de deploy e suites de teste usam $DB_PASSWORD, $API_KEY normalmente. O Jenkins automaticamente intercepta toda saída de log e substitui cada ocorrência de um valor de segredo por ***. Quando o bloco withCredentials termina, todos os valores são limpos da memória.",
     "key1_title": "Zero Credenciais no Código",
-    "key1_desc": "Nenhuma API key, senha ou caminho de segredo aparece no Jenkinsfile ou na configuração do Jenkins. O código do pipeline referencia apenas IDs de credenciais do Jenkins (como 'DB_PWD'). As equipes de segurança controlam a política do Conjur independentemente dos desenvolvedores.",
+    "key1_desc": "Nenhuma API key, senha ou caminho de segredo aparece no Jenkinsfile ou na configuração do Jenkins. O código do pipeline referencia apenas IDs de credenciais do Jenkins (como 'DB_PWD'). As equipes de segurança controlam a política do Secrets Manager independentemente dos desenvolvedores.",
     "key2_title": "Identidade JWT de Curta Duração",
     "key2_desc": "Cada build se autentica usando um JWT de 2 minutos assinado pelo próprio Jenkins. Sem API key armazenada, sem credencial de longa duração, sem nada para rotacionar na identidade Jenkins. Se um token for interceptado, expira antes de poder ser reutilizado.",
     "key3_title": "Mascaramento Automático + Controle de Escopo",
     "key3_desc": "O Jenkins mascara automaticamente todos os valores de segredo nos logs de build. O bloco withCredentials é o limite de escopo — segredos disponíveis apenas dentro dele e limpos ao sair. Três níveis de credenciais (Global, Folder, Job) permitem segredos compartilhados entre equipes com controle de herança.",
     "arch_title": "Referência de Arquitetura",
-    "arch1_title": "Conjur Credentials Plugin",
+    "arch1_title": "Secrets Manager Credentials Plugin",
     "arch1_desc": "Instalado via Jenkins Plugin Manager. Conecta o Jenkins Credential Store ao Secrets Manager. Suporta autenticação JWT (sem chaves, recomendado) e API key. Funciona com Pipelines Declarativos, Scripted e projetos Freestyle.",
     "arch2_title": "Autenticação JWT",
     "arch2_desc": "Jenkins atua como seu próprio emissor de tokens OIDC. Cada build gera um JWT com escopo assinado pela chave privada do Jenkins. O Secrets Manager verifica a assinatura contra o endpoint JWKS público. Nenhum segredo é armazenado no Jenkins para habilitar essa autenticação.",
     "arch3_title": "Níveis de Herança de Credenciais",
-    "arch3_desc": "Três níveis: Global (visível para todos os jobs), Folder (compartilhado em uma pasta, herdado por subpastas), Job/Pipeline (específico do job). Cada nível mapeia para um host no Conjur com a anotação jenkins_pronoun: Global | Folder | Pipeline.",
+    "arch3_desc": "Três níveis: Global (visível para todos os jobs), Folder (compartilhado em uma pasta, herdado por subpastas), Job/Pipeline (específico do job). Cada nível mapeia para um host no Secrets Manager com a anotação jenkins_pronoun: Global | Folder | Pipeline.",
     "arch4_title": "Controle de Acesso Baseado em Política",
-    "arch4_desc": "Os blocos !permit da política do Conjur definem exatamente quais identidades de host de pipeline podem ler quais variáveis de segredo. Alterar o acesso (conceder ou revogar) é uma atualização de política — sem rotação de segredos, sem redistribuição de credenciais, efeito imediato."
+    "arch4_desc": "Os blocos !permit da política do Secrets Manager definem exatamente quais identidades de host de pipeline podem ler quais variáveis de segredo. Alterar o acesso (conceder ou revogar) é uma atualização de política — sem rotação de segredos, sem redistribuição de credenciais, efeito imediato."
   },
   "policy": {
     "badge": "Políticas & Branches",
-    "title": "Como a Política do Conjur é Estruturada",
-    "subtitle": "A política do Conjur é YAML carregado em uma árvore de branches. Cada !policy cria um namespace, recursos dentro dele recebem IDs totalmente qualificados, e roles + permits definem cada decisão de autorização. Esta animação percorre a estrutura, um conceito por vez.",
+    "title": "Como a Política do Secrets Manager é Estruturada",
+    "subtitle": "A política do Secrets Manager é YAML carregado em uma árvore de branches. Cada !policy cria um namespace, recursos dentro dele recebem IDs totalmente qualificados, e roles + permits definem cada decisão de autorização. Esta animação percorre a estrutura, um conceito por vez.",
     "step_of": "Passo {{current}} de {{total}}",
     "keyboard_hint": "← → setas · Espaço para play/pause",
     "tree_label": "árvore da política",
@@ -760,7 +760,7 @@
     "n_host": "!host",
     "n_host_sub": "app1-host",
     "s1_title": "Política como Árvore de Branches",
-    "s1_desc": "Política do Conjur é YAML puro — uma lista de statements. Quando carregada, esses statements montam uma árvore de branches enraizada num único container implícito: o próprio account. Todo segredo, toda identidade e toda regra de autorização vive em algum ponto dessa árvore, endereçável pelo seu caminho. A animação vai apresentar cada peça progressivamente: a raiz, branches criados por !policy, os recursos dentro deles e como !permit e !grant ligam identidades a segredos.",
+    "s1_desc": "Política do Secrets Manager é YAML puro — uma lista de statements. Quando carregada, esses statements montam uma árvore de branches enraizada num único container implícito: o próprio account. Todo segredo, toda identidade e toda regra de autorização vive em algum ponto dessa árvore, endereçável pelo seu caminho. A animação vai apresentar cada peça progressivamente: a raiz, branches criados por !policy, os recursos dentro deles e como !permit e !grant ligam identidades a segredos.",
     "s2_title": "A Raiz e o Primeiro !policy",
     "s2_desc": "Um statement !policy no topo do arquivo cria um branch de nível superior, abaixo da raiz. Ele tem três campos: id (o nome, ex.: prod), owner (uma role que controla o branch — normalmente um grupo como prod-admins) e body (a lista de statements que vivem dentro dele). O owner tem autoridade plena sobre tudo declarado dentro do branch e é a única role capaz de substituir ou apagar seu conteúdo.",
     "s3_title": "Aninhando Branches — !policy Dentro de !policy",

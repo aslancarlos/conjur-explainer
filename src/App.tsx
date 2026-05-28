@@ -25,10 +25,10 @@ function ScrollToTop() {
 
 function Layout() {
   return (
-    <div className="min-h-screen bg-bg-base text-slate-200">
+    <div className="min-h-screen bg-bg text-text">
       <NavBar />
       <ScrollToTop />
-      <main className="pt-14">
+      <main id="main" className="pt-14">
         <Outlet />
       </main>
       <Footer />

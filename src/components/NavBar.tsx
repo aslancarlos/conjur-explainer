@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Shield, ChevronDown, Menu, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import ThemeToggle from './ThemeToggle'
 
 const LANGS = ['en', 'pt', 'es'] as const
 
@@ -191,8 +192,10 @@ export default function NavBar() {
           </div>
         </div>
 
-        {/* Right side: lang switcher + mobile toggle */}
+        {/* Right side: theme toggle + lang switcher + mobile toggle */}
         <div className="flex items-center gap-2">
+          <ThemeToggle />
+
           <div className="hidden sm:flex items-center gap-1">
             {LANGS.map(lang => (
               <button
