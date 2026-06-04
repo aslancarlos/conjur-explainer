@@ -1,21 +1,27 @@
 import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import NavBar from './components/NavBar'
 import Footer from './components/Footer'
+import Loading from './components/Loading'
+import PageTransition from './components/PageTransition'
+// Home is the most-visited route — keep it eager so the landing paints instantly.
 import HomePage from './pages/HomePage'
-import SpringBootSection from './components/SpringBootSection'
-import DotNetSection from './components/DotNetSection'
-import GitHubActionsSection from './components/GitHubActionsSection'
-import ESOShopSection from './components/ESOShopSection'
-import IntegrationFlow from './components/IntegrationFlow'
-import ComparisonTable from './components/ComparisonTable'
-import LiveToolsSection from './components/LiveToolsSection'
-import DualAccountsPage from './pages/DualAccountsPage'
-import JwtPage from './pages/JwtPage'
-import JwtValidatorPage from './pages/JwtValidatorPage'
-import SecretsHubPage from './pages/SecretsHubPage'
-import JenkinsPage from './pages/JenkinsPage'
-import PolicyPage from './pages/PolicyPage'
+
+// Every other route is code-split: its JS chunk is fetched on demand, so the
+// initial download no longer carries all 14 pages.
+const SpringBootSection = lazy(() => import('./components/SpringBootSection'))
+const DotNetSection = lazy(() => import('./components/DotNetSection'))
+const GitHubActionsSection = lazy(() => import('./components/GitHubActionsSection'))
+const ESOShopSection = lazy(() => import('./components/ESOShopSection'))
+const IntegrationFlow = lazy(() => import('./components/IntegrationFlow'))
+const ComparisonTable = lazy(() => import('./components/ComparisonTable'))
+const LiveToolsSection = lazy(() => import('./components/LiveToolsSection'))
+const DualAccountsPage = lazy(() => import('./pages/DualAccountsPage'))
+const JwtPage = lazy(() => import('./pages/JwtPage'))
+const JwtValidatorPage = lazy(() => import('./pages/JwtValidatorPage'))
+const SecretsHubPage = lazy(() => import('./pages/SecretsHubPage'))
+const JenkinsPage = lazy(() => import('./pages/JenkinsPage'))
+const PolicyPage = lazy(() => import('./pages/PolicyPage'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -29,7 +35,11 @@ function Layout() {
       <NavBar />
       <ScrollToTop />
       <main id="main" className="pt-14">
-        <Outlet />
+        <Suspense fallback={<Loading />}>
+          <PageTransition>
+            <Outlet />
+          </PageTransition>
+        </Suspense>
       </main>
       <Footer />
     </div>
@@ -48,13 +58,13 @@ export default function App() {
           <Route path="/eso-shop"       element={<ESOShopSection />} />
           <Route path="/flow"           element={<IntegrationFlow />} />
           <Route path="/compare"        element={<ComparisonTable />} />
-          <Route path="/tools"           element={<LiveToolsSection />} />
+          <Route path="/tools"          element={<LiveToolsSection />} />
           <Route path="/dualaccounts"   element={<DualAccountsPage />} />
           <Route path="/jwt"            element={<JwtPage />} />
           <Route path="/jwt-validator"  element={<JwtValidatorPage />} />
-          <Route path="/secretshub"    element={<SecretsHubPage />} />
-          <Route path="/jenkins"       element={<JenkinsPage />} />
-          <Route path="/policy"        element={<PolicyPage />} />
+          <Route path="/secretshub"     element={<SecretsHubPage />} />
+          <Route path="/jenkins"        element={<JenkinsPage />} />
+          <Route path="/policy"         element={<PolicyPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
