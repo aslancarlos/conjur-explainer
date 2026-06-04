@@ -12,9 +12,13 @@ export default function Hero() {
   const { t } = useTranslation()
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-20 pb-16 overflow-hidden">
-      {/* Background glow */}
+    <section
+      className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-20 pb-16 overflow-hidden"
+      style={{ background: 'linear-gradient(180deg, #173EB8 7.81%, #061D63 83.85%)' }}
+    >
+      {/* Idira brand glow + subtle workload accents over the hero gradient */}
       <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(50% 55% at 80% 6%, rgba(38,91,255,.45), transparent 60%), radial-gradient(40% 45% at 8% 108%, rgba(38,91,255,.30), transparent 60%)' }} />
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-conjur-cyan/5 rounded-full blur-3xl" />
         <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-spring/5 rounded-full blur-3xl" />
         <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-dotnet/5 rounded-full blur-3xl" />
@@ -33,7 +37,7 @@ export default function Hero() {
           </span>
         </motion.h1>
 
-        <motion.p {...fadeUp(0.3)} className="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+        <motion.p {...fadeUp(0.3)} className="text-lg text-slate-200 max-w-2xl mx-auto leading-relaxed">
           {t('hero.subtitle')}
         </motion.p>
 
