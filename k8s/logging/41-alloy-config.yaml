@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alloy-config
+  namespace: logging
+data:
+  config.alloy: |
+    // ── Pod log discovery ──────────────────────────────────────────
+    discovery.kubernetes "pods" {
+      role = "pod"
+    }
+
+    // Only keep pods scheduled to THIS node (the DaemonSet pod's host).
+    discovery.relabel "pods" {
+      targets = discovery.kubernetes.pods.targets
+
+      rule {
+        source_labels = ["__meta_kubernetes_pod_node_name"]
+        action        = "keep"
+        regex         = sys.env("NODE_NAME")
+      }
+
+      rule {
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "namespace"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_pod_name"]
+        target_label  = "pod"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_pod_container_name"]
+        target_label  = "container"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+        target_label  = "app"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_pod_label_app"]
+        target_label  = "app_label"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_pod_node_name"]
+        target_label  = "node"
+      }
+    }
+
+    // Read container logs straight from the kubelet (via SA token).
+    loki.source.kubernetes "pods" {
+      targets    = discovery.relabel.pods.output
+      forward_to = [loki.write.local.receiver]
+    }
+
+    // ── Cluster events ─────────────────────────────────────────────
+    loki.source.kubernetes_events "events" {
+      job_name   = "kubernetes-events"
+      log_format = "logfmt"
+      forward_to = [loki.write.local.receiver]
+    }
+
+    // ── Ship to Loki ───────────────────────────────────────────────
+    loki.write "local" {
+      endpoint {
+        url = "http://loki.logging.svc.cluster.local:3100/loki/api/v1/push"
+      }
+      external_labels = {
+        cluster = "latam",
+        source  = "eks",
+      }
+    }

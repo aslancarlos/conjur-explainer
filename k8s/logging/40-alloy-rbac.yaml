@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: alloy
+  namespace: logging
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: alloy
+rules:
+  # Discovery (read-only) for loki.source.kubernetes / discovery.kubernetes.
+  # `nodes/proxy` was dropped (privilege-escalation surface) and `configmaps`
+  # was dropped (Alloy gets its config from a mounted volume, not the API).
+  - apiGroups: [""]
+    resources:
+      - nodes
+      - nodes/metrics
+      - services
+      - endpoints
+      - pods
+      - namespaces
+      - events
+    verbs: ["get", "list", "watch"]
+  # Reading container logs via the apiserver pod-log subresource.
+  - apiGroups: [""]
+    resources:
+      - pods/log
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: alloy
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: alloy
+subjects:
+  - kind: ServiceAccount
+    name: alloy
+    namespace: logging
