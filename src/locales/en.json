@@ -574,7 +574,10 @@
     "esoshop_desc": "Node.js ecommerce app using External Secrets Operator to sync Secrets Manager credentials into Kubernetes Secrets.",
     "controller_title": "App Controller",
     "controller_badge": "Cost Control",
-    "controller_desc": "Start and stop Kubernetes deployments across namespaces to reduce cluster costs when apps are not in use."
+    "controller_desc": "Start and stop Kubernetes deployments across namespaces to reduce cluster costs when apps are not in use.",
+    "swa_title": "SWA → AWS S3",
+    "swa_badge": "New · Machine Identity",
+    "swa_desc": "Interactive, animated walkthrough of Secure Workload Access reaching AWS with no static keys: a short-lived JWT-SVID is swapped via sts:AssumeRoleWithWebIdentity to list an S3 bucket. Step through the whole flow."
   },
   "dual": {
     "badge": "How It Works",

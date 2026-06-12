@@ -1,7 +1,7 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ExternalLink, LayoutDashboard, ShoppingCart, BarChart2, Leaf, Code2, Monitor, Power } from 'lucide-react'
+import { ExternalLink, LayoutDashboard, ShoppingCart, BarChart2, Leaf, Code2, Monitor, Power, KeyRound } from 'lucide-react'
 
 interface Tool {
   icon: React.ElementType
@@ -27,6 +27,18 @@ const TOOLS: Tool[] = [
     descKey: 'livetools.k8s_desc',
     badgeKey: 'livetools.k8s_badge',
     href: '/dashboard/',
+    ctaKey: 'livetools.open',
+  },
+  {
+    icon: KeyRound,
+    color: 'text-eso',
+    border: 'border-eso/30',
+    bg: 'bg-eso/5',
+    dot: 'bg-eso',
+    titleKey: 'livetools.swa_title',
+    descKey: 'livetools.swa_desc',
+    badgeKey: 'livetools.swa_badge',
+    href: '/swa-s3',
     ctaKey: 'livetools.open',
   },
   {

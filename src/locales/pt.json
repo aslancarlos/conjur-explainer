@@ -574,7 +574,10 @@
     "esoshop_desc": "App Node.js de e-commerce usando External Secrets Operator para sincronizar credenciais do Secrets Manager em K8s Secrets.",
     "controller_title": "App Controller",
     "controller_badge": "Controle de Custos",
-    "controller_desc": "Inicie e pare deployments Kubernetes em múltiplos namespaces para reduzir custos do cluster quando os apps não estão em uso."
+    "controller_desc": "Inicie e pare deployments Kubernetes em múltiplos namespaces para reduzir custos do cluster quando os apps não estão em uso.",
+    "swa_title": "SWA → AWS S3",
+    "swa_badge": "Novo · Machine Identity",
+    "swa_desc": "Explicador interativo e animado do Secure Workload Access acessando a AWS sem chaves estáticas: um JWT-SVID efêmero é trocado via sts:AssumeRoleWithWebIdentity para listar um bucket S3. Percorra todo o fluxo, passo a passo."
   },
   "dual": {
     "badge": "Como Funciona",
