@@ -17,6 +17,8 @@
     "compare_sub": "Comparação de 4 padrões",
     "livetools": "Dashboards ao Vivo",
     "livetools_sub": "Grafana, K8s, monitores de app",
+    "swa": "SWA → AWS S3",
+    "swa_sub": "SPIFFE/SVID → STS, sem chaves estáticas",
     "controller": "App Controller",
     "controller_sub": "Iniciar / parar deployments",
     "jwtvalidator": "JWT Validator API",

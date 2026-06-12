@@ -32,6 +32,7 @@ const EXAMPLES: DropItem[] = [
 ]
 
 const TOOLS: DropItem[] = [
+  { to: '/swa-s3',       href: '/swa-s3', labelKey: 'nav.swa', subKey: 'nav.swa_sub', color: 'text-eso' },
   { to: '/flow',         labelKey: 'nav.flow',         subKey: 'nav.flow_sub'         },
   { to: '/compare',      labelKey: 'nav.compare',      subKey: 'nav.compare_sub'      },
   { to: '/tools',        labelKey: 'nav.livetools',    subKey: 'nav.livetools_sub'    },

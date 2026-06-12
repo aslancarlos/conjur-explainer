@@ -17,6 +17,8 @@
     "compare_sub": "4-pattern feature comparison",
     "livetools": "Live Dashboards",
     "livetools_sub": "Grafana, K8s, app monitors",
+    "swa": "SWA → AWS S3",
+    "swa_sub": "SPIFFE/SVID → STS, no static keys",
     "controller": "App Controller",
     "controller_sub": "Start / stop deployments",
     "jwtvalidator": "JWT Validator API",
