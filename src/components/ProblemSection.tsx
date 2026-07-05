@@ -48,8 +48,8 @@ export default function ProblemSection() {
                   <div className="w-10 h-10 rounded-xl bg-conjur-red/10 flex items-center justify-center">
                     <Icon size={18} className="text-conjur-red" />
                   </div>
-                  <h3 className="font-semibold text-white">{item.title}</h3>
-                  <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
+                  <h3 className="font-semibold text-text">{item.title}</h3>
+                  <p className="text-sm text-text-muted leading-relaxed">{item.desc}</p>
                 </motion.div>
               )
             })}
@@ -71,8 +71,8 @@ export default function ProblemSection() {
               <span className="badge bg-conjur-cyan/10 text-conjur-cyan border border-conjur-cyan/20 text-xs">
                 {t('problem.solution_badge')}
               </span>
-              <h3 className="text-xl font-bold text-white">{t('problem.solution_title')}</h3>
-              <p className="text-slate-400 leading-relaxed max-w-2xl">{t('problem.solution_desc')}</p>
+              <h3 className="text-xl font-bold text-text">{t('problem.solution_title')}</h3>
+              <p className="text-text-muted leading-relaxed max-w-2xl">{t('problem.solution_desc')}</p>
             </div>
           </div>
         </motion.div>

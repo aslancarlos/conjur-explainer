@@ -62,14 +62,14 @@ export default function ESOShopSection() {
         >
           <div className="flex items-center gap-3">
             <span className="badge bg-eso/10 text-eso border border-eso/20">{t('esoshop.badge')}</span>
-            <span className="badge bg-bg-card border-border text-slate-400">{t('esoshop.label')}</span>
+            <span className="badge bg-bg-card border-border text-text-muted">{t('esoshop.label')}</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold flex items-center gap-3">
             <ShoppingCart size={32} className="text-eso" />
             {t('esoshop.title')}
             <span className="text-eso">{t('esoshop.titleAccent')}</span>
           </h2>
-          <p className="text-slate-400 leading-relaxed max-w-2xl">{t('esoshop.desc')}</p>
+          <p className="text-text-muted leading-relaxed max-w-2xl">{t('esoshop.desc')}</p>
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-8">
@@ -89,10 +89,10 @@ export default function ESOShopSection() {
                       <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold font-mono ${cls}`}>
                         {step.n}
                       </span>
-                      <span className="font-semibold text-white text-sm">{step.title}</span>
+                      <span className="font-semibold text-text text-sm">{step.title}</span>
                     </div>
                     <pre className="code-block text-xs leading-relaxed overflow-x-auto whitespace-pre-wrap">
-                      <code className="text-slate-300">{step.code}</code>
+                      <code className="text-text-2">{step.code}</code>
                     </pre>
                   </div>
                   {i < steps.length - 1 && <div className="step-connector" />}
@@ -119,13 +119,14 @@ export default function ESOShopSection() {
                 <button
                   onClick={fetchHealth}
                   disabled={loading}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-eso hover:bg-eso/10 transition-colors"
+                  aria-label="Refresh"
+                  className="p-1.5 rounded-lg text-text-muted hover:text-eso hover:bg-eso/10 transition-colors"
                 >
-                  <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+                  <RefreshCw size={14} aria-hidden="true" className={loading ? 'animate-spin' : ''} />
                 </button>
               </div>
 
-              <h4 className="font-semibold text-white">{t('esoshop.live_title')}</h4>
+              <h4 className="font-semibold text-text">{t('esoshop.live_title')}</h4>
 
               {error && (
                 <p className="text-xs text-conjur-red bg-conjur-red/10 rounded-lg px-3 py-2">{error}</p>
@@ -147,13 +148,13 @@ export default function ESOShopSection() {
                 </div>
               )}
               {!data && !error && loading && (
-                <div className="text-xs text-slate-500 animate-pulse">fetching /k8s-eso/health…</div>
+                <div className="text-xs text-text-muted animate-pulse">fetching /k8s-eso/health…</div>
               )}
-              <p className="text-xs text-slate-500">{t('esoshop.live_note')}</p>
+              <p className="text-xs text-text-muted">{t('esoshop.live_note')}</p>
             </motion.div>
 
             {/* Features */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {features.map((f, i) => (
                 <motion.div
                   key={i}
@@ -161,8 +162,8 @@ export default function ESOShopSection() {
                   transition={{ duration: 0.4, delay: 0.5 + i * 0.08 }}
                   className="section-card space-y-1"
                 >
-                  <p className="text-sm font-semibold text-white">{f.title}</p>
-                  <p className="text-xs text-slate-400 leading-relaxed">{f.desc}</p>
+                  <p className="text-sm font-semibold text-text">{f.title}</p>
+                  <p className="text-xs text-text-muted leading-relaxed">{f.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -212,8 +213,8 @@ export default function ESOShopSection() {
               {t('esoshop.operator_badge')}
             </span>
           </div>
-          <h3 className="text-lg font-bold text-white">{t('esoshop.operator_title')}</h3>
-          <p className="text-sm text-slate-400 leading-relaxed max-w-3xl">{t('esoshop.operator_desc')}</p>
+          <h3 className="text-lg font-bold text-text">{t('esoshop.operator_title')}</h3>
+          <p className="text-sm text-text-muted leading-relaxed max-w-3xl">{t('esoshop.operator_desc')}</p>
           <div className="grid sm:grid-cols-3 gap-4 pt-2">
             {(t('esoshop.operator_steps', { returnObjects: true }) as Array<{ n: string; title: string; desc: string }>).map((s, i) => (
               <div key={i} className="space-y-1">
@@ -221,9 +222,9 @@ export default function ESOShopSection() {
                   <span className="w-6 h-6 rounded bg-conjur-gold/10 border border-conjur-gold/20 flex items-center justify-center text-xs font-bold text-conjur-gold">
                     {s.n}
                   </span>
-                  <span className="text-sm font-semibold text-white">{s.title}</span>
+                  <span className="text-sm font-semibold text-text">{s.title}</span>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed pl-8">{s.desc}</p>
+                <p className="text-xs text-text-muted leading-relaxed pl-8">{s.desc}</p>
               </div>
             ))}
           </div>

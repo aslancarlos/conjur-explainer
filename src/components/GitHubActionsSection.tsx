@@ -38,14 +38,14 @@ export default function GitHubActionsSection() {
         >
           <div className="flex items-center gap-3">
             <span className="badge bg-gh/10 text-gh border border-gh/20">{t('gha.badge')}</span>
-            <span className="badge bg-bg-card border-border text-slate-400">{t('gha.label')}</span>
+            <span className="badge bg-bg-card border-border text-text-muted">{t('gha.label')}</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold flex items-center gap-3">
             <Github size={32} className="text-gh" />
             {t('gha.title')}
             <span className="text-gh">{t('gha.titleAccent')}</span>
           </h2>
-          <p className="text-slate-400 leading-relaxed max-w-2xl">{t('gha.desc')}</p>
+          <p className="text-text-muted leading-relaxed max-w-2xl">{t('gha.desc')}</p>
         </motion.div>
 
         {/* Zero-credential highlight */}
@@ -56,8 +56,8 @@ export default function GitHubActionsSection() {
         >
           <p className="text-center text-2xl font-bold">
             <span className="text-gh">Zero credentials stored</span>{' '}
-            <span className="text-slate-400 font-normal text-lg">in the runner, repository, or pipeline.</span>{' '}
-            <span className="text-white">GitHub's identity IS the credential.</span>
+            <span className="text-text-muted font-normal text-lg">in the runner, repository, or pipeline.</span>{' '}
+            <span className="text-text">GitHub's identity IS the credential.</span>
           </p>
         </motion.div>
 
@@ -80,10 +80,10 @@ export default function GitHubActionsSection() {
                       <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold font-mono ${cls}`}>
                         {step.n}
                       </span>
-                      <span className="font-semibold text-white text-sm">{step.title}</span>
+                      <span className="font-semibold text-text text-sm">{step.title}</span>
                     </div>
                     <pre className="code-block text-xs leading-relaxed overflow-x-auto whitespace-pre-wrap">
-                      <code className="text-slate-300">{step.code}</code>
+                      <code className="text-text-2">{step.code}</code>
                     </pre>
                   </div>
                   {i < steps.length - 1 && <div className="step-connector" />}
@@ -101,7 +101,7 @@ export default function GitHubActionsSection() {
               transition={{ duration: 0.5, delay: 0.4 }}
               className="section-card border-gh/20 space-y-4"
             >
-              <h4 className="font-semibold text-white text-sm flex items-center gap-2">
+              <h4 className="font-semibold text-text text-sm flex items-center gap-2">
                 <GitBranch size={14} className="text-gh" />
                 {t('gha.flow_title')}
               </h4>
@@ -118,10 +118,10 @@ export default function GitHubActionsSection() {
                     <div className="flex items-center gap-2.5">
                       <div className={`w-2 h-2 rounded-full ${item.dot} flex-shrink-0`} />
                       <span className={`text-xs font-semibold ${item.color}`}>{item.label}</span>
-                      <span className="text-xs text-slate-500">{item.sub}</span>
+                      <span className="text-xs text-text-muted">{item.sub}</span>
                     </div>
                     {i < 4 && (
-                      <div className="ml-[3px] w-px h-4 border-l border-dashed border-slate-700" />
+                      <div className="ml-[3px] w-px h-4 border-l border-dashed border-border" />
                     )}
                   </div>
                 ))}
@@ -137,7 +137,7 @@ export default function GitHubActionsSection() {
             </motion.div>
 
             {/* Features */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {features.map((f, i) => (
                 <motion.div
                   key={i}
@@ -145,8 +145,8 @@ export default function GitHubActionsSection() {
                   transition={{ duration: 0.4, delay: 1.0 + i * 0.08 }}
                   className="section-card space-y-1"
                 >
-                  <p className="text-sm font-semibold text-white">{f.title}</p>
-                  <p className="text-xs text-slate-400 leading-relaxed">{f.desc}</p>
+                  <p className="text-sm font-semibold text-text">{f.title}</p>
+                  <p className="text-xs text-text-muted leading-relaxed">{f.desc}</p>
                 </motion.div>
               ))}
             </div>

@@ -54,9 +54,14 @@ export default function JenkinsPage() {
 
   useEffect(() => {
     if (!playing) return
-    const id = setInterval(next, 2800)
+    const id = setInterval(() => {
+      setStep(s => {
+        if (s >= total - 1) { setPlaying(false); return s }
+        return s + 1
+      })
+    }, 2800)
     return () => clearInterval(id)
-  }, [playing, next])
+  }, [playing, total])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -80,8 +85,8 @@ export default function JenkinsPage() {
       {/* Header */}
       <div className="w-full max-w-4xl text-center mb-10">
         <span className="badge mb-4">{t('jenkins.badge')}</span>
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">{t('jenkins.title')}</h1>
-        <p className="text-slate-400 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+        <h1 className="text-3xl md:text-4xl font-bold text-text mb-4">{t('jenkins.title')}</h1>
+        <p className="text-text-muted text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
           {t('jenkins.subtitle')}
         </p>
       </div>
@@ -92,12 +97,13 @@ export default function JenkinsPage() {
           <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
           <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
           <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
-          <span className="ml-2 text-xs text-slate-500 font-mono">
+          <span className="ml-2 text-xs text-text-muted font-mono">
             jenkins · conjur-credentials-plugin · step {step + 1}/{total}
           </span>
         </div>
 
-        <svg viewBox="0 0 880 450" className="w-full h-auto select-none" style={{ fontFamily: 'ui-monospace, monospace' }}>
+        <div className="overflow-x-auto rounded-xl border border-border bg-[#050d1a] p-4">
+        <svg viewBox="0 0 880 450" className="h-auto select-none" role="img" aria-label="Jenkins architecture diagram" style={{ fontFamily: 'ui-monospace, monospace', minWidth: 640, width: '100%' }}>
           <defs>
             {Object.entries(CK).map(([k, v]) => (
               <marker key={k} id={`arr-${k}`} viewBox="0 0 10 10" refX="9" refY="5"
@@ -291,48 +297,49 @@ export default function JenkinsPage() {
             </g>
           ))}
         </svg>
+        </div>
       </div>
 
       {/* Step description */}
       <div className="w-full max-w-5xl mt-6">
         <div className="bg-bg-card border border-border rounded-xl p-5 min-h-[110px]">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
+            <span className="text-[10px] font-mono text-text-muted uppercase tracking-widest">
               {t('jenkins.step_of', { current: step + 1, total })}
             </span>
-            <span className="text-[10px] font-mono text-slate-600">{t('jenkins.keyboard_hint')}</span>
+            <span className="text-[10px] font-mono text-text-muted">{t('jenkins.keyboard_hint')}</span>
           </div>
           <AnimatePresence mode="wait">
             <motion.div key={step}
               initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.2 }}>
-              <p className="text-sm font-semibold text-white mb-1">{t(`jenkins.s${step + 1}_title`)}</p>
-              <p className="text-sm text-slate-400 leading-relaxed">{t(`jenkins.s${step + 1}_desc`)}</p>
+              <p className="text-sm font-semibold text-text mb-1">{t(`jenkins.s${step + 1}_title`)}</p>
+              <p className="text-sm text-text-muted leading-relaxed">{t(`jenkins.s${step + 1}_desc`)}</p>
             </motion.div>
           </AnimatePresence>
         </div>
 
         {/* Controls */}
         <div className="flex items-center justify-center gap-3 mt-4">
-          <button onClick={prev}
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
-            <ChevronLeft size={18} />
+          <button onClick={prev} aria-label="Previous step"
+            className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-bg-muted transition-colors">
+            <ChevronLeft size={18} aria-hidden="true" />
           </button>
           <div className="flex gap-1.5">
             {STEPS.map((_, i) => (
-              <button key={i} onClick={() => setStep(i)}
+              <button key={i} onClick={() => setStep(i)} aria-label={`Go to step ${i + 1}`}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
                   i === step ? 'w-6 bg-purple-400' : 'w-1.5 bg-slate-700 hover:bg-slate-500'
                 }`} />
             ))}
           </div>
-          <button onClick={() => setPlaying(p => !p)}
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
-            {playing ? <Pause size={18} /> : <Play size={18} />}
+          <button onClick={() => setPlaying(p => !p)} aria-label={playing ? 'Pause' : 'Play'}
+            className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-bg-muted transition-colors">
+            {playing ? <Pause size={18} aria-hidden="true" /> : <Play size={18} aria-hidden="true" />}
           </button>
-          <button onClick={next}
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
-            <ChevronRight size={18} />
+          <button onClick={next} aria-label="Next step"
+            className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-bg-muted transition-colors">
+            <ChevronRight size={18} aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -341,15 +348,15 @@ export default function JenkinsPage() {
       <div className="w-full max-w-5xl mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
         {[1, 2, 3].map(n => (
           <div key={n} className="section-card">
-            <p className="text-sm font-semibold text-white mb-2">{t(`jenkins.key${n}_title`)}</p>
-            <p className="text-xs text-slate-400 leading-relaxed">{t(`jenkins.key${n}_desc`)}</p>
+            <p className="text-sm font-semibold text-text mb-2">{t(`jenkins.key${n}_title`)}</p>
+            <p className="text-xs text-text-muted leading-relaxed">{t(`jenkins.key${n}_desc`)}</p>
           </div>
         ))}
       </div>
 
       {/* Architecture reference */}
       <div className="w-full max-w-5xl mt-6 bg-bg-card border border-border rounded-xl p-5">
-        <p className="text-xs font-semibold text-slate-300 mb-3 uppercase tracking-widest font-mono">
+        <p className="text-xs font-semibold text-text-2 mb-3 uppercase tracking-widest font-mono">
           {t('jenkins.arch_title')}
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -359,8 +366,8 @@ export default function JenkinsPage() {
                 {String(n).padStart(2, '0')}
               </span>
               <div>
-                <p className="text-xs font-semibold text-slate-200">{t(`jenkins.arch${n}_title`)}</p>
-                <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">{t(`jenkins.arch${n}_desc`)}</p>
+                <p className="text-xs font-semibold text-text">{t(`jenkins.arch${n}_title`)}</p>
+                <p className="text-xs text-text-muted mt-0.5 leading-relaxed">{t(`jenkins.arch${n}_desc`)}</p>
               </div>
             </div>
           ))}

@@ -1,5 +1,5 @@
-import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useEffect, useCallback } from 'react'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react'
 
@@ -82,19 +82,18 @@ const TOTAL = RAW.length
 
 export default function IntegrationFlow() {
   const { t } = useTranslation()
+  const reduce = useReducedMotion()
   const [step, setStep] = useState(0)
 
   const go = useCallback((d: 1 | -1) =>
     setStep(s => Math.max(0, Math.min(TOTAL - 1, s + d))), [])
 
-  useEffect(() => {
-    const h = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') go(1)
-      if (e.key === 'ArrowLeft')  go(-1)
-    }
-    window.addEventListener('keydown', h)
-    return () => window.removeEventListener('keydown', h)
-  }, [go])
+  // Scoped keyboard nav: arrows only steer the stepper when it (or a child) has
+  // focus, so we don't hijack page-wide ArrowLeft/Right / scrolling.
+  const onKey = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowRight') { e.preventDefault(); go(1) }
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); go(-1) }
+  }
 
   const vis   = CUM[step]
   const hi    = new Set(RAW[step].hi)
@@ -110,11 +109,17 @@ export default function IntegrationFlow() {
             {t('flow.badge')}
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold">{t('flow.title')}</h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-sm">{t('flow.subtitle')}</p>
+          <p className="text-text-muted max-w-2xl mx-auto text-sm">{t('flow.subtitle')}</p>
         </div>
 
         {/* ── card ── */}
-        <div className="rounded-2xl border border-border bg-bg-card overflow-hidden">
+        <div
+          className="rounded-2xl border border-border bg-bg-card overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue"
+          tabIndex={0}
+          role="group"
+          aria-label={t('flow.title')}
+          onKeyDown={onKey}
+        >
 
           {/* step bar */}
           <div className="border-b border-border px-5 py-3.5 flex items-center gap-4">
@@ -127,7 +132,7 @@ export default function IntegrationFlow() {
                 <p className="text-[10px] font-mono text-conjur-gold/60 mb-0.5">
                   {t('flow.step_of', { current: step + 1, total: TOTAL })}
                 </p>
-                <p className="text-sm font-semibold text-white leading-snug">
+                <p className="text-sm font-semibold text-text leading-snug">
                   {t(`flow.s${step + 1}_title`)}
                 </p>
               </motion.div>
@@ -135,25 +140,27 @@ export default function IntegrationFlow() {
 
             <div className="flex items-center gap-1.5 flex-shrink-0">
               <button onClick={() => go(-1)} disabled={step === 0}
-                className="p-1.5 rounded-lg border border-border text-slate-400 hover:text-white hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
+                className="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-border text-text-muted hover:text-text hover:border-text-muted disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
                 aria-label="Previous step">
-                <ChevronLeft size={15} />
+                <ChevronLeft size={15} aria-hidden="true" />
               </button>
               <button onClick={() => go(1)} disabled={step === TOTAL - 1}
-                className="p-1.5 rounded-lg border border-border text-slate-400 hover:text-white hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
+                className="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-border text-text-muted hover:text-text hover:border-text-muted disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
                 aria-label="Next step">
-                <ChevronRight size={15} />
+                <ChevronRight size={15} aria-hidden="true" />
               </button>
               <button onClick={() => setStep(0)}
-                className="p-1.5 rounded-lg border border-border text-slate-500 hover:text-conjur-gold hover:border-conjur-gold/40 transition-colors"
+                className="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-border text-text-muted hover:text-conjur-gold hover:border-conjur-gold/40 transition-colors"
                 aria-label="Reset" title="Reset">
-                <RotateCcw size={13} />
+                <RotateCcw size={13} aria-hidden="true" />
               </button>
             </div>
           </div>
 
-          {/* SVG graph */}
-          <div className="px-4 pt-5 pb-3 overflow-x-auto">
+          {/* SVG graph — pinned to a fixed dark canvas so the dark-tuned diagram
+              stays legible in both light and dark themes */}
+          <div className="px-4 pt-5 pb-3">
+            <div className="overflow-x-auto rounded-xl border border-border bg-[#050d1a] p-4">
             <svg
               viewBox="0 0 870 415"
               style={{ minWidth: 560, width: '100%' }}
@@ -245,8 +252,8 @@ export default function IntegrationFlow() {
                         strokeWidth="1"
                         strokeOpacity="0.35"
                         filter="url(#glow)"
-                        animate={{ strokeOpacity: [0.2, 0.5, 0.2] }}
-                        transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+                        animate={reduce ? { strokeOpacity: 0.35 } : { strokeOpacity: [0.2, 0.5, 0.2] }}
+                        transition={reduce ? { duration: 0 } : { duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
                       />
                     )}
 
@@ -285,8 +292,12 @@ export default function IntegrationFlow() {
                       <motion.circle
                         cx={n.x + n.w - 16} cy={n.y + 16} r="4"
                         fill={c.stroke}
-                        animate={active ? { opacity:[0.4,1,0.4], r:[3,4.5,3] } : { opacity:0.15, r:3 }}
-                        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                        animate={
+                          reduce
+                            ? { opacity: active ? 1 : 0.15, r: active ? 4 : 3 }
+                            : active ? { opacity:[0.4,1,0.4], r:[3,4.5,3] } : { opacity:0.15, r:3 }
+                        }
+                        transition={reduce ? { duration: 0 } : { duration: 2, repeat: Infinity, ease: 'easeInOut' }}
                       />
                     )}
 
@@ -302,6 +313,7 @@ export default function IntegrationFlow() {
                 )
               })}
             </svg>
+            </div>
           </div>
 
           {/* description */}
@@ -310,7 +322,7 @@ export default function IntegrationFlow() {
               <motion.p key={step}
                 initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.22 }}
-                className="text-sm text-slate-400 leading-relaxed"
+                className="text-sm text-text-muted leading-relaxed"
               >
                 {t(`flow.s${step + 1}_desc`)}
               </motion.p>
@@ -320,15 +332,15 @@ export default function IntegrationFlow() {
           {/* progress bar */}
           <div className="h-0.5 bg-bg-base/50 mx-5 mb-4 rounded-full overflow-hidden">
             <motion.div
-              className="h-full rounded-full bg-conjur-cyan/50"
-              animate={{ width: `${((step + 1) / TOTAL) * 100}%` }}
+              className="h-full w-full origin-left rounded-full bg-conjur-cyan/50"
+              animate={{ scaleX: (step + 1) / TOTAL }}
               transition={{ duration: 0.35, ease: 'easeOut' }}
             />
           </div>
         </div>
 
         {/* keyboard hint */}
-        <p className="text-center text-xs text-slate-700 select-none">
+        <p className="text-center text-xs text-text-muted select-none">
           {t('flow.keyboard_hint')}
         </p>
       </div>

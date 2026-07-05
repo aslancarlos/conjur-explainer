@@ -133,7 +133,7 @@ export default function LiveToolsSection() {
             {t('livetools.badge')}
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold">{t('livetools.title')}</h2>
-          <p className="text-slate-400 max-w-2xl mx-auto">{t('livetools.subtitle')}</p>
+          <p className="text-text-muted max-w-2xl mx-auto">{t('livetools.subtitle')}</p>
         </motion.div>
 
         {/* K8s Dashboard — featured card */}
@@ -148,7 +148,7 @@ export default function LiveToolsSection() {
             </div>
             <div className="flex-1 space-y-3">
               <div className="flex flex-wrap items-center gap-3">
-                <h3 className="text-xl font-bold text-white">{t('livetools.k8s_title')}</h3>
+                <h3 className="text-xl font-bold text-text">{t('livetools.k8s_title')}</h3>
                 <span className="badge bg-conjur-cyan/10 text-conjur-cyan border border-conjur-cyan/20 text-xs">
                   {t('livetools.k8s_badge')}
                 </span>
@@ -157,10 +157,10 @@ export default function LiveToolsSection() {
                   {t('livetools.live')}
                 </span>
               </div>
-              <p className="text-slate-400 leading-relaxed max-w-2xl">{t('livetools.k8s_desc')}</p>
+              <p className="text-text-muted leading-relaxed max-w-2xl">{t('livetools.k8s_desc')}</p>
               <div className="grid sm:grid-cols-3 gap-3 pt-1">
                 {(t('livetools.k8s_features', { returnObjects: true }) as string[]).map((f, i) => (
-                  <div key={i} className="flex items-center gap-2 text-xs text-slate-400">
+                  <div key={i} className="flex items-center gap-2 text-xs text-text-muted">
                     <span className="w-1 h-1 rounded-full bg-conjur-cyan flex-shrink-0" />
                     {f}
                   </div>
@@ -175,8 +175,8 @@ export default function LiveToolsSection() {
                 >
                   <Monitor size={14} /> {t('livetools.k8s_cta')}
                 </a>
-                <div className="flex items-center gap-2 text-xs text-slate-500 px-3 py-2 rounded-full border border-border">
-                  <span className="font-mono text-slate-400">{t('livetools.k8s_login')}</span>
+                <div className="flex items-center gap-2 text-xs text-text-muted px-3 py-2 rounded-full border border-border">
+                  <span className="font-mono text-text-muted">{t('livetools.k8s_login')}</span>
                 </div>
               </div>
             </div>
@@ -201,15 +201,15 @@ export default function LiveToolsSection() {
                   <div className={`w-10 h-10 rounded-xl border ${tool.border} ${tool.bg} flex items-center justify-center`}>
                     <Icon size={18} className={tool.color} />
                   </div>
-                  <ExternalLink size={14} className="text-slate-600 group-hover:text-slate-400 transition-colors mt-1" />
+                  <ExternalLink size={14} className="text-text-muted group-hover:text-text-2 transition-colors mt-1" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className={`w-1.5 h-1.5 rounded-full ${tool.dot} animate-pulse-slow`} />
                     <span className={`text-[10px] font-semibold ${tool.color}`}>{t(tool.badgeKey)}</span>
                   </div>
-                  <p className="font-semibold text-white text-sm">{t(tool.titleKey)}</p>
-                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">{t(tool.descKey)}</p>
+                  <p className="font-semibold text-text text-sm">{t(tool.titleKey)}</p>
+                  <p className="text-xs text-text-muted mt-1 leading-relaxed">{t(tool.descKey)}</p>
                 </div>
               </motion.a>
             )

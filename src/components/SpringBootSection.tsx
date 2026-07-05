@@ -61,14 +61,14 @@ export default function SpringBootSection() {
         >
           <div className="flex items-center gap-3">
             <span className="badge bg-spring/10 text-spring border border-spring/20">{t('springboot.badge')}</span>
-            <span className="badge bg-bg-card border-border text-slate-400">{t('springboot.label')}</span>
+            <span className="badge bg-bg-card border-border text-text-muted">{t('springboot.label')}</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold flex items-center gap-3">
             <Leaf size={32} className="text-spring" />
             {t('springboot.title')}
             <span className="text-spring">{t('springboot.titleAccent')}</span>
           </h2>
-          <p className="text-slate-400 leading-relaxed max-w-2xl">{t('springboot.desc')}</p>
+          <p className="text-text-muted leading-relaxed max-w-2xl">{t('springboot.desc')}</p>
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-8">
@@ -88,10 +88,10 @@ export default function SpringBootSection() {
                       <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold font-mono ${cls}`}>
                         {step.n}
                       </span>
-                      <span className="font-semibold text-white text-sm">{step.title}</span>
+                      <span className="font-semibold text-text text-sm">{step.title}</span>
                     </div>
                     <pre className="code-block text-xs leading-relaxed overflow-x-auto whitespace-pre-wrap">
-                      <code className="text-slate-300">{step.code}</code>
+                      <code className="text-text-2">{step.code}</code>
                     </pre>
                   </div>
                   {i < steps.length - 1 && <div className="step-connector" />}
@@ -118,13 +118,14 @@ export default function SpringBootSection() {
                 <button
                   onClick={fetchStatus}
                   disabled={loading}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-spring hover:bg-spring/10 transition-colors"
+                  aria-label="Refresh"
+                  className="p-1.5 rounded-lg text-text-muted hover:text-spring hover:bg-spring/10 transition-colors"
                 >
-                  <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+                  <RefreshCw size={14} aria-hidden="true" className={loading ? 'animate-spin' : ''} />
                 </button>
               </div>
 
-              <h4 className="font-semibold text-white">{t('springboot.live_title')}</h4>
+              <h4 className="font-semibold text-text">{t('springboot.live_title')}</h4>
 
               {error && (
                 <p className="text-xs text-conjur-red bg-conjur-red/10 rounded-lg px-3 py-2">{error}</p>
@@ -146,13 +147,13 @@ export default function SpringBootSection() {
                 </div>
               )}
               {!data && !error && loading && (
-                <div className="text-xs text-slate-500 animate-pulse">fetching /springboot/checkit…</div>
+                <div className="text-xs text-text-muted animate-pulse">fetching /springboot/checkit…</div>
               )}
-              <p className="text-xs text-slate-500">{t('springboot.live_note')}</p>
+              <p className="text-xs text-text-muted">{t('springboot.live_note')}</p>
             </motion.div>
 
             {/* Features */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {features.map((f, i) => (
                 <motion.div
                   key={i}
@@ -160,8 +161,8 @@ export default function SpringBootSection() {
                   transition={{ duration: 0.4, delay: 0.5 + i * 0.08 }}
                   className="section-card space-y-1"
                 >
-                  <p className="text-sm font-semibold text-white">{f.title}</p>
-                  <p className="text-xs text-slate-400 leading-relaxed">{f.desc}</p>
+                  <p className="text-sm font-semibold text-text">{f.title}</p>
+                  <p className="text-xs text-text-muted leading-relaxed">{f.desc}</p>
                 </motion.div>
               ))}
             </div>

@@ -35,7 +35,7 @@ export default function ApiStatus() {
   return (
     <span
       title={`GET /api/health — ${label}`}
-      className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-border px-2 py-1 font-mono text-[11px] text-slate-400"
+      className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-border px-2 py-1 font-mono text-[11px] text-text-muted"
     >
       <span className={`w-1.5 h-1.5 rounded-full ${dot} ${status === 'ok' ? 'animate-pulse' : ''}`} />
       /api

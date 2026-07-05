@@ -101,23 +101,38 @@ export default function GhaLiveRunner({ stages }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [t])
 
-  // poll until run completes
+  // poll until run completes — stop the interval on completion, on repeated
+  // failures, and at a hard attempt cap so we never poll the backend forever.
   useEffect(() => {
     if (!runId) return
     let stopped = false
+    let id: number | undefined
+    let attempts = 0
+    let failures = 0
+    const stop = () => { if (id !== undefined) window.clearInterval(id) }
+    const fail = (msg: string) => {
+      stop()
+      if (!stopped) { setErr(formatErr(msg)); setBusy(false) }
+    }
     const poll = async () => {
+      if (++attempts > 200) { stop(); if (!stopped) setBusy(false); return } // ~10 min hard cap
       try {
         const r = await fetch(`/api/gha/runs/${runId}`)
-        if (!r.ok) return
+        if (!r.ok) { if (++failures >= 5) fail(`HTTP ${r.status}`); return }
+        failures = 0
         const j: ApiRun = await r.json()
         if (stopped) return
         setData(j)
-        if (j.run.status === 'completed') setBusy(false)
-      } catch { /* keep polling */ }
+        if (j.run.status === 'completed') { setBusy(false); stop() }
+      } catch {
+        if (++failures >= 5) fail('network_error')
+      }
     }
     poll()
-    const id = window.setInterval(poll, 3000)
-    return () => { stopped = true; window.clearInterval(id) }
+    id = window.setInterval(poll, 3000)
+    return () => { stopped = true; stop() }
+    // formatErr closes over the stable `t`; intentionally excluded from deps.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runId])
 
   const isLive   = !!data
@@ -145,7 +160,7 @@ export default function GhaLiveRunner({ stages }: Props) {
     <div className="section-card border-gh/20 space-y-3">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2 min-w-0">
-          <h4 className="font-semibold text-white text-sm">{t('gha.runner.title')}</h4>
+          <h4 className="font-semibold text-text text-sm">{t('gha.runner.title')}</h4>
           {isLive && (
             <span className={`badge text-[10px] ${
               data!.run.status === 'completed'
@@ -167,8 +182,8 @@ export default function GhaLiveRunner({ stages }: Props) {
               {t('gha.runner.view_on_github')} <ExternalLink size={10} />
             </a>
           )}
-          <button onClick={start} disabled={!!stillRunning}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gh text-white text-xs font-semibold hover:bg-gh/80 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+          <button onClick={start} disabled={!!stillRunning} aria-busy={!!stillRunning}
+            className="inline-flex items-center justify-center gap-2 px-4 min-h-[44px] rounded-lg bg-gh text-white text-xs font-semibold hover:bg-gh/80 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
             {stillRunning
               ? <><Loader2 size={12} className="animate-spin" /> {t('gha.runner.btn_running')}</>
               : <><Play    size={12} />                          {t('gha.runner.btn_run')}    </>
@@ -178,13 +193,13 @@ export default function GhaLiveRunner({ stages }: Props) {
       </div>
 
       {err && (
-        <div className="flex items-start gap-2 text-xs text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-lg px-3 py-2">
-          <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" />
+        <div role="alert" className="flex items-start gap-2 text-xs text-amber-600 dark:text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-lg px-3 py-2">
+          <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" aria-hidden="true" />
           <span>{err}</span>
         </div>
       )}
       {pending && !err && (
-        <div className="flex items-start gap-2 text-xs text-blue-300 bg-blue-500/10 border border-blue-500/30 rounded-lg px-3 py-2">
+        <div role="status" className="flex items-start gap-2 text-xs text-blue-600 dark:text-blue-300 bg-blue-500/10 border border-blue-500/30 rounded-lg px-3 py-2">
           <Loader2 size={12} className="mt-0.5 flex-shrink-0 animate-spin" />
           <span>{t('gha.runner.pending')}</span>
         </div>
@@ -196,12 +211,12 @@ export default function GhaLiveRunner({ stages }: Props) {
             <span className="flex-shrink-0 w-4 flex items-center justify-center">
               <StatusIcon status={row.status} conclusion={row.conclusion} />
             </span>
-            <span className="text-xs text-slate-300 leading-relaxed flex-1 truncate">{row.name}</span>
+            <span className="text-xs text-text-2 leading-relaxed flex-1 truncate">{row.name}</span>
             {row.elapsed && (
-              <span className="text-[10px] font-mono text-slate-500 flex-shrink-0">{row.elapsed}</span>
+              <span className="text-[10px] font-mono text-text-muted flex-shrink-0">{row.elapsed}</span>
             )}
             {row.url && (
-              <a href={row.url} target="_blank" rel="noopener" className="text-slate-500 hover:text-gh flex-shrink-0">
+              <a href={row.url} target="_blank" rel="noopener" aria-label={`View ${row.name} on GitHub`} className="text-text-muted hover:text-gh flex-shrink-0">
                 <ExternalLink size={11} />
               </a>
             )}
@@ -209,7 +224,7 @@ export default function GhaLiveRunner({ stages }: Props) {
         ))}
       </div>
 
-      <p className="text-[10px] text-slate-600">{t('gha.runner.hint')}</p>
+      <p className="text-[10px] text-text-muted">{t('gha.runner.hint')}</p>
     </div>
   )
 }
