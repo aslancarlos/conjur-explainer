@@ -22,6 +22,7 @@ const JwtValidatorPage = lazy(() => import('./pages/JwtValidatorPage'))
 const SecretsHubPage = lazy(() => import('./pages/SecretsHubPage'))
 const JenkinsPage = lazy(() => import('./pages/JenkinsPage'))
 const AnsiblePage = lazy(() => import('./pages/AnsiblePage'))
+const CsiDriverPage = lazy(() => import('./pages/CsiDriverPage'))
 const PolicyPage = lazy(() => import('./pages/PolicyPage'))
 
 function ScrollToTop() {
@@ -66,6 +67,7 @@ export default function App() {
           <Route path="/secretshub"     element={<SecretsHubPage />} />
           <Route path="/jenkins"        element={<JenkinsPage />} />
           <Route path="/ansible"        element={<AnsiblePage />} />
+          <Route path="/csi"            element={<CsiDriverPage />} />
           <Route path="/policy"         element={<PolicyPage />} />
         </Route>
       </Routes>

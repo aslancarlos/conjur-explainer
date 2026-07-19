@@ -6,7 +6,7 @@ export default {
   // `item.color.replace('text-', 'bg-')`, so `bg-ansible` never appears as a
   // literal for the JIT to find. Other accents (bg-spring, bg-conjur-gold…) are
   // used literally elsewhere; this one isn't — safelist it so the dot renders.
-  safelist: ['bg-ansible'],
+  safelist: ['bg-ansible', 'bg-csi'],
   theme: {
     extend: {
       colors: {
@@ -43,6 +43,7 @@ export default {
         gh:      '#0067ff',
         eso:     '#fa582d',
         ansible: '#ee0000',
+        csi:     '#326ce5',
 
         // ─── Legacy CyberArk-era names kept as aliases on IDIRA tones ──
         conjur: {
