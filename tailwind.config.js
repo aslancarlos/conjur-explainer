@@ -2,6 +2,11 @@
 export default {
   darkMode: 'class',
   content: ['./index.html', './src/**/*.{ts,tsx}'],
+  // NavBar builds each item's dot color at runtime via
+  // `item.color.replace('text-', 'bg-')`, so `bg-ansible` never appears as a
+  // literal for the JIT to find. Other accents (bg-spring, bg-conjur-gold…) are
+  // used literally elsewhere; this one isn't — safelist it so the dot renders.
+  safelist: ['bg-ansible'],
   theme: {
     extend: {
       colors: {
