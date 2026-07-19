@@ -23,6 +23,7 @@ const INTEGRATIONS: DropItem[] = [
   { to: '/secretshub',   labelKey: 'nav.secretshub',    subKey: 'nav.secretshub_sub',   color: 'text-dotnet'      },
   { to: '/jenkins',      labelKey: 'nav.jenkins',       subKey: 'nav.jenkins_sub',      color: 'text-spring'      },
   { to: '/ansible',      labelKey: 'nav.ansible',       subKey: 'nav.ansible_sub',      color: 'text-ansible'     },
+  { to: '/csi',          labelKey: 'nav.csidriver',     subKey: 'nav.csidriver_sub',    color: 'text-csi'         },
 ]
 
 const EXAMPLES: DropItem[] = [
