@@ -1,0 +1,51 @@
+# Network isolation for the logging stack. Loki runs with auth_enabled: false
+# (single-tenant), so these policies are what keep arbitrary workloads from
+# reading/writing it. Each policy implicitly denies all other ingress to its
+# target pods.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: loki-ingress
+  namespace: logging
+spec:
+  podSelector:
+    matchLabels:
+      app: loki
+  policyTypes: ["Ingress"]
+  ingress:
+    # Writes from the Alloy DaemonSet (same namespace).
+    - from:
+        - podSelector:
+            matchLabels:
+              app: alloy
+      ports:
+        - { protocol: TCP, port: 3100 }
+        - { protocol: TCP, port: 9095 }
+    # Reads from Grafana / the monitoring namespace.
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+      ports:
+        - { protocol: TCP, port: 3100 }
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: alloy-admin-ingress
+  namespace: logging
+spec:
+  podSelector:
+    matchLabels:
+      app: alloy
+  policyTypes: ["Ingress"]
+  ingress:
+    # Only the monitoring namespace may reach Alloy's HTTP admin/metrics port.
+    # (Kubelet readiness probes originate from the node and are not subject to
+    # this policy. If the cluster CNI blocks them, add the node CIDR here.)
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+      ports:
+        - { protocol: TCP, port: 12345 }

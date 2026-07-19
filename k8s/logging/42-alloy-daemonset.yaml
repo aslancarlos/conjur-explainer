@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: alloy
+  namespace: logging
+  labels:
+    app: alloy
+spec:
+  selector:
+    matchLabels:
+      app: alloy
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: alloy
+    spec:
+      serviceAccountName: alloy
+      # Collect logs from worker nodes only. The blanket `operator: Exists`
+      # toleration was removed so Alloy never lands on control-plane nodes.
+      tolerations:
+        - key: node.kubernetes.io/not-ready
+          effect: NoExecute
+          operator: Exists
+          tolerationSeconds: 300
+        - key: node.kubernetes.io/unreachable
+          effect: NoExecute
+          operator: Exists
+          tolerationSeconds: 300
+        - key: node.kubernetes.io/disk-pressure
+          effect: NoSchedule
+          operator: Exists
+        - key: node.kubernetes.io/memory-pressure
+          effect: NoSchedule
+          operator: Exists
+        - key: node.kubernetes.io/pid-pressure
+          effect: NoSchedule
+          operator: Exists
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: DoesNotExist
+      # Logs are read through the Kubernetes API (loki.source.kubernetes), so
+      # the container needs no host PID, no host mounts, and no root.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: alloy
+          image: grafana/alloy:v1.5.1
+          args:
+            - run
+            - /etc/alloy/config.alloy
+            - --server.http.listen-addr=0.0.0.0:12345
+            - --stability.level=generally-available
+            - --storage.path=/var/lib/alloy
+          ports:
+            - name: http
+              containerPort: 12345
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 192Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: 12345
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          volumeMounts:
+            - name: config
+              mountPath: /etc/alloy
+            - name: data
+              mountPath: /var/lib/alloy
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: config
+          configMap:
+            name: alloy-config
+        - name: data
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
