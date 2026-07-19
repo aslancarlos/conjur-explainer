@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronLeft, ChevronRight, RotateCcw, Play, Pause } from 'lucide-react'
@@ -64,6 +64,7 @@ function statusTextFill(s: AcctStatus) {
 
 export default function DualAccountsPage() {
   const { t } = useTranslation()
+  const reduce = useReducedMotion()
   const [step, setStep]       = useState(0)
   const [playing, setPlaying] = useState(false)
 
@@ -116,8 +117,8 @@ export default function DualAccountsPage() {
           <span className="badge bg-conjur-gold/10 text-conjur-gold border border-conjur-gold/20">
             {t('dual.badge')}
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold">{t('dual.title')}</h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-sm">{t('dual.subtitle')}</p>
+          <h1 className="text-3xl sm:text-4xl font-bold">{t('dual.title')}</h1>
+          <p className="text-text-muted max-w-2xl mx-auto text-sm">{t('dual.subtitle')}</p>
         </div>
 
         {/* main card */}
@@ -134,7 +135,7 @@ export default function DualAccountsPage() {
                 <p className="text-[10px] font-mono text-conjur-gold/60 mb-0.5">
                   {t('dual.step_of', { current: step + 1, total: TOTAL })}
                 </p>
-                <p className="text-sm font-semibold text-white leading-snug">
+                <p className="text-sm font-semibold text-text leading-snug">
                   {t(`dual.s${step + 1}_title`)}
                 </p>
               </motion.div>
@@ -146,23 +147,23 @@ export default function DualAccountsPage() {
                 className={`p-1.5 rounded-lg border transition-colors ${
                   playing
                     ? 'border-conjur-gold/40 text-conjur-gold'
-                    : 'border-border text-slate-400 hover:text-conjur-gold hover:border-conjur-gold/40'
+                    : 'border-border text-text-muted hover:text-conjur-gold hover:border-conjur-gold/40'
                 }`}
                 aria-label={playing ? 'Pause' : 'Play'}
               >
-                {playing ? <Pause size={14} /> : <Play size={14} />}
+                {playing ? <Pause size={14} aria-hidden="true" /> : <Play size={14} aria-hidden="true" />}
               </button>
-              <button onClick={() => go(-1)} disabled={step === 0}
-                className="p-1.5 rounded-lg border border-border text-slate-400 hover:text-white hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors">
-                <ChevronLeft size={15} />
+              <button onClick={() => go(-1)} disabled={step === 0} aria-label="Previous step"
+                className="p-1.5 rounded-lg border border-border text-text-muted hover:text-text hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors">
+                <ChevronLeft size={15} aria-hidden="true" />
               </button>
-              <button onClick={() => go(1)} disabled={step === TOTAL - 1}
-                className="p-1.5 rounded-lg border border-border text-slate-400 hover:text-white hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors">
-                <ChevronRight size={15} />
+              <button onClick={() => go(1)} disabled={step === TOTAL - 1} aria-label="Next step"
+                className="p-1.5 rounded-lg border border-border text-text-muted hover:text-text hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors">
+                <ChevronRight size={15} aria-hidden="true" />
               </button>
-              <button onClick={() => { setStep(0); setPlaying(false) }}
-                className="p-1.5 rounded-lg border border-border text-slate-500 hover:text-conjur-gold hover:border-conjur-gold/40 transition-colors">
-                <RotateCcw size={13} />
+              <button onClick={() => { setStep(0); setPlaying(false) }} aria-label="Restart"
+                className="p-1.5 rounded-lg border border-border text-text-muted hover:text-conjur-gold hover:border-conjur-gold/40 transition-colors">
+                <RotateCcw size={13} aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -330,8 +331,10 @@ export default function DualAccountsPage() {
                 {t('dual.node_app_sub')}
               </text>
               <motion.circle cx={132} cy={190} r={4} fill={C.cyan.stroke}
-                animate={isHi('app') ? { opacity:[0.4,1,0.4], r:[3,4.5,3] } : { opacity:0.15, r:3 }}
-                transition={{ duration: 2, repeat: Infinity, ease:'easeInOut' }} />
+                animate={reduce
+                  ? { opacity: isHi('app') ? 1 : 0.15, r: isHi('app') ? 4 : 3 }
+                  : isHi('app') ? { opacity:[0.4,1,0.4], r:[3,4.5,3] } : { opacity:0.15, r:3 }}
+                transition={{ duration: 2, repeat: reduce ? 0 : Infinity, ease:'easeInOut' }} />
 
               {/* ── CP node ── */}
               <rect x={200} y={150} width={156} height={126} rx={10}
@@ -377,8 +380,8 @@ export default function DualAccountsPage() {
               {cur.cpmPulse && (
                 <motion.rect x={672} y={17} width={178} height={82} rx={16}
                   fill="none" stroke={C.dotnet.stroke} strokeWidth={1}
-                  animate={{ strokeOpacity: [0.15, 0.5, 0.15] }}
-                  transition={{ duration: 1.8, repeat: Infinity, ease:'easeInOut' }}
+                  animate={reduce ? { strokeOpacity: 0.4 } : { strokeOpacity: [0.15, 0.5, 0.15] }}
+                  transition={{ duration: 1.8, repeat: reduce ? 0 : Infinity, ease:'easeInOut' }}
                   filter="url(#d-glow)" />
               )}
               <rect x={680} y={25} width={162} height={66} rx={10}
@@ -433,7 +436,7 @@ export default function DualAccountsPage() {
               <motion.p key={step}
                 initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.22 }}
-                className="text-sm text-slate-400 leading-relaxed">
+                className="text-sm text-text-muted leading-relaxed">
                 {t(`dual.s${step + 1}_desc`)}
               </motion.p>
             </AnimatePresence>
@@ -441,8 +444,9 @@ export default function DualAccountsPage() {
 
           {/* progress bar */}
           <div className="h-0.5 bg-bg-base/50 mx-5 mb-4 rounded-full overflow-hidden">
-            <motion.div className="h-full rounded-full bg-conjur-gold/50"
-              animate={{ width: `${((step + 1) / TOTAL) * 100}%` }}
+            <motion.div className="h-full w-full rounded-full bg-conjur-gold/50"
+              style={{ transformOrigin: 'left' }}
+              animate={{ scaleX: (step + 1) / TOTAL }}
               transition={{ duration: 0.35, ease: 'easeOut' }} />
           </div>
         </div>
@@ -451,13 +455,13 @@ export default function DualAccountsPage() {
         <div className="grid sm:grid-cols-3 gap-4">
           {[1, 2, 3].map(n => (
             <div key={n} className="section-card space-y-2">
-              <h3 className="text-sm font-semibold text-white">{t(`dual.key${n}_title`)}</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">{t(`dual.key${n}_desc`)}</p>
+              <h3 className="text-sm font-semibold text-text">{t(`dual.key${n}_title`)}</h3>
+              <p className="text-xs text-text-muted leading-relaxed">{t(`dual.key${n}_desc`)}</p>
             </div>
           ))}
         </div>
 
-        <p className="text-center text-xs text-slate-700 select-none">{t('dual.keyboard_hint')}</p>
+        <p className="text-center text-xs text-text-muted select-none">{t('dual.keyboard_hint')}</p>
       </div>
     </section>
   )

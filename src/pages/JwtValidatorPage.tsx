@@ -110,8 +110,8 @@ export default function JwtValidatorPage() {
           <span className="badge bg-conjur-cyan/10 text-conjur-cyan border border-conjur-cyan/30 inline-flex items-center gap-1.5">
             <ShieldCheck size={12} /> {t('jwtv.badge')}
           </span>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white">{t('jwtv.title')}</h1>
-          <p className="text-slate-400 max-w-2xl mx-auto text-sm leading-relaxed">
+          <h1 className="text-3xl sm:text-4xl font-bold text-text">{t('jwtv.title')}</h1>
+          <p className="text-text-muted max-w-2xl mx-auto text-sm leading-relaxed">
             {t('jwtv.subtitle')}
           </p>
         </div>
@@ -123,7 +123,7 @@ export default function JwtValidatorPage() {
               ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
               : health === 'down'
                 ? 'bg-red-500/10 text-red-300 border-red-500/30'
-                : 'bg-slate-500/10 text-slate-400 border-slate-500/30'
+                : 'bg-slate-500/10 text-text-muted border-slate-500/30'
           }`}>
             {health === 'loading' && <Loader2 size={12} className="animate-spin" />}
             {health === 'ok' && <CheckCircle2 size={12} />}
@@ -142,22 +142,22 @@ export default function JwtValidatorPage() {
         <div className="grid sm:grid-cols-3 gap-4">
           {[1, 2, 3].map(n => (
             <div key={n} className="section-card space-y-2">
-              <h3 className="text-sm font-semibold text-white">{t(`jwtv.feat${n}_title`)}</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">{t(`jwtv.feat${n}_desc`)}</p>
+              <h3 className="text-sm font-semibold text-text">{t(`jwtv.feat${n}_title`)}</h3>
+              <p className="text-xs text-text-muted leading-relaxed">{t(`jwtv.feat${n}_desc`)}</p>
             </div>
           ))}
         </div>
 
         {/* Endpoints table */}
         <div className="section-card overflow-hidden">
-          <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-text mb-4 flex items-center gap-2">
             <KeyRound size={16} className="text-conjur-cyan" />
             {t('jwtv.endpoints_title')}
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs uppercase tracking-wider text-slate-500 border-b border-border">
+                <tr className="text-left text-xs uppercase tracking-wider text-text-muted border-b border-border">
                   <th className="py-2 pr-4 font-medium">{t('jwtv.table_method')}</th>
                   <th className="py-2 pr-4 font-medium">{t('jwtv.table_path')}</th>
                   <th className="py-2 font-medium">{t('jwtv.table_desc')}</th>
@@ -165,14 +165,14 @@ export default function JwtValidatorPage() {
               </thead>
               <tbody className="divide-y divide-border/60">
                 {ENDPOINTS.map(ep => (
-                  <tr key={ep.path} className="hover:bg-white/[0.02] transition-colors">
+                  <tr key={ep.path} className="hover:bg-bg-muted transition-colors">
                     <td className="py-3 pr-4">
                       <span className={`px-2 py-0.5 text-[10px] font-mono font-semibold rounded border ${methodColor(ep.method)}`}>
                         {ep.method}
                       </span>
                     </td>
                     <td className="py-3 pr-4 font-mono text-xs text-conjur-cyan">{ep.path}</td>
-                    <td className="py-3 text-xs text-slate-400">{t(ep.descKey)}</td>
+                    <td className="py-3 text-xs text-text-muted">{t(ep.descKey)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -182,14 +182,14 @@ export default function JwtValidatorPage() {
 
         {/* Validations performed */}
         <div className="section-card">
-          <h2 className="text-lg font-semibold text-white mb-4">{t('jwtv.checks_title')}</h2>
+          <h2 className="text-lg font-semibold text-text mb-4">{t('jwtv.checks_title')}</h2>
           <div className="grid sm:grid-cols-2 gap-x-6 gap-y-2">
             {CLAIMS.map(c => (
               <div key={c.key} className="flex items-start gap-3 text-xs">
                 <span className="inline-block px-1.5 py-0.5 rounded font-mono font-semibold text-[10px] bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 flex-shrink-0 mt-0.5">
                   ✓ {c.key}
                 </span>
-                <span className="text-slate-400 leading-relaxed">{t(c.descKey)}</span>
+                <span className="text-text-muted leading-relaxed">{t(c.descKey)}</span>
               </div>
             ))}
           </div>
@@ -197,31 +197,37 @@ export default function JwtValidatorPage() {
 
         {/* Try it */}
         <div className="section-card">
-          <h2 className="text-lg font-semibold text-white mb-1">{t('jwtv.try_title')}</h2>
-          <p className="text-xs text-slate-500 mb-4">{t('jwtv.try_subtitle')}</p>
+          <h2 id="jwtv-try-title" className="text-lg font-semibold text-text mb-1">{t('jwtv.try_title')}</h2>
+          <p className="text-xs text-text-muted mb-4">{t('jwtv.try_subtitle')}</p>
+          <label htmlFor="jwtv-token-input" className="sr-only">{t('jwtv.try_title')}</label>
           <textarea
+            id="jwtv-token-input"
             value={tokenInput}
             onChange={e => setTokenInput(e.target.value)}
             placeholder="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ii4uLiJ9..."
             spellCheck={false}
-            className="w-full h-28 px-3 py-2 text-xs font-mono bg-bg-base/70 border border-border rounded-lg text-slate-300 focus:border-conjur-cyan/50 focus:outline-none resize-y"
+            aria-labelledby="jwtv-try-title"
+            className="w-full h-28 px-3 py-2 text-xs font-mono bg-bg-base/70 border border-border rounded-lg text-text-2 focus:border-conjur-cyan/50 focus:outline-none resize-y"
           />
           <div className="mt-3 flex items-center justify-between gap-3">
-            <span className="text-[10px] font-mono text-slate-600">
+            <span className="text-[10px] font-mono text-text-muted">
               POST https://demo.minha.cloud/api/verify
             </span>
             <button
               onClick={handleVerify}
               disabled={!tokenInput.trim() || verifying}
-              className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-conjur-cyan/15 text-conjur-cyan border border-conjur-cyan/40 hover:bg-conjur-cyan/25 disabled:opacity-40 disabled:cursor-not-allowed transition-colors inline-flex items-center gap-1.5"
+              aria-busy={verifying}
+              className="px-4 min-h-[44px] rounded-lg text-xs font-semibold bg-conjur-cyan/15 text-conjur-cyan border border-conjur-cyan/40 hover:bg-conjur-cyan/25 disabled:opacity-40 disabled:cursor-not-allowed transition-colors inline-flex items-center justify-center gap-1.5"
             >
-              {verifying && <Loader2 size={12} className="animate-spin" />}
+              {verifying && <Loader2 size={12} className="animate-spin" aria-hidden="true" />}
               {t('jwtv.try_button')}
             </button>
           </div>
 
           {result && (
             <motion.div
+              role="status"
+              aria-live="polite"
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25 }}
@@ -233,18 +239,18 @@ export default function JwtValidatorPage() {
             >
               <div className="flex items-center gap-2 mb-3">
                 {result.valid
-                  ? <CheckCircle2 size={16} className="text-emerald-400" />
-                  : <XCircle    size={16} className="text-red-400" />}
-                <span className={`text-sm font-semibold ${result.valid ? 'text-emerald-300' : 'text-red-300'}`}>
+                  ? <CheckCircle2 size={16} className="text-emerald-500" aria-hidden="true" />
+                  : <XCircle    size={16} className="text-red-500" aria-hidden="true" />}
+                <span className={`text-sm font-semibold ${result.valid ? 'text-emerald-600 dark:text-emerald-300' : 'text-red-600 dark:text-red-300'}`}>
                   {result.valid ? t('jwtv.result_valid') : t('jwtv.result_invalid')}
                 </span>
                 {!result.valid && (
-                  <code className="ml-auto text-[10px] font-mono px-1.5 py-0.5 rounded bg-red-500/10 text-red-300 border border-red-500/20">
+                  <code className="ml-auto text-[10px] font-mono px-1.5 py-0.5 rounded bg-red-500/10 text-red-600 dark:text-red-300 border border-red-500/20">
                     {result.code}
                   </code>
                 )}
               </div>
-              <pre className="text-[11px] font-mono text-slate-300 bg-bg-base/60 rounded p-3 overflow-x-auto leading-relaxed">
+              <pre className="text-[11px] font-mono text-text-2 bg-bg-base/60 rounded p-3 overflow-x-auto leading-relaxed">
 {JSON.stringify(result, null, 2)}
               </pre>
             </motion.div>
@@ -253,7 +259,7 @@ export default function JwtValidatorPage() {
 
         {/* Deployment info */}
         <div className="section-card space-y-3">
-          <h2 className="text-lg font-semibold text-white">{t('jwtv.deploy_title')}</h2>
+          <h2 className="text-lg font-semibold text-text">{t('jwtv.deploy_title')}</h2>
           <div className="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-xs">
             <Row label={t('jwtv.deploy_provider')}  value={config?.provider ?? '—'} mono />
             <Row label={t('jwtv.deploy_tenant')}    value={config?.tenant_id ?? '—'} mono />
@@ -272,8 +278,8 @@ export default function JwtValidatorPage() {
 function Row({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3">
-      <span className="text-slate-500 sm:w-32 flex-shrink-0">{label}</span>
-      <span className={`text-slate-300 ${mono ? 'font-mono break-all' : ''}`}>{value}</span>
+      <span className="text-text-muted sm:w-32 flex-shrink-0">{label}</span>
+      <span className={`text-text-2 ${mono ? 'font-mono break-all' : ''}`}>{value}</span>
     </div>
   )
 }

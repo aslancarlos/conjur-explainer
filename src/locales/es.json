@@ -17,6 +17,8 @@
     "compare_sub": "Comparación de 4 patrones",
     "livetools": "Dashboards en Vivo",
     "livetools_sub": "Grafana, K8s, monitores de app",
+    "swa": "SWA → AWS S3",
+    "swa_sub": "SPIFFE/SVID → STS, sin llaves estáticas",
     "controller": "App Controller",
     "controller_sub": "Iniciar / detener deployments",
     "jwtvalidator": "JWT Validator API",
@@ -574,7 +576,10 @@
     "esoshop_desc": "App Node.js de e-commerce usando External Secrets Operator para sincronizar credenciales de Secrets Manager en K8s Secrets.",
     "controller_title": "App Controller",
     "controller_badge": "Control de Costos",
-    "controller_desc": "Inicie y detenga deployments de Kubernetes en múltiples namespaces para reducir costos del clúster cuando las apps no están en uso."
+    "controller_desc": "Inicie y detenga deployments de Kubernetes en múltiples namespaces para reducir costos del clúster cuando las apps no están en uso.",
+    "swa_title": "SWA → AWS S3",
+    "swa_badge": "Nuevo · Machine Identity",
+    "swa_desc": "Explicador interactivo y animado del Secure Workload Access accediendo a AWS sin llaves estáticas: un JWT-SVID efímero se intercambia vía sts:AssumeRoleWithWebIdentity para listar un bucket S3. Recorre todo el flujo, paso a paso."
   },
   "dual": {
     "badge": "Cómo Funciona",

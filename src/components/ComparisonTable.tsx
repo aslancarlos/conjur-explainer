@@ -20,11 +20,11 @@ const renderCell = (value: string, icon: string) => {
     </span>
   )
   if (icon === 'minus') return (
-    <span className="inline-flex items-center gap-1 text-slate-500 text-xs sm:text-sm">
+    <span className="inline-flex items-center gap-1 text-text-muted text-xs sm:text-sm">
       <Minus size={13} /> {value}
     </span>
   )
-  return <span className="text-slate-300 text-xs sm:text-sm">{value}</span>
+  return <span className="text-text-2 text-xs sm:text-sm">{value}</span>
 }
 
 export default function ComparisonTable() {
@@ -55,7 +55,7 @@ export default function ComparisonTable() {
             {t('compare.badge')}
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold">{t('compare.title')}</h2>
-          <p className="text-slate-400 max-w-2xl mx-auto">{t('compare.subtitle')}</p>
+          <p className="text-text-muted max-w-2xl mx-auto">{t('compare.subtitle')}</p>
         </motion.div>
 
         <motion.div
@@ -66,7 +66,7 @@ export default function ComparisonTable() {
           <table className="w-full text-sm min-w-[700px]">
             <thead>
               <tr className="border-b border-border bg-bg-card">
-                <th className="text-left px-5 py-4 text-slate-400 font-medium w-[22%]">
+                <th className="text-left px-5 py-4 text-text-muted font-medium w-[22%]">
                   {t('compare.col_feature')}
                 </th>
                 {cols.map(c => (
@@ -87,7 +87,7 @@ export default function ComparisonTable() {
                   transition={{ duration: 0.35, delay: 0.3 + i * 0.06 }}
                   className={`border-b border-border/50 ${i % 2 === 0 ? 'bg-bg-base' : 'bg-bg-card/40'} hover:bg-bg-card transition-colors`}
                 >
-                  <td className="px-5 py-3.5 font-medium text-white text-xs sm:text-sm">{row.feature}</td>
+                  <td className="px-5 py-3.5 font-medium text-text text-xs sm:text-sm">{row.feature}</td>
                   <td className="px-4 py-3.5">{renderCell(row.spring, row.springIcon)}</td>
                   <td className="px-4 py-3.5">{renderCell(row.dotnet, row.dotnetIcon)}</td>
                   <td className="px-4 py-3.5">{renderCell(row.gha,    row.ghaIcon)}</td>
@@ -110,7 +110,7 @@ export default function ComparisonTable() {
             return (
               <div key={i} className={`section-card ${border} space-y-2`}>
                 <p className={`text-sm font-semibold ${color}`}>{b.title}</p>
-                <p className="text-xs text-slate-400 leading-relaxed">{b.desc}</p>
+                <p className="text-xs text-text-muted leading-relaxed">{b.desc}</p>
               </div>
             )
           })}

@@ -176,7 +176,7 @@ export default function ArchitectureDiagram() {
                 <p className="text-[10px] font-mono text-conjur-gold/60 mb-0.5">
                   {t('architecture.step_of', { current: step + 1, total: TOTAL })}
                 </p>
-                <p className="text-sm font-semibold text-white leading-snug">
+                <p className="text-sm font-semibold text-text leading-snug">
                   {titles[step]}
                 </p>
               </motion.div>
@@ -184,22 +184,22 @@ export default function ArchitectureDiagram() {
 
             <div className="flex items-center gap-1.5 flex-shrink-0">
               <button onClick={handlePlayPause}
-                className="p-1.5 rounded-lg border border-border text-slate-400 hover:text-conjur-gold hover:border-conjur-gold/40 transition-colors"
+                className="p-1.5 rounded-lg border border-border text-text-muted hover:text-conjur-gold hover:border-conjur-gold/40 transition-colors"
                 aria-label={playing ? 'Pause' : 'Play'}>
                 {playing ? <Pause size={13} /> : <Play size={13} />}
               </button>
               <button onClick={() => { go(-1); setPlaying(false) }} disabled={step === 0}
-                className="p-1.5 rounded-lg border border-border text-slate-400 hover:text-white hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
+                className="p-1.5 rounded-lg border border-border text-text-muted hover:text-text hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
                 aria-label="Previous step">
                 <ChevronLeft size={15} />
               </button>
               <button onClick={() => { go(1); setPlaying(false) }} disabled={step === TOTAL - 1}
-                className="p-1.5 rounded-lg border border-border text-slate-400 hover:text-white hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
+                className="p-1.5 rounded-lg border border-border text-text-muted hover:text-text hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
                 aria-label="Next step">
                 <ChevronRight size={15} />
               </button>
               <button onClick={() => { setStep(0); setPlaying(true) }}
-                className="p-1.5 rounded-lg border border-border text-slate-500 hover:text-conjur-gold hover:border-conjur-gold/40 transition-colors"
+                className="p-1.5 rounded-lg border border-border text-text-muted hover:text-conjur-gold hover:border-conjur-gold/40 transition-colors"
                 aria-label="Restart" title="Restart">
                 <RotateCcw size={13} />
               </button>
@@ -224,7 +224,7 @@ export default function ArchitectureDiagram() {
           </div>
 
           {/* ── SVG diagram ── */}
-          <div className="px-4 pt-3 pb-2 overflow-x-auto">
+          <div className="overflow-x-auto rounded-xl border border-border bg-[#050d1a] p-4">
             <svg viewBox="0 0 820 460" style={{ minWidth: 560, width: '100%' }}
               role="img" aria-label={t('architecture.badge')}>
               <defs>
@@ -453,7 +453,7 @@ export default function ArchitectureDiagram() {
               <motion.p key={step}
                 initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.22 }}
-                className="text-sm text-slate-300 leading-relaxed">
+                className="text-sm text-text-2 leading-relaxed">
                 {descs[step]}
               </motion.p>
             </AnimatePresence>
@@ -468,7 +468,7 @@ export default function ArchitectureDiagram() {
         </div>
 
         {/* keyboard hint */}
-        <p className="text-center text-xs text-slate-700 select-none">
+        <p className="text-center text-xs text-text-muted select-none">
           {t('architecture.keyboard_hint')}
         </p>
       </div>

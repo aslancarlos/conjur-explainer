@@ -30,8 +30,20 @@ async function ensureLocale(lng?: string) {
   if (i18n.language.split('-')[0] === base) i18n.changeLanguage(base)
 }
 
+// Keep the document language in sync so screen readers announce content in the
+// active locale (WCAG 3.1.2). index.html ships lang="en"; update it on change.
+function syncDocumentLang(lng?: string) {
+  if (typeof document !== 'undefined') {
+    document.documentElement.lang = (lng || 'en').split('-')[0]
+  }
+}
+
 // Load the detected language at startup (if not English) and on every change.
 ensureLocale(i18n.language)
-i18n.on('languageChanged', ensureLocale)
+syncDocumentLang(i18n.language)
+i18n.on('languageChanged', (lng) => {
+  ensureLocale(lng)
+  syncDocumentLang(lng)
+})
 
 export default i18n

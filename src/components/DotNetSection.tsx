@@ -33,14 +33,14 @@ export default function DotNetSection() {
         >
           <div className="flex items-center gap-3">
             <span className="badge bg-dotnet/10 text-dotnet border border-dotnet/20">{t('dotnet.badge')}</span>
-            <span className="badge bg-bg-card border-border text-slate-400">{t('dotnet.label')}</span>
+            <span className="badge bg-bg-card border-border text-text-muted">{t('dotnet.label')}</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold flex items-center gap-3">
             <Puzzle size={32} className="text-dotnet" />
             {t('dotnet.title')}
             <span className="text-dotnet">{t('dotnet.titleAccent')}</span>
           </h2>
-          <p className="text-slate-400 leading-relaxed max-w-2xl">{t('dotnet.desc')}</p>
+          <p className="text-text-muted leading-relaxed max-w-2xl">{t('dotnet.desc')}</p>
         </motion.div>
 
         {/* Zero-code highlight */}
@@ -51,8 +51,8 @@ export default function DotNetSection() {
         >
           <p className="text-center text-2xl font-bold">
             <span className="text-dotnet">Zero Conjur code</span>{' '}
-            <span className="text-slate-400 font-normal text-lg">in the .NET application.</span>{' '}
-            <span className="text-white">The sidecar does the work.</span>
+            <span className="text-text-muted font-normal text-lg">in the .NET application.</span>{' '}
+            <span className="text-text">The sidecar does the work.</span>
           </p>
         </motion.div>
 
@@ -74,10 +74,10 @@ export default function DotNetSection() {
                       <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold font-mono ${cls}`}>
                         {step.n}
                       </span>
-                      <span className="font-semibold text-white text-sm">{step.title}</span>
+                      <span className="font-semibold text-text text-sm">{step.title}</span>
                     </div>
                     <pre className="code-block text-xs leading-relaxed overflow-x-auto whitespace-pre-wrap">
-                      <code className="text-slate-300">{step.code}</code>
+                      <code className="text-text-2">{step.code}</code>
                     </pre>
                   </div>
                   {i < steps.length - 1 && <div className="step-connector" />}
@@ -94,32 +94,32 @@ export default function DotNetSection() {
               transition={{ duration: 0.5, delay: 0.4 }}
               className="section-card border-dotnet/20 space-y-4"
             >
-              <h4 className="font-semibold text-white text-sm">Pod anatomy</h4>
+              <h4 className="font-semibold text-text text-sm">Pod anatomy</h4>
               <div className="rounded-xl border border-border bg-bg-base p-4 space-y-3">
                 {/* Pod container */}
-                <div className="text-xs text-slate-500 font-mono mb-2">K8s Pod</div>
+                <div className="text-xs text-text-muted font-mono mb-2">K8s Pod</div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="rounded-lg border border-dotnet/30 bg-dotnet/5 p-3 space-y-1">
                     <div className="text-xs font-bold text-dotnet">secrets-provider</div>
-                    <div className="text-xs text-slate-400">authenticates with Conjur</div>
-                    <div className="text-xs text-slate-400">writes K8s Secret</div>
+                    <div className="text-xs text-text-muted">authenticates with Conjur</div>
+                    <div className="text-xs text-text-muted">writes K8s Secret</div>
                     <div className="w-2 h-2 rounded-full bg-dotnet animate-pulse-slow" />
                   </div>
                   <div className="rounded-lg border border-conjur-cyan/30 bg-conjur-cyan/5 p-3 space-y-1">
                     <div className="text-xs font-bold text-conjur-cyan">dotnet app</div>
-                    <div className="text-xs text-slate-400">reads env vars</div>
-                    <div className="text-xs text-slate-400">DB_USER / DB_PASS</div>
+                    <div className="text-xs text-text-muted">reads env vars</div>
+                    <div className="text-xs text-text-muted">DB_USER / DB_PASS</div>
                     <div className="w-2 h-2 rounded-full bg-conjur-cyan animate-pulse-slow" />
                   </div>
                 </div>
-                <div className="text-xs text-center text-slate-500 font-mono">
+                <div className="text-xs text-center text-text-muted font-mono">
                   ↑ both share the same pod, different containers
                 </div>
               </div>
             </motion.div>
 
             {/* Features */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {features.map((f, i) => (
                 <motion.div
                   key={i}
@@ -127,8 +127,8 @@ export default function DotNetSection() {
                   transition={{ duration: 0.4, delay: 0.5 + i * 0.08 }}
                   className="section-card space-y-1"
                 >
-                  <p className="text-sm font-semibold text-white">{f.title}</p>
-                  <p className="text-xs text-slate-400 leading-relaxed">{f.desc}</p>
+                  <p className="text-sm font-semibold text-text">{f.title}</p>
+                  <p className="text-xs text-text-muted leading-relaxed">{f.desc}</p>
                 </motion.div>
               ))}
             </div>

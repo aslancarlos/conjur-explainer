@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronLeft, ChevronRight, RotateCcw, Play, Pause } from 'lucide-react'
@@ -57,6 +57,7 @@ const TOTAL = JSTEPS.length
 
 export default function JwtPage() {
   const { t } = useTranslation()
+  const reduce = useReducedMotion()
   const [step, setStep]       = useState(0)
   const [playing, setPlaying] = useState(false)
 
@@ -103,8 +104,8 @@ export default function JwtPage() {
           <span className="badge bg-gh/10 text-blue-400 border border-gh/30">
             {t('jwt.badge')}
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold">{t('jwt.title')}</h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-sm">{t('jwt.subtitle')}</p>
+          <h1 className="text-3xl sm:text-4xl font-bold">{t('jwt.title')}</h1>
+          <p className="text-text-muted max-w-2xl mx-auto text-sm">{t('jwt.subtitle')}</p>
         </div>
 
         {/* main card */}
@@ -121,31 +122,31 @@ export default function JwtPage() {
                 <p className="text-[10px] font-mono text-blue-400/60 mb-0.5">
                   {t('jwt.step_of', { current: step + 1, total: TOTAL })}
                 </p>
-                <p className="text-sm font-semibold text-white leading-snug">
+                <p className="text-sm font-semibold text-text leading-snug">
                   {t(`jwt.s${step + 1}_title`)}
                 </p>
               </motion.div>
             </AnimatePresence>
 
             <div className="flex items-center gap-1.5 flex-shrink-0">
-              <button onClick={() => setPlaying(p => !p)}
+              <button onClick={() => setPlaying(p => !p)} aria-label={playing ? 'Pause' : 'Play'}
                 className={`p-1.5 rounded-lg border transition-colors ${playing
                   ? 'border-blue-400/40 text-blue-400'
-                  : 'border-border text-slate-400 hover:text-blue-400 hover:border-blue-400/40'
+                  : 'border-border text-text-muted hover:text-blue-400 hover:border-blue-400/40'
                 }`}>
-                {playing ? <Pause size={14} /> : <Play size={14} />}
+                {playing ? <Pause size={14} aria-hidden="true" /> : <Play size={14} aria-hidden="true" />}
               </button>
-              <button onClick={() => go(-1)} disabled={step === 0}
-                className="p-1.5 rounded-lg border border-border text-slate-400 hover:text-white hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors">
-                <ChevronLeft size={15} />
+              <button onClick={() => go(-1)} disabled={step === 0} aria-label="Previous step"
+                className="p-1.5 rounded-lg border border-border text-text-muted hover:text-text hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors">
+                <ChevronLeft size={15} aria-hidden="true" />
               </button>
-              <button onClick={() => go(1)} disabled={step === TOTAL - 1}
-                className="p-1.5 rounded-lg border border-border text-slate-400 hover:text-white hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors">
-                <ChevronRight size={15} />
+              <button onClick={() => go(1)} disabled={step === TOTAL - 1} aria-label="Next step"
+                className="p-1.5 rounded-lg border border-border text-text-muted hover:text-text hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors">
+                <ChevronRight size={15} aria-hidden="true" />
               </button>
-              <button onClick={() => { setStep(0); setPlaying(false) }}
-                className="p-1.5 rounded-lg border border-border text-slate-500 hover:text-blue-400 hover:border-blue-400/40 transition-colors">
-                <RotateCcw size={13} />
+              <button onClick={() => { setStep(0); setPlaying(false) }} aria-label="Restart"
+                className="p-1.5 rounded-lg border border-border text-text-muted hover:text-blue-400 hover:border-blue-400/40 transition-colors">
+                <RotateCcw size={13} aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -169,8 +170,8 @@ export default function JwtPage() {
               {isHi('conjur') && (
                 <motion.rect x={412} y={7} width={226} height={286} rx={16}
                   fill="none" stroke={C.gold.stroke} strokeWidth={1}
-                  animate={{ strokeOpacity:[0.2,0.5,0.2] }}
-                  transition={{ duration:2.4, repeat:Infinity, ease:'easeInOut' }}
+                  animate={reduce ? { strokeOpacity:0.4 } : { strokeOpacity:[0.2,0.5,0.2] }}
+                  transition={{ duration:2.4, repeat: reduce ? 0 : Infinity, ease:'easeInOut' }}
                   filter="url(#j-glow)" />
               )}
               <rect x={420} y={15} width={210} height={270} rx={12}
@@ -198,8 +199,10 @@ export default function JwtPage() {
               </text>
               {/* pulse dot */}
               <motion.circle cx={614} cy={30} r={4} fill={C.gold.stroke}
-                animate={isHi('conjur') ? { opacity:[0.4,1,0.4], r:[3,4.5,3] } : { opacity:0.15, r:3 }}
-                transition={{ duration:2, repeat:Infinity, ease:'easeInOut' }} />
+                animate={reduce
+                  ? { opacity: isHi('conjur') ? 1 : 0.15, r: isHi('conjur') ? 4 : 3 }
+                  : isHi('conjur') ? { opacity:[0.4,1,0.4], r:[3,4.5,3] } : { opacity:0.15, r:3 }}
+                transition={{ duration:2, repeat: reduce ? 0 : Infinity, ease:'easeInOut' }} />
 
               {/* ── Validator sub-box ── */}
               <rect x={435} y={75} width={180} height={82} rx={8}
@@ -322,8 +325,10 @@ export default function JwtPage() {
                 )}
               </AnimatePresence>
               <motion.circle cx={137} cy={200} r={4} fill={C.cyan.stroke}
-                animate={isHi('pod') ? { opacity:[0.4,1,0.4], r:[3,4.5,3] } : { opacity:0.15, r:3 }}
-                transition={{ duration:2, repeat:Infinity, ease:'easeInOut' }} />
+                animate={reduce
+                  ? { opacity: isHi('pod') ? 1 : 0.15, r: isHi('pod') ? 4 : 3 }
+                  : isHi('pod') ? { opacity:[0.4,1,0.4], r:[3,4.5,3] } : { opacity:0.15, r:3 }}
+                transition={{ duration:2, repeat: reduce ? 0 : Infinity, ease:'easeInOut' }} />
 
               {/* ── K8s API node ── */}
               <rect x={215} y={20} width={160} height={70} rx={10}
@@ -401,7 +406,7 @@ export default function JwtPage() {
               <motion.p key={step}
                 initial={{ opacity:0, y:5 }} animate={{ opacity:1, y:0 }}
                 exit={{ opacity:0, y:-5 }} transition={{ duration:0.22 }}
-                className="text-sm text-slate-400 leading-relaxed">
+                className="text-sm text-text-muted leading-relaxed">
                 {t(`jwt.s${step + 1}_desc`)}
               </motion.p>
             </AnimatePresence>
@@ -409,8 +414,9 @@ export default function JwtPage() {
 
           {/* progress bar */}
           <div className="h-0.5 bg-bg-base/50 mx-5 mb-4 rounded-full overflow-hidden">
-            <motion.div className="h-full rounded-full bg-blue-500/50"
-              animate={{ width:`${((step + 1) / TOTAL) * 100}%` }}
+            <motion.div className="h-full w-full rounded-full bg-blue-500/50"
+              style={{ transformOrigin: 'left' }}
+              animate={{ scaleX: (step + 1) / TOTAL }}
               transition={{ duration:0.35, ease:'easeOut' }} />
           </div>
         </div>
@@ -419,13 +425,13 @@ export default function JwtPage() {
         <div className="grid sm:grid-cols-3 gap-4">
           {[1, 2, 3].map(n => (
             <div key={n} className="section-card space-y-2">
-              <h3 className="text-sm font-semibold text-white">{t(`jwt.key${n}_title`)}</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">{t(`jwt.key${n}_desc`)}</p>
+              <h3 className="text-sm font-semibold text-text">{t(`jwt.key${n}_title`)}</h3>
+              <p className="text-xs text-text-muted leading-relaxed">{t(`jwt.key${n}_desc`)}</p>
             </div>
           ))}
         </div>
 
-        <p className="text-center text-xs text-slate-700 select-none">{t('jwt.keyboard_hint')}</p>
+        <p className="text-center text-xs text-text-muted select-none">{t('jwt.keyboard_hint')}</p>
       </div>
     </section>
   )

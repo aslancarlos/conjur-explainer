@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronLeft, ChevronRight, RotateCcw, Play, Pause } from 'lucide-react'
@@ -128,6 +128,7 @@ const NODES: TreeNode[] = [
 
 export default function PolicyPage() {
   const { t } = useTranslation()
+  const reduce = useReducedMotion()
   const [step, setStep]       = useState(0)
   const [playing, setPlaying] = useState(false)
 
@@ -172,8 +173,8 @@ export default function PolicyPage() {
           <span className="badge bg-conjur-gold/10 text-conjur-gold border border-conjur-gold/30">
             {t('policy.badge')}
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold">{t('policy.title')}</h2>
-          <p className="text-slate-400 max-w-2xl mx-auto text-sm">{t('policy.subtitle')}</p>
+          <h1 className="text-3xl sm:text-4xl font-bold">{t('policy.title')}</h1>
+          <p className="text-text-muted max-w-2xl mx-auto text-sm">{t('policy.subtitle')}</p>
         </div>
 
         {/* main card */}
@@ -190,31 +191,31 @@ export default function PolicyPage() {
                 <p className="text-[10px] font-mono text-conjur-gold/70 mb-0.5">
                   {t('policy.step_of', { current: step + 1, total: TOTAL })}
                 </p>
-                <p className="text-sm font-semibold text-white leading-snug">
+                <p className="text-sm font-semibold text-text leading-snug">
                   {t(`policy.s${step + 1}_title`)}
                 </p>
               </motion.div>
             </AnimatePresence>
 
             <div className="flex items-center gap-1.5 flex-shrink-0">
-              <button onClick={() => setPlaying(p => !p)}
+              <button onClick={() => setPlaying(p => !p)} aria-label={playing ? 'Pause' : 'Play'}
                 className={`p-1.5 rounded-lg border transition-colors ${playing
                   ? 'border-conjur-gold/50 text-conjur-gold'
-                  : 'border-border text-slate-400 hover:text-conjur-gold hover:border-conjur-gold/50'
+                  : 'border-border text-text-muted hover:text-conjur-gold hover:border-conjur-gold/50'
                 }`}>
-                {playing ? <Pause size={14} /> : <Play size={14} />}
+                {playing ? <Pause size={14} aria-hidden="true" /> : <Play size={14} aria-hidden="true" />}
               </button>
-              <button onClick={() => go(-1)} disabled={step === 0}
-                className="p-1.5 rounded-lg border border-border text-slate-400 hover:text-white hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors">
-                <ChevronLeft size={15} />
+              <button onClick={() => go(-1)} disabled={step === 0} aria-label="Previous step"
+                className="p-1.5 rounded-lg border border-border text-text-muted hover:text-text hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors">
+                <ChevronLeft size={15} aria-hidden="true" />
               </button>
-              <button onClick={() => go(1)} disabled={step === TOTAL - 1}
-                className="p-1.5 rounded-lg border border-border text-slate-400 hover:text-white hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors">
-                <ChevronRight size={15} />
+              <button onClick={() => go(1)} disabled={step === TOTAL - 1} aria-label="Next step"
+                className="p-1.5 rounded-lg border border-border text-text-muted hover:text-text hover:border-slate-500 disabled:opacity-25 disabled:cursor-not-allowed transition-colors">
+                <ChevronRight size={15} aria-hidden="true" />
               </button>
-              <button onClick={() => { setStep(0); setPlaying(false) }}
-                className="p-1.5 rounded-lg border border-border text-slate-500 hover:text-conjur-gold hover:border-conjur-gold/50 transition-colors">
-                <RotateCcw size={13} />
+              <button onClick={() => { setStep(0); setPlaying(false) }} aria-label="Restart"
+                className="p-1.5 rounded-lg border border-border text-text-muted hover:text-conjur-gold hover:border-conjur-gold/50 transition-colors">
+                <RotateCcw size={13} aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -349,8 +350,8 @@ export default function PolicyPage() {
                       stroke={C.green.stroke} strokeWidth={1.4} fill="none"
                       strokeDasharray="4 3"
                       markerEnd="url(#pol-green)"
-                      animate={{ strokeDashoffset:[0,-14] }}
-                      transition={{ duration:1.4, repeat:Infinity, ease:'linear' }} />
+                      animate={reduce ? { strokeDashoffset:0 } : { strokeDashoffset:[0,-14] }}
+                      transition={{ duration:1.4, repeat: reduce ? 0 : Infinity, ease:'linear' }} />
                     <text x={528} y={285} fontSize="8.5" fontFamily="JetBrains Mono, monospace"
                       fill={C.green.text} textAnchor="middle">
                       permit: read, execute
@@ -367,8 +368,8 @@ export default function PolicyPage() {
                       stroke={C.green.stroke} strokeWidth={1.4} fill="none"
                       strokeDasharray="4 3"
                       markerEnd="url(#pol-green)"
-                      animate={{ strokeDashoffset:[0,-14] }}
-                      transition={{ duration:1.4, repeat:Infinity, ease:'linear' }} />
+                      animate={reduce ? { strokeDashoffset:0 } : { strokeDashoffset:[0,-14] }}
+                      transition={{ duration:1.4, repeat: reduce ? 0 : Infinity, ease:'linear' }} />
                     <text x={718} y={305} fontSize="8.5" fontFamily="JetBrains Mono, monospace"
                       fill={C.green.text} textAnchor="middle">
                       grant: member
@@ -390,8 +391,8 @@ export default function PolicyPage() {
                     {hi && (
                       <motion.rect x={x - 3} y={y - 3} width={n.w + 6} height={n.h + 6} rx={9}
                         fill="none" stroke={C[n.ck].stroke} strokeWidth={1}
-                        animate={{ strokeOpacity:[0.25,0.65,0.25] }}
-                        transition={{ duration:2.2, repeat:Infinity, ease:'easeInOut' }}
+                        animate={reduce ? { strokeOpacity:0.5 } : { strokeOpacity:[0.25,0.65,0.25] }}
+                        transition={{ duration:2.2, repeat: reduce ? 0 : Infinity, ease:'easeInOut' }}
                         filter="url(#pol-glow)" />
                     )}
                     <rect x={x} y={y} width={n.w} height={n.h} rx={7}
@@ -436,8 +437,8 @@ export default function PolicyPage() {
                     {findNode('var') && (
                       <motion.circle cx={475} cy={263} r={5}
                         fill={C.cyan.stroke}
-                        animate={{ opacity:[0.3,0.9,0.3], r:[4,6,4] }}
-                        transition={{ duration:2, repeat:Infinity, ease:'easeInOut' }} />
+                        animate={reduce ? { opacity:0.9, r:5 } : { opacity:[0.3,0.9,0.3], r:[4,6,4] }}
+                        transition={{ duration:2, repeat: reduce ? 0 : Infinity, ease:'easeInOut' }} />
                     )}
                   </motion.g>
                 )}
@@ -451,7 +452,7 @@ export default function PolicyPage() {
               <motion.p key={step}
                 initial={{ opacity:0, y:5 }} animate={{ opacity:1, y:0 }}
                 exit={{ opacity:0, y:-5 }} transition={{ duration:0.22 }}
-                className="text-sm text-slate-400 leading-relaxed">
+                className="text-sm text-text-muted leading-relaxed">
                 {t(`policy.s${step + 1}_desc`)}
               </motion.p>
             </AnimatePresence>
@@ -459,8 +460,9 @@ export default function PolicyPage() {
 
           {/* progress bar */}
           <div className="h-0.5 bg-bg-base/50 mx-5 mb-4 rounded-full overflow-hidden">
-            <motion.div className="h-full rounded-full bg-conjur-gold/60"
-              animate={{ width:`${((step + 1) / TOTAL) * 100}%` }}
+            <motion.div className="h-full w-full rounded-full bg-conjur-gold/60"
+              style={{ transformOrigin: 'left' }}
+              animate={{ scaleX: (step + 1) / TOTAL }}
               transition={{ duration:0.35, ease:'easeOut' }} />
           </div>
         </div>
@@ -469,13 +471,13 @@ export default function PolicyPage() {
         <div className="grid sm:grid-cols-3 gap-4">
           {[1, 2, 3].map(n => (
             <div key={n} className="section-card space-y-2">
-              <h3 className="text-sm font-semibold text-white">{t(`policy.key${n}_title`)}</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">{t(`policy.key${n}_desc`)}</p>
+              <h3 className="text-sm font-semibold text-text">{t(`policy.key${n}_title`)}</h3>
+              <p className="text-xs text-text-muted leading-relaxed">{t(`policy.key${n}_desc`)}</p>
             </div>
           ))}
         </div>
 
-        <p className="text-center text-xs text-slate-700 select-none">{t('policy.keyboard_hint')}</p>
+        <p className="text-center text-xs text-text-muted select-none">{t('policy.keyboard_hint')}</p>
       </div>
     </section>
   )
