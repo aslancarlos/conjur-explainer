@@ -1,7 +1,10 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci
+# @types/react-dom@18 declares a peer on @types/react@^18, but the project pins
+# @types/react@19 — a dev-only (type-checking) conflict with no runtime impact.
+# --legacy-peer-deps lets the deterministic install proceed past it.
+RUN npm ci --legacy-peer-deps
 COPY . .
 RUN npm run build
 

@@ -33,10 +33,11 @@ export default {
         },
 
         // ─── Per-workload accents ──────────────────────────────────────
-        spring: '#2d8a3e',
-        dotnet: '#6048d6',
-        gh:     '#0067ff',
-        eso:    '#fa582d',
+        spring:  '#2d8a3e',
+        dotnet:  '#6048d6',
+        gh:      '#0067ff',
+        eso:     '#fa582d',
+        ansible: '#ee0000',
 
         // ─── Legacy CyberArk-era names kept as aliases on IDIRA tones ──
         conjur: {
