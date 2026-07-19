@@ -18,6 +18,13 @@ i18n
     resources: { en: { translation: en } },
     fallbackLng: 'en',
     interpolation: { escapeValue: false },
+    // pt/es are code-split and loaded on demand (see ensureLocale below). With
+    // react-i18next's default useSuspense, a non-English detected language would
+    // make useTranslation() suspend on first render — and NavBar sits outside the
+    // app's Suspense boundary, so the whole tree fails to mount (blank screen).
+    // Disable suspense: components render the `en` fallback immediately and
+    // re-render once the real bundle arrives.
+    react: { useSuspense: false },
   })
 
 async function ensureLocale(lng?: string) {
