@@ -69,9 +69,9 @@
 }
 .skip-link:focus { transform: translateY(0); }
 
-/* Iridescent shimmer for IDIRA brand */
+/* Iridescent shimmer — official IDIRA palette (cyan → sky → blue) */
 .idira-shimmer {
-  background: linear-gradient(95deg, #00d4ff 0%, #2589ff 30%, #ff2d8a 60%, #ff7a3d 100%);
+  background: linear-gradient(95deg, #4ad1f0 0%, #00c0e8 26%, #2589ff 62%, #265bff 100%);
   background-size: 200% 100%;
   background-clip: text;
   -webkit-background-clip: text;
@@ -106,4 +106,85 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ─── Modern IDIRA home: mesh, grid, promise band (PANTONE palette) ─── */
+
+/* Animated iridescent mesh — official IDIRA blues/cyan + subtle orange accent */
+.hero-mesh {
+  background:
+    radial-gradient(ellipse 55% 50% at 78% 26%, rgba(38, 91, 255, 0.40), transparent 60%),
+    radial-gradient(ellipse 52% 50% at 20% 66%, rgba(74, 209, 240, 0.30), transparent 62%),
+    radial-gradient(ellipse 45% 45% at 70% 90%, rgba(250, 88, 45, 0.14), transparent 60%),
+    radial-gradient(ellipse 40% 40% at 12% 18%, rgba(201, 214, 255, 0.16), transparent 60%);
+  filter: blur(46px);
+  animation: hero-mesh 26s ease-in-out infinite alternate;
+}
+@keyframes hero-mesh {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(38px, -28px) scale(1.12); }
+}
+
+/* Subtle masked dot grid */
+.hero-grid {
+  background-image: radial-gradient(rgba(148, 163, 184, 0.16) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(ellipse 72% 62% at 42% 42%, #000 0%, transparent 76%);
+  mask-image: radial-gradient(ellipse 72% 62% at 42% 42%, #000 0%, transparent 76%);
+}
+
+/* Diagonal-cut primary CTA */
+.cta-diagonal { clip-path: polygon(0 0, 100% 0, calc(100% - 13px) 100%, 0 100%); }
+
+/* Promise band — always deep navy, rotating conic PANTONE gradient behind */
+.idira-promise {
+  background: #0f1b3a;
+  color: #f0f4fc;
+  border-radius: 28px;
+  padding: clamp(48px, 7vw, 96px) clamp(26px, 6vw, 64px);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.idira-promise::before {
+  content: '';
+  position: absolute;
+  top: -40%; right: -12%;
+  width: 72%; height: 200%;
+  background: conic-gradient(from 210deg, #0f1b3a, #265bff 24%, #4ad1f0 48%, #007bff 70%, #fa582d 88%, #0f1b3a 100%);
+  filter: blur(92px);
+  opacity: 0.55;
+  z-index: -1;
+  animation: idira-spin 42s linear infinite;
+}
+@keyframes idira-spin { to { transform: rotate(360deg); } }
+
+.idira-promise-zero {
+  display: inline-block;
+  position: relative;
+  font: 800 clamp(150px, 21vw, 290px)/0.85 'Onest', system-ui, sans-serif;
+  letter-spacing: -0.07em;
+  background: linear-gradient(180deg, #ffffff 0%, rgba(184, 196, 220, 0.38) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.idira-promise-zero::after {
+  content: '';
+  position: absolute;
+  bottom: 0.2em; right: -0.16em;
+  width: 0.13em; height: 0.13em;
+  background: #fa582d;
+  border-radius: 50%;
+  box-shadow: 0 0 26px 6px rgba(250, 88, 45, 0.55);
+}
+
+/* Navbar — modern iridescent line matching the hero */
+.nav-iridescent::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(74, 209, 240, 0.55) 22%, rgba(37, 137, 255, 0.55) 48%, rgba(38, 91, 255, 0.45) 72%, transparent 100%);
+  opacity: 0.75;
 }

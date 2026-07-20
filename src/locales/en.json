@@ -43,35 +43,131 @@
     "eyebrow": "Palo Alto Networks | IDIRA · Secrets Manager · Kubernetes · ESO · DevSecOps",
     "title": "Secrets Management",
     "titleAccent": "in Action",
-    "subtitle": "Four integration patterns. Zero hardcoded credentials. Spring Boot (direct JWT), .NET (Secrets Provider sidecar), GitHub Actions (OIDC), and a K8s-native ecommerce app using External Secrets Operator — all fetching credentials live from Palo Alto Networks | IDIRA Secrets Manager.",
+    "subtitle": "Eight live integration patterns, zero hardcoded credentials. Spring Boot, .NET, GitHub Actions, Jenkins, Ansible, the Secrets Store CSI Driver, External Secrets Operator and zero-downtime Dual Accounts rotation — every workload fetches its secret live from Palo Alto Networks | IDIRA Secrets Manager with its own short-lived identity: keyless, rotated, scoped by policy and fully audited.",
     "cta_spring": "Spring Boot Demo",
     "cta_dotnet": ".NET Demo",
     "cta_eso": "ESO Shop Demo",
-    "cta_explore": "Explore patterns ↓"
+    "cta_explore": "Explore patterns ↓",
+    "federated_label": "Federated across",
+    "stat1_label": "live integration patterns",
+    "stat2_label": "identity authority",
+    "stat3_label": "secrets at rest",
+    "stat4_label": "keyless workload identity"
+  },
+  "promise": {
+    "eyebrow": "The promise",
+    "claim_pre": "Zero static credentials in source, images, env vars or CI.",
+    "claim_mark": "Every workload talks to IDIRA with its own identity.",
+    "detail": "This is not a roadmap or a vendor PDF — it is running infrastructure: eight live apps you can hit right now, the policy that scopes them, the architecture that proves it, and the open-source code behind every piece. Built on the LATAM Lab tenant, federated to GitHub, AWS and Kubernetes."
+  },
+  "constellation": {
+    "aria": "IDIRA at the centre as the identity authority, with the eight live demos around it, each fetching its secret from IDIRA."
+  },
+  "flow": {
+    "badge": "Integration Flow",
+    "title": "How Secrets Manager authenticates workloads",
+    "subtitle": "A step-by-step look at the JWT authentication and secret retrieval flow shared by all four integration patterns.",
+    "step_of": "Step {{current}} of {{total}}",
+    "keyboard_hint": "← → arrow keys to navigate",
+    "aria_label": "Secrets Manager integration flow diagram",
+    "s1_title": "App identities",
+    "s1_desc": "Four clients with distinct Kubernetes identities: Spring Boot, .NET 8, GitHub Actions, and ESO Shop. Each authenticates independently using its own ServiceAccount JWT (or OIDC token for GitHub Actions).",
+    "s2_title": "Secrets Manager",
+    "s2_desc": "Palo Alto Networks | IDIRA Secrets Manager is the central identity broker and secrets vault, running at latamlab.secretsmgr.cyberark.cloud. All four patterns authenticate to this single control plane.",
+    "s3_title": "Identity verification via K8s API",
+    "s3_desc": "Secrets Manager does not trust JWTs blindly — it forwards each token to the Kubernetes API Server for validation. The API Server confirms the token is genuine and bound to a real ServiceAccount.",
+    "s4_title": "Spring Boot authenticates",
+    "s4_desc": "Spring Boot sends its Kubernetes ServiceAccount JWT to Secrets Manager's authn-jwt/eks-latam endpoint. Secrets Manager validates the identity against its policy and returns a short-lived API token.",
+    "s5_title": ".NET authenticates via sidecar",
+    "s5_desc": "The Palo Alto Networks | IDIRA Secrets Provider sidecar — not the .NET app itself — authenticates with Secrets Manager using JWT. The application never handles any credential exchange directly.",
+    "s6_title": "GitHub Actions authenticates via OIDC",
+    "s6_desc": "GitHub Actions uses its native OIDC token instead of a Kubernetes JWT. Secrets Manager validates the workflow identity: repository name and workflow name must match the policy exactly.",
+    "s7_title": "ESO Shop authenticates via operator",
+    "s7_desc": "The External Secrets Operator authenticates to Secrets Manager using the eso-shop-sa ServiceAccount JWT. It syncs credentials into a Kubernetes Secret every 60 seconds — the app reads only env vars.",
+    "s8_title": "Secrets retrieved from vault",
+    "s8_desc": "Once identity is confirmed, Secrets Manager retrieves the requested secrets from its internal vault: DB_USER, DB_PASS, and DB_HOST from the data/vault/dev-demo-aslan/dbuser_dual path.",
+    "s9_title": "Database connected — full flow complete",
+    "s9_desc": "Credentials reach the application as environment variables. The app connects to MySQL using dynamic, Secrets Manager-managed credentials. No secret ever touches source code or a container image."
+  },
+  "demos": {
+    "kicker": "Live demos",
+    "title": "Twelve patterns, one identity broker",
+    "subtitle": "Every pattern below consumes or governs secrets in IDIRA with its own identity — no shared key, no secret in the image. Open any one to watch the full flow, step by step.",
+    "cta": "See the flow",
+    "spring": "A Spring Boot service injects DB credentials at runtime with @Value via the Secrets Manager SDK, authenticating with its Kubernetes ServiceAccount JWT. No datasource password on disk or in the image.",
+    "dotnet": "A .NET app receives its credentials through the CyberArk Secrets Provider sidecar into IConfiguration — the workload never calls the vault directly; the sidecar handles auth and injection.",
+    "gha": "A CI/CD pipeline authenticates with GitHub's OIDC token — no stored PAT — and pulls scoped secrets during the workflow run via the Conjur GitHub Action.",
+    "eso": "A Kubernetes-native ecommerce app uses the External Secrets Operator to sync IDIRA secrets into the cluster, with a live secret-watcher operator and an i18n storefront.",
+    "jenkins": "Jenkins pipelines fetch secrets at build time with the Secrets Manager Credentials Plugin, using a short-lived JWT signed by Jenkins itself. Values are auto-masked in the build logs.",
+    "ansible": "Playbooks retrieve secrets at run time through the cyberark.conjur lookup plugin, authenticated with a JWT from your IdP — nothing static in inventory or the playbook.",
+    "csi": "The Secrets Store CSI Driver mounts the secret into a read-only tmpfs volume via a projected ServiceAccount JWT, refreshing it automatically every ~2 minutes with no pod restart.",
+    "dual": "Zero-downtime credential rotation in action: the CPM rotates account A while account B keeps serving, and the credential provider cache switches over seamlessly.",
+    "swa": "A workload with a SPIFFE/SVID identity exchanges its certificate for temporary AWS STS credentials and reads an S3 bucket — no static access key, all over mTLS and identity federation.",
+    "jwt": "The heart of the model: authn-jwt validates the workload's identity token (ServiceAccount, OIDC, IdP) against policy before releasing any secret — walk the full handshake, step by step.",
+    "secretshub": "Secrets Hub syncs secrets from CyberArk PAM into the cloud vault, keeping a single source of truth — apps always consume from the same API, with no duplicated credential.",
+    "policy": "Policy as code: hosts, groups and permissions declared in YAML and versioned in git. Each identity gets least-privilege, auditable access, reviewable in a PR."
+  },
+  "caps": {
+    "kicker": "What they share",
+    "title": "Every pattern, the same guarantees",
+    "subtitle": "Different tools, one model: identity-first, keyless, rotated, scoped by policy and fully auditable.",
+    "identity_title": "Keyless workload identity",
+    "identity_desc": "Each workload authenticates with a short-lived JWT/OIDC token or cloud IAM — never a static API key stored on disk, in an image or in CI.",
+    "rotation_title": "Automatic rotation",
+    "rotation_desc": "Secrets are re-fetched and refreshed in place — no redeploy, no pod restart. Rotate at the source and every consumer follows.",
+    "policy_title": "Policy-based access",
+    "policy_desc": "Policy scopes exactly which identity can read which secret. Granting or revoking is a policy change — immediate, no secret redistribution.",
+    "audit_title": "Fully audited",
+    "audit_desc": "Every authentication and secret fetch is logged and tied to the workload identity — a complete trail of who read what, and when.",
+    "oss_title": "Open-source & reproducible",
+    "oss_desc": "Every app, manifest and policy in this demo is on GitHub. Fork it, read it, run it in your own cluster.",
+    "live_title": "Live & federated",
+    "live_desc": "Not slides — running infrastructure federated to GitHub, AWS and Kubernetes that you can hit right now."
   },
   "problem": {
     "badge": "The Problem",
     "title": "Hardcoded credentials are a ticking time bomb",
+    "subtitle": "Each risk below maps to well-established industry frameworks — NIST SP 800-53 / 800-207, MITRE ATT&CK, OWASP and CIS Controls.",
+    "maps_to": "Maps to",
     "items": [
       {
         "icon": "alert",
         "title": "Credentials in source code",
-        "desc": "Database passwords committed to git repositories leak in breach dumps, old forks, and CI logs."
+        "desc": "Hardcoded database passwords and API keys leak through git history, forks and CI logs — the most common unsecured-credential technique in MITRE ATT&CK (T1552.001) and a top weakness in CWE-798. Verizon's DBIR consistently ranks stolen credentials as the #1 breach vector."
       },
       {
         "icon": "clock",
         "title": "No rotation",
-        "desc": "Static credentials are never rotated. One leaked password = permanent access until manual intervention."
+        "desc": "Static credentials that never expire violate NIST SP 800-53 IA-5 (Authenticator Management) and NIST SP 800-63B guidance. A single leak grants standing access — MITRE ATT&CK T1078, Valid Accounts — until someone manually intervenes."
       },
       {
         "icon": "eye",
         "title": "No audit trail",
-        "desc": "Who accessed what secret, when? Without a secrets manager, you have no idea."
+        "desc": "Who read which secret, and when? Without centralized access logging you cannot satisfy NIST SP 800-53 AU-2 / AU-12, CIS Control 8 or PCI DSS Req. 10 — and you cannot detect credential misuse."
       }
     ],
     "solution_badge": "The Solution",
     "solution_title": "Dynamic secrets with Palo Alto Networks | IDIRA Secrets Manager",
-    "solution_desc": "Secrets Manager authenticates workloads using their Kubernetes identity (JWT) — not passwords. Secrets are fetched at runtime, cached briefly, and rotated automatically. No secret ever touches your code."
+    "solution_desc": "Secrets Manager flips the model: a workload never holds a static password. Each one authenticates with its own platform identity — a Kubernetes ServiceAccount JWT, a GitHub OIDC token or an AWS IAM role — and receives a short-lived secret, scoped by policy, fetched at runtime over mTLS and rotated automatically with zero downtime. No secret is ever written to source, a container image or an environment variable. The result is identity-first, least-privilege, fully-audited access — exactly the model prescribed by NIST SP 800-207 Zero Trust Architecture — and it directly mitigates the MITRE ATT&CK techniques above (T1552.001 Credentials in Files, T1078 Valid Accounts).",
+    "pillars_label": "Why this closes the gaps",
+    "pillars": [
+      {
+        "title": "Ephemeral identity, not passwords",
+        "desc": "Every workload proves who it is with a JWT, OIDC token or IAM role — there is no shared, long-lived credential to steal."
+      },
+      {
+        "title": "Least privilege by policy",
+        "desc": "Each identity reads only the secrets its Conjur policy explicitly grants — nothing more, enforced centrally."
+      },
+      {
+        "title": "Automatic rotation",
+        "desc": "Short-TTL secrets are fetched at runtime and rotated with no downtime, so any leak expires on its own."
+      },
+      {
+        "title": "Complete audit trail",
+        "desc": "Every secret retrieval is logged — who, what and when — ready for your SIEM and compliance evidence."
+      }
+    ]
   },
   "architecture": {
     "badge": "Architecture",
@@ -401,32 +497,6 @@
         "desc": "Patches deployment annotation eso-operator/restartedAt. Kubernetes rolls pods one by one with maxUnavailable: 0."
       }
     ]
-  },
-  "flow": {
-    "badge": "Integration Flow",
-    "title": "How Secrets Manager authenticates workloads",
-    "subtitle": "A step-by-step look at the JWT authentication and secret retrieval flow shared by all four integration patterns.",
-    "step_of": "Step {{current}} of {{total}}",
-    "keyboard_hint": "← → arrow keys to navigate",
-    "aria_label": "Secrets Manager integration flow diagram",
-    "s1_title": "App identities",
-    "s1_desc": "Four clients with distinct Kubernetes identities: Spring Boot, .NET 8, GitHub Actions, and ESO Shop. Each authenticates independently using its own ServiceAccount JWT (or OIDC token for GitHub Actions).",
-    "s2_title": "Secrets Manager",
-    "s2_desc": "Palo Alto Networks | IDIRA Secrets Manager is the central identity broker and secrets vault, running at latamlab.secretsmgr.cyberark.cloud. All four patterns authenticate to this single control plane.",
-    "s3_title": "Identity verification via K8s API",
-    "s3_desc": "Secrets Manager does not trust JWTs blindly — it forwards each token to the Kubernetes API Server for validation. The API Server confirms the token is genuine and bound to a real ServiceAccount.",
-    "s4_title": "Spring Boot authenticates",
-    "s4_desc": "Spring Boot sends its Kubernetes ServiceAccount JWT to Secrets Manager's authn-jwt/eks-latam endpoint. Secrets Manager validates the identity against its policy and returns a short-lived API token.",
-    "s5_title": ".NET authenticates via sidecar",
-    "s5_desc": "The Palo Alto Networks | IDIRA Secrets Provider sidecar — not the .NET app itself — authenticates with Secrets Manager using JWT. The application never handles any credential exchange directly.",
-    "s6_title": "GitHub Actions authenticates via OIDC",
-    "s6_desc": "GitHub Actions uses its native OIDC token instead of a Kubernetes JWT. Secrets Manager validates the workflow identity: repository name and workflow name must match the policy exactly.",
-    "s7_title": "ESO Shop authenticates via operator",
-    "s7_desc": "The External Secrets Operator authenticates to Secrets Manager using the eso-shop-sa ServiceAccount JWT. It syncs credentials into a Kubernetes Secret every 60 seconds — the app reads only env vars.",
-    "s8_title": "Secrets retrieved from vault",
-    "s8_desc": "Once identity is confirmed, Secrets Manager retrieves the requested secrets from its internal vault: DB_USER, DB_PASS, and DB_HOST from the data/vault/dev-demo-aslan/dbuser_dual path.",
-    "s9_title": "Database connected — full flow complete",
-    "s9_desc": "Credentials reach the application as environment variables. The app connects to MySQL using dynamic, Secrets Manager-managed credentials. No secret ever touches source code or a container image."
   },
   "compare": {
     "badge": "Comparison",
@@ -915,5 +985,13 @@
     "deploy_issuer": "Issuer",
     "deploy_jwks": "JWKS URI",
     "deploy_namespace": "K8s namespace"
+  },
+  "ccflow": {
+    "col_workloads": "Workloads",
+    "col_auth": "Authentication",
+    "col_delivery": "Service",
+    "m_workloads": "live workloads",
+    "m_auth": "primary auth",
+    "m_rest": "secrets at rest"
   }
 }

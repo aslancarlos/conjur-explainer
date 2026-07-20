@@ -14,25 +14,19 @@ const C: Record<CK, { stroke: string; text: string; border: string; bg: string }
   slate:  { stroke: '#64748b', text: '#94a3b8', border: 'rgba(100,116,139,0.35)', bg: 'rgba(15,30,48,0.7)'  },
 }
 
-// ─── layout (ViewBox 0 0 820 460) ────────────────────────────────────────────
+// ─── layout (ViewBox 0 0 860 490) — Command-Center style, no crossing lines ───
 //
-// ┌──── Kubernetes Cluster (x=8,y=8 → x=498,y=328) ─────────────────────────┐  ┌── Conjur Cloud · SaaS ──┐
-// │  ┌─── App Pod ──────────────┐  [K8s API Server]                          │  │ [Secrets Manager]        │
-// │  │  [App Container]          │  x=308,y=114,w=168,h=62                   │  │ x=568,y=54,w=232,h=96    │
-// │  │  [Service Account JWT]    │                                            │  └──────────────────────────┘
-// │  └──────────────────────────┘  [Secrets Vault]                           │
-// │                                x=308,y=240,w=168,h=62                    │
-// └────────────────────────────────────────────────────────────────────────────┘
-// ─ ─ ─ external · outside cluster ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─
-// [MySQL] x=300,y=382,w=186,h=62
+// Auth handshake runs across the TOP (auth ↑ / token ↓ over K8s API);
+// secret consumption runs across the BOTTOM (read → vault, secrets ← vault,
+// connect → MySQL down the left gutter). Two hubs (App Pod, Secrets Manager)
+// with all edges routed so none cross or overlap another node.
 //
-// Node centers / key connection points:
-//   container  cx=127,cy=73   right=(226,73)  bottom=(127,104)
-//   jwt        cx=127,cy=179  right=(226,179) top=(127,150)
-//   k8sapi     cx=392,cy=145  left=(308,145)  right=(476,145)
-//   sm         cx=684,cy=102  left=(568,102)  right=(800,102) bottom=(684,150)
-//   vault      cx=392,cy=271  top=(392,240)   left=(308,271)
-//   mysql      cx=393,cy=413  top=(393,382)
+//   Kubernetes Cluster (x=8..564, y=8..380)          Conjur Cloud · SaaS (x=616..848)
+//   ┌ App Pod ┐   [K8s API]                            [ Secrets Manager ]
+//   │container │                                        (authn-jwt)
+//   │  jwt     │   [Secrets Vault]
+//   └──────────┘
+//   ─ external ─   [MySQL]  (bottom-left, under the pod)
 
 interface N {
   id: string; x: number; y: number; w: number; h: number
@@ -43,35 +37,36 @@ interface E {
 }
 
 const NODES: N[] = [
-  // ── inside Kubernetes cluster ──────────────────────────────────────────────
-  { id:'container', x:28,  y:42,  w:198, h:62,  label:'App Container',       sub:'Spring Boot · .NET · ESO',              ck:'cyan'             },
-  { id:'jwt',       x:28,  y:150, w:198, h:58,  label:'Service Account JWT', sub:'/var/run/secrets/tokens/jwt',           ck:'gold'             },
-  { id:'k8sapi',   x:308, y:114, w:168, h:62,  label:'K8s API Server',      sub:'JWT validation',                        ck:'slate'            },
-  // ── outside cluster — Conjur Cloud SaaS ───────────────────────────────────
-  { id:'sm',        x:568, y:54,  w:232, h:96,  label:'Secrets Manager',     sub:'latamlab.secretsmgr.cyberark.cloud',    ck:'gold', feat:true   },
-  // ── inside Kubernetes cluster — Secrets Vault ─────────────────────────────
-  { id:'vault',     x:308, y:240, w:168, h:62,  label:'Secrets Vault',       sub:'data/vault/dev-demo-aslan/…',           ck:'cyan'             },
-  // ── external database ──────────────────────────────────────────────────────
-  { id:'mysql',     x:300, y:382, w:186, h:62,  label:'MySQL Database',      sub:'mysql.demo.local',                        ck:'spring', external:true },
+  // ── App Pod (inside Kubernetes cluster) ────────────────────────────────────
+  { id:'container', x:40,  y:64,  w:216, h:58,  label:'App Container',       sub:'Spring Boot · .NET · ESO',              ck:'cyan'             },
+  { id:'jwt',       x:40,  y:156, w:216, h:58,  label:'Service Account JWT', sub:'/var/run/secrets/tokens/jwt',           ck:'gold'             },
+  // ── K8s API Server (inside cluster, upper-middle) ──────────────────────────
+  { id:'k8sapi',    x:340, y:118, w:176, h:56,  label:'K8s API Server',      sub:'JWT validation',                        ck:'slate'            },
+  // ── Conjur Cloud SaaS (outside cluster, right) ─────────────────────────────
+  { id:'sm',        x:636, y:74,  w:196, h:104, label:'Secrets Manager',     sub:'latamlab.secretsmgr.cyberark.cloud',    ck:'gold', feat:true   },
+  // ── Secrets Vault (inside cluster, lower-middle) ───────────────────────────
+  { id:'vault',     x:336, y:298, w:180, h:56,  label:'Secrets Vault',       sub:'data/vault/dev-demo-aslan/…',           ck:'cyan'             },
+  // ── External database (bottom-left, below the pod) ─────────────────────────
+  { id:'mysql',     x:40,  y:406, w:216, h:60,  label:'MySQL Database',      sub:'mysql.demo.local',                        ck:'spring', external:true },
 ]
 
 const EDGES: E[] = [
-  // Step 1 — K8s projects a short-lived JWT into the pod filesystem
-  { id:'jwt-proj', d:'M 127,104 L 127,150',                          ck:'gold',   tag:'projected',    lx:152, ly:130 },
-  // Step 2 — App sends JWT to Secrets Manager to authenticate
-  { id:'auth-sm',  d:'M 226,179 C 396,179 396,102 568,102',          ck:'gold',   tag:'JWT',           lx:382, ly:150 },
-  // Step 3a — SM forwards JWT to K8s API Server for validation
-  { id:'sm-k8',    d:'M 568,90 C 522,90 522,145 476,145',            ck:'gold',   tag:'verify',        lx:521, ly:108 },
-  // Step 3b — K8s API Server confirms the workload identity
-  { id:'k8-sm',    d:'M 476,162 C 522,162 522,116 568,116',          ck:'slate',  tag:'✓ ok',          lx:521, ly:144 },
-  // Step 3c — SM returns a short-lived API token to the app
-  { id:'sm-app',   d:'M 568,72 C 396,72 396,64 226,64',              ck:'cyan',   tag:'API token',     lx:382, ly:64  },
+  // Step 1 — K8s projects a short-lived JWT into the pod filesystem (vertical)
+  { id:'jwt-proj', d:'M 148,122 L 148,156',                              ck:'gold',   tag:'projected', lx:178, ly:142 },
+  // Step 2 — App sends JWT to Secrets Manager to authenticate (TOP lane, over K8s API)
+  { id:'auth-sm',  d:'M 256,80 C 420,44 500,58 636,96',                  ck:'gold',   tag:'JWT',       lx:432, ly:48  },
+  // Step 3a — SM forwards JWT to K8s API Server for validation (short, local)
+  { id:'sm-k8',    d:'M 636,138 C 590,146 560,146 516,146',              ck:'gold',   tag:'verify',    lx:574, ly:134 },
+  // Step 3b — K8s API Server confirms the workload identity (short, below verify)
+  { id:'k8-sm',    d:'M 516,158 C 560,160 590,160 636,156',              ck:'slate',  tag:'✓ ok',      lx:574, ly:172 },
+  // Step 3c — SM returns a short-lived API token to the app (TOP lane, below auth)
+  { id:'sm-app',   d:'M 636,110 C 500,82 420,74 256,100',                ck:'cyan',   tag:'API token', lx:432, ly:78  },
   // Step 4 — Secrets Vault surfaces credentials to Secrets Manager (Vault → SM)
-  { id:'sm-vt',    d:'M 392,240 C 392,200 684,210 684,150',          ck:'cyan',   tag:'secrets',       lx:540, ly:198 },
-  // Step 5 — App Container reads secret values directly from Secrets Vault
-  { id:'app-vt',   d:'M 226,73 C 280,73 308,200 308,271',            ck:'cyan',   tag:'read',          lx:260, ly:142 },
-  // Step 6 — App Container connects to MySQL using retrieved credentials
-  { id:'app-db',   d:'M 127,104 C 260,104 393,280 393,382',          ck:'spring', tag:'connect',       lx:320, ly:208 },
+  { id:'sm-vt',    d:'M 516,322 C 596,318 612,240 636,168',              ck:'cyan',   tag:'secrets',   lx:588, ly:252 },
+  // Step 5 — App Container reads secret values directly from Secrets Vault (drop, right of pod)
+  { id:'app-vt',   d:'M 256,106 C 318,150 318,272 352,300',             ck:'cyan',   tag:'read',      lx:326, ly:214 },
+  // Step 6 — App connects to MySQL using retrieved credentials (left gutter → external)
+  { id:'app-db',   d:'M 92,122 C 24,260 24,406 148,406',                ck:'spring', tag:'connect',   lx:66,  ly:300 },
 ]
 
 // ─── step definitions (7 steps matching architecture.flow) ───────────────────
@@ -107,7 +102,7 @@ const AUTO_MS = 4000
 export default function ArchitectureDiagram() {
   const { t } = useTranslation()
   const [step, setStep]       = useState(0)
-  const [playing, setPlaying] = useState(true)
+  const [playing, setPlaying] = useState(false)   // start paused — presenter controls the flow
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const go = useCallback((d: 1 | -1) =>
@@ -225,7 +220,7 @@ export default function ArchitectureDiagram() {
 
           {/* ── SVG diagram ── */}
           <div className="overflow-x-auto rounded-xl border border-border bg-[#050d1a] p-4">
-            <svg viewBox="0 0 820 460" style={{ minWidth: 560, width: '100%' }}
+            <svg viewBox="0 0 860 490" style={{ minWidth: 560, width: '100%' }}
               role="img" aria-label={t('architecture.badge')}>
               <defs>
                 {(Object.keys(C) as CK[]).map(k => (
@@ -241,22 +236,22 @@ export default function ArchitectureDiagram() {
               </defs>
 
               {/* ══ Kubernetes Cluster boundary (App Pod + K8s API + Vault inside) ══ */}
-              <rect x="8" y="8" width="490" height="320" rx="14"
+              <rect x="8" y="8" width="556" height="372" rx="14"
                 fill="rgba(9,18,32,0.5)" stroke="rgba(100,116,139,0.25)"
                 strokeWidth="1.5" strokeDasharray="8 5" />
-              <text x="24" y="24" fontSize="10" fill="rgba(100,116,139,0.5)"
+              <text x="24" y="26" fontSize="10" fill="rgba(100,116,139,0.5)"
                 fontFamily="JetBrains Mono, monospace" fontWeight="600" letterSpacing="0.3">
                 Kubernetes Cluster
               </text>
 
               {/* ── App Pod boundary — appears with container ── */}
-              <motion.rect x="18" y="28" width="220" height="192" rx="10"
+              <motion.rect x="24" y="48" width="248" height="192" rx="10"
                 fill="rgba(0,180,224,0.03)" stroke="rgba(0,180,224,0.2)"
                 strokeWidth="1" strokeDasharray="5 4"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: vis.nodes.has('container') ? 1 : 0 }}
                 transition={{ duration: 0.4 }} />
-              <motion.text x="30" y="44" fontSize="9" fill="rgba(0,180,224,0.4)"
+              <motion.text x="36" y="62" fontSize="9" fill="rgba(0,180,224,0.4)"
                 fontFamily="JetBrains Mono, monospace"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: vis.nodes.has('container') ? 1 : 0 }}
@@ -265,13 +260,13 @@ export default function ArchitectureDiagram() {
               </motion.text>
 
               {/* ══ Conjur Cloud SaaS boundary (SM only — outside cluster) ════════════ */}
-              <motion.rect x="556" y="32" width="256" height="130" rx="14"
+              <motion.rect x="616" y="44" width="232" height="154" rx="14"
                 fill="rgba(245,158,11,0.025)" stroke="rgba(245,158,11,0.22)"
                 strokeWidth="1" strokeDasharray="6 4"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: vis.nodes.has('sm') ? 1 : 0 }}
                 transition={{ duration: 0.5 }} />
-              <motion.text x="572" y="48" fontSize="9" fill="rgba(245,158,11,0.45)"
+              <motion.text x="632" y="60" fontSize="9" fill="rgba(245,158,11,0.45)"
                 fontFamily="JetBrains Mono, monospace" fontWeight="600"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: vis.nodes.has('sm') ? 1 : 0 }}
@@ -280,12 +275,12 @@ export default function ArchitectureDiagram() {
               </motion.text>
 
               {/* ══ External zone separator & label ══════════════════════════════════ */}
-              <motion.line x1="8" y1="348" x2="812" y2="348"
+              <motion.line x1="8" y1="388" x2="852" y2="388"
                 stroke="rgba(100,116,139,0.18)" strokeWidth="1" strokeDasharray="4 4"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: vis.nodes.has('mysql') ? 1 : 0 }}
                 transition={{ duration: 0.5 }} />
-              <motion.text x="24" y="364" fontSize="9" fill="rgba(100,116,139,0.38)"
+              <motion.text x="288" y="404" fontSize="9" fill="rgba(100,116,139,0.38)"
                 fontFamily="JetBrains Mono, monospace"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: vis.nodes.has('mysql') ? 1 : 0 }}
@@ -437,9 +432,9 @@ export default function ArchitectureDiagram() {
               <motion.g key={`bubble-${step}`}
                 initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3, type: 'spring', stiffness: 300, damping: 22 }}>
-                <circle cx="794" cy="22" r="14"
+                <circle cx="832" cy="26" r="14"
                   fill="rgba(245,158,11,0.15)" stroke="rgba(245,158,11,0.4)" strokeWidth="1" />
-                <text x="794" y="27" textAnchor="middle" fontSize="12" fontWeight="700"
+                <text x="832" y="31" textAnchor="middle" fontSize="12" fontWeight="700"
                   fill="#fcd34d" fontFamily="Inter, system-ui, sans-serif">
                   {step + 1}
                 </text>

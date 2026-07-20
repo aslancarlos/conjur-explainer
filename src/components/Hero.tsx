@@ -1,93 +1,77 @@
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import { ArrowDown, ExternalLink } from 'lucide-react'
+import CommandCenterFlow from './CommandCenterFlow'
+import securityLayers from '../assets/brand/security-layers-blue.png'
 
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 24 },
+const fadeUp = (delay: number) => ({
+  initial: { opacity: 0, y: 18 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, delay },
+  transition: { duration: 0.6, delay, ease: [0.2, 0.7, 0.2, 1] as [number, number, number, number] },
 })
+
+const FEDERATED = ['Kubernetes', 'AWS', 'GitHub', 'Spring Boot', '.NET', 'Conjur Cloud']
 
 export default function Hero() {
   const { t } = useTranslation()
 
   return (
-    <section
-      className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-20 pb-16 overflow-hidden"
-      style={{ background: 'linear-gradient(180deg, #173EB8 7.81%, #061D63 83.85%)' }}
-    >
-      {/* Idira brand glow + subtle workload accents over the hero gradient */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0" style={{ background: 'radial-gradient(50% 55% at 80% 6%, rgba(38,91,255,.45), transparent 60%), radial-gradient(40% 45% at 8% 108%, rgba(38,91,255,.30), transparent 60%)' }} />
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-conjur-cyan/5 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-spring/5 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-dotnet/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/3 left-1/2 -translate-x-1/2 w-64 h-64 bg-eso/5 rounded-full blur-3xl" />
-      </div>
+    <section className="relative overflow-hidden bg-[#070c1c] text-white">
+      {/* Official IDIRA "security layers" backdrop (right-anchored) */}
+      <img
+        src={securityLayers}
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute right-0 top-0 w-[52%] max-w-[720px] h-auto opacity-70 mix-blend-screen select-none"
+      />
+      {/* Iridescent mesh + dot grid */}
+      <div className="hero-mesh pointer-events-none absolute inset-0 opacity-90" aria-hidden />
+      <div className="hero-grid pointer-events-none absolute inset-0" aria-hidden />
+      {/* Fade the backdrop into the copy on the left */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#070c1c] via-[#070c1c]/85 to-transparent" aria-hidden />
 
-      <div className="relative max-w-4xl mx-auto text-center space-y-6">
-        <motion.p {...fadeUp(0.1)} className="badge bg-conjur-cyan/10 text-conjur-cyan border border-conjur-cyan/20">
-          {t('hero.eyebrow')}
-        </motion.p>
+      <div className="relative max-w-7xl mx-auto px-6 lg:px-10 pt-16 pb-10">
+        {/* Copy */}
+        <div className="max-w-3xl">
+          <motion.h1 {...fadeUp(0.05)}
+            className="font-semibold tracking-[-0.03em] leading-[0.98] text-[clamp(40px,6.4vw,80px)] max-w-[15ch]">
+            {t('hero.title')}{' '}
+            <em className="not-italic idira-shimmer">{t('hero.titleAccent')}</em>
+          </motion.h1>
 
-        <motion.h1 {...fadeUp(0.2)} className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
-          {t('hero.title')}{' '}
-          <span className="bg-gradient-to-r from-conjur-cyan via-conjur-gold via-spring to-eso bg-clip-text text-transparent">
-            {t('hero.titleAccent')}
-          </span>
-        </motion.h1>
+          <motion.p {...fadeUp(0.16)}
+            className="mt-6 text-[15px] md:text-base leading-[1.65] text-slate-300/90 max-w-[62ch]">
+            {t('hero.subtitle')}
+          </motion.p>
+        </div>
 
-        <motion.p {...fadeUp(0.3)} className="text-lg text-slate-200 max-w-2xl mx-auto leading-relaxed">
-          {t('hero.subtitle')}
-        </motion.p>
-
-        <motion.div {...fadeUp(0.4)} className="flex flex-wrap gap-4 justify-center pt-4">
-          <a
-            href="/springboot/dashboard"
-            target="_blank"
-            rel="noopener"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-spring text-white font-semibold hover:bg-spring/80 transition-colors"
-          >
-            {t('hero.cta_spring')} <ExternalLink size={14} />
-          </a>
-          <a
-            href="/dotnet/usuarios"
-            target="_blank"
-            rel="noopener"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-dotnet text-white font-semibold hover:bg-dotnet/80 transition-colors"
-          >
-            {t('hero.cta_dotnet')} <ExternalLink size={14} />
-          </a>
-          <a
-            href="/k8s-eso/"
-            target="_blank"
-            rel="noopener"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-eso text-white font-semibold hover:bg-eso/80 transition-colors"
-          >
-            {t('hero.cta_eso')} <ExternalLink size={14} />
-          </a>
+        {/* Command Center flow */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.28, ease: [0.2, 0.7, 0.2, 1] }}
+          className="mt-8 -mx-2 sm:mx-0 rounded-2xl border border-white/10 bg-white/[0.02] p-3 sm:p-5 overflow-x-auto"
+        >
+          <div className="min-w-[720px]">
+            <CommandCenterFlow />
+          </div>
         </motion.div>
 
-        <motion.a
-          {...fadeUp(0.6)}
-          href="#problem"
-          className="inline-flex flex-col items-center gap-2 text-slate-500 hover:text-conjur-cyan transition-colors mt-8"
-        >
-          <span className="text-sm">{t('hero.cta_explore')}</span>
-          <ArrowDown size={16} className="animate-bounce" />
-        </motion.a>
+        {/* Federated workloads strip */}
+        <motion.div {...fadeUp(0.42)} className="mt-9">
+          <p className="text-[10.5px] font-mono uppercase tracking-[0.16em] text-slate-500">{t('hero.federated_label')}</p>
+          <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
+            {FEDERATED.map(f => (
+              <span key={f} className="text-[13px] font-medium text-slate-400">{f}</span>
+            ))}
+          </div>
+        </motion.div>
       </div>
 
-      {/* Floating tech badges */}
-      <div className="absolute bottom-12 left-6 hidden lg:flex flex-col gap-2 text-xs text-slate-600">
-        {['Spring Boot 3.5', '.NET 8', 'GitHub Actions'].map(label => (
-          <span key={label} className="badge bg-bg-card border-border text-slate-500">{label}</span>
-        ))}
-      </div>
-      <div className="absolute bottom-12 right-6 hidden lg:flex flex-col gap-2 text-xs text-slate-600">
-        {['ESO v2.1', 'Node.js 20', 'Conjur Cloud'].map(label => (
-          <span key={label} className="badge bg-bg-card border-border text-slate-500">{label}</span>
-        ))}
+      {/* Scroll hint */}
+      <div className="relative pb-8 text-center">
+        <a href="#problem" className="text-xs font-mono text-slate-500 hover:text-slate-300 transition-colors">
+          {t('hero.cta_explore')}
+        </a>
       </div>
     </section>
   )
