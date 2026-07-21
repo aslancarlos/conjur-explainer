@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pcloud-proxy
+  namespace: conjur
+  labels:
+    app: pcloud-proxy
+spec:
+  selector:
+    app: pcloud-proxy
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: ClusterIP
