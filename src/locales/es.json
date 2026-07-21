@@ -21,6 +21,8 @@
     "swa_sub": "SPIFFE/SVID → STS, sin llaves estáticas",
     "controller": "App Controller",
     "controller_sub": "Iniciar / detener deployments",
+    "pcloud": "PCLOUD Vault Admin",
+    "pcloud_sub": "Gestionar cuentas, rotar secretos",
     "jwtvalidator": "JWT Validator API",
     "jwtvalidator_sub": "Endpoint de validación en vivo",
     "dualaccounts": "Dual Accounts",
@@ -993,5 +995,94 @@
     "m_workloads": "workloads en vivo",
     "m_auth": "auth principal",
     "m_rest": "secretos en reposo"
+  },
+  "pcloud": {
+    "badge": "Privilege Cloud",
+    "title": "Administración de Cuentas del Vault",
+    "subtitle": "Inicia sesión con un usuario de CyberArk Privilege Cloud con permiso en los safes dev-demo-aslan y devsecops para listar, crear, inspeccionar y rotar cuentas — en vivo, mediante la API de platform token.",
+    "login_title": "Entrar a Privilege Cloud",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "logon": "Entrar",
+    "logging_in": "Entrando…",
+    "logoff": "Salir",
+    "login_hint": "Tus credenciales se envían una vez para obtener un platform token de corta duración; la contraseña nunca se almacena, registra ni cachea.",
+    "show": "Mostrar",
+    "hide": "Ocultar",
+    "safe": "Safe",
+    "new_account": "Nueva cuenta",
+    "refresh": "Actualizar",
+    "loading": "Cargando…",
+    "no_accounts": "No hay cuentas en este safe.",
+    "col_user": "Usuario",
+    "col_address": "Dirección",
+    "col_platform": "Plataforma",
+    "col_type": "Tipo",
+    "col_mgmt": "Gestión",
+    "col_actions": "",
+    "details": "Detalles",
+    "detail_title": "Detalles de la cuenta",
+    "auto": "auto",
+    "manual": "manual",
+    "reveal_secret": "Revelar secreto",
+    "revealing": "Recuperando…",
+    "secret": "Secreto",
+    "rotate": "Rotar secreto ahora",
+    "rotating": "Solicitando rotación…",
+    "rotate_confirm": "¿Disparar una rotación inmediata (CPM) del secreto de esta cuenta?",
+    "rotate_done": "Rotación solicitada — el CPM cambiará el secreto en breve.",
+    "create_title": "Crear cuenta",
+    "platform": "Plataforma",
+    "select_platform": "Selecciona una plataforma…",
+    "name": "Nombre",
+    "secret_type": "Tipo de secreto",
+    "auto_mgmt": "Dejar que el CPM gestione y rote esta cuenta automáticamente",
+    "create": "Crear cuenta",
+    "creating": "Creando…",
+    "cancel": "Cancelar",
+    "calllog_title": "Registro de llamadas en vivo",
+    "calllog_hint": "Cada acción abajo se enruta a CyberArk Privilege Cloud. Cada entrada muestra las llamadas upstream realizadas, con método, estado y latencia.",
+    "calllog_empty": "Aún no hay llamadas — inicia sesión para ver el flujo.",
+    "calllog_stepline": "pasos: {{step}}",
+    "how_title": "Cómo funciona — cada llamada, paso a paso",
+    "how_intro": "El browser solo habla con el proxy /api/pcloud (mismo origen). El proxy resuelve las URLs reales del tenant en el servicio público de discovery, reenvía tu platform token como Bearer y solo toca los dos safes permitidos.",
+    "how_note": "El proxy es stateless: no guarda credenciales ni tokens. Las contraseñas y secretos recuperados nunca se registran ni cachean. Solo los safes dev-demo-aslan y devsecops son accesibles por esta herramienta.",
+    "how_steps": [
+      {
+        "title": "Resolver URLs del tenant",
+        "call": "GET platform-discovery.cyberark.cloud/api/public/tenant-discovery?bySubdomain=…",
+        "desc": "Descubre las URLs de la API de Privilege Cloud e Identity desde el subdominio — nada está hardcodeado."
+      },
+      {
+        "title": "Autenticar (platform token)",
+        "call": "POST {identity}/oauth2/platformtoken",
+        "desc": "Intercambia usuario + contraseña por un platform token OAuth de corta duración vía client_credentials. El token queda solo en la memoria de tu browser."
+      },
+      {
+        "title": "Listar cuentas",
+        "call": "GET {pcloud}/PasswordVault/api/Accounts?filter=safeName eq {safe}",
+        "desc": "Lista las cuentas del safe seleccionado. El proxy rechaza cualquier safe fuera de la allow-list."
+      },
+      {
+        "title": "Detalles de la cuenta",
+        "call": "GET {pcloud}/PasswordVault/api/Accounts/{id}",
+        "desc": "Obtiene todas las propiedades de la cuenta; el proxy verifica que esté en un safe permitido antes de devolverla."
+      },
+      {
+        "title": "Revelar secreto",
+        "call": "POST {pcloud}/PasswordVault/api/Accounts/{id}/Password/Retrieve",
+        "desc": "Recupera el valor del secreto bajo demanda. Se muestra enmascarado y nunca se registra ni rastrea."
+      },
+      {
+        "title": "Rotar secreto",
+        "call": "POST {pcloud}/PasswordVault/api/Accounts/{id}/Change",
+        "desc": "Pide al CPM cambiar el secreto de inmediato (rotación)."
+      },
+      {
+        "title": "Crear cuenta",
+        "call": "POST {pcloud}/PasswordVault/api/Accounts",
+        "desc": "Da de alta una nueva cuenta en el safe, opcionalmente bajo gestión automática del CPM."
+      }
+    ]
   }
 }

@@ -24,6 +24,7 @@ const JenkinsPage = lazy(() => import('./pages/JenkinsPage'))
 const AnsiblePage = lazy(() => import('./pages/AnsiblePage'))
 const CsiDriverPage = lazy(() => import('./pages/CsiDriverPage'))
 const PolicyPage = lazy(() => import('./pages/PolicyPage'))
+const PcloudPage = lazy(() => import('./pages/PcloudPage'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -69,6 +70,7 @@ export default function App() {
           <Route path="/ansible"        element={<AnsiblePage />} />
           <Route path="/csi"            element={<CsiDriverPage />} />
           <Route path="/policy"         element={<PolicyPage />} />
+          <Route path="/pcloud"         element={<PcloudPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

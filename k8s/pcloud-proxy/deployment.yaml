@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pcloud-proxy
+  namespace: conjur
+  labels:
+    app: pcloud-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pcloud-proxy
+  template:
+    metadata:
+      labels:
+        app: pcloud-proxy
+    spec:
+      imagePullSecrets:
+        - name: dockerhub-pull
+      containers:
+        - name: pcloud-proxy
+          image: aslancarlos/pcloud-proxy:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ALLOWED_ORIGIN
+              value: https://demo.minha.cloud
+            - name: ALLOWED_SAFES
+              value: dev-demo-aslan,devsecops
+            # Tenant subdomain is infrastructure-specific — supplied out-of-band
+            # via the pcloud-proxy-config Secret, never committed to git.
+            - name: PCLOUD_SUBDOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: pcloud-proxy-config
+                  key: subdomain
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "20m"
+            limits:
+              memory: "64Mi"
+              cpu: "100m"
+          readinessProbe:
+            httpGet:
+              path: /api/pcloud/healthz
+              port: 8080
+            initialDelaySeconds: 2
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/pcloud/healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 30

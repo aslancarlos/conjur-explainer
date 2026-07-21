@@ -5,7 +5,7 @@ import {
   ChevronDown, Menu, X,
   RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
   Leaf, Hexagon, Github, ShoppingCart, Database,
-  Workflow, GitCompareArrows, Wrench, BadgeCheck, LayoutDashboard,
+  Workflow, GitCompareArrows, Wrench, BadgeCheck, LayoutDashboard, Vault,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -70,6 +70,7 @@ const EXAMPLES: DropItem[] = [
 ]
 
 const TOOLS: DropItem[] = [
+  { to: '/pcloud',       labelKey: 'nav.pcloud',       subKey: 'nav.pcloud_sub',       color: 'text-conjur-cyan', Icon: Vault },
   { to: '/flow',         labelKey: 'nav.flow',         subKey: 'nav.flow_sub',         color: 'text-conjur-cyan', Icon: Workflow },
   { to: '/compare',      labelKey: 'nav.compare',      subKey: 'nav.compare_sub',      color: 'text-conjur-cyan', Icon: GitCompareArrows },
   { to: '/tools',        labelKey: 'nav.livetools',    subKey: 'nav.livetools_sub',    color: 'text-conjur-cyan', Icon: Wrench },
