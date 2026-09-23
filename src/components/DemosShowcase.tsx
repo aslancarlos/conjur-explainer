@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ArrowRight, Leaf, Hexagon, Github, ShoppingBag, Wrench, Boxes, HardDrive, RefreshCw, Database, KeyRound, Combine, ScrollText } from 'lucide-react'
+import { ArrowRight, Leaf, Hexagon, Github, ShoppingBag, Wrench, Boxes, HardDrive, RefreshCw, Database, KeyRound, Combine, ScrollText, Fingerprint } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
 interface Demo {
@@ -28,6 +28,7 @@ const DEMOS: Demo[] = [
   { key: 'dual',       to: '/dualaccounts',   name: 'Dual Accounts',  secret: 'rotation',      color: '#a9b6ff', Icon: RefreshCw },
   { key: 'jwt',        to: '/jwt',            name: 'authn-jwt',      secret: 'identity handshake', color: '#22d3ee', Icon: KeyRound },
   { key: 'secretshub', to: '/secretshub',     name: 'Secrets Hub',    secret: 'PAM → cloud sync', color: '#a78bfa', Icon: Combine },
+  { key: 'swaexplainer', to: '/swa',        name: 'Secure Workload Access', secret: 'SPIFFE identity', color: '#22d3ee', Icon: Fingerprint },
   { key: 'policy',     to: '/policy',         name: 'Policy as Code', secret: 'YAML + git',    color: '#f5b301', Icon: ScrollText },
 ]
 

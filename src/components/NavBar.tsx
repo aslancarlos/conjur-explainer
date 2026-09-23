@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
   ChevronDown, Menu, X,
-  RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
+  RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel, Fingerprint,
   Leaf, Hexagon, Github, ShoppingCart, Database,
   Workflow, GitCompareArrows, Wrench, BadgeCheck, LayoutDashboard, Vault,
 } from 'lucide-react'
@@ -59,6 +59,7 @@ const INTEGRATIONS: DropItem[] = [
   { to: '/jenkins',      labelKey: 'nav.jenkins',       subKey: 'nav.jenkins_sub',      color: 'text-spring',      Icon: Server },
   { to: '/ansible',      labelKey: 'nav.ansible',       subKey: 'nav.ansible_sub',      color: 'text-ansible',     Icon: Boxes },
   { to: '/csi',          labelKey: 'nav.csidriver',     subKey: 'nav.csidriver_sub',    color: 'text-csi',         Icon: ShipWheel },
+  { to: '/swa',          labelKey: 'nav.swaexplainer',  subKey: 'nav.swaexplainer_sub', color: 'text-conjur-cyan', Icon: Fingerprint },
 ]
 
 const EXAMPLES: DropItem[] = [

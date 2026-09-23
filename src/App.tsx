@@ -20,6 +20,7 @@ const DualAccountsPage = lazy(() => import('./pages/DualAccountsPage'))
 const JwtPage = lazy(() => import('./pages/JwtPage'))
 const JwtValidatorPage = lazy(() => import('./pages/JwtValidatorPage'))
 const SecretsHubPage = lazy(() => import('./pages/SecretsHubPage'))
+const SwaPage = lazy(() => import('./pages/SwaPage'))
 const JenkinsPage = lazy(() => import('./pages/JenkinsPage'))
 const AnsiblePage = lazy(() => import('./pages/AnsiblePage'))
 const CsiDriverPage = lazy(() => import('./pages/CsiDriverPage'))
@@ -66,6 +67,7 @@ export default function App() {
           <Route path="/jwt"            element={<JwtPage />} />
           <Route path="/jwt-validator"  element={<JwtValidatorPage />} />
           <Route path="/secretshub"     element={<SecretsHubPage />} />
+          <Route path="/swa"            element={<SwaPage />} />
           <Route path="/jenkins"        element={<JenkinsPage />} />
           <Route path="/ansible"        element={<AnsiblePage />} />
           <Route path="/csi"            element={<CsiDriverPage />} />
