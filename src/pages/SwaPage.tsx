@@ -599,12 +599,12 @@ export default function SwaPage() {
         {IdentityDiagram}
       </FlowPanel>
 
-      <FlowPanel prefix="aws" steps={AWS_STEPS.length} viewBox="0 0 900 400"
+      <FlowPanel prefix="aws" steps={AWS_STEPS.length} viewBox="0 0 900 430"
         caption="path a · federated identity · aws">
         {AwsDiagramWithEdges}
       </FlowPanel>
 
-      <FlowPanel prefix="db"  steps={DB_STEPS.length}  viewBox="0 0 900 420"
+      <FlowPanel prefix="db"  steps={DB_STEPS.length}  viewBox="0 0 900 432"
         caption="path b · secret retrieval · database">
         {DbDiagram}
       </FlowPanel>
