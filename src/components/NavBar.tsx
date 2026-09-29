@@ -3,9 +3,9 @@ import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import {
   ChevronDown, Menu, X,
-  RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
+  RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel, Fingerprint,
   Leaf, Hexagon, Github, ShoppingCart, Database,
-  Workflow, GitCompareArrows, Wrench, BadgeCheck, LayoutDashboard,
+  Workflow, GitCompareArrows, Wrench, BadgeCheck, LayoutDashboard, Vault, FileKey,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -59,6 +59,7 @@ const INTEGRATIONS: DropItem[] = [
   { to: '/jenkins',      labelKey: 'nav.jenkins',       subKey: 'nav.jenkins_sub',      color: 'text-spring',      Icon: Server },
   { to: '/ansible',      labelKey: 'nav.ansible',       subKey: 'nav.ansible_sub',      color: 'text-ansible',     Icon: Boxes },
   { to: '/csi',          labelKey: 'nav.csidriver',     subKey: 'nav.csidriver_sub',    color: 'text-csi',         Icon: ShipWheel },
+  { to: '/swa',          labelKey: 'nav.swaexplainer',  subKey: 'nav.swaexplainer_sub', color: 'text-conjur-cyan', Icon: Fingerprint },
 ]
 
 const EXAMPLES: DropItem[] = [
@@ -67,9 +68,11 @@ const EXAMPLES: DropItem[] = [
   { to: '/github-actions', labelKey: 'nav.gha',         subKey: 'nav.gha_sub',        color: 'text-gh',     Icon: Github },
   { to: '/eso-shop',       labelKey: 'nav.esoshop',     subKey: 'nav.esoshop_sub',    color: 'text-eso',    Icon: ShoppingCart },
   { to: '/swa-s3',         href: '/swa-s3', labelKey: 'nav.swa', subKey: 'nav.swa_sub', color: 'text-eso',  Icon: Database },
+  { to: '/svid',           href: '/svid', labelKey: 'nav.svid', subKey: 'nav.svid_sub', color: 'text-conjur-cyan', Icon: FileKey },
 ]
 
 const TOOLS: DropItem[] = [
+  { to: '/pcloud',       labelKey: 'nav.pcloud',       subKey: 'nav.pcloud_sub',       color: 'text-conjur-cyan', Icon: Vault },
   { to: '/flow',         labelKey: 'nav.flow',         subKey: 'nav.flow_sub',         color: 'text-conjur-cyan', Icon: Workflow },
   { to: '/compare',      labelKey: 'nav.compare',      subKey: 'nav.compare_sub',      color: 'text-conjur-cyan', Icon: GitCompareArrows },
   { to: '/tools',        labelKey: 'nav.livetools',    subKey: 'nav.livetools_sub',    color: 'text-conjur-cyan', Icon: Wrench },

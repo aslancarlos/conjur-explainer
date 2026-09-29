@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pcloud-proxy
+  namespace: conjur
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    # A separate ingress owns the catch-all regex `/api(/|$)(.*)`. In nginx a
+    # regex location beats a plain prefix, so we must also use a regex — a longer,
+    # more-specific one — which nginx-ingress orders first so it wins for
+    # /api/pcloud/*. No rewrite: the proxy needs the full original path.
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx-internal
+  tls:
+    - hosts:
+        - demo.minha.cloud
+      secretName: k8scert
+  rules:
+    - host: demo.minha.cloud
+      http:
+        paths:
+          - path: /api/pcloud(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: pcloud-proxy
+                port:
+                  number: 80
