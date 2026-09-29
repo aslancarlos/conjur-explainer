@@ -5,7 +5,7 @@ import {
   ChevronDown, Menu, X,
   RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel, Fingerprint,
   Leaf, Hexagon, Github, ShoppingCart, Database,
-  Workflow, GitCompareArrows, Wrench, BadgeCheck, LayoutDashboard, Vault,
+  Workflow, GitCompareArrows, Wrench, BadgeCheck, LayoutDashboard, Vault, FileKey,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -68,6 +68,7 @@ const EXAMPLES: DropItem[] = [
   { to: '/github-actions', labelKey: 'nav.gha',         subKey: 'nav.gha_sub',        color: 'text-gh',     Icon: Github },
   { to: '/eso-shop',       labelKey: 'nav.esoshop',     subKey: 'nav.esoshop_sub',    color: 'text-eso',    Icon: ShoppingCart },
   { to: '/swa-s3',         href: '/swa-s3', labelKey: 'nav.swa', subKey: 'nav.swa_sub', color: 'text-eso',  Icon: Database },
+  { to: '/svid',           href: '/svid', labelKey: 'nav.svid', subKey: 'nav.svid_sub', color: 'text-conjur-cyan', Icon: FileKey },
 ]
 
 const TOOLS: DropItem[] = [

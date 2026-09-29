@@ -19,6 +19,8 @@
     "livetools_sub": "Grafana, K8s, monitores de app",
     "swa": "SWA → AWS S3",
     "swa_sub": "SPIFFE/SVID → STS, sem chaves estáticas",
+    "svid": "SVID ao vivo: X.509 + JWT",
+    "svid_sub": "Peça os dois tipos de identidade SPIFFE",
     "controller": "App Controller",
     "controller_sub": "Iniciar / parar deployments",
     "pcloud": "PCLOUD Vault Admin",
