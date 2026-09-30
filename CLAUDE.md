@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+> **UI work:** read [`DESIGN.md`](DESIGN.md) first — tokens, colour rules, page anatomy, the animated-diagram pattern and the QA checklist for everything on demo.minha.cloud.
+
 ## Build and deploy
 
 Images must target `linux/amd64` — the EKS nodes do not run ARM.
