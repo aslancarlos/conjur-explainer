@@ -13,6 +13,18 @@
   --rgb-text-2:     42 51 68;
   --rgb-text-muted: 91 100 120;
 
+  /* Semantic tones — foreground-safe (≥ 4.5:1 on surface and bg-alt) */
+  --rgb-tone-accent:  0 72 184;
+  --rgb-tone-live:    14 116 144;
+  --rgb-tone-success: 4 120 87;
+  --rgb-tone-warning: 161 98 7;
+  --rgb-tone-danger:  185 28 28;
+
+  /* Domain colours — who owns a component (never used for status) */
+  --rgb-domain-idira: 0 88 230;
+  --rgb-domain-cp:    96 72 214;
+  --rgb-domain-k8s:   194 65 12;
+
   color-scheme: light;
 }
 
@@ -24,6 +36,16 @@
   --rgb-text:       226 232 240;
   --rgb-text-2:     200 210 226;
   --rgb-text-muted: 139 150 173;
+
+  --rgb-tone-accent:  125 176 255;
+  --rgb-tone-live:    0 212 255;
+  --rgb-tone-success: 52 211 153;
+  --rgb-tone-warning: 255 184 0;
+  --rgb-tone-danger:  255 122 89;
+
+  --rgb-domain-idira: 92 152 255;
+  --rgb-domain-cp:    167 150 250;
+  --rgb-domain-k8s:   255 138 92;
 
   color-scheme: dark;
 }

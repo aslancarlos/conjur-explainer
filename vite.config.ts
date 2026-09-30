@@ -12,6 +12,7 @@ export default defineConfig({
         manualChunks(id) {
           if (!id.includes('node_modules')) return
           if (id.includes('framer-motion')) return 'motion'
+          if (id.includes('/gsap/')) return 'gsap'
           if (id.includes('react-router') || id.includes('@remix-run')) return 'router'
           if (id.includes('i18next') || id.includes('react-i18next')) return 'i18n'
           if (id.includes('lucide-react')) return 'icons'

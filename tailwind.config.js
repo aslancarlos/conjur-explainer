@@ -25,6 +25,21 @@ export default {
         'text-2':  'rgb(var(--rgb-text-2) / <alpha-value>)',
         'text-muted': 'rgb(var(--rgb-text-muted) / <alpha-value>)',
 
+        // ─── Semantic tones (theme-aware, AA-safe as text/stroke/fill) ──
+        tone: {
+          accent:  'rgb(var(--rgb-tone-accent) / <alpha-value>)',
+          live:    'rgb(var(--rgb-tone-live) / <alpha-value>)',
+          success: 'rgb(var(--rgb-tone-success) / <alpha-value>)',
+          warning: 'rgb(var(--rgb-tone-warning) / <alpha-value>)',
+          danger:  'rgb(var(--rgb-tone-danger) / <alpha-value>)',
+        },
+        // ─── Domain colours: who owns a component (never status) ───────
+        domain: {
+          idira: 'rgb(var(--rgb-domain-idira) / <alpha-value>)',
+          cp:    'rgb(var(--rgb-domain-cp) / <alpha-value>)',
+          k8s:   'rgb(var(--rgb-domain-k8s) / <alpha-value>)',
+        },
+
         // ─── Brand accents (constant in both themes) ───────────────────
         idira: {
           blue:        '#0067ff',
