@@ -18,7 +18,6 @@ const ComparisonTable = lazy(() => import('./components/ComparisonTable'))
 const LiveToolsSection = lazy(() => import('./components/LiveToolsSection'))
 const DualAccountsPage = lazy(() => import('./pages/DualAccountsPage'))
 const JwtPage = lazy(() => import('./pages/JwtPage'))
-const JwtValidatorPage = lazy(() => import('./pages/JwtValidatorPage'))
 const SecretsHubPage = lazy(() => import('./pages/SecretsHubPage'))
 const JenkinsPage = lazy(() => import('./pages/JenkinsPage'))
 const AnsiblePage = lazy(() => import('./pages/AnsiblePage'))
@@ -69,7 +68,6 @@ export default function App() {
           <Route path="/tools"          element={<LiveToolsSection />} />
           <Route path="/dualaccounts"   element={<DualAccountsPage />} />
           <Route path="/jwt"            element={<JwtPage />} />
-          <Route path="/jwt-validator"  element={<JwtValidatorPage />} />
           <Route path="/secretshub"     element={<SecretsHubPage />} />
           <Route path="/jenkins"        element={<JenkinsPage />} />
           <Route path="/ansible"        element={<AnsiblePage />} />

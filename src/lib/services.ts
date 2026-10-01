@@ -13,7 +13,6 @@ export interface LiveService {
 }
 
 export const SERVICES: LiveService[] = [
-  { key: 'api',       name: 'JWT Validator API',    check: '/api/health',          kind: 'json', open: '/jwt-validator' },
   { key: 'spring',    name: 'Spring Boot',          check: '/springboot/checkit',  kind: 'json', open: '/springboot/dashboard' },
   { key: 'eso',       name: 'ESO Shop',             check: '/k8s-eso/health',      kind: 'json', open: '/eso-shop/' },
   { key: 'dotnet',    name: '.NET',                 check: '/dotnet/usuarios',     kind: 'http', open: '/dotnet/usuarios' },
