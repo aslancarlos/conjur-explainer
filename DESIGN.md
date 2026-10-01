@@ -133,7 +133,19 @@ A returning visitor's locale (pt/es) is loaded **before** the first render (`loc
 
 ## 7. Page anatomy
 
-**Home teaches before it demos:** hero ("Every workload, its own identity" + jumps to the two definitions) → **Fundamentals** (what a secret is, what a machine identity is, prove → authorize → deliver, "no secret zero"; wording from the Secrets Manager *Key concepts* docs) → problem (why static secrets fail) → **Secret vs identity** table + **identity per platform** (evidence → authenticator → demo link) → **flow, live** (Command Center diagram, always-dark band) → guarantees → Kubernetes architecture → **glossary** → compact demo links (same use case / product switch) → promise. Demo detail lives on the demo pages, not on the home.
+**Home stays clean:** hero ("Every workload, its own identity", CTAs open the first two Concepts pages) → **flow, live** (Command Center diagram, always-dark band) → **"Learn the concepts"** cards (one per Concepts page) → compact demo links (same use case / product switch) → promise. Teaching content lives on the Concepts pages; demo detail on the demo pages.
+
+**Concepts pages** (`/concepts/*`, menu group *Concepts*, right under Home in both grouping views) — a learning trail rendered by `ConceptLayout` (compact dark hero band with "Concepts · n/5", content, previous/next links in the order of the group in `lib/nav.ts`):
+
+| Route | Content |
+|---|---|
+| `/concepts/secrets` | Definition card (examples, how IDIRA stores it, docs link) + why static secrets are a risk (NIST / MITRE) |
+| `/concepts/machine-identity` | Definition card + identity each platform already issues → IDIRA authenticator → demo |
+| `/concepts/secret-vs-identity` | Comparison table (stacked on phones) + prove → authorize → deliver + "no secret zero" + guarantees |
+| `/concepts/kubernetes` | Kubernetes architecture walkthrough |
+| `/concepts/glossary` | Docs terms as a definition list (anchors `#term-<key>`) |
+
+Wording follows the Secrets Manager *Key concepts* docs; building blocks live in `src/components/concepts/ConceptPieces.tsx`.
 
 **Explainer pages:**
 
@@ -271,6 +283,7 @@ Reference implementation: `src/pages/DualAccountsPage.tsx`.
 
 | Date | Change |
 |---|---|
+| 2026-09-30 | Concepts pages (`/concepts/*`) + lean home. |
 | 2026-09-30 | Official IDIRA logo in a theme-aware top bar; Use case \| Product grouping; home Fundamentals section. |
 | 2026-09-30 | App shell: left sidebar + drawer (§6), `lib/nav.ts`, ambient hero diagram rules (§10), locale preload. |
 | 2026-09-30 | First version. Adds `tone-*` and `domain-*` tokens, the animated-diagram pattern, explainer page anatomy and QA checklist (from the `/dualaccounts` rebuild, PR #46). |

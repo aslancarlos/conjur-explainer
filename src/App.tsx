@@ -24,6 +24,13 @@ const JenkinsPage = lazy(() => import('./pages/JenkinsPage'))
 const AnsiblePage = lazy(() => import('./pages/AnsiblePage'))
 const CsiDriverPage = lazy(() => import('./pages/CsiDriverPage'))
 const PolicyPage = lazy(() => import('./pages/PolicyPage'))
+const concept = (name: 'SecretsConcept' | 'IdentityConcept' | 'CompareConcept' | 'KubernetesConcept' | 'GlossaryConcept') =>
+  lazy(() => import('./pages/ConceptPages').then(m => ({ default: m[name] })))
+const SecretsConcept = concept('SecretsConcept')
+const IdentityConcept = concept('IdentityConcept')
+const CompareConcept = concept('CompareConcept')
+const KubernetesConcept = concept('KubernetesConcept')
+const GlossaryConcept = concept('GlossaryConcept')
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -68,6 +75,11 @@ export default function App() {
           <Route path="/ansible"        element={<AnsiblePage />} />
           <Route path="/csi"            element={<CsiDriverPage />} />
           <Route path="/policy"         element={<PolicyPage />} />
+          <Route path="/concepts/secrets"            element={<SecretsConcept />} />
+          <Route path="/concepts/machine-identity"   element={<IdentityConcept />} />
+          <Route path="/concepts/secret-vs-identity" element={<CompareConcept />} />
+          <Route path="/concepts/kubernetes"         element={<KubernetesConcept />} />
+          <Route path="/concepts/glossary"           element={<GlossaryConcept />} />
         </Route>
       </Routes>
     </BrowserRouter>

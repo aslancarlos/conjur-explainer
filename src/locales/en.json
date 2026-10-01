@@ -52,7 +52,18 @@
     "prod_secretsmanager": "Secrets Manager",
     "prod_swa": "Secure Workload Access",
     "prod_secretshub": "Secrets Hub",
-    "prod_pam": "PAM & Credential Providers"
+    "prod_pam": "PAM & Credential Providers",
+    "group_concepts": "Concepts",
+    "c_secret": "What is a secret?",
+    "c_secret_sub": "Definition, examples, and why static secrets are a risk.",
+    "c_identity": "What is a machine identity?",
+    "c_identity_sub": "How workloads prove who they are — and what each platform already issues.",
+    "c_compare": "Secret vs identity",
+    "c_compare_sub": "Side by side, and how they fit: prove → authorize → deliver.",
+    "c_k8s": "Architecture on Kubernetes",
+    "c_k8s_sub": "How Secrets Manager authenticates pods and delivers secrets in a cluster.",
+    "c_glossary": "Glossary",
+    "c_glossary_sub": "Workload, host, authenticator, policy, secret zero and more."
   },
   "hero": {
     "eyebrow": "Machine identity · Secrets · IDIRA by Palo Alto Networks",
@@ -62,7 +73,7 @@
     "cta_spring": "Spring Boot Demo",
     "cta_dotnet": ".NET Demo",
     "cta_eso": "ESO Shop Demo",
-    "cta_explore": "Start with the fundamentals",
+    "cta_explore": "See the flow live",
     "federated_label": "Federated across",
     "stat1_label": "live integration patterns",
     "stat2_label": "identity authority",
@@ -1095,9 +1106,6 @@
     "injected": "injected at runtime"
   },
   "fundamentals": {
-    "kicker": "Fundamentals",
-    "title": "Two ideas behind every demo",
-    "subtitle": "Before picking a pattern, separate what is protected — the secret — from who asks for it — the machine identity.",
     "examples_label": "Examples",
     "in_idira": "In IDIRA Secrets Manager",
     "secret": {
@@ -1157,7 +1165,6 @@
     "subtitle": "Each workload proves who it is with its platform’s method, an IDIRA authenticator verifies it, policy authorizes, and the vault delivers the database credential — while CPM rotates it in place. One path at a time; hover a workload to trace it."
   },
   "practice": {
-    "kicker": "Side by side",
     "title": "Secret or identity?",
     "subtitle": "They are often confused — and the difference is the whole point: a secret is what you protect; an identity is how a workload earns access to it.",
     "aspect": "Aspect",
@@ -1226,7 +1233,6 @@
     }
   },
   "glossary": {
-    "kicker": "Glossary",
     "title": "The vocabulary, in one place",
     "subtitle": "Terms used across this site, as the Secrets Manager docs define them.",
     "terms": {
@@ -1279,5 +1285,19 @@
         "def": "Umbrella term for identities that are not people — workloads, service accounts, certificates, API keys. Machine identity is how workloads prove who they are."
       }
     }
+  },
+  "concepts": {
+    "definition": "Definition",
+    "secret_sub": "What it protects, what it looks like in practice, how IDIRA stores it — and why secrets left in code or images are a risk.",
+    "identity_sub": "How applications, pods, pipelines and scripts prove who they are — without a stored password — and which identity each platform already issues.",
+    "k8s_title": "Architecture on Kubernetes",
+    "k8s_sub": "Step through how a pod’s ServiceAccount identity is verified by Secrets Manager and how the secret reaches the application.",
+    "trail": "Concepts trail",
+    "prev": "Previous",
+    "next": "Next",
+    "open": "Open",
+    "home_kicker": "Start here",
+    "home_title": "Learn the concepts",
+    "home_subtitle": "Five short pages, in order: what a secret is, what a machine identity is, how they fit, how it works on Kubernetes, and the vocabulary."
   }
 }

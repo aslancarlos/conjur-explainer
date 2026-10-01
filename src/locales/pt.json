@@ -52,7 +52,18 @@
     "prod_secretsmanager": "Secrets Manager",
     "prod_swa": "Secure Workload Access",
     "prod_secretshub": "Secrets Hub",
-    "prod_pam": "PAM & Credential Providers"
+    "prod_pam": "PAM & Credential Providers",
+    "group_concepts": "Conceitos",
+    "c_secret": "O que é um secret?",
+    "c_secret_sub": "Definição, exemplos e por que secrets estáticos são um risco.",
+    "c_identity": "O que é identidade de máquina?",
+    "c_identity_sub": "Como os workloads provam quem são — e o que cada plataforma já emite.",
+    "c_compare": "Secret × identidade",
+    "c_compare_sub": "Lado a lado, e como se encaixam: provar → autorizar → entregar.",
+    "c_k8s": "Arquitetura no Kubernetes",
+    "c_k8s_sub": "Como o Secrets Manager autentica pods e entrega secrets em um cluster.",
+    "c_glossary": "Glossário",
+    "c_glossary_sub": "Workload, host, authenticator, policy, secret zero e mais."
   },
   "hero": {
     "eyebrow": "Identidade de máquina · Secrets · IDIRA by Palo Alto Networks",
@@ -62,7 +73,7 @@
     "cta_spring": "Demo Spring Boot",
     "cta_dotnet": "Demo .NET",
     "cta_eso": "Demo ESO Shop",
-    "cta_explore": "Comece pelos fundamentos",
+    "cta_explore": "Veja o fluxo ao vivo",
     "federated_label": "Federado em",
     "stat1_label": "padrões de integração ao vivo",
     "stat2_label": "autoridade de identidade",
@@ -1095,9 +1106,6 @@
     "injected": "injetado em runtime"
   },
   "fundamentals": {
-    "kicker": "Fundamentos",
-    "title": "Dois conceitos por trás de cada demo",
-    "subtitle": "Antes de escolher um padrão, separe o que é protegido — o secret — de quem pede por ele — a identidade de máquina.",
     "examples_label": "Exemplos",
     "in_idira": "No IDIRA Secrets Manager",
     "secret": {
@@ -1157,7 +1165,6 @@
     "subtitle": "Cada workload prova quem é com o método da sua plataforma, um authenticator do IDIRA verifica, a policy autoriza e o cofre entrega a credencial do banco — enquanto o CPM a rotaciona no lugar. Um caminho por vez; passe o mouse em um workload para acompanhá-lo."
   },
   "practice": {
-    "kicker": "Lado a lado",
     "title": "Secret ou identidade?",
     "subtitle": "Os dois costumam ser confundidos — e a diferença é justamente o ponto: o secret é o que você protege; a identidade é como o workload conquista o acesso a ele.",
     "aspect": "Aspecto",
@@ -1226,7 +1233,6 @@
     }
   },
   "glossary": {
-    "kicker": "Glossário",
     "title": "O vocabulário, em um só lugar",
     "subtitle": "Termos usados em todo o site, como a documentação do Secrets Manager os define.",
     "terms": {
@@ -1279,5 +1285,19 @@
         "def": "Termo amplo para identidades que não são pessoas — workloads, contas de serviço, certificados, chaves de API. Identidade de máquina é como os workloads provam quem são."
       }
     }
+  },
+  "concepts": {
+    "definition": "Definição",
+    "secret_sub": "O que ele protege, como aparece na prática, como o IDIRA o guarda — e por que secrets deixados no código ou em imagens são um risco.",
+    "identity_sub": "Como aplicações, pods, pipelines e scripts provam quem são — sem uma senha guardada — e que identidade cada plataforma já emite.",
+    "k8s_title": "Arquitetura no Kubernetes",
+    "k8s_sub": "Acompanhe, passo a passo, como a identidade da ServiceAccount de um pod é verificada pelo Secrets Manager e como o secret chega à aplicação.",
+    "trail": "Trilha de conceitos",
+    "prev": "Anterior",
+    "next": "Próximo",
+    "open": "Abrir",
+    "home_kicker": "Comece aqui",
+    "home_title": "Aprenda os conceitos",
+    "home_subtitle": "Cinco páginas curtas, em ordem: o que é um secret, o que é uma identidade de máquina, como se encaixam, como funciona no Kubernetes e o vocabulário."
   }
 }

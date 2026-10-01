@@ -51,7 +51,7 @@ npx tsc --noEmit
 
 | Route | Component |
 |---|---|
-| `/` | `HomePage` (Hero + Problem + Architecture) |
+| `/` | `HomePage` (Hero + live flow + Concepts cards + demo links + promise) |
 | `/spring-boot` | `SpringBootSection` |
 | `/dotnet` | `DotNetSection` |
 | `/github-actions` | `GitHubActionsSection` |
@@ -64,6 +64,7 @@ npx tsc --noEmit
 | `/secretshub` | `SecretsHubPage` |
 | `/jenkins` | `JenkinsPage` |
 | `/policy` | `PolicyPage` (Conjur policy structure + branches walkthrough) |
+| `/concepts/secrets` · `/concepts/machine-identity` · `/concepts/secret-vs-identity` · `/concepts/kubernetes` · `/concepts/glossary` | `ConceptPages` (learning trail, see DESIGN.md §7) |
 
 **Navigation lives in `src/lib/nav.ts`** — one `NAV` array (Home · Identity & access · Kubernetes · CI/CD & automation · Credential lifecycle · Tools, grouped like the CyberArk docs) drives the sidebar, the mobile drawer and the home demo catalogue (`DEMO_GROUPS`; set `demo` on an item to list it). Add a page there, not in a component. Labels and sub-descriptions are i18n keys (e.g. `nav.springboot`, `nav.springboot_sub`). See DESIGN.md §6.
 

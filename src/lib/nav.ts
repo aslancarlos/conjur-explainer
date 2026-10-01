@@ -1,5 +1,5 @@
 import {
-  Home, RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
+  Home, BookOpen, ArrowLeftRight, Container, Fingerprint, RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
   Leaf, Hexagon, Github, ShoppingCart, Database,
   Workflow, GitCompareArrows, Wrench, BadgeCheck, LayoutDashboard,
 } from 'lucide-react'
@@ -45,6 +45,18 @@ export const NAV: NavGroup[] = [
   {
     key: 'home',
     items: [{ to: '/', labelKey: 'nav.home', Icon: Home, color: 'text-domain-idira' }],
+  },
+  {
+    // Learning trail (ConceptLayout follows this order for prev / next).
+    key: 'concepts',
+    labelKey: 'nav.group_concepts',
+    items: [
+      { to: '/concepts/secrets',            labelKey: 'nav.c_secret',   subKey: 'nav.c_secret_sub',   Icon: KeyRound,       color: 'text-domain-idira' },
+      { to: '/concepts/machine-identity',   labelKey: 'nav.c_identity', subKey: 'nav.c_identity_sub', Icon: Fingerprint,    color: 'text-domain-idira' },
+      { to: '/concepts/secret-vs-identity', labelKey: 'nav.c_compare',  subKey: 'nav.c_compare_sub',  Icon: ArrowLeftRight, color: 'text-domain-idira' },
+      { to: '/concepts/kubernetes',         labelKey: 'nav.c_k8s',      subKey: 'nav.c_k8s_sub',      Icon: Container,      color: 'text-domain-idira' },
+      { to: '/concepts/glossary',           labelKey: 'nav.c_glossary', subKey: 'nav.c_glossary_sub', Icon: BookOpen,       color: 'text-domain-idira' },
+    ],
   },
   {
     key: 'identity',
@@ -131,9 +143,11 @@ export function navBy(view: NavView): NavGroup[] {
   if (view === 'usecase') return NAV
   const all = NAV.flatMap(g => g.items)
   const home = NAV.find(g => g.key === 'home')!
+  const concepts = NAV.find(g => g.key === 'concepts')!
   const tools = NAV.find(g => g.key === 'tools')!
   return [
     home,
+    concepts,
     ...PRODUCTS.map(p => ({
       key: `p-${p.key}`, labelKey: p.labelKey, descKey: p.descKey,
       items: all.filter(i => i.product === p.key),

@@ -1,12 +1,13 @@
 import { motion, useReducedMotion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowDown, Fingerprint, KeyRound } from 'lucide-react'
 import securityLayers from '../assets/brand/security-layers-blue.png'
 
 /**
  * Home hero — teaches first: the headline is the machine-identity idea, and the
- * two calls to action jump to the Fundamentals definitions. The live flow
- * diagram lives in its own section further down (FlowSection).
+ * two calls to action open the Concepts pages. The live flow diagram follows
+ * in its own section (FlowSection).
  */
 export default function Hero() {
   const { t } = useTranslation()
@@ -41,22 +42,22 @@ export default function Hero() {
           </motion.p>
 
           <motion.div {...fadeUp(0.26)} className="mt-9 flex flex-wrap gap-3">
-            <a href="#fund-secret"
+            <Link to="/concepts/secrets"
               className="inline-flex min-h-11 items-center gap-2 rounded-md bg-idira-blue px-5 text-sm font-semibold text-white
                 hover:bg-idira-blue-2 active:bg-idira-blue-deep transition-colors">
               <KeyRound size={17} aria-hidden="true" />{t('hero.cta_secret')}
-            </a>
-            <a href="#fund-identity"
+            </Link>
+            <Link to="/concepts/machine-identity"
               className="inline-flex min-h-11 items-center gap-2 rounded-md border border-white/20 bg-white/5 px-5 text-sm font-semibold
                 text-white hover:bg-white/10 hover:border-white/35 transition-colors">
               <Fingerprint size={17} aria-hidden="true" />{t('hero.cta_identity')}
-            </a>
+            </Link>
           </motion.div>
         </div>
       </div>
 
       <div className="relative pb-8 text-center">
-        <a href="#fundamentals" className="inline-flex min-h-11 items-center gap-1.5 font-mono text-xs text-slate-400 hover:text-slate-200 transition-colors">
+        <a href="#flow-live" className="inline-flex min-h-11 items-center gap-1.5 font-mono text-xs text-slate-400 hover:text-slate-200 transition-colors">
           {t('hero.cta_explore')}<ArrowDown size={13} aria-hidden="true" />
         </a>
       </div>
