@@ -24,7 +24,7 @@ If code and this file disagree, fix the code or update this file in the same PR 
 
 - Visual language follows Palo Alto Networks **IDIRA**. The top bar shows the **official "IDIRA by Palo Alto Networks" lockup** (`src/assets/brand/idira-logo-light.png` on light backgrounds, `idira-logo-dark.png` on dark — the official dark artwork ships on solid black and was converted to alpha by un-compositing it from black, which is exact: re-composited on black it differs by ≤ 6/255, the JPEG noise floor). Only margins were cropped; never recolour or redraw the mark, and don't rely on `mix-blend-mode` over the translucent top bar (it shows a box). In running text the brand reads `Palo Alto Networks | IDIRA`.
 - Two themes, user-selectable (`useTheme()`, persisted in `localStorage('idira-theme')`, applied as `data-theme` + `.dark` on `<html>` before paint).
-- **Always-dark zones** ignore the theme: the hero band (`bg-[#070c1c]`) and the promise band (`.idira-promise`, `#0f1b3a`). Text inside them uses `text-white` / `text-slate-300/90`.
+- **Always-dark zones** ignore the theme: the hero band and the live-flow band (`bg-[#070c1c]`). Text inside them uses `text-white` / `text-slate-300/90`.
 - Official art: `src/assets/brand/security-layers-blue.png` (hero backdrop), `idira-icon-color.png`. Don't recolour or crop them.
 
 ---
@@ -133,7 +133,7 @@ A returning visitor's locale (pt/es) is loaded **before** the first render (`loc
 
 ## 7. Page anatomy
 
-**Home stays clean:** hero ("Every workload, its own identity", CTAs open the first two Concepts pages) → **flow, live** (Command Center diagram, always-dark band) → **"Learn the concepts"** cards (one per Concepts page) → compact demo links (same use case / product switch) → promise. Teaching content lives on the Concepts pages; demo detail on the demo pages.
+**Home stays clean:** hero ("Every workload, its own identity", CTAs open the first two Concepts pages) → **flow, live** (Command Center diagram, always-dark band) → **"Learn the concepts"** cards (one per Concepts page) → compact demo links (same use case / product switch). Teaching content lives on the Concepts pages; demo detail on the demo pages.
 
 **Concepts pages** (`/concepts/*`, menu group *Concepts*, right under Home in both grouping views) — a learning trail rendered by `ConceptLayout` (compact dark hero band with "Concepts · n/5", content, previous/next links in the order of the group in `lib/nav.ts`):
 

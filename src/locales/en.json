@@ -82,12 +82,6 @@
     "cta_secret": "What is a secret?",
     "cta_identity": "What is a machine identity?"
   },
-  "promise": {
-    "eyebrow": "The promise",
-    "claim_pre": "Zero static credentials in source, images, env vars or CI.",
-    "claim_mark": "Every workload talks to IDIRA with its own identity.",
-    "detail": "This is not a roadmap or a vendor PDF — it is running infrastructure: eight live apps you can hit right now, the policy that scopes them, the architecture that proves it, and the open-source code behind every piece. Built on the LATAM Lab tenant, federated to GitHub, AWS and Kubernetes."
-  },
   "constellation": {
     "aria": "IDIRA at the centre as the identity authority, with the eight live demos around it, each fetching its secret from IDIRA."
   },

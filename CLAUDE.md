@@ -51,7 +51,7 @@ npx tsc --noEmit
 
 | Route | Component |
 |---|---|
-| `/` | `HomePage` (Hero + live flow + Concepts cards + demo links + promise) |
+| `/` | `HomePage` (Hero + live flow + Concepts cards + demo links) |
 | `/spring-boot` | `SpringBootSection` |
 | `/dotnet` | `DotNetSection` |
 | `/github-actions` | `GitHubActionsSection` |

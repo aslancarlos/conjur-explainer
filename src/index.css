@@ -130,7 +130,7 @@
   }
 }
 
-/* ─── Modern IDIRA home: mesh, grid, promise band (PANTONE palette) ─── */
+/* ─── Modern IDIRA home: mesh and grid (PANTONE palette) ─── */
 
 /* Animated iridescent mesh — official IDIRA blues/cyan + subtle orange accent */
 .hero-mesh {
@@ -157,49 +157,6 @@
 
 /* Diagonal-cut primary CTA */
 .cta-diagonal { clip-path: polygon(0 0, 100% 0, calc(100% - 13px) 100%, 0 100%); }
-
-/* Promise band — always deep navy, rotating conic PANTONE gradient behind */
-.idira-promise {
-  background: #0f1b3a;
-  color: #f0f4fc;
-  border-radius: 28px;
-  padding: clamp(48px, 7vw, 96px) clamp(26px, 6vw, 64px);
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-.idira-promise::before {
-  content: '';
-  position: absolute;
-  top: -40%; right: -12%;
-  width: 72%; height: 200%;
-  background: conic-gradient(from 210deg, #0f1b3a, #265bff 24%, #4ad1f0 48%, #007bff 70%, #fa582d 88%, #0f1b3a 100%);
-  filter: blur(92px);
-  opacity: 0.55;
-  z-index: -1;
-  animation: idira-spin 42s linear infinite;
-}
-@keyframes idira-spin { to { transform: rotate(360deg); } }
-
-.idira-promise-zero {
-  display: inline-block;
-  position: relative;
-  font: 800 clamp(150px, 21vw, 290px)/0.85 'Onest', system-ui, sans-serif;
-  letter-spacing: -0.07em;
-  background: linear-gradient(180deg, #ffffff 0%, rgba(184, 196, 220, 0.38) 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-}
-.idira-promise-zero::after {
-  content: '';
-  position: absolute;
-  bottom: 0.2em; right: -0.16em;
-  width: 0.13em; height: 0.13em;
-  background: #fa582d;
-  border-radius: 50%;
-  box-shadow: 0 0 26px 6px rgba(250, 88, 45, 0.55);
-}
 
 /* Navbar — modern iridescent line matching the hero */
 .nav-iridescent::after {

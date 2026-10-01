@@ -82,12 +82,6 @@
     "cta_secret": "O que é um secret?",
     "cta_identity": "O que é uma identidade de máquina?"
   },
-  "promise": {
-    "eyebrow": "A promessa",
-    "claim_pre": "Zero credenciais estáticas no código, imagens, env vars ou CI.",
-    "claim_mark": "Cada workload fala com o IDIRA com a própria identidade.",
-    "detail": "Isto não é um roadmap nem um PDF de fornecedor — é infraestrutura rodando: oito apps ao vivo que você acessa agora, a policy que as escopa, a arquitetura que prova, e o código open-source por trás de cada peça. No tenant LATAM Lab, federado a GitHub, AWS e Kubernetes."
-  },
   "constellation": {
     "aria": "IDIRA no centro como autoridade de identidade, com as oito demos ao redor, cada uma buscando seu segredo no IDIRA."
   },
