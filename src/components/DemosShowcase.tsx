@@ -3,44 +3,17 @@ import { motion, useInView, useReducedMotion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight } from 'lucide-react'
-import { NAV, type NavItem } from '../lib/nav'
+import { DEMO_GROUPS } from '../lib/nav'
 
-interface Demo { key: string; to: string; name: string; secret: string }
-
-// The pattern catalogue, grouped exactly like the sidebar so the mental model
-// matches: running examples first, then platform integrations. Icon and accent
-// come from lib/nav (one icon per concept across the site — DESIGN.md §8).
-const GROUPS: Array<{ key: 'examples' | 'integrations'; titleKey: string; descKey: string; demos: Demo[] }> = [
-  {
-    key: 'examples', titleKey: 'nav.examples', descKey: 'demos.group_examples', demos: [
-      { key: 'spring',  to: '/spring-boot',    name: 'Spring Boot',    secret: 'direct JWT' },
-      { key: 'dotnet',  to: '/dotnet',         name: '.NET',           secret: 'sidecar' },
-      { key: 'gha',     to: '/github-actions', name: 'GitHub Actions', secret: 'OIDC' },
-      { key: 'eso',     to: '/eso-shop',       name: 'ESO Shop',       secret: 'ESO' },
-      { key: 'swa',     to: '/swa-s3',         name: 'SWA → AWS S3',   secret: 'SPIFFE/SVID → STS' },
-    ],
-  },
-  {
-    key: 'integrations', titleKey: 'nav.integrations', descKey: 'demos.group_integrations', demos: [
-      { key: 'dual',       to: '/dualaccounts', name: 'Dual Accounts',  secret: 'rotation' },
-      { key: 'jwt',        to: '/jwt',          name: 'authn-jwt',      secret: 'identity handshake' },
-      { key: 'policy',     to: '/policy',       name: 'Policy as Code', secret: 'YAML + git' },
-      { key: 'secretshub', to: '/secretshub',   name: 'Secrets Hub',    secret: 'PAM → cloud sync' },
-      { key: 'jenkins',    to: '/jenkins',      name: 'Jenkins',        secret: 'plugin JWT' },
-      { key: 'ansible',    to: '/ansible',      name: 'Ansible',        secret: 'lookup' },
-      { key: 'csi',        to: '/csi',          name: 'CSI Driver',     secret: 'tmpfs volume' },
-    ],
-  },
-]
-
-const NAV_BY_ROUTE = new Map<string, NavItem>(NAV.flatMap(g => g.items).map(i => [i.to, i]))
+// The catalogue mirrors the sidebar groups (lib/nav.ts) — same taxonomy, same
+// icon per concept (DESIGN.md §9), one place to add a demo.
 
 export default function DemosShowcase() {
   const { t } = useTranslation()
   const reduce = useReducedMotion()
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
-  const total = GROUPS.reduce((n, g) => n + g.demos.length, 0)
+  const total = DEMO_GROUPS.reduce((n, g) => n + g.items.length, 0)
 
   let idx = 0
   return (
@@ -52,20 +25,20 @@ export default function DemosShowcase() {
           <p className="mt-4 text-base leading-relaxed text-text-2">{t('demos.subtitle')}</p>
         </div>
 
-        {GROUPS.map(group => (
+        {DEMO_GROUPS.map(group => (
           <div key={group.key} className="mt-12">
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-border pb-3">
-              <h3 className="text-lg font-semibold text-text">{t(group.titleKey)}</h3>
-              <span className="font-mono text-xs text-text-muted tabular-nums">{group.demos.length}/{total}</span>
-              <p className="w-full sm:w-auto sm:ml-auto text-sm text-text-muted">{t(group.descKey)}</p>
+              <h3 className="text-lg font-semibold text-text">{t(group.labelKey!)}</h3>
+              <span className="font-mono text-xs text-text-muted tabular-nums">{group.items.length}/{total}</span>
+              {group.descKey && <p className="w-full sm:w-auto sm:ml-auto text-sm text-text-muted">{t(group.descKey)}</p>}
             </div>
 
             <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-              {group.demos.map(d => {
-                const nav = NAV_BY_ROUTE.get(d.to)
-                const Icon = nav?.Icon
-                const accent = nav?.color ?? 'text-text-2'
-                const external = Boolean(nav?.href)
+              {group.items.map(item => {
+                const d = { key: item.to, to: item.to, ...item.demo! }
+                const Icon = item.Icon
+                const accent = item.color ?? 'text-text-2'
+                const external = Boolean(item.href)
                 const i = idx++
                 const cardCls = 'group relative flex h-full flex-col rounded-2xl border border-border bg-bg-card p-5 ' +
                   'transition-colors duration-200 hover:border-text-muted/50 hover:bg-bg-muted/60'
@@ -74,14 +47,14 @@ export default function DemosShowcase() {
                     <span className={`absolute left-0 top-6 h-9 w-1 rounded-r bg-current ${accent}`} aria-hidden="true" />
                     <div className="flex items-center gap-3">
                       <span className={`flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-bg-muted ${accent}`}>
-                        {Icon && <Icon size={18} strokeWidth={1.9} aria-hidden="true" />}
+                        <Icon size={18} strokeWidth={1.9} aria-hidden="true" />
                       </span>
                       <div className="min-w-0">
                         <p className="text-sm font-bold text-text leading-tight">{d.name}</p>
                         <p className="font-mono text-xs text-text-muted">{d.secret}</p>
                       </div>
                     </div>
-                    <p className="mt-4 text-sm leading-relaxed text-text-2 flex-1">{t(`demos.${d.key}`)}</p>
+                    <p className="mt-4 text-sm leading-relaxed text-text-2 flex-1">{t(d.descKey)}</p>
                     <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-text-2 group-hover:text-text transition-colors">
                       {t('demos.cta')}
                       <ArrowRight size={14} aria-hidden="true" className={`transition-transform group-hover:translate-x-0.5 ${accent}`} />

@@ -1,7 +1,6 @@
 {
   "nav": {
     "home": "Início",
-    "integrations": "Integrações",
     "tools": "Ferramentas",
     "springboot": "Spring Boot",
     "springboot_sub": "Autenticação JWT Direta",
@@ -27,7 +26,6 @@
     "dualaccounts_sub": "Rotação de credenciais sem downtime",
     "jwt": "Autenticação JWT",
     "jwt_sub": "Como funciona a autenticação JWT de workloads",
-    "examples": "Exemplos",
     "secretshub": "Secrets Hub",
     "secretshub_sub": "Sincronize segredos do PAM com AWS, Azure e GCP",
     "jenkins": "Jenkins",
@@ -43,7 +41,11 @@
     "close_menu": "Fechar menu",
     "collapse": "Recolher menu",
     "expand": "Expandir menu",
-    "language": "Idioma"
+    "language": "Idioma",
+    "group_identity": "Identidade & acesso",
+    "group_k8s": "Kubernetes",
+    "group_cicd": "CI/CD & automação",
+    "group_lifecycle": "Ciclo de vida"
   },
   "hero": {
     "eyebrow": "Palo Alto Networks | IDIRA · Secrets Manager · Kubernetes · ESO · DevSecOps",
@@ -112,8 +114,10 @@
     "jwt": "O coração do modelo: o authn-jwt valida o token de identidade do workload (ServiceAccount, OIDC, IdP) contra a policy antes de liberar qualquer segredo — veja o handshake completo, passo a passo.",
     "secretshub": "O Secrets Hub sincroniza segredos do CyberArk PAM para o cofre em nuvem, mantendo uma fonte única de verdade — as apps consomem sempre da mesma API, sem duplicar credencial.",
     "policy": "Policy como código: hosts, grupos e permissões declarados em YAML e versionados no git. Cada identidade recebe acesso de menor privilégio, auditável e revisável em PR.",
-    "group_examples": "Demos em execução para abrir e acompanhar ao vivo.",
-    "group_integrations": "Recursos da IDIRA e integrações de CI/CD, gestão de configuração e Kubernetes."
+    "group_identity": "Como o workload prova quem é — e o que a policy permite que ele leia.",
+    "group_k8s": "Pods recebem segredos com a identidade da ServiceAccount: SDK, sidecar, operator ou volume CSI.",
+    "group_cicd": "Pipelines e automação buscam segredos em tempo de execução — nada guardado na ferramenta.",
+    "group_lifecycle": "Rotação e sincronização no lado do PAM, sem que os consumidores percebam."
   },
   "caps": {
     "kicker": "O que compartilham",

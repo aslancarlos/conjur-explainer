@@ -65,7 +65,7 @@ npx tsc --noEmit
 | `/jenkins` | `JenkinsPage` |
 | `/policy` | `PolicyPage` (Conjur policy structure + branches walkthrough) |
 
-**Navigation lives in `src/lib/nav.ts`** — one `NAV` array (Home · Integrations · Examples · Tools) drives the sidebar, the mobile drawer and the home demo catalogue icons. Add a page there, not in a component. Labels and sub-descriptions are i18n keys (e.g. `nav.springboot`, `nav.springboot_sub`). See DESIGN.md §6.
+**Navigation lives in `src/lib/nav.ts`** — one `NAV` array (Home · Identity & access · Kubernetes · CI/CD & automation · Credential lifecycle · Tools, grouped like the CyberArk docs) drives the sidebar, the mobile drawer and the home demo catalogue (`DEMO_GROUPS`; set `demo` on an item to list it). Add a page there, not in a component. Labels and sub-descriptions are i18n keys (e.g. `nav.springboot`, `nav.springboot_sub`). See DESIGN.md §6.
 
 **`vite.config.ts` has `base: '/'`** — the app is served at the domain root (`demo.minha.cloud/`). Do not change this. If `base` were set to a sub-path, all asset paths and client-side navigation would break.
 

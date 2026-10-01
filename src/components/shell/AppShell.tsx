@@ -95,7 +95,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
       <aside className={`hidden lg:flex fixed top-14 bottom-0 left-0 z-40 flex-col border-r border-border bg-bg-card
         ${collapsed ? 'w-16' : 'w-60'}`}>
         <nav aria-label={t('nav.primary')} className="flex-1 overflow-y-auto overscroll-contain px-2 py-4">
-          <SideNav collapsed={collapsed} dense />
+          <SideNav collapsed={collapsed} dense idPrefix="side" />
         </nav>
       </aside>
 
@@ -120,7 +120,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
                 </button>
               </div>
               <nav aria-label={t('nav.primary')} className="flex-1 overflow-y-auto overscroll-contain px-2 py-4">
-                <SideNav />
+                <SideNav idPrefix="drawer" />
               </nav>
               <div className="border-t border-border p-3">
                 <LanguageSwitcher />

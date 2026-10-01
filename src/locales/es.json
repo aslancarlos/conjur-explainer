@@ -1,7 +1,6 @@
 {
   "nav": {
     "home": "Inicio",
-    "integrations": "Integraciones",
     "tools": "Herramientas",
     "springboot": "Spring Boot",
     "springboot_sub": "Autenticación JWT Directa",
@@ -27,7 +26,6 @@
     "dualaccounts_sub": "Rotación de credenciales sin downtime",
     "jwt": "Autenticación JWT",
     "jwt_sub": "Cómo funciona la autenticación JWT de workloads",
-    "examples": "Ejemplos",
     "secretshub": "Secrets Hub",
     "secretshub_sub": "Sincroniza secretos PAM con AWS, Azure y GCP",
     "jenkins": "Jenkins",
@@ -43,7 +41,11 @@
     "close_menu": "Cerrar menú",
     "collapse": "Contraer menú",
     "expand": "Expandir menú",
-    "language": "Idioma"
+    "language": "Idioma",
+    "group_identity": "Identidad & acceso",
+    "group_k8s": "Kubernetes",
+    "group_cicd": "CI/CD & automatización",
+    "group_lifecycle": "Ciclo de vida"
   },
   "hero": {
     "eyebrow": "Palo Alto Networks | IDIRA · Secrets Manager · Kubernetes · ESO · DevSecOps",
@@ -112,8 +114,10 @@
     "jwt": "El corazón del modelo: authn-jwt valida el token de identidad del workload (ServiceAccount, OIDC, IdP) contra la policy antes de liberar cualquier secreto — recorre el handshake completo, paso a paso.",
     "secretshub": "Secrets Hub sincroniza secretos de CyberArk PAM al vault en la nube, manteniendo una única fuente de verdad — las apps siempre consumen de la misma API, sin credencial duplicada.",
     "policy": "Policy como código: hosts, grupos y permisos declarados en YAML y versionados en git. Cada identidad obtiene acceso de mínimo privilegio, auditable y revisable en un PR.",
-    "group_examples": "Demos en ejecución para abrir y seguir en vivo.",
-    "group_integrations": "Capacidades de IDIRA e integraciones de CI/CD, gestión de configuración y Kubernetes."
+    "group_identity": "Cómo el workload prueba quién es — y qué le permite leer la policy.",
+    "group_k8s": "Los pods reciben secretos con la identidad de su ServiceAccount: SDK, sidecar, operator o volumen CSI.",
+    "group_cicd": "Pipelines y automatización obtienen secretos en tiempo de ejecución — nada guardado en la herramienta.",
+    "group_lifecycle": "Rotación y sincronización del lado del PAM, sin que los consumidores lo noten."
   },
   "caps": {
     "kicker": "Lo que comparten",

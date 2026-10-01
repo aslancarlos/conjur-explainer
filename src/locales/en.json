@@ -1,7 +1,6 @@
 {
   "nav": {
     "home": "Home",
-    "integrations": "Integrations",
     "tools": "Tools",
     "springboot": "Spring Boot",
     "springboot_sub": "Direct JWT Authentication",
@@ -27,7 +26,6 @@
     "dualaccounts_sub": "Zero-downtime credential rotation",
     "jwt": "JWT Authentication",
     "jwt_sub": "How workload JWT auth works",
-    "examples": "Examples",
     "secretshub": "Secrets Hub",
     "secretshub_sub": "Sync PAM secrets to AWS, Azure & GCP",
     "jenkins": "Jenkins",
@@ -43,7 +41,11 @@
     "close_menu": "Close menu",
     "collapse": "Collapse sidebar",
     "expand": "Expand sidebar",
-    "language": "Language"
+    "language": "Language",
+    "group_identity": "Identity & access",
+    "group_k8s": "Kubernetes",
+    "group_cicd": "CI/CD & automation",
+    "group_lifecycle": "Credential lifecycle"
   },
   "hero": {
     "eyebrow": "Palo Alto Networks | IDIRA · Secrets Manager · Kubernetes · ESO · DevSecOps",
@@ -112,8 +114,10 @@
     "jwt": "The heart of the model: authn-jwt validates the workload's identity token (ServiceAccount, OIDC, IdP) against policy before releasing any secret — walk the full handshake, step by step.",
     "secretshub": "Secrets Hub syncs secrets from CyberArk PAM into the cloud vault, keeping a single source of truth — apps always consume from the same API, with no duplicated credential.",
     "policy": "Policy as code: hosts, groups and permissions declared in YAML and versioned in git. Each identity gets least-privilege, auditable access, reviewable in a PR.",
-    "group_examples": "Running demos you can open and watch live.",
-    "group_integrations": "IDIRA capabilities and CI/CD, config-management and Kubernetes integrations."
+    "group_identity": "How a workload proves who it is — and what policy lets it read.",
+    "group_k8s": "Pods get secrets with their ServiceAccount identity: SDK, sidecar, operator or CSI volume.",
+    "group_cicd": "Pipelines and automation fetch secrets at run time — nothing stored in the tool.",
+    "group_lifecycle": "PAM-side rotation and synchronisation that consumers never notice."
   },
   "caps": {
     "kicker": "What they share",
