@@ -37,7 +37,13 @@
     "csidriver": "CSI Driver",
     "csidriver_sub": "Segredos em volume via Secrets Store CSI Driver",
     "policy": "Políticas & Branches",
-    "policy_sub": "Como a política YAML do Secrets Manager é estruturada"
+    "policy_sub": "Como a política YAML do Secrets Manager é estruturada",
+    "primary": "Navegação principal",
+    "open_menu": "Abrir menu",
+    "close_menu": "Fechar menu",
+    "collapse": "Recolher menu",
+    "expand": "Expandir menu",
+    "language": "Idioma"
   },
   "hero": {
     "eyebrow": "Palo Alto Networks | IDIRA · Secrets Manager · Kubernetes · ESO · DevSecOps",
@@ -105,7 +111,9 @@
     "swa": "Um workload com identidade SPIFFE/SVID troca seu certificado por credenciais STS temporárias da AWS e lê um bucket S3 — sem access key estática, tudo via mTLS e federação de identidade.",
     "jwt": "O coração do modelo: o authn-jwt valida o token de identidade do workload (ServiceAccount, OIDC, IdP) contra a policy antes de liberar qualquer segredo — veja o handshake completo, passo a passo.",
     "secretshub": "O Secrets Hub sincroniza segredos do CyberArk PAM para o cofre em nuvem, mantendo uma fonte única de verdade — as apps consomem sempre da mesma API, sem duplicar credencial.",
-    "policy": "Policy como código: hosts, grupos e permissões declarados em YAML e versionados no git. Cada identidade recebe acesso de menor privilégio, auditável e revisável em PR."
+    "policy": "Policy como código: hosts, grupos e permissões declarados em YAML e versionados no git. Cada identidade recebe acesso de menor privilégio, auditável e revisável em PR.",
+    "group_examples": "Demos em execução para abrir e acompanhar ao vivo.",
+    "group_integrations": "Recursos da IDIRA e integrações de CI/CD, gestão de configuração e Kubernetes."
   },
   "caps": {
     "kicker": "O que compartilham",
@@ -1060,6 +1068,13 @@
     "col_delivery": "Serviço",
     "m_workloads": "workloads ao vivo",
     "m_auth": "auth principal",
-    "m_rest": "segredos em repouso"
+    "m_rest": "segredos em repouso",
+    "open": "Abrir a demo {{name}}",
+    "play": "Reproduzir",
+    "pause": "Pausar",
+    "path": "Caminho do segredo",
+    "rotation": "O CPM rotaciona a credencial do banco no lugar — os workloads seguem funcionando (Dual Accounts).",
+    "hint": "Passe o mouse ou foque um workload para ver o caminho · clique para abrir a demo.",
+    "injected": "injetado em runtime"
   }
 }

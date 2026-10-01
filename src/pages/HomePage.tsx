@@ -13,11 +13,13 @@ const ArchitectureDiagram = lazy(() => import('../components/ArchitectureDiagram
 export default function HomePage() {
   return (
     <>
+      {/* Path selection first: what IDIRA does (hero) → pick a demo → why it
+          matters → guarantees → how it fits in Kubernetes → the promise. */}
       <Hero />
+      <DemosShowcase />
       <div id="problem">
         <ProblemSection />
       </div>
-      <DemosShowcase />
       <Capabilities />
       <Suspense fallback={<Loading />}>
         <ArchitectureDiagram />

@@ -49,11 +49,9 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.28, ease: [0.2, 0.7, 0.2, 1] }}
-          className="mt-8 -mx-2 sm:mx-0 rounded-2xl border border-white/10 bg-white/[0.02] p-3 sm:p-5 overflow-x-auto"
+          className="mt-8 rounded-2xl border border-white/10 bg-white/[0.02] p-4 sm:p-5"
         >
-          <div className="min-w-[720px]">
-            <CommandCenterFlow />
-          </div>
+          <CommandCenterFlow />
         </motion.div>
 
         {/* Federated workloads strip */}
@@ -69,7 +67,7 @@ export default function Hero() {
 
       {/* Scroll hint */}
       <div className="relative pb-8 text-center">
-        <a href="#problem" className="text-xs font-mono text-slate-500 hover:text-slate-300 transition-colors">
+        <a href="#demos" className="text-xs font-mono text-slate-500 hover:text-slate-300 transition-colors">
           {t('hero.cta_explore')}
         </a>
       </div>

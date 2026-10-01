@@ -37,7 +37,13 @@
     "csidriver": "CSI Driver",
     "csidriver_sub": "Volume-mounted secrets via Secrets Store CSI Driver",
     "policy": "Policy & Branches",
-    "policy_sub": "How Secrets Manager policy YAML is structured"
+    "policy_sub": "How Secrets Manager policy YAML is structured",
+    "primary": "Main navigation",
+    "open_menu": "Open menu",
+    "close_menu": "Close menu",
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar",
+    "language": "Language"
   },
   "hero": {
     "eyebrow": "Palo Alto Networks | IDIRA · Secrets Manager · Kubernetes · ESO · DevSecOps",
@@ -105,7 +111,9 @@
     "swa": "A workload with a SPIFFE/SVID identity exchanges its certificate for temporary AWS STS credentials and reads an S3 bucket — no static access key, all over mTLS and identity federation.",
     "jwt": "The heart of the model: authn-jwt validates the workload's identity token (ServiceAccount, OIDC, IdP) against policy before releasing any secret — walk the full handshake, step by step.",
     "secretshub": "Secrets Hub syncs secrets from CyberArk PAM into the cloud vault, keeping a single source of truth — apps always consume from the same API, with no duplicated credential.",
-    "policy": "Policy as code: hosts, groups and permissions declared in YAML and versioned in git. Each identity gets least-privilege, auditable access, reviewable in a PR."
+    "policy": "Policy as code: hosts, groups and permissions declared in YAML and versioned in git. Each identity gets least-privilege, auditable access, reviewable in a PR.",
+    "group_examples": "Running demos you can open and watch live.",
+    "group_integrations": "IDIRA capabilities and CI/CD, config-management and Kubernetes integrations."
   },
   "caps": {
     "kicker": "What they share",
@@ -1060,6 +1068,13 @@
     "col_delivery": "Service",
     "m_workloads": "live workloads",
     "m_auth": "primary auth",
-    "m_rest": "secrets at rest"
+    "m_rest": "secrets at rest",
+    "open": "Open the {{name}} demo",
+    "play": "Play",
+    "pause": "Pause",
+    "path": "Secret path",
+    "rotation": "CPM rotates the database credential in place — workloads keep working (Dual Accounts).",
+    "hint": "Hover or focus a workload to trace its path · click to open its demo.",
+    "injected": "injected at runtime"
   }
 }

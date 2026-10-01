@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
 import { lazy, Suspense, useEffect } from 'react'
-import NavBar from './components/NavBar'
+import AppShell from './components/shell/AppShell'
 import Footer from './components/Footer'
 import Loading from './components/Loading'
 import PageTransition from './components/PageTransition'
@@ -33,8 +33,7 @@ function ScrollToTop() {
 
 function Layout() {
   return (
-    <div className="min-h-screen bg-bg text-text">
-      <NavBar />
+    <AppShell>
       <ScrollToTop />
       <main id="main" className="pt-14">
         <Suspense fallback={<Loading />}>
@@ -44,7 +43,7 @@ function Layout() {
         </Suspense>
       </main>
       <Footer />
-    </div>
+    </AppShell>
   )
 }
 

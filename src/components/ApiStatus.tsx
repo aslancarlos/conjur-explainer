@@ -6,7 +6,7 @@ type Status = 'checking' | 'ok' | 'down'
  * Live status badge for the JWT-validator API. Pings GET /api/health on mount
  * and every 30s, surfacing the real /api liveness in the nav.
  */
-export default function ApiStatus() {
+export default function ApiStatus({ tone = 'theme' }: { tone?: 'dark' | 'theme' }) {
   const [status, setStatus] = useState<Status>('checking')
 
   useEffect(() => {
@@ -35,7 +35,8 @@ export default function ApiStatus() {
   return (
     <span
       title={`GET /api/health — ${label}`}
-      className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-border px-2 py-1 font-mono text-[11px] text-text-muted"
+      className={`hidden sm:inline-flex items-center gap-1.5 rounded-lg border px-2 py-1 font-mono text-xs ${
+        tone === 'dark' ? 'border-white/15 text-slate-300' : 'border-border text-text-muted'}`}
     >
       <span className={`w-1.5 h-1.5 rounded-full ${dot} ${status === 'ok' ? 'animate-pulse' : ''}`} />
       /api

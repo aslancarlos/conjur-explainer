@@ -47,7 +47,7 @@ npx tsc --noEmit
 
 ## Architecture decisions
 
-**Multi-page routing with React Router v6** — the app uses `BrowserRouter` + `Routes` + a `Layout` route. Each section is a standalone page, not a scroll-section. The `Layout` component uses `<Outlet />` and wraps all pages with `NavBar`, `Footer`, and `ScrollToTop`. `main` has `pt-14` to offset the fixed navbar.
+**Multi-page routing with React Router v6** — the app uses `BrowserRouter` + `Routes` + a `Layout` route. Each section is a standalone page, not a scroll-section. The `Layout` component wraps all pages in `AppShell` (top bar + left sidebar / mobile drawer, `src/components/shell/`) with `Footer` and `ScrollToTop`. `main` has `pt-14` to offset the fixed top bar; the content column gets `lg:pl-60` (or `lg:pl-16` collapsed).
 
 | Route | Component |
 |---|---|
@@ -65,7 +65,7 @@ npx tsc --noEmit
 | `/jenkins` | `JenkinsPage` |
 | `/policy` | `PolicyPage` (Conjur policy structure + branches walkthrough) |
 
-**NavBar uses dropdown menus** — two dropdowns: "Integrations" (app patterns) and "Tools" (flow/compare/dashboards). State-based (`useState`) not CSS hover, so they close on route change and outside click. `DropItem` interface drives both PATTERNS and TOOLS arrays. All labels come from i18n keys including sub-descriptions (e.g., `nav.springboot_sub`).
+**Navigation lives in `src/lib/nav.ts`** — one `NAV` array (Home · Integrations · Examples · Tools) drives the sidebar, the mobile drawer and the home demo catalogue icons. Add a page there, not in a component. Labels and sub-descriptions are i18n keys (e.g. `nav.springboot`, `nav.springboot_sub`). See DESIGN.md §6.
 
 **`vite.config.ts` has `base: '/'`** — the app is served at the domain root (`demo.minha.cloud/`). Do not change this. If `base` were set to a sub-path, all asset paths and client-side navigation would break.
 
@@ -108,7 +108,7 @@ If you forget `returnObjects: true`, i18next returns a comma-joined string inste
    - `useTranslation()` for all text
    - Section wrapped in `<section id="xyz">`
 2. Add a color token to `tailwind.config.js` if the pattern needs one
-3. Add the NavBar link in `NavBar.tsx` with the matching `hover:text-<color>` class and responsive visibility class (`hidden sm:block`, `hidden md:block`, etc.)
+3. Add the page to `NAV` in `src/lib/nav.ts` (icon + accent that reaches 3:1 in both themes)
 4. Add translation keys to all three locale files: `src/locales/en.json`, `pt.json`, `es.json`
 5. Import and place the component in `App.tsx`
 

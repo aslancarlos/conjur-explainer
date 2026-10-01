@@ -23,7 +23,7 @@ export default function Capabilities() {
       <div className="max-w-7xl mx-auto" ref={ref}>
         <div className="max-w-2xl">
           <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-idira-cyan">{t('caps.kicker')}</p>
-          <h2 className="mt-3 text-[clamp(26px,3.4vw,40px)] font-bold tracking-[-0.02em] text-text">{t('caps.title')}</h2>
+          <h2 className="mt-3 text-[clamp(26px,3.4vw,40px)] font-bold leading-tight tracking-[-0.02em] text-text">{t('caps.title')}</h2>
           <p className="mt-4 text-[15px] leading-relaxed text-text-2">{t('caps.subtitle')}</p>
         </div>
 

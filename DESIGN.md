@@ -67,7 +67,7 @@ Rules:
 - Domain colour appears **only** on the icon chip, a 3 px top stripe and lane labels. Card fill and body text stay neutral.
 - **Never** use a status colour (success/warning/danger) as a domain or decoration. Green means active, nothing else.
 - Control plane shares IDIRA blue on purpose: control originates in the platform.
-- Add a new domain only with a new CSS var pair, AA check (§11) and a row here.
+- Add a new domain only with a new CSS var pair, AA check (§14) and a row here.
 
 ### 3.4 Brand constants & workload accents (theme-independent)
 
@@ -110,7 +110,26 @@ Headings are sequential (`h1` once per page → `h2` → `h3`).
 
 ---
 
-## 6. Page anatomy (explainer pages)
+## 6. App shell & navigation
+
+Console-style shell, aligned with sinfonia.minha.cloud (`src/components/shell/`):
+
+| Part | Spec |
+|---|---|
+| Top bar | Fixed, `h-14`, always dark (`bg-[#070c1c]/90` + blur + `.nav-iridescent` line). Left: sidebar toggle (≥ lg collapses, < lg opens drawer) · brand. Right: `/api` status · EN/PT/ES · theme. Dark-tone variants: `ApiStatus tone="dark"`, `ThemeToggle tone="dark"`, `LanguageSwitcher tone="dark"` |
+| Sidebar (≥ 1024 px) | Left, fixed under the top bar, `w-60` (240 px) or `w-16` icons-only, choice persisted in `localStorage('idira-sidebar-collapsed')`. Theme-aware (`bg-bg-card`, `border-r border-border`). Rows 36 px (mouse) |
+| Drawer (< 1024 px) | Same navigation, slides from the left (`w-[min(20rem,85vw)]`), 55 % scrim, focus moves to Close, Esc / scrim / navigation close it, focus returns to the menu button, page scroll locked. Rows 44 px (touch); language switch in its footer |
+| Groups | Home · Integrations · Examples · Tools — one source of truth in `src/lib/nav.ts` (also feeds the home demo catalogue) |
+| Current page | Tinted row + 3 px `idira-blue` left bar + `aria-current="page"` |
+| Icons | One per page, coloured with the page accent only if it reaches 3:1 in **both** themes; otherwise a theme-aware token (`domain-idira`, `domain-cp`, `text-text-2`) |
+
+Content column gets `lg:pl-60` / `lg:pl-16`; `main` keeps `pt-14`. Never add a second fixed bar or global keyboard listeners.
+
+A returning visitor's locale (pt/es) is loaded **before** the first render (`localeReady` in `src/i18n.ts`), so no component flashes English.
+
+---
+
+## 7. Page anatomy (explainer pages)
 
 ```
 ┌ Hero band (always dark) ─────────────────────────────────────────┐
@@ -140,7 +159,7 @@ Hero band recipe (copy from `DualAccountsPage.tsx` / `Hero.tsx`):
 
 ---
 
-## 7. Components
+## 8. Components
 
 | Component | Spec |
 |---|---|
@@ -156,7 +175,7 @@ All interactive targets ≥ 44×44 px with ≥ 8 px spacing. Icon-only buttons n
 
 ---
 
-## 8. Iconography
+## 9. Iconography
 
 - **lucide-react only** (currently 0.408). No emoji as icons or bullets.
 - Sizes: 14 (inline/labels), 16 (chips), 18 (buttons), 20 (concept tiles). Stroke 1.75–2.
@@ -167,9 +186,11 @@ All interactive targets ≥ 44×44 px with ≥ 8 px spacing. Icon-only buttons n
 
 ---
 
-## 9. Animated diagrams (the pattern)
+## 10. Animated diagrams (the pattern)
 
 Reference implementation: `src/pages/DualAccountsPage.tsx`.
+
+**Ambient hero diagrams** (home Command Center): no GSAP, no infinite loops. One journey at a time driven by a `requestAnimationFrame` token on `getPointAtLength`, a visible **Pause** button (WCAG 2.2.2), auto-pause on hover/focus, off-screen (IntersectionObserver) and hidden tabs, static under reduced motion, nodes link to their page, and a vertical chip/stepper variant below 640 px instead of sideways scrolling.
 
 **When:** step-by-step explanations of a system flow → **GSAP** (`gsap` + `MotionPathPlugin`, own lazy chunk). Simple entrances, hovers, text crossfades → Framer Motion (already in the bundle). Don't mix both on the same element.
 
@@ -193,7 +214,7 @@ Reference implementation: `src/pages/DualAccountsPage.tsx`.
 
 ---
 
-## 10. Accessibility checklist
+## 11. Accessibility checklist
 
 - Contrast: text ≥ 4.5:1, large text/icons/meaningful strokes ≥ 3:1 — **in both themes**.
 - Visible focus (`:focus-visible` 2 px `#2589ff`), skip link present, logical tab order.
@@ -203,7 +224,7 @@ Reference implementation: `src/pages/DualAccountsPage.tsx`.
 
 ---
 
-## 11. Content, i18n & data
+## 12. Content, i18n & data
 
 - Three locales — `en`, `pt`, `es` — always updated together with identical keys/shape (`t(key, { returnObjects: true })` for arrays).
 - No user-facing strings hard-coded in components, including SVG. Exceptions: literal identifiers (`dbuser_dual`, `CurrInd`, `refreshInterval: 1m`).
@@ -212,14 +233,14 @@ Reference implementation: `src/pages/DualAccountsPage.tsx`.
 
 ---
 
-## 12. Performance
+## 13. Performance
 
 - Every page is a lazy route; heavy libraries get their own `manualChunks` entry (see `vite.config.ts`: `gsap`, `motion`, …) so they never load on other routes.
 - Import images through Vite (hashed, cacheable). No layout shift: SVGs use `viewBox` + `w-full h-auto`.
 
 ---
 
-## 13. QA before merge
+## 14. QA before merge
 
 1. `npx tsc --noEmit` and `npm run build` (CI runs the build on every PR).
 2. Check light + dark, en + pt + es, 1280 px and 390 px.
@@ -229,11 +250,14 @@ Reference implementation: `src/pages/DualAccountsPage.tsx`.
 
 ---
 
-## 14. Known debt (fix opportunistically)
+## 15. Known debt (fix opportunistically)
 
 - Older components still use raw hex (`#64748b` ×67, `#94a3b8` ×57, `#a78bfa` ×50, `#4ade80` ×44 …). Migrate to tokens when touching them.
 - `CLAUDE.md` deploy section still shows `:latest`; production pins `aslancarlos/conjur-explainer:design2026rNN`.
 - `docs/IDIRA-REDESIGN.md` palette is outdated — this file wins.
+- Pre-existing horizontal overflow at 390 px on `/spring-boot` (137 px), `/dotnet` (94 px), `/eso-shop` (36 px) — also present before the shell change.
+- Some older pages (e.g. `/jenkins`) still use emoji as icons; replace with lucide when touched.
+- Home copy disagrees on counts ("Eight live integration patterns" vs "Twelve patterns"); align with the real catalogue.
 
 ---
 
@@ -241,4 +265,5 @@ Reference implementation: `src/pages/DualAccountsPage.tsx`.
 
 | Date | Change |
 |---|---|
+| 2026-09-30 | App shell: left sidebar + drawer (§6), `lib/nav.ts`, ambient hero diagram rules (§10), locale preload. |
 | 2026-09-30 | First version. Adds `tone-*` and `domain-*` tokens, the animated-diagram pattern, explainer page anatomy and QA checklist (from the `/dualaccounts` rebuild, PR #46). |

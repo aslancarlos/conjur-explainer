@@ -24,7 +24,10 @@ i18n
     // app's Suspense boundary, so the whole tree fails to mount (blank screen).
     // Disable suspense: components render the `en` fallback immediately and
     // re-render once the real bundle arrives.
-    react: { useSuspense: false },
+    // bindI18nStore 'added': re-render every consumer when a lazy bundle lands,
+    // otherwise components that don't re-render for other reasons (sidebar,
+    // hero) keep showing the English fallback.
+    react: { useSuspense: false, bindI18nStore: 'added' },
   })
 
 async function ensureLocale(lng?: string) {
@@ -46,7 +49,9 @@ function syncDocumentLang(lng?: string) {
 }
 
 // Load the detected language at startup (if not English) and on every change.
-ensureLocale(i18n.language)
+// main.tsx awaits `localeReady` before the first render, so a returning pt/es
+// visitor never sees an English flash (and no component misses the update).
+export const localeReady = ensureLocale(i18n.language).catch(() => undefined)
 syncDocumentLang(i18n.language)
 i18n.on('languageChanged', (lng) => {
   ensureLocale(lng)
