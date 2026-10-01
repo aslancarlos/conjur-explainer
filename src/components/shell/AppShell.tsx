@@ -19,13 +19,13 @@ function readCollapsed() {
 /**
  * Official IDIRA lockup ("IDIRA by Palo Alto Networks"), never recoloured:
  * light-background artwork in the light theme, dark-background artwork in the
- * dark theme (its solid black JPEG ground is dropped with mix-blend: screen).
+ * dark theme (official black-ground artwork converted to alpha — exact, no recolour).
  */
 function Brand() {
   return (
     <Link to="/" aria-label="IDIRA by Palo Alto Networks — Home" className="flex items-center shrink-0 rounded-md">
       <img src={logoLight} alt="" width={248} height={70} className="h-9 w-auto dark:hidden" />
-      <img src={logoDark} alt="" width={251} height={71} className="hidden h-9 w-auto mix-blend-screen dark:block" />
+      <img src={logoDark} alt="" width={251} height={71} className="hidden h-9 w-auto dark:block" />
     </Link>
   )
 }

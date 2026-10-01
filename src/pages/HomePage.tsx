@@ -1,9 +1,12 @@
 import { lazy, Suspense } from 'react'
 import Hero from '../components/Hero'
-import ProblemSection from '../components/ProblemSection'
-import DemosShowcase from '../components/DemosShowcase'
 import Fundamentals from '../components/Fundamentals'
+import ProblemSection from '../components/ProblemSection'
+import IdentityInPractice from '../components/IdentityInPractice'
+import FlowSection from '../components/FlowSection'
 import Capabilities from '../components/Capabilities'
+import Glossary from '../components/Glossary'
+import DemosShowcase from '../components/DemosShowcase'
 import IdiraPromise from '../components/IdiraPromise'
 import Loading from '../components/Loading'
 
@@ -11,21 +14,28 @@ import Loading from '../components/Loading'
 // initial paint of the landing page.
 const ArchitectureDiagram = lazy(() => import('../components/ArchitectureDiagram'))
 
+/**
+ * The home teaches before it demos (DESIGN.md §7):
+ * idea (hero) → what a secret / a machine identity is → why static secrets
+ * fail → secret vs identity + identity per platform → the flow, live →
+ * guarantees → Kubernetes architecture → glossary → jump into the demos → promise.
+ */
 export default function HomePage() {
   return (
     <>
-      {/* What IDIRA does (hero) → the two concepts (secret, machine identity)
-          → pick a demo → why it matters → guarantees → Kubernetes fit → promise. */}
       <Hero />
       <Fundamentals />
-      <DemosShowcase />
       <div id="problem">
         <ProblemSection />
       </div>
+      <IdentityInPractice />
+      <FlowSection />
       <Capabilities />
       <Suspense fallback={<Loading />}>
         <ArchitectureDiagram />
       </Suspense>
+      <Glossary />
+      <DemosShowcase />
       <IdiraPromise />
     </>
   )

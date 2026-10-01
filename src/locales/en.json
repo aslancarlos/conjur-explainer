@@ -55,19 +55,21 @@
     "prod_pam": "PAM & Credential Providers"
   },
   "hero": {
-    "eyebrow": "Palo Alto Networks | IDIRA · Secrets Manager · Kubernetes · ESO · DevSecOps",
-    "title": "Secrets Management",
-    "titleAccent": "in Action",
-    "subtitle": "Eight live integration patterns, zero hardcoded credentials. Spring Boot, .NET, GitHub Actions, Jenkins, Ansible, the Secrets Store CSI Driver, External Secrets Operator and zero-downtime Dual Accounts rotation — every workload fetches its secret live from Palo Alto Networks | IDIRA Secrets Manager with its own short-lived identity: keyless, rotated, scoped by policy and fully audited.",
+    "eyebrow": "Machine identity · Secrets · IDIRA by Palo Alto Networks",
+    "title": "Every workload,",
+    "titleAccent": "its own identity",
+    "subtitle": "No secrets in code, images or pipelines. Every application, pod and job proves who it is to IDIRA, receives only what policy allows, and its credentials rotate without downtime. Everything you see here runs live.",
     "cta_spring": "Spring Boot Demo",
     "cta_dotnet": ".NET Demo",
     "cta_eso": "ESO Shop Demo",
-    "cta_explore": "Explore patterns ↓",
+    "cta_explore": "Start with the fundamentals",
     "federated_label": "Federated across",
     "stat1_label": "live integration patterns",
     "stat2_label": "identity authority",
     "stat3_label": "secrets at rest",
-    "stat4_label": "keyless workload identity"
+    "stat4_label": "keyless workload identity",
+    "cta_secret": "What is a secret?",
+    "cta_identity": "What is a machine identity?"
   },
   "promise": {
     "eyebrow": "The promise",
@@ -106,8 +108,8 @@
   },
   "demos": {
     "kicker": "Live demos",
-    "title": "Twelve patterns, one identity broker",
-    "subtitle": "Every pattern below consumes or governs secrets in IDIRA with its own identity — no shared key, no secret in the image. Open any one to watch the full flow, step by step.",
+    "title": "See each pattern running",
+    "subtitle": "Every demo runs live with its own identity — open one to follow the flow step by step.",
     "cta": "See the flow",
     "spring": "A Spring Boot service injects DB credentials at runtime with @Value via the Secrets Manager SDK, authenticating with its Kubernetes ServiceAccount JWT. No datasource password on disk or in the image.",
     "dotnet": "A .NET app receives its credentials through the CyberArk Secrets Provider sidecar into IConfiguration — the workload never calls the vault directly; the sidecar handles auth and injection.",
@@ -1148,5 +1150,134 @@
     },
     "zero_title": "No “secret zero”.",
     "zero_desc": "The identity replaces the bootstrap password, so a workload never needs a secret to get its secrets."
+  },
+  "flowlive": {
+    "kicker": "See it live",
+    "title": "From identity to secret, step by step",
+    "subtitle": "Each workload proves who it is with its platform’s method, an IDIRA authenticator verifies it, policy authorizes, and the vault delivers the database credential — while CPM rotates it in place. One path at a time; hover a workload to trace it."
+  },
+  "practice": {
+    "kicker": "Side by side",
+    "title": "Secret or identity?",
+    "subtitle": "They are often confused — and the difference is the whole point: a secret is what you protect; an identity is how a workload earns access to it.",
+    "aspect": "Aspect",
+    "col_secret": "Secret",
+    "col_identity": "Machine identity",
+    "compare_caption": "Comparison between a secret and a machine identity",
+    "rows": {
+      "question": {
+        "label": "Answers",
+        "secret": "What is being protected?",
+        "identity": "Who is asking?"
+      },
+      "example": {
+        "label": "Example",
+        "secret": "The password of the orders database",
+        "identity": "The Kubernetes ServiceAccount token of the orders pod"
+      },
+      "issuer": {
+        "label": "Who issues it",
+        "secret": "Your team, the PAM vault or Secrets Manager (static or dynamic)",
+        "identity": "The platform the workload runs on — Kubernetes, GitHub, Jenkins, AWS or a SPIFFE server"
+      },
+      "lifetime": {
+        "label": "Lifetime",
+        "secret": "Long-lived if static; short-lived if dynamic or rotated by CPM",
+        "identity": "Short-lived and renewed automatically by the platform"
+      },
+      "leak": {
+        "label": "If it leaks",
+        "secret": "Grants access to the target until it is rotated or revoked",
+        "identity": "Only works where it is accepted: IDIRA checks issuer, audience and claims, and it expires quickly"
+      },
+      "idira": {
+        "label": "In IDIRA",
+        "secret": "A variable, with fetchers and updaters",
+        "identity": "A host in policy, verified by an authenticator"
+      }
+    },
+    "platforms_title": "Which identity each platform already issues",
+    "platforms_subtitle": "No new password to manage: IDIRA verifies the identity the platform already gives every workload.",
+    "p_platform": "Platform",
+    "p_evidence": "Identity evidence",
+    "p_authn": "IDIRA authenticator",
+    "p_see": "See it in",
+    "platforms": {
+      "k8s": {
+        "name": "Kubernetes",
+        "evidence": "ServiceAccount JWT projected into the pod"
+      },
+      "github": {
+        "name": "GitHub Actions",
+        "evidence": "OIDC token issued to each workflow run"
+      },
+      "jenkins": {
+        "name": "Jenkins",
+        "evidence": "JWT signed by the Jenkins controller (Secrets Manager plugin)"
+      },
+      "aws": {
+        "name": "AWS",
+        "evidence": "IAM role, proved with a signed STS request"
+      },
+      "spiffe": {
+        "name": "SPIFFE",
+        "evidence": "SVID (X.509 or JWT) issued by the SPIFFE server"
+      }
+    }
+  },
+  "glossary": {
+    "kicker": "Glossary",
+    "title": "The vocabulary, in one place",
+    "subtitle": "Terms used across this site, as the Secrets Manager docs define them.",
+    "terms": {
+      "workload": {
+        "term": "Workload",
+        "def": "A non-human actor: application, container, CI job, script, playbook, VM or service."
+      },
+      "host": {
+        "term": "Host",
+        "def": "How a workload identity is represented in Secrets Manager policy — with only the privileges its job needs."
+      },
+      "authenticator": {
+        "term": "Authenticator",
+        "def": "The Secrets Manager service that verifies an identity’s evidence (authn-jwt, authn-iam, OIDC…) before any secret is released."
+      },
+      "token": {
+        "term": "Access token",
+        "def": "Short-lived token returned after a successful authentication; the workload uses it to fetch the secrets it may read."
+      },
+      "policy": {
+        "term": "Policy",
+        "def": "Declarative YAML that defines identities, secrets and permissions — kept in git and reviewed like code."
+      },
+      "variable": {
+        "term": "Variable",
+        "def": "The record that stores a secret in Secrets Manager. PAM accounts sync in as data/vault/<safe>/<account>/<property>."
+      },
+      "fetchers": {
+        "term": "fetchers / updaters",
+        "def": "The two access lists of every secret: who may read it and who may change it."
+      },
+      "dynamic": {
+        "term": "Dynamic secret",
+        "def": "Created just-in-time for one consumer and valid for a short period, then deleted or obsolete."
+      },
+      "rotation": {
+        "term": "Rotation",
+        "def": "Changing a credential on a schedule. In PAM the CPM rotates it, and Secrets Manager syncs the new value every minute."
+      },
+      "secretzero": {
+        "term": "Secret zero",
+        "def": "The first credential a workload would need in order to fetch all the others. Identity-based authentication removes it."
+      },
+      "spiffe": {
+        "term": "SPIFFE / SVID",
+        "def": "Open standard for workload identity; the SVID (X.509 or JWT) is the document a workload presents. Used by Secure Workload Access."
+      },
+      "nhi": {
+        "term": "Non-human identity (NHI)",
+        "def": "Umbrella term for identities that are not people — workloads, service accounts, certificates, API keys. Machine identity is how workloads prove who they are."
+      }
+    }
   }
 }

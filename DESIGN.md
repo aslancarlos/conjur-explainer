@@ -22,7 +22,7 @@ If code and this file disagree, fix the code or update this file in the same PR 
 
 ## 2. Brand & themes
 
-- Visual language follows Palo Alto Networks **IDIRA**. The top bar shows the **official "IDIRA by Palo Alto Networks" lockup** (`src/assets/brand/idira-logo-light.png` on light backgrounds, `idira-logo-dark.png` on dark — the dark artwork ships on solid black and is placed with `mix-blend-mode: screen`). Only transparent margins were cropped; never recolour or redraw the mark. In running text the brand reads `Palo Alto Networks | IDIRA`.
+- Visual language follows Palo Alto Networks **IDIRA**. The top bar shows the **official "IDIRA by Palo Alto Networks" lockup** (`src/assets/brand/idira-logo-light.png` on light backgrounds, `idira-logo-dark.png` on dark — the official dark artwork ships on solid black and was converted to alpha by un-compositing it from black, which is exact: re-composited on black it differs by ≤ 6/255, the JPEG noise floor). Only margins were cropped; never recolour or redraw the mark, and don't rely on `mix-blend-mode` over the translucent top bar (it shows a box). In running text the brand reads `Palo Alto Networks | IDIRA`.
 - Two themes, user-selectable (`useTheme()`, persisted in `localStorage('idira-theme')`, applied as `data-theme` + `.dark` on `<html>` before paint).
 - **Always-dark zones** ignore the theme: the hero band (`bg-[#070c1c]`) and the promise band (`.idira-promise`, `#0f1b3a`). Text inside them uses `text-white` / `text-slate-300/90`.
 - Official art: `src/assets/brand/security-layers-blue.png` (hero backdrop), `idira-icon-color.png`. Don't recolour or crop them.
@@ -133,7 +133,7 @@ A returning visitor's locale (pt/es) is loaded **before** the first render (`loc
 
 ## 7. Page anatomy
 
-**Home:** hero (Command Center flow) → **Fundamentals** (what a secret is, what a machine identity is, how they fit: prove → authorize → deliver, "no secret zero"; wording follows the Secrets Manager *Key concepts* pages and links to them) → demo catalogue (same grouping switch as the sidebar) → problem → guarantees → Kubernetes architecture → promise.
+**Home teaches before it demos:** hero ("Every workload, its own identity" + jumps to the two definitions) → **Fundamentals** (what a secret is, what a machine identity is, prove → authorize → deliver, "no secret zero"; wording from the Secrets Manager *Key concepts* docs) → problem (why static secrets fail) → **Secret vs identity** table + **identity per platform** (evidence → authenticator → demo link) → **flow, live** (Command Center diagram, always-dark band) → guarantees → Kubernetes architecture → **glossary** → compact demo links (same use case / product switch) → promise. Demo detail lives on the demo pages, not on the home.
 
 **Explainer pages:**
 

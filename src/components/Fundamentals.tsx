@@ -38,7 +38,7 @@ export default function Fundamentals() {
   })
 
   return (
-    <section id="fundamentals" className="px-6 lg:px-10 py-20 md:py-24 border-b border-border">
+    <section id="fundamentals" className="scroll-mt-14 px-6 lg:px-10 py-20 md:py-24 border-b border-border">
       <div className="max-w-7xl mx-auto" ref={ref}>
         <div className="max-w-2xl">
           <p className="font-mono text-xs uppercase tracking-[0.16em] text-tone-live">{t('fundamentals.kicker')}</p>
@@ -54,8 +54,8 @@ export default function Fundamentals() {
             const examples = t(`fundamentals.${c.key}.examples`, { returnObjects: true }) as string[]
             const points = t(`fundamentals.${c.key}.points`, { returnObjects: true }) as string[]
             return (
-              <motion.article key={c.key} {...enter(i)}
-                className="flex flex-col rounded-2xl border border-border bg-bg-card p-6 sm:p-8">
+              <motion.article key={c.key} id={`fund-${c.key}`} {...enter(i)}
+                className="scroll-mt-20 flex flex-col rounded-2xl border border-border bg-bg-card p-6 sm:p-8">
                 <div className="flex items-center gap-3">
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-idira-blue/10 text-tone-accent" aria-hidden="true">
                     <c.Icon size={22} strokeWidth={1.8} />

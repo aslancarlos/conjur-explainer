@@ -3,7 +3,7 @@ import type { KeyboardEvent as ReactKeyboardEvent, MouseEvent as ReactMouseEvent
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useReducedMotion } from 'framer-motion'
-import { ArrowRight, ChevronRight, Pause, Play } from 'lucide-react'
+import { ChevronRight, Pause, Play } from 'lucide-react'
 
 /**
  * CommandCenterFlow — hero centrepiece in the IDIRA "Command Center" style.
@@ -204,25 +204,10 @@ export default function CommandCenterFlow() {
     ? ['CPM rotation', 'Databases']
     : [w.name, m.label, `authn-${m.authn}`, 'policy', 'vault', 'Databases']
 
-  const stats = [
-    { v: String(WORKLOADS.length).padStart(2, '0'), l: t('ccflow.m_workloads'), c: 'text-white' },
-    { v: 'JWT', l: t('ccflow.m_auth'), c: 'text-[#4ad1f0]' },
-    { v: '00', l: t('ccflow.m_rest'), c: 'text-[#ff7a59]' },
-  ]
-
   return (
     <div ref={rootRef}>
-      {/* Stats + controls */}
-      <div className="flex flex-wrap items-end justify-between gap-4 px-1 pb-3">
-        <dl className="flex flex-wrap gap-x-8 gap-y-2">
-          {stats.map(s => (
-            <div key={s.l}>
-              <dt className="sr-only">{s.l}</dt>
-              <dd className={`text-3xl font-extrabold tabular-nums leading-none ${s.c}`}>{s.v}</dd>
-              <dd className="mt-1 font-mono text-xs text-slate-400" aria-hidden="true">{s.l}</dd>
-            </div>
-          ))}
-        </dl>
+      {/* Controls */}
+      <div className="flex justify-end px-1 pb-3">
         {!reduce && (
           <button type="button" onClick={() => setUserPaused(p => !p)}
             aria-pressed={userPaused}
@@ -382,12 +367,7 @@ export default function CommandCenterFlow() {
             </li>
           ))}
         </ol>
-        {rotating
-          ? <p className="text-xs text-slate-400">{t('ccflow.rotation')}</p>
-          : <a href={w.to} onClick={e => open(e, w.to)}
-              className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-[#7fb0ff] hover:text-white transition-colors">
-              {t('ccflow.open', { name: w.name })}<ArrowRight size={15} aria-hidden="true" />
-            </a>}
+        {rotating && <p className="text-xs text-slate-400">{t('ccflow.rotation')}</p>}
       </div>
       <p className="mt-1 hidden sm:block text-xs text-slate-500">{t('ccflow.hint')}</p>
     </div>

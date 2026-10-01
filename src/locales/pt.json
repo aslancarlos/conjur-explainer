@@ -55,19 +55,21 @@
     "prod_pam": "PAM & Credential Providers"
   },
   "hero": {
-    "eyebrow": "Palo Alto Networks | IDIRA · Secrets Manager · Kubernetes · ESO · DevSecOps",
-    "title": "Gestão de Segredos",
-    "titleAccent": "em Ação",
-    "subtitle": "Oito padrões de integração ao vivo, zero credenciais no código. Spring Boot, .NET, GitHub Actions, Jenkins, Ansible, o Secrets Store CSI Driver, o External Secrets Operator e a rotação sem downtime de Dual Accounts — cada workload busca seu segredo ao vivo no Palo Alto Networks | IDIRA Secrets Manager com a própria identidade efêmera: sem chave, rotacionado, escopado por policy e totalmente auditado.",
+    "eyebrow": "Identidade de máquina · Secrets · IDIRA by Palo Alto Networks",
+    "title": "Cada workload com",
+    "titleAccent": "sua própria identidade",
+    "subtitle": "Nenhum secret no código, na imagem ou no pipeline. Cada aplicação, pod e job prova quem é para o IDIRA, recebe só o que a policy permite, e a credencial é rotacionada sem downtime. Tudo o que você vê aqui roda ao vivo.",
     "cta_spring": "Demo Spring Boot",
     "cta_dotnet": "Demo .NET",
     "cta_eso": "Demo ESO Shop",
-    "cta_explore": "Explorar padrões ↓",
+    "cta_explore": "Comece pelos fundamentos",
     "federated_label": "Federado em",
     "stat1_label": "padrões de integração ao vivo",
     "stat2_label": "autoridade de identidade",
     "stat3_label": "segredos em repouso",
-    "stat4_label": "identidade sem chave"
+    "stat4_label": "identidade sem chave",
+    "cta_secret": "O que é um secret?",
+    "cta_identity": "O que é uma identidade de máquina?"
   },
   "promise": {
     "eyebrow": "A promessa",
@@ -106,8 +108,8 @@
   },
   "demos": {
     "kicker": "Demos ao vivo",
-    "title": "Doze padrões, um broker de identidade",
-    "subtitle": "Cada padrão abaixo consome ou governa segredos no IDIRA com a própria identidade — sem chave compartilhada, sem segredo na imagem. Abra qualquer um para ver todo o fluxo, passo a passo.",
+    "title": "Veja cada padrão funcionando",
+    "subtitle": "Cada demo roda ao vivo com a própria identidade — abra uma para acompanhar o fluxo passo a passo.",
     "cta": "Ver o fluxo",
     "spring": "Um serviço Spring Boot injeta credenciais do banco em runtime com @Value via o SDK do Secrets Manager, autenticando com o JWT da ServiceAccount do Kubernetes. Sem senha de datasource em disco ou na imagem.",
     "dotnet": "Uma app .NET recebe as credenciais pelo sidecar CyberArk Secrets Provider direto no IConfiguration — o workload nunca chama o cofre; o sidecar cuida da auth e da injeção.",
@@ -1148,5 +1150,134 @@
     },
     "zero_title": "Sem “secret zero”.",
     "zero_desc": "A identidade substitui a senha de bootstrap: o workload nunca precisa de um secret para buscar seus secrets."
+  },
+  "flowlive": {
+    "kicker": "Veja ao vivo",
+    "title": "Da identidade ao secret, passo a passo",
+    "subtitle": "Cada workload prova quem é com o método da sua plataforma, um authenticator do IDIRA verifica, a policy autoriza e o cofre entrega a credencial do banco — enquanto o CPM a rotaciona no lugar. Um caminho por vez; passe o mouse em um workload para acompanhá-lo."
+  },
+  "practice": {
+    "kicker": "Lado a lado",
+    "title": "Secret ou identidade?",
+    "subtitle": "Os dois costumam ser confundidos — e a diferença é justamente o ponto: o secret é o que você protege; a identidade é como o workload conquista o acesso a ele.",
+    "aspect": "Aspecto",
+    "col_secret": "Secret",
+    "col_identity": "Identidade de máquina",
+    "compare_caption": "Comparação entre um secret e uma identidade de máquina",
+    "rows": {
+      "question": {
+        "label": "Responde",
+        "secret": "O que está sendo protegido?",
+        "identity": "Quem está pedindo?"
+      },
+      "example": {
+        "label": "Exemplo",
+        "secret": "A senha do banco de pedidos",
+        "identity": "O token da ServiceAccount do pod de pedidos no Kubernetes"
+      },
+      "issuer": {
+        "label": "Quem emite",
+        "secret": "Seu time, o cofre do PAM ou o Secrets Manager (estático ou dinâmico)",
+        "identity": "A plataforma onde o workload roda — Kubernetes, GitHub, Jenkins, AWS ou um servidor SPIFFE"
+      },
+      "lifetime": {
+        "label": "Duração",
+        "secret": "Longa se estático; curta se dinâmico ou rotacionado pelo CPM",
+        "identity": "Curta e renovada automaticamente pela plataforma"
+      },
+      "leak": {
+        "label": "Se vazar",
+        "secret": "Dá acesso ao alvo até ser rotacionado ou revogado",
+        "identity": "Só funciona onde é aceita: o IDIRA confere emissor, audience e claims, e ela expira rápido"
+      },
+      "idira": {
+        "label": "No IDIRA",
+        "secret": "Uma variable, com fetchers e updaters",
+        "identity": "Um host na policy, verificado por um authenticator"
+      }
+    },
+    "platforms_title": "Que identidade cada plataforma já emite",
+    "platforms_subtitle": "Nenhuma senha nova para gerenciar: o IDIRA verifica a identidade que a plataforma já entrega a cada workload.",
+    "p_platform": "Plataforma",
+    "p_evidence": "Evidência de identidade",
+    "p_authn": "Authenticator do IDIRA",
+    "p_see": "Veja em",
+    "platforms": {
+      "k8s": {
+        "name": "Kubernetes",
+        "evidence": "JWT da ServiceAccount projetado no pod"
+      },
+      "github": {
+        "name": "GitHub Actions",
+        "evidence": "Token OIDC emitido para cada execução do workflow"
+      },
+      "jenkins": {
+        "name": "Jenkins",
+        "evidence": "JWT assinado pelo controller do Jenkins (plugin do Secrets Manager)"
+      },
+      "aws": {
+        "name": "AWS",
+        "evidence": "Role do IAM, comprovada com uma requisição STS assinada"
+      },
+      "spiffe": {
+        "name": "SPIFFE",
+        "evidence": "SVID (X.509 ou JWT) emitido pelo servidor SPIFFE"
+      }
+    }
+  },
+  "glossary": {
+    "kicker": "Glossário",
+    "title": "O vocabulário, em um só lugar",
+    "subtitle": "Termos usados em todo o site, como a documentação do Secrets Manager os define.",
+    "terms": {
+      "workload": {
+        "term": "Workload",
+        "def": "Um ator não humano: aplicação, container, job de CI, script, playbook, VM ou serviço."
+      },
+      "host": {
+        "term": "Host",
+        "def": "Como uma identidade de workload é representada na policy do Secrets Manager — só com os privilégios que sua função exige."
+      },
+      "authenticator": {
+        "term": "Authenticator",
+        "def": "O serviço do Secrets Manager que verifica a evidência de uma identidade (authn-jwt, authn-iam, OIDC…) antes de liberar qualquer secret."
+      },
+      "token": {
+        "term": "Access token",
+        "def": "Token de curta duração devolvido após uma autenticação bem-sucedida; o workload o usa para buscar os secrets que pode ler."
+      },
+      "policy": {
+        "term": "Policy",
+        "def": "YAML declarativo que define identidades, secrets e permissões — mantido no git e revisado como código."
+      },
+      "variable": {
+        "term": "Variable",
+        "def": "O registro que guarda um secret no Secrets Manager. Contas do PAM chegam como data/vault/<safe>/<conta>/<propriedade>."
+      },
+      "fetchers": {
+        "term": "fetchers / updaters",
+        "def": "As duas listas de acesso de cada secret: quem pode ler e quem pode alterar."
+      },
+      "dynamic": {
+        "term": "Secret dinâmico",
+        "def": "Criado just-in-time para um consumidor e válido por pouco tempo; depois é apagado ou fica obsoleto."
+      },
+      "rotation": {
+        "term": "Rotação",
+        "def": "Trocar uma credencial de forma programada. No PAM, o CPM faz a rotação e o Secrets Manager sincroniza o novo valor a cada minuto."
+      },
+      "secretzero": {
+        "term": "Secret zero",
+        "def": "A primeira credencial de que um workload precisaria para buscar todas as outras. A autenticação baseada em identidade elimina essa necessidade."
+      },
+      "spiffe": {
+        "term": "SPIFFE / SVID",
+        "def": "Padrão aberto de identidade de workload; o SVID (X.509 ou JWT) é o documento que o workload apresenta. Usado pelo Secure Workload Access."
+      },
+      "nhi": {
+        "term": "Identidade não humana (NHI)",
+        "def": "Termo amplo para identidades que não são pessoas — workloads, contas de serviço, certificados, chaves de API. Identidade de máquina é como os workloads provam quem são."
+      }
+    }
   }
 }
