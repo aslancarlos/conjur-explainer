@@ -1381,5 +1381,16 @@
     "zone_k8s": "Kubernetes",
     "zone_idira": "IDIRA",
     "zone_svc": "Services & cloud"
+  },
+  "player": {
+    "zone_k8s": "Kubernetes",
+    "zone_idira": "IDIRA",
+    "zone_svc": "Services & cloud",
+    "zone_cp": "Applications & pipelines",
+    "zone_neutral": "Other systems",
+    "kind_identity": "Identity",
+    "kind_secret": "Secret / credential",
+    "kind_access": "Service access",
+    "kind_control": "Policy / control"
   }
 }
