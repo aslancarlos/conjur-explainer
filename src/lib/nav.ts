@@ -1,5 +1,5 @@
 import {
-  Home, BookOpen, ArrowLeftRight, Container, Fingerprint, RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
+  Home, BookOpen, ArrowLeftRight, Container, Fingerprint, FileBadge, RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
   Leaf, Hexagon, Github, ShoppingCart, Database,
   Workflow, GitCompareArrows, Wrench, BadgeCheck, LayoutDashboard,
 } from 'lucide-react'
@@ -67,6 +67,8 @@ export const NAV: NavGroup[] = [
         demo: { name: 'authn-jwt', secret: 'identity handshake', descKey: 'demos.jwt' } },
       { to: '/policy', product: 'secretsmanager', labelKey: 'nav.policy', subKey: 'nav.policy_sub', Icon: ScrollText, color: 'text-domain-idira',
         demo: { name: 'Policy as Code', secret: 'YAML + git', descKey: 'demos.policy' } },
+      { to: '/svid', product: 'swa', href: '/svid', labelKey: 'nav.svid', subKey: 'nav.svid_sub', Icon: FileBadge, color: 'text-domain-idira',
+        demo: { name: 'SVID', secret: 'X.509-SVID + JWT-SVID', descKey: 'demos.svid' } },
       { to: '/swa-s3', product: 'swa', href: '/swa-s3', labelKey: 'nav.swa', subKey: 'nav.swa_sub', Icon: Database, color: 'text-eso',
         demo: { name: 'SWA → AWS S3', secret: 'SPIFFE/SVID → STS', descKey: 'demos.swa' } },
     ],

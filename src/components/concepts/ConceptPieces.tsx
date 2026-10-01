@@ -147,7 +147,7 @@ const PLATFORMS: Array<{ key: string; authn: string; demos: Array<{ to: string; 
   { key: 'github',  authn: 'authn-jwt', demos: [{ to: '/github-actions', label: 'GitHub Actions' }] },
   { key: 'jenkins', authn: 'authn-jwt', demos: [{ to: '/jenkins', label: 'Jenkins' }] },
   { key: 'aws',     authn: 'authn-iam', demos: [{ to: '/ansible', label: 'Ansible' }] },
-  { key: 'spiffe',  authn: 'Secure Workload Access', demos: [{ to: '/swa-s3', label: 'SWA → AWS S3', external: true }] },
+  { key: 'spiffe',  authn: 'Secure Workload Access', demos: [{ to: '/svid', label: 'SVID', external: true }, { to: '/swa-s3', label: 'SWA → AWS S3', external: true }] },
 ]
 
 /** Which identity each platform already issues → IDIRA authenticator → demo. */

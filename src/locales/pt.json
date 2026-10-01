@@ -63,7 +63,9 @@
     "c_k8s": "Arquitetura no Kubernetes",
     "c_k8s_sub": "Como o Secrets Manager autentica pods e entrega secrets em um cluster.",
     "c_glossary": "Glossário",
-    "c_glossary_sub": "Workload, host, authenticator, policy, secret zero e mais."
+    "c_glossary_sub": "Workload, host, authenticator, policy, secret zero e mais.",
+    "svid": "SVID ao vivo",
+    "svid_sub": "X.509-SVID e JWT-SVID emitidos na hora"
   },
   "hero": {
     "eyebrow": "Identidade de máquina · Secrets · IDIRA by Palo Alto Networks",
@@ -132,7 +134,8 @@
     "prod_secretsmanager": "Identidade de workload, policy e entrega de segredos para apps, Kubernetes e pipelines.",
     "prod_swa": "Identidade de workload baseada em SPIFFE (X.509/JWT-SVID) federada às nuvens: sem chaves estáticas.",
     "prod_secretshub": "Sincroniza segredos gerenciados pelo PAM com os cofres nativos das nuvens.",
-    "prod_pam": "Cofre e rotação pelo CPM; Dual Accounts mantêm os consumidores no ar durante a rotação."
+    "prod_pam": "Cofre e rotação pelo CPM; Dual Accounts mantêm os consumidores no ar durante a rotação.",
+    "svid": "Um workload atestado recebe na hora sua identidade SPIFFE do Secure Workload Access: um X.509-SVID para mTLS e um JWT-SVID para a audience escolhida, lado a lado, com quando usar cada um."
   },
   "caps": {
     "kicker": "O que compartilham",
