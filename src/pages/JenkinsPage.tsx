@@ -1,83 +1,121 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react'
+import { GitBranch, KeySquare, Puzzle, ShieldCheck, Vault, Workflow } from 'lucide-react'
+import FlowPlayer, { type FlowSpec } from '../components/flow/FlowPlayer'
 
-interface JStep {
-  litEdges: string[]
-  hiNodes: string[]
-  showSetup: boolean
-  showJwt: boolean
-  showCode: boolean
-  showMask: boolean
-}
-
-const STEPS: JStep[] = [
-  { litEdges: [],                                             hiNodes: ['jenkins','plugin','job','jwks','conjur','authn','vault','dev'], showSetup: false, showJwt: false, showCode: false, showMask: false },
-  { litEdges: [],                                             hiNodes: ['plugin','conjur','authn','vault'],                             showSetup: true,  showJwt: false, showCode: false, showMask: false },
-  { litEdges: ['dev-job'],                                    hiNodes: ['dev','job'],                                                   showSetup: false, showJwt: false, showCode: true,  showMask: false },
-  { litEdges: ['job-plugin'],                                 hiNodes: ['job','plugin'],                                                showSetup: false, showJwt: true,  showCode: true,  showMask: false },
-  { litEdges: ['plugin-authn','authn-jwks','jwks-authn'],     hiNodes: ['plugin','authn','jwks','jenkins'],                            showSetup: false, showJwt: true,  showCode: false, showMask: false },
-  { litEdges: ['authn-vault'],                                hiNodes: ['authn','vault','conjur'],                                      showSetup: false, showJwt: false, showCode: false, showMask: false },
-  { litEdges: ['vault-plugin','plugin-job'],                  hiNodes: ['vault','plugin','job'],                                        showSetup: false, showJwt: false, showCode: false, showMask: false },
-  { litEdges: [],                                             hiNodes: ['job','dev'],                                                   showSetup: false, showJwt: false, showCode: true,  showMask: true  },
-]
-
-const CK: Record<string, string> = {
-  cyan:   '#22d3ee',
-  purple: '#a78bfa',
-  gold:   '#f59e0b',
-  green:  '#4ade80',
-}
-
-interface Edge { id: string; d: string; ck: string; label: string; lx: number; ly: number }
-const EDGES: Edge[] = [
-  { id: 'dev-job',      d: 'M 330,400 C 275,400 275,265 230,265',      ck: 'cyan',   label: 'trigger',  lx: 272, ly: 333 },
-  { id: 'job-plugin',   d: 'M 127,178 C 127,163 127,153 127,153',      ck: 'purple', label: 'request',  lx: 100, ly: 165 },
-  { id: 'plugin-authn', d: 'M 230,105 L 650,105',                       ck: 'purple', label: 'POST jwt', lx: 440, ly:  97 },
-  { id: 'authn-jwks',   d: 'M 682,58 C 682,28 535,18 535,15',          ck: 'gold',   label: 'JWKS?',    lx: 610, ly:  28 },
-  { id: 'jwks-authn',   d: 'M 535,75 C 535,96 660,118 660,120',        ck: 'green',  label: 'pub keys', lx: 592, ly: 105 },
-  { id: 'authn-vault',  d: 'M 752,153 C 752,162 752,170 752,178',      ck: 'purple', label: 'verify ✓', lx: 768, ly: 165 },
-  { id: 'vault-plugin', d: 'M 752,313 C 752,400 127,400 127,153',      ck: 'green',  label: 'secret',   lx: 440, ly: 408 },
-  { id: 'plugin-job',   d: 'M 127,153 C 127,163 127,178 127,178',      ck: 'cyan',   label: 'env var',  lx: 152, ly: 165 },
-]
-
+/**
+ * Jenkins pipeline fetching a secret (FlowPlayer spec).
+ *   git push -> pipeline -> withCredentials -> plugin signs a 120 s JWT ->
+ *   authn-jwt/jenkins verifies it against the Jenkins JWKS -> host annotations
+ *   and !permit -> vault returns db_password -> injected as a masked env var.
+ */
 export default function JenkinsPage() {
   const { t } = useTranslation()
-  const [step, setStep] = useState(0)
-  const [playing, setPlaying] = useState(true)
-  const cur = STEPS[step]
-  const total = STEPS.length
-
-  const next = useCallback(() => setStep(s => (s + 1) % total), [total])
-  const prev = useCallback(() => setStep(s => (s - 1 + total) % total), [total])
-
-  useEffect(() => {
-    if (!playing) return
-    const id = setInterval(() => {
-      setStep(s => {
-        if (s >= total - 1) { setPlaying(false); return s }
-        return s + 1
-      })
-    }, 2800)
-    return () => clearInterval(id)
-  }, [playing, total])
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') next()
-      else if (e.key === 'ArrowLeft') prev()
-      else if (e.key === ' ') { e.preventDefault(); setPlaying(p => !p) }
+  const spec = useMemo<FlowSpec>(() => {
+    const f = (k: string) => t(`idflow.${k}`)
+    const pend = f('st_pending')
+    const step = (n: number) => ({ title: t(`jenkins.s${n}_title`), desc: t(`jenkins.s${n}_desc`) })
+    const check = (k: string) => ({ k, states: [
+      { v: 'idle', text: f('st_idle'), tone: 'muted' as const }, { v: 'check', text: f('st_check'), tone: 'warn' as const }, { v: 'ok', text: f('st_valid'), tone: 'ok' as const }] })
+    return {
+      id: 'jenkinsflow',
+      ariaLabel: t('jenkins.title'),
+      initial: { cfg: 'none', jwt: 'none', env: 'none', build: 'idle', sig: 'idle', ann: 'idle', perm: 'idle', v: 'idle' },
+      nodes: [
+        { id: 'dev', domain: 'neutral', Icon: GitBranch, title: 'git push', sub: 'Jenkinsfile' },
+        { id: 'job', domain: 'cp', Icon: Workflow, title: 'Pipeline', sub: 'Project1/pipeline', rows: [
+          { label: 'DB_PASSWORD', k: 'env', states: [{ v: 'none', text: pend, tone: 'muted' }, { v: 'ok', text: '****', tone: 'ok' }] },
+          { label: 'build', k: 'build', states: [{ v: 'idle', text: f('st_idle'), tone: 'muted' }, { v: 'run', text: 'RUNNING', tone: 'warn' }, { v: 'ok', text: 'SUCCESS', tone: 'ok' }] },
+        ] },
+        { id: 'plugin', domain: 'cp', Icon: Puzzle, title: 'Credentials Plugin', sub: 'withCredentials', rows: [
+          { label: 'service', k: 'cfg', states: [{ v: 'none', text: pend, tone: 'muted' }, { v: 'ok', text: 'authn-jwt/jenkins', tone: 'ok' }] },
+          { label: 'JWT', k: 'jwt', states: [{ v: 'none', text: pend, tone: 'muted' }, { v: 'ok', text: 'exp 120s', tone: 'ok' }] },
+        ] },
+        { id: 'jwks', domain: 'cp', Icon: KeySquare, title: 'JWKS', sub: '/jwtauth/conjur-jwk-set' },
+        { id: 'authn', domain: 'idira', Icon: ShieldCheck, title: 'IDIRA Secrets Manager', sub: 'authn-jwt/jenkins', rows: [
+          { label: 'jwks-uri', ...check('sig') },
+          { label: 'annotations', ...check('ann') },
+          { label: '!permit', ...check('perm') },
+        ] },
+        { id: 'vault', domain: 'idira', Icon: Vault, title: 'jenkins_secrets', sub: 'vault', rows: [
+          { label: 'db_password', k: 'v', states: [{ v: 'idle', text: f('st_idle'), tone: 'muted' }, { v: 'ok', text: f('st_delivered'), tone: 'ok' }] },
+        ] },
+      ],
+      edgeKinds: {
+        'dev-job': 'access', 'job-plugin': 'access', 'plugin-job': 'secret',
+        'plugin-authn': 'identity', 'authn-jwks': 'access', 'jwks-authn': 'identity',
+        'authn-vault': 'control', 'vault-plugin': 'secret',
+      },
+      layouts: {
+        wide: {
+          w: 980, h: 420, title: 14,
+          boxes: {
+            plugin: { x: 16, y: 46, w: 220, h: 112 }, job: { x: 16, y: 246, w: 220, h: 112 },
+            jwks: { x: 380, y: 36, w: 220, h: 64 }, dev: { x: 380, y: 330, w: 220, h: 64 },
+            authn: { x: 744, y: 40, w: 220, h: 130 }, vault: { x: 744, y: 256, w: 220, h: 92 },
+          },
+          zones: [
+            { d: 'cp', x: 6, y: 30, w: 240, h: 342 }, { d: 'cp', x: 370, y: 24, w: 240, h: 88 },
+            { d: 'neutral', x: 370, y: 318, w: 240, h: 88 }, { d: 'idira', x: 734, y: 26, w: 240, h: 334 },
+          ],
+          edges: {
+            'dev-job': 'M 380,362 C 308,362 308,316 236,316',
+            'job-plugin': 'M 96,246 L 96,158', 'plugin-job': 'M 156,158 L 156,246',
+            'plugin-authn': 'M 236,132 L 744,132',
+            'authn-jwks': 'M 744,62 L 600,62', 'jwks-authn': 'M 600,84 L 744,84',
+            'authn-vault': 'M 854,170 L 854,256',
+            'vault-plugin': 'M 744,302 C 540,302 440,150 236,150',
+          },
+        },
+        narrow: {
+          w: 360, h: 880, title: 14,
+          boxes: {
+            dev: { x: 70, y: 30, w: 220, h: 64 }, job: { x: 70, y: 140, w: 220, h: 112 },
+            plugin: { x: 50, y: 300, w: 260, h: 112 }, authn: { x: 50, y: 470, w: 260, h: 130 },
+            jwks: { x: 70, y: 650, w: 220, h: 64 }, vault: { x: 70, y: 764, w: 220, h: 92 },
+          },
+          zones: [
+            { d: 'neutral', x: 60, y: 20, w: 240, h: 84 }, { d: 'cp', x: 40, y: 128, w: 280, h: 296 },
+            { d: 'idira', x: 40, y: 458, w: 280, h: 154 }, { d: 'cp', x: 60, y: 638, w: 240, h: 88 },
+            { d: 'idira', x: 60, y: 752, w: 240, h: 116 },
+          ],
+          edges: {
+            'dev-job': 'M 180,94 L 180,140',
+            'job-plugin': 'M 160,252 L 160,300', 'plugin-job': 'M 200,300 L 200,252',
+            'plugin-authn': 'M 180,412 L 180,470',
+            'authn-jwks': 'M 160,600 L 160,650', 'jwks-authn': 'M 200,650 L 200,600',
+            'authn-vault': 'M 310,560 C 350,560 350,810 290,810',
+            'vault-plugin': 'M 70,810 C 12,810 12,356 50,356',
+          },
+        },
+      },
+      steps: [
+        { ...step(1), focus: ['dev', 'job', 'plugin', 'jwks', 'authn', 'vault'], end: 0.6, fx: [] },
+        { ...step(2), focus: ['plugin', 'authn', 'jwks'], end: 2.8, fx: [
+          { t: 'packet', at: 0.3, edge: 'plugin-authn', label: 'service-id', kind: 'control' },
+          { t: 'set', at: 1.3, k: 'cfg', v: 'ok', pop: true },
+          { t: 'packet', at: 1.4, edge: 'authn-jwks', label: 'jwks-uri', kind: 'control' }] },
+        { ...step(3), focus: ['dev', 'job'], end: 2.2, fx: [
+          { t: 'packet', at: 0.3, edge: 'dev-job', label: 'git push' }, { t: 'set', at: 1.3, k: 'build', v: 'run', pop: true }] },
+        { ...step(4), focus: ['job', 'plugin'], end: 2.2, fx: [
+          { t: 'packet', at: 0.3, edge: 'job-plugin', label: 'withCredentials' }, { t: 'set', at: 1.3, k: 'jwt', v: 'ok', pop: true }] },
+        { ...step(5), focus: ['plugin', 'authn', 'jwks'], end: 4.0, fx: [
+          { t: 'packet', at: 0.3, edge: 'plugin-authn', label: 'POST JWT' }, { t: 'set', at: 1.2, k: 'sig', v: 'check' },
+          { t: 'packet', at: 1.4, edge: 'authn-jwks', label: 'GET jwks' },
+          { t: 'packet', at: 2.5, edge: 'jwks-authn', label: 'RSA public key' }, { t: 'set', at: 3.4, k: 'sig', v: 'ok', pop: true }] },
+        { ...step(6), focus: ['authn', 'vault'], end: 3.0, fx: [
+          { t: 'set', at: 0.2, k: 'ann', v: 'check' }, { t: 'set', at: 0.8, k: 'ann', v: 'ok', pop: true },
+          { t: 'set', at: 1.0, k: 'perm', v: 'check' }, { t: 'set', at: 1.6, k: 'perm', v: 'ok', pop: true },
+          { t: 'packet', at: 1.7, edge: 'authn-vault', label: '!permit' }] },
+        { ...step(7), focus: ['vault', 'plugin', 'job'], end: 3.2, fx: [
+          { t: 'set', at: 0.2, k: 'v', v: 'ok', pop: true },
+          { t: 'packet', at: 0.3, edge: 'vault-plugin', label: 'db_password' },
+          { t: 'packet', at: 1.5, edge: 'plugin-job', label: 'DB_PASSWORD' }, { t: 'set', at: 2.5, k: 'env', v: 'ok', pop: true }] },
+        { ...step(8), focus: ['job', 'dev'], end: 1.4, fx: [
+          { t: 'set', at: 0.4, k: 'build', v: 'ok', pop: true }] },
+      ],
     }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [next, prev])
-
-  const litEdge = (id: string) => cur.litEdges.includes(id)
-  const hi      = (id: string) => cur.hiNodes.includes(id)
-
-  const ns = (id: string, c: string) => hi(id) ? c : '#1e293b'
-  const nf = (id: string, c: string) => hi(id) ? c + '12' : '#0f172a'
+  }, [t])
 
   return (
     <section className="min-h-screen bg-bg-base px-4 py-16 flex flex-col items-center">
@@ -91,257 +129,8 @@ export default function JenkinsPage() {
         </p>
       </div>
 
-      {/* SVG Diagram */}
-      <div className="w-full max-w-5xl bg-bg-card border border-border rounded-2xl overflow-hidden shadow-2xl">
-        <div className="p-3 border-b border-border flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
-          <span className="ml-2 text-xs text-text-muted font-mono">
-            jenkins · conjur-credentials-plugin · step {step + 1}/{total}
-          </span>
-        </div>
-
-        <div className="overflow-x-auto rounded-xl border border-border bg-[#050d1a] p-4">
-        <svg viewBox="0 0 880 450" className="h-auto select-none" role="img" aria-label="Jenkins architecture diagram" style={{ fontFamily: 'ui-monospace, monospace', minWidth: 640, width: '100%' }}>
-          <defs>
-            {Object.entries(CK).map(([k, v]) => (
-              <marker key={k} id={`arr-${k}`} viewBox="0 0 10 10" refX="9" refY="5"
-                markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill={v} />
-              </marker>
-            ))}
-          </defs>
-
-          {/* ── Jenkins Server frame ── */}
-          <rect x={10} y={15} width={235} height={315} rx={14}
-            stroke={ns('jenkins','#f59e0b')} strokeWidth={1.5} fill={hi('jenkins') ? '#f59e0b08' : 'transparent'}
-            style={{ transition: 'stroke 0.4s, fill 0.4s' }} />
-          <text x={127} y={44} textAnchor="middle" fontSize={10} fontWeight="700"
-            fill={hi('jenkins') ? '#f59e0b' : '#64748b'} style={{ transition: 'fill 0.4s' }}>
-            JENKINS SERVER
-          </text>
-          <text x={127} y={57} textAnchor="middle" fontSize={8.5} fill="#475569">CI/CD · v2.455+</text>
-
-          {/* Plugin box */}
-          <rect x={25} y={65} width={205} height={100} rx={8}
-            stroke={ns('plugin','#a78bfa')} strokeWidth={1.5} fill={nf('plugin','#a78bfa')}
-            style={{ transition: 'stroke 0.4s, fill 0.4s' }} />
-          <text x={127} y={89} textAnchor="middle" fontSize={10} fontWeight="700"
-            fill={hi('plugin') ? '#a78bfa' : '#94a3b8'} style={{ transition: 'fill 0.4s' }}>
-            🔌 Conjur Credentials Plugin
-          </text>
-          <text x={127} y={104} textAnchor="middle" fontSize={8.5} fill="#64748b">conjur-credentials v3.x</text>
-
-          {/* JWT overlay in plugin box */}
-          <AnimatePresence>
-            {cur.showJwt && (
-              <motion.g key="jwt" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <rect x={35} y={112} width={185} height={44} rx={5} fill="#a78bfa18" stroke="#a78bfa44" strokeWidth={1} />
-                <text x={127} y={126} textAnchor="middle" fontSize={7.5} fontWeight="700" fill="#a78bfa">JWT  iss:jenkins.acme.com</text>
-                <text x={127} y={138} textAnchor="middle" fontSize={7.5} fill="#94a3b8">aud:cyberark-conjur  sub:Proj1/pipeline</text>
-                <text x={127} y={150} textAnchor="middle" fontSize={7.5} fill="#64748b">exp:now+120s  signed by Jenkins key</text>
-              </motion.g>
-            )}
-          </AnimatePresence>
-          {!cur.showJwt && (
-            <text x={127} y={133} textAnchor="middle" fontSize={8.5} fill="#64748b">generates JWT · fetches secrets</text>
-          )}
-
-          {/* Job box */}
-          <rect x={25} y={185} width={205} height={135} rx={8}
-            stroke={ns('job','#22d3ee')} strokeWidth={1.5} fill={nf('job','#22d3ee')}
-            style={{ transition: 'stroke 0.4s, fill 0.4s' }} />
-          <text x={127} y={207} textAnchor="middle" fontSize={10} fontWeight="700"
-            fill={hi('job') ? '#22d3ee' : '#94a3b8'} style={{ transition: 'fill 0.4s' }}>
-            📋 Pipeline Job
-          </text>
-          <text x={127} y={222} textAnchor="middle" fontSize={8.5} fill="#64748b">Jenkinsfile · Project1/pipeline</text>
-
-          {/* Code / mask overlay in job box */}
-          <AnimatePresence mode="wait">
-            {cur.showMask ? (
-              <motion.g key="mask" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <rect x={35} y={230} width={185} height={80} rx={5} fill="#22d3ee10" stroke="#22d3ee33" strokeWidth={1} />
-                <text x={127} y={245} textAnchor="middle" fontSize={7.5} fontWeight="700" fill="#22d3ee">BUILD LOG</text>
-                <text x={127} y={259} textAnchor="middle" fontSize={7.5} fill="#94a3b8">+ deploy --db=***</text>
-                <text x={127} y={272} textAnchor="middle" fontSize={7.5} fill="#94a3b8">+ git push https://***:***@github.com</text>
-                <text x={127} y={285} textAnchor="middle" fontSize={7.5} fill="#4ade80">✓ Deploy successful</text>
-                <text x={127} y={300} textAnchor="middle" fontSize={7} fill="#64748b">secret values masked automatically</text>
-              </motion.g>
-            ) : cur.showCode ? (
-              <motion.g key="code" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <rect x={35} y={230} width={185} height={80} rx={5} fill="#1e293b" stroke="#334155" strokeWidth={1} />
-                <text x={127} y={245} textAnchor="middle" fontSize={7.5} fontWeight="700" fill="#64748b">Jenkinsfile</text>
-                <text x={42}  y={259} textAnchor="start"  fontSize={7.5} fill="#94a3b8">withCredentials([</text>
-                <text x={42}  y={271} textAnchor="start"  fontSize={7.5} fill="#a78bfa">  conjurSecretCredential(</text>
-                <text x={42}  y={283} textAnchor="start"  fontSize={7.5} fill="#94a3b8">    credentialsId: <tspan fill="#4ade80">'DB_PWD'</tspan>,</text>
-                <text x={42}  y={295} textAnchor="start"  fontSize={7.5} fill="#94a3b8">    variable: <tspan fill="#22d3ee">'DB_PASSWORD'</tspan>)])</text>
-              </motion.g>
-            ) : (
-              <motion.g key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <text x={127} y={258} textAnchor="middle" fontSize={8.5} fill="#64748b">withCredentials([ ])</text>
-                <text x={127} y={274} textAnchor="middle" fontSize={8.5} fill="#64748b">env vars injected at runtime</text>
-                <text x={127} y={290} textAnchor="middle" fontSize={8} fill="#475569">secrets never stored in Jenkinsfile</text>
-              </motion.g>
-            )}
-          </AnimatePresence>
-
-          {/* ── JWKS Endpoint (top center) ── */}
-          <rect x={330} y={15} width={210} height={62} rx={8}
-            stroke={ns('jwks','#f59e0b')} strokeWidth={1.5} fill={nf('jwks','#f59e0b')}
-            style={{ transition: 'stroke 0.4s, fill 0.4s' }} />
-          <text x={435} y={38} textAnchor="middle" fontSize={10} fontWeight="700"
-            fill={hi('jwks') ? '#f59e0b' : '#94a3b8'} style={{ transition: 'fill 0.4s' }}>
-            🔑 JWKS Endpoint
-          </text>
-          <text x={435} y={52} textAnchor="middle" fontSize={8.5} fill="#64748b">jenkins/jwtauth/conjur-jwk-set</text>
-          <text x={435} y={66} textAnchor="middle" fontSize={8} fill={hi('jwks') ? '#f59e0b88' : '#334155'}
-            style={{ transition: 'fill 0.4s' }}>RSA public keys · Jenkins-signed</text>
-
-          {/* ── Developer / Trigger (bottom center) ── */}
-          <rect x={330} y={360} width={210} height={78} rx={10}
-            stroke={ns('dev','#4ade80')} strokeWidth={1.5} fill={nf('dev','#4ade80')}
-            style={{ transition: 'stroke 0.4s, fill 0.4s' }} />
-          <text x={435} y={385} textAnchor="middle" fontSize={10} fontWeight="700"
-            fill={hi('dev') ? '#4ade80' : '#94a3b8'} style={{ transition: 'fill 0.4s' }}>
-            👩‍💻 Developer
-          </text>
-          <text x={435} y={400} textAnchor="middle" fontSize={8.5} fill="#64748b">push to repo · manual trigger</text>
-          <text x={435} y={414} textAnchor="middle" fontSize={8}
-            fill={hi('dev') ? '#4ade8099' : '#334155'} style={{ transition: 'fill 0.4s' }}>
-            no secrets in source code ✓
-          </text>
-          <text x={435} y={428} textAnchor="middle" fontSize={8} fill="#475569">Jenkinsfile uses Credential IDs only</text>
-
-          {/* ── Secrets Manager frame ── */}
-          <rect x={635} y={15} width={235} height={315} rx={14}
-            stroke={ns('conjur','#22d3ee')} strokeWidth={1.5} fill={hi('conjur') ? '#22d3ee08' : 'transparent'}
-            style={{ transition: 'stroke 0.4s, fill 0.4s' }} />
-          <text x={752} y={44} textAnchor="middle" fontSize={10} fontWeight="700"
-            fill={hi('conjur') ? '#22d3ee' : '#64748b'} style={{ transition: 'fill 0.4s' }}>
-            SECRETS MANAGER
-          </text>
-          <text x={752} y={57} textAnchor="middle" fontSize={8.5} fill="#475569">CyberArk · authn-jwt/jenkins</text>
-
-          {/* JWT Auth box */}
-          <rect x={650} y={65} width={205} height={100} rx={8}
-            stroke={ns('authn','#a78bfa')} strokeWidth={1.5} fill={nf('authn','#a78bfa')}
-            style={{ transition: 'stroke 0.4s, fill 0.4s' }} />
-          <text x={752} y={89} textAnchor="middle" fontSize={10} fontWeight="700"
-            fill={hi('authn') ? '#a78bfa' : '#94a3b8'} style={{ transition: 'fill 0.4s' }}>
-            🔐 JWT Authenticator
-          </text>
-          <text x={752} y={104} textAnchor="middle" fontSize={8.5} fill="#64748b">authn-jwt/jenkins webservice</text>
-
-          {/* Setup config overlay in authn box */}
-          <AnimatePresence>
-            {cur.showSetup && (
-              <motion.g key="setup" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <rect x={660} y={111} width={185} height={45} rx={5} fill="#a78bfa18" stroke="#a78bfa44" strokeWidth={1} />
-                <text x={752} y={125} textAnchor="middle" fontSize={7.5} fontWeight="700" fill="#a78bfa">POLICY CONFIG</text>
-                <text x={752} y={138} textAnchor="middle" fontSize={7.5} fill="#94a3b8">jwks-uri · token-app-property</text>
-                <text x={752} y={151} textAnchor="middle" fontSize={7.5} fill="#94a3b8">issuer · audience: cyberark-conjur</text>
-              </motion.g>
-            )}
-          </AnimatePresence>
-          {!cur.showSetup && (
-            <text x={752} y={130} textAnchor="middle" fontSize={8.5} fill="#64748b">validates JWT · resolves identity</text>
-          )}
-
-          {/* Vault box */}
-          <rect x={650} y={185} width={205} height={135} rx={8}
-            stroke={ns('vault','#4ade80')} strokeWidth={1.5} fill={nf('vault','#4ade80')}
-            style={{ transition: 'stroke 0.4s, fill 0.4s' }} />
-          <text x={752} y={209} textAnchor="middle" fontSize={10} fontWeight="700"
-            fill={hi('vault') ? '#4ade80' : '#94a3b8'} style={{ transition: 'fill 0.4s' }}>
-            🗄 Secrets Vault
-          </text>
-          <text x={752} y={224} textAnchor="middle" fontSize={8.5} fill="#64748b">jenkins_secrets/db_password</text>
-          <text x={752} y={238} textAnchor="middle" fontSize={8.5} fill="#64748b">jenkins_secrets/api_key</text>
-          <text x={752} y={252} textAnchor="middle" fontSize={8.5} fill="#64748b">jenkins_secrets/github_token</text>
-          <text x={752} y={269} textAnchor="middle" fontSize={8}
-            fill={hi('vault') ? '#4ade8099' : '#334155'} style={{ transition: 'fill 0.4s' }}>
-            !permit: read/execute → jenkins layer
-          </text>
-          <text x={752} y={283} textAnchor="middle" fontSize={8} fill="#475569">policy-based · audited · rotated</text>
-
-          {/* Progress bar */}
-          <rect x={650} y={298} width={205} height={6} rx={3} fill="#1e293b" />
-          <motion.rect x={650} y={298} height={6} rx={3} fill="#a78bfa"
-            animate={{ width: 205 * (step / (total - 1)) }}
-            transition={{ duration: 0.4, ease: 'easeOut' }} />
-          <text x={752} y={318} textAnchor="middle" fontSize={7.5} fill="#475569">
-            {t('jenkins.step_of', { current: step + 1, total })}
-          </text>
-
-          {/* ── Edges ── */}
-          {EDGES.map(e => (
-            <g key={e.id}>
-              <motion.path
-                d={e.d} fill="none" stroke={CK[e.ck]}
-                strokeDasharray={litEdge(e.id) ? '7 4' : '0'}
-                markerEnd={litEdge(e.id) ? `url(#arr-${e.ck})` : undefined}
-                animate={{ opacity: litEdge(e.id) ? 1 : 0, strokeWidth: litEdge(e.id) ? 2 : 0 }}
-                transition={{ duration: 0.3 }}
-              />
-              <AnimatePresence>
-                {litEdge(e.id) && (
-                  <motion.text key={`lbl-${e.id}`}
-                    x={e.lx} y={e.ly} textAnchor="middle" fontSize={8} fontWeight="700" fill={CK[e.ck]}
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                    {e.label}
-                  </motion.text>
-                )}
-              </AnimatePresence>
-            </g>
-          ))}
-        </svg>
-        </div>
-      </div>
-
-      {/* Step description */}
-      <div className="w-full max-w-5xl mt-6">
-        <div className="bg-bg-card border border-border rounded-xl p-5 min-h-[110px]">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px] font-mono text-text-muted uppercase tracking-widest">
-              {t('jenkins.step_of', { current: step + 1, total })}
-            </span>
-            <span className="text-[10px] font-mono text-text-muted">{t('jenkins.keyboard_hint')}</span>
-          </div>
-          <AnimatePresence mode="wait">
-            <motion.div key={step}
-              initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.2 }}>
-              <p className="text-sm font-semibold text-text mb-1">{t(`jenkins.s${step + 1}_title`)}</p>
-              <p className="text-sm text-text-muted leading-relaxed">{t(`jenkins.s${step + 1}_desc`)}</p>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* Controls */}
-        <div className="flex items-center justify-center gap-3 mt-4">
-          <button onClick={prev} aria-label="Previous step"
-            className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-bg-muted transition-colors">
-            <ChevronLeft size={18} aria-hidden="true" />
-          </button>
-          <div className="flex gap-1.5">
-            {STEPS.map((_, i) => (
-              <button key={i} onClick={() => setStep(i)} aria-label={`Go to step ${i + 1}`}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === step ? 'w-6 bg-purple-400' : 'w-1.5 bg-slate-700 hover:bg-slate-500'
-                }`} />
-            ))}
-          </div>
-          <button onClick={() => setPlaying(p => !p)} aria-label={playing ? 'Pause' : 'Play'}
-            className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-bg-muted transition-colors">
-            {playing ? <Pause size={18} aria-hidden="true" /> : <Play size={18} aria-hidden="true" />}
-          </button>
-          <button onClick={next} aria-label="Next step"
-            className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-bg-muted transition-colors">
-            <ChevronRight size={18} aria-hidden="true" />
-          </button>
-        </div>
+      <div className="w-full max-w-5xl">
+        <FlowPlayer spec={spec} />
       </div>
 
       {/* Concept cards */}
@@ -362,7 +151,7 @@ export default function JenkinsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[1, 2, 3, 4].map(n => (
             <div key={n} className="flex gap-3 items-start">
-              <span className="text-purple-400 font-mono text-xs font-bold mt-0.5 shrink-0">
+              <span className="text-domain-idira font-mono text-xs font-bold mt-0.5 shrink-0">
                 {String(n).padStart(2, '0')}
               </span>
               <div>

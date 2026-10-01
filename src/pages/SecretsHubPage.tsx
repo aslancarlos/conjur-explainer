@@ -1,89 +1,130 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react'
+import { CalendarClock, Cloud, Combine, HardDrive, Vault } from 'lucide-react'
+import FlowPlayer, { type FlowSpec, type FlowRow } from '../components/flow/FlowPlayer'
 
-interface SHStep {
-  litEdges: string[]
-  hiNodes: string[]
-  cpmPulse: boolean
-  activeTargets: ('aws' | 'azure' | 'gcp')[]
-  showPolicy: boolean
-  showTrust: boolean
-  showWorkloadRead: boolean
-}
-
-const STEPS: SHStep[] = [
-  { litEdges: [],                                                hiNodes: ['pam','safe','cpm','hub','aws','azure','gcp','workload'], cpmPulse: false, activeTargets: [],                         showPolicy: false, showTrust: false, showWorkloadRead: false },
-  { litEdges: ['cpm-safe'],                                      hiNodes: ['pam','safe','cpm'],                                     cpmPulse: true,  activeTargets: [],                         showPolicy: false, showTrust: false, showWorkloadRead: false },
-  { litEdges: [],                                                hiNodes: ['hub','aws','azure','gcp'],                              cpmPulse: false, activeTargets: ['aws','azure','gcp'],       showPolicy: false, showTrust: true,  showWorkloadRead: false },
-  { litEdges: ['hub-safe'],                                      hiNodes: ['hub','safe','pam'],                                     cpmPulse: false, activeTargets: [],                         showPolicy: false, showTrust: false, showWorkloadRead: false },
-  { litEdges: ['hub-safe'],                                      hiNodes: ['hub','safe'],                                           cpmPulse: false, activeTargets: ['aws','azure','gcp'],       showPolicy: true,  showTrust: false, showWorkloadRead: false },
-  { litEdges: ['hub-safe','hub-aws','hub-azure','hub-gcp'],      hiNodes: ['hub','safe','aws','azure','gcp'],                       cpmPulse: false, activeTargets: ['aws','azure','gcp'],       showPolicy: false, showTrust: false, showWorkloadRead: false },
-  { litEdges: ['cpm-safe','hub-safe','hub-aws','hub-azure','hub-gcp'], hiNodes: ['cpm','safe','hub','aws','azure','gcp'],           cpmPulse: true,  activeTargets: ['aws','azure','gcp'],       showPolicy: false, showTrust: false, showWorkloadRead: false },
-  { litEdges: ['aws-wl','azure-wl','gcp-wl'],                    hiNodes: ['workload','aws','azure','gcp'],                         cpmPulse: false, activeTargets: ['aws','azure','gcp'],       showPolicy: false, showTrust: false, showWorkloadRead: true  },
-]
-
-const CK: Record<string, string> = {
-  gold:  '#f59e0b',
-  cyan:  '#22d3ee',
-  aws:   '#FF9900',
-  azure: '#60a5fa',
-  gcp:   '#4ade80',
-}
-
-interface Edge { id: string; d: string; ck: string; label: string; lx: number; ly: number }
-const EDGES: Edge[] = [
-  { id: 'cpm-safe',  d: 'M 122,185 C 122,170 122,162 122,160',          ck: 'gold',  label: 'rotates', lx: 135, ly: 172 },
-  { id: 'hub-safe',  d: 'M 220,108 C 272,108 272,207 325,207',           ck: 'cyan',  label: 'reads',   lx: 270, ly: 148 },
-  { id: 'hub-aws',   d: 'M 545,185 C 597,185 597,62 650,62',             ck: 'aws',   label: 'syncs',   lx: 595, ly: 115 },
-  { id: 'hub-azure', d: 'M 545,207 C 597,207 597,177 650,177',           ck: 'azure', label: 'syncs',   lx: 595, ly: 190 },
-  { id: 'hub-gcp',   d: 'M 545,225 C 597,225 597,292 650,292',           ck: 'gcp',   label: 'syncs',   lx: 595, ly: 270 },
-  { id: 'aws-wl',    d: 'M 757,110 C 757,288 726,354 726,360',           ck: 'aws',   label: 'reads',   lx: 735, ly: 234 },
-  { id: 'azure-wl',  d: 'M 757,225 C 757,312 757,354 757,360',           ck: 'azure', label: 'reads',   lx: 768, ly: 292 },
-  { id: 'gcp-wl',    d: 'M 757,340 C 757,352 788,357 788,360',           ck: 'gcp',   label: 'reads',   lx: 780, ly: 350 },
-]
-
+/**
+ * Secrets Hub sync (FlowPlayer spec).
+ *   CPM rotates the credential in the PAM Safe -> Secrets Hub (Safe member,
+ *   PAM_SAFE sync policy) reads it -> pushes it to AWS SM, Azure KV and GCP SM
+ *   through each store's own trust (IAM Role, App Registration, Service Account)
+ *   -> workloads read it with the native SDK.
+ */
 export default function SecretsHubPage() {
   const { t } = useTranslation()
-  const [step, setStep] = useState(0)
-  const [playing, setPlaying] = useState(true)
-  const reduce = useReducedMotion()
-  const cur = STEPS[step]
-  const total = STEPS.length
-
-  const next = useCallback(() => setStep(s => (s + 1) % total), [total])
-  const prev = useCallback(() => setStep(s => (s - 1 + total) % total), [total])
-
-  useEffect(() => {
-    if (!playing) return
-    const id = setInterval(() => {
-      setStep(s => {
-        if (s >= total - 1) { setPlaying(false); return s }
-        return s + 1
-      })
-    }, 2800)
-    return () => clearInterval(id)
-  }, [playing, total])
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') next()
-      else if (e.key === 'ArrowLeft') prev()
-      else if (e.key === ' ') { e.preventDefault(); setPlaying(p => !p) }
+  const spec = useMemo<FlowSpec>(() => {
+    const f = (k: string) => t(`idflow.${k}`)
+    const pend = f('st_pending')
+    const step = (n: number) => ({ title: t(`secretshub.s${n}_title`), desc: t(`secretshub.s${n}_desc`) })
+    const ver = (k: string): FlowRow => ({ label: f('r_secret'), k, states: [
+      { v: 'none', text: pend, tone: 'muted' }, { v: 'v1', text: 'v1', tone: 'ok' }, { v: 'v2', text: 'v2', tone: 'ok' }] })
+    const trust = (k: string): FlowRow => ({ label: f('r_identity'), k, states: [
+      { v: 'none', text: pend, tone: 'muted' }, { v: 'ok', text: f('st_valid'), tone: 'ok' }] })
+    const push = (at: number, label: string) => ([
+      { t: 'packet' as const, at, edge: 'hub-aws', label },
+      { t: 'packet' as const, at, edge: 'hub-az', label },
+      { t: 'packet' as const, at, edge: 'hub-gcp', label },
+    ])
+    const land = (at: number, v: string) => (['aws', 'az', 'gcp'] as const).map((k, i) => ({ t: 'set' as const, at: at + i * 0.1, k, v, pop: true }))
+    return {
+      id: 'shubflow',
+      ariaLabel: t('secretshub.title'),
+      initial: { sv: 'none', mem: 'none', pol: 'none', sync: 'idle', awsT: 'none', azT: 'none', gcpT: 'none', aws: 'none', az: 'none', gcp: 'none', wl: 'none' },
+      nodes: [
+        { id: 'safe', domain: 'idira', Icon: Vault, title: 'PAM Safe', sub: 'Privilege Cloud', rows: [
+          { label: 'db/password', k: 'sv', states: [{ v: 'none', text: pend, tone: 'muted' }, { v: 'v1', text: 'v1', tone: 'ok' }, { v: 'v2', text: 'v2', tone: 'ok' }] },
+          { label: 'api/key', value: 'v1', tone: 'ok' },
+        ] },
+        { id: 'cpm', domain: 'idira', Icon: CalendarClock, title: 'CPM', sub: 'Central Policy Manager' },
+        { id: 'hub', domain: 'idira', Icon: Combine, title: 'Secrets Hub', sub: 'SaaS', rows: [
+          { label: 'safe', k: 'mem', states: [{ v: 'none', text: pend, tone: 'muted' }, { v: 'ok', text: 'List · Retrieve', tone: 'ok' }] },
+          { label: 'policy', k: 'pol', states: [{ v: 'none', text: pend, tone: 'muted' }, { v: 'ok', text: 'PAM_SAFE', tone: 'ok' }] },
+          { label: 'sync', k: 'sync', states: [{ v: 'idle', text: f('st_idle'), tone: 'muted' }, { v: 'check', text: f('st_check'), tone: 'warn' }, { v: 'ok', text: f('st_delivered'), tone: 'ok' }] },
+        ] },
+        { id: 'aws', domain: 'svc', Icon: Cloud, title: 'AWS Secrets Manager', sub: 'IAM Role', rows: [trust('awsT'), ver('aws')] },
+        { id: 'az', domain: 'svc', Icon: Cloud, title: 'Azure Key Vault', sub: 'App Registration', rows: [trust('azT'), ver('az')] },
+        { id: 'gcp', domain: 'svc', Icon: Cloud, title: 'GCP Secret Manager', sub: 'Service Account', rows: [trust('gcpT'), ver('gcp')] },
+        { id: 'wl', domain: 'cp', Icon: HardDrive, title: f('n_wl'), sub: 'native SDK', rows: [ver('wl')] },
+      ],
+      edgeKinds: {
+        'cpm-safe': 'secret', 'safe-hub': 'secret', 'hub-safe': 'control',
+        'hub-aws': 'secret', 'hub-az': 'secret', 'hub-gcp': 'secret',
+        'aws-wl': 'secret', 'az-wl': 'secret', 'gcp-wl': 'secret',
+      },
+      layouts: {
+        wide: {
+          w: 980, h: 450, title: 14,
+          boxes: {
+            safe: { x: 16, y: 56, w: 196, h: 112 }, cpm: { x: 16, y: 270, w: 196, h: 84 },
+            hub: { x: 290, y: 146, w: 200, h: 128 },
+            aws: { x: 566, y: 32, w: 210, h: 112 }, az: { x: 566, y: 172, w: 210, h: 112 }, gcp: { x: 566, y: 312, w: 210, h: 112 },
+            wl: { x: 822, y: 180, w: 150, h: 92 },
+          },
+          zones: [
+            { d: 'idira', x: 6, y: 40, w: 494, h: 330 },
+            { d: 'svc', x: 556, y: 22, w: 230, h: 412 },
+            { d: 'cp', x: 812, y: 168, w: 166, h: 116 },
+          ],
+          edges: {
+            'cpm-safe': 'M 114,270 L 114,168',
+            'safe-hub': 'M 212,92 C 252,92 252,182 290,182', 'hub-safe': 'M 290,214 C 240,214 240,132 212,132',
+            'hub-aws': 'M 490,178 C 528,178 528,88 566,88', 'hub-az': 'M 490,210 C 528,210 528,228 566,228', 'hub-gcp': 'M 490,242 C 528,242 528,368 566,368',
+            'aws-wl': 'M 776,88 C 799,88 799,210 822,210', 'az-wl': 'M 776,228 L 822,228', 'gcp-wl': 'M 776,368 C 799,368 799,246 822,246',
+          },
+        },
+        narrow: {
+          w: 360, h: 1090, title: 14,
+          boxes: {
+            cpm: { x: 70, y: 30, w: 220, h: 84 }, safe: { x: 50, y: 164, w: 260, h: 112 },
+            hub: { x: 50, y: 326, w: 260, h: 128 },
+            aws: { x: 50, y: 520, w: 260, h: 112 }, az: { x: 50, y: 662, w: 260, h: 112 }, gcp: { x: 50, y: 804, w: 260, h: 112 },
+            wl: { x: 70, y: 976, w: 220, h: 92 },
+          },
+          zones: [
+            { d: 'idira', x: 40, y: 20, w: 280, h: 444 },
+            { d: 'svc', x: 40, y: 508, w: 280, h: 420 },
+            { d: 'cp', x: 60, y: 964, w: 240, h: 116 },
+          ],
+          edges: {
+            'cpm-safe': 'M 180,114 L 180,164',
+            'safe-hub': 'M 160,276 L 160,326', 'hub-safe': 'M 200,326 L 200,276',
+            'hub-aws': 'M 180,454 L 180,520',
+            'hub-az': 'M 310,400 C 342,400 342,718 310,718', 'hub-gcp': 'M 50,400 C 18,400 18,860 50,860',
+            'aws-wl': 'M 50,576 C 8,576 8,1022 70,1022', 'az-wl': 'M 310,718 C 354,718 354,1022 290,1022', 'gcp-wl': 'M 180,916 L 180,976',
+          },
+        },
+      },
+      steps: [
+        { ...step(1), focus: ['safe', 'cpm', 'hub', 'aws', 'az', 'gcp', 'wl'], end: 0.6, fx: [] },
+        { ...step(2), focus: ['cpm', 'safe'], end: 2.2, fx: [
+          { t: 'packet', at: 0.3, edge: 'cpm-safe', label: 'db/password' }, { t: 'set', at: 1.3, k: 'sv', v: 'v1', pop: true }] },
+        { ...step(3), focus: ['hub', 'aws', 'az', 'gcp'], end: 2.4, fx: [
+          { t: 'packet', at: 0.3, edge: 'hub-aws', label: 'IAM Role', kind: 'identity' },
+          { t: 'packet', at: 0.3, edge: 'hub-az', label: 'App Reg', kind: 'identity' },
+          { t: 'packet', at: 0.3, edge: 'hub-gcp', label: 'Svc Acct', kind: 'identity' },
+          { t: 'set', at: 1.3, k: 'awsT', v: 'ok', pop: true }, { t: 'set', at: 1.4, k: 'azT', v: 'ok', pop: true }, { t: 'set', at: 1.5, k: 'gcpT', v: 'ok', pop: true }] },
+        { ...step(4), focus: ['hub', 'safe'], end: 2.2, fx: [
+          { t: 'packet', at: 0.3, edge: 'hub-safe', label: 'Safe member' }, { t: 'set', at: 1.3, k: 'mem', v: 'ok', pop: true }] },
+        { ...step(5), focus: ['hub', 'safe', 'aws', 'az', 'gcp'], end: 2.2, fx: [
+          { t: 'packet', at: 0.3, edge: 'hub-safe', label: 'PAM_SAFE' }, { t: 'set', at: 1.3, k: 'pol', v: 'ok', pop: true }] },
+        { ...step(6), focus: ['safe', 'hub', 'aws', 'az', 'gcp'], end: 3.8, fx: [
+          { t: 'set', at: 0.2, k: 'sync', v: 'check' },
+          { t: 'packet', at: 0.3, edge: 'safe-hub', label: 'db/password' },
+          ...push(1.5, 'v1'), ...land(2.5, 'v1'), { t: 'set', at: 2.9, k: 'sync', v: 'ok', pop: true }] },
+        { ...step(7), focus: ['cpm', 'safe', 'hub', 'aws', 'az', 'gcp'], end: 5.0, fx: [
+          { t: 'set', at: 0.1, k: 'sync', v: 'idle' },
+          { t: 'packet', at: 0.3, edge: 'cpm-safe', label: 'v2' }, { t: 'set', at: 1.3, k: 'sv', v: 'v2', pop: true },
+          { t: 'set', at: 1.5, k: 'sync', v: 'check' },
+          { t: 'packet', at: 1.6, edge: 'safe-hub', label: 'v2' },
+          ...push(2.8, 'v2'), ...land(3.8, 'v2'), { t: 'set', at: 4.2, k: 'sync', v: 'ok', pop: true }] },
+        { ...step(8), focus: ['aws', 'az', 'gcp', 'wl'], end: 3.4, fx: [
+          { t: 'packet', at: 0.3, edge: 'aws-wl', label: 'GetSecretValue' },
+          { t: 'packet', at: 0.9, edge: 'az-wl', label: 'getSecret' },
+          { t: 'packet', at: 1.5, edge: 'gcp-wl', label: 'accessSecretVersion' },
+          { t: 'set', at: 2.6, k: 'wl', v: 'v2', pop: true }] },
+      ],
     }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [next, prev])
-
-  const litEdge = (id: string) => cur.litEdges.includes(id)
-  const hiNode  = (id: string) => cur.hiNodes.includes(id)
-
-  // Node stroke/fill helpers
-  const ns = (id: string, color: string) => hiNode(id) ? color : '#1e293b'
-  const nf = (id: string, color: string) => hiNode(id) ? color + '12' : '#0f172a'
-
-  const tgt = (t: 'aws'|'azure'|'gcp') => cur.activeTargets.includes(t)
+  }, [t])
 
   return (
     <section className="min-h-screen bg-bg-base px-4 py-16 flex flex-col items-center">
@@ -99,254 +140,8 @@ export default function SecretsHubPage() {
         </p>
       </div>
 
-      {/* SVG Diagram */}
-      <div className="w-full max-w-5xl bg-bg-card border border-border rounded-2xl overflow-hidden shadow-2xl">
-        <div className="p-3 border-b border-border flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-          <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
-          <span className="ml-2 text-xs text-text-muted font-mono">secrets-hub · sync diagram · step {step + 1}/{total}</span>
-        </div>
-
-        <div className="overflow-x-auto rounded-xl border border-border bg-[#050d1a] p-4">
-        <svg viewBox="0 0 880 450" className="h-auto select-none" role="img" aria-label="Secrets Hub architecture diagram" style={{ fontFamily: 'ui-monospace, monospace', minWidth: 640, width: '100%' }}>
-          <defs>
-            {Object.entries(CK).map(([k, v]) => (
-              <marker key={k} id={`arr-${k}`} viewBox="0 0 10 10" refX="9" refY="5"
-                markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill={v} />
-              </marker>
-            ))}
-          </defs>
-
-          {/* ── Privilege Cloud / PAM frame ── */}
-          <rect x={10} y={15} width={225} height={310} rx={14}
-            stroke={ns('pam', '#f59e0b')} strokeWidth={1.5} fill={hiNode('pam') ? '#f59e0b08' : 'transparent'}
-            style={{ transition: 'stroke 0.4s, fill 0.4s' }} />
-          <text x={122} y={44} textAnchor="middle" fontSize={10} fontWeight="700"
-            fill={hiNode('pam') ? '#f59e0b' : '#64748b'} style={{ transition: 'fill 0.4s' }}>
-            PRIVILEGE CLOUD
-          </text>
-          <text x={122} y={57} textAnchor="middle" fontSize={8.5} fill="#475569">PAM · Source of Truth</text>
-
-          {/* Safe */}
-          <rect x={25} y={68} width={195} height={100} rx={8}
-            stroke={ns('safe', '#22d3ee')} strokeWidth={1.5} fill={nf('safe', '#22d3ee')}
-            style={{ transition: 'stroke 0.4s, fill 0.4s' }} />
-          <text x={122} y={92} textAnchor="middle" fontSize={10} fontWeight="700"
-            fill={hiNode('safe') ? '#22d3ee' : '#94a3b8'} style={{ transition: 'fill 0.4s' }}>
-            🔐 PAM Safe
-          </text>
-          <text x={122} y={108} textAnchor="middle" fontSize={8.5} fill="#64748b">db/password · api/key</text>
-          <text x={122} y={122} textAnchor="middle" fontSize={8.5} fill="#64748b">app/token · svc/cert</text>
-          <text x={122} y={138} textAnchor="middle" fontSize={8}
-            fill={hiNode('safe') ? '#22d3ee88' : '#334155'} style={{ transition: 'fill 0.4s' }}>
-            Sourced by CyberArk ↑
-          </text>
-          <text x={122} y={152} textAnchor="middle" fontSize={8} fill="#475569">audited · versioned</text>
-
-          {/* CPM */}
-          <motion.rect x={25} y={192} width={195} height={100} rx={8}
-            stroke={ns('cpm', '#f59e0b')} strokeWidth={cur.cpmPulse ? 2 : 1.5} fill={nf('cpm', '#f59e0b')}
-            animate={cur.cpmPulse && !reduce ? { strokeOpacity: [0.25, 1, 0.25] } : { strokeOpacity: 1 }}
-            transition={cur.cpmPulse && !reduce ? { duration: 1.4, repeat: Infinity, ease: 'easeInOut' } : {}}
-            style={{ transition: 'fill 0.4s' }} />
-          <text x={122} y={218} textAnchor="middle" fontSize={10} fontWeight="700"
-            fill={hiNode('cpm') ? '#f59e0b' : '#94a3b8'} style={{ transition: 'fill 0.4s' }}>
-            ⚙ CPM
-          </text>
-          <text x={122} y={234} textAnchor="middle" fontSize={8.5} fill="#64748b">Central Policy Manager</text>
-          <text x={122} y={248} textAnchor="middle" fontSize={8.5} fill="#64748b">auto-rotates on schedule</text>
-          <text x={122} y={264} textAnchor="middle" fontSize={8}
-            fill={cur.cpmPulse ? '#f59e0bcc' : '#334155'} style={{ transition: 'fill 0.4s' }}>
-            {cur.cpmPulse ? '● rotating...' : '● on schedule'}
-          </text>
-          <text x={122} y={278} textAnchor="middle" fontSize={8} fill="#475569">policies · auditing · SIEM</text>
-
-          {/* ── Secrets Hub ── */}
-          <rect x={325} y={130} width={220} height={165} rx={12}
-            stroke={ns('hub', '#a78bfa')} strokeWidth={1.5} fill={nf('hub', '#a78bfa')}
-            style={{ transition: 'stroke 0.4s, fill 0.4s' }} />
-          <text x={435} y={158} textAnchor="middle" fontSize={12} fontWeight="700"
-            fill={hiNode('hub') ? '#a78bfa' : '#94a3b8'} style={{ transition: 'fill 0.4s' }}>
-            Secrets Hub
-          </text>
-          <text x={435} y={173} textAnchor="middle" fontSize={8.5} fill="#64748b">SaaS · CyberArk Identity Security Platform</text>
-
-          {/* Sync Policy pill. Visible on step 5 */}
-          <AnimatePresence>
-            {cur.showPolicy && (
-              <motion.g key="policy" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-                <rect x={342} y={185} width={186} height={52} rx={7} fill="#a78bfa18" stroke="#a78bfa55" strokeWidth={1} />
-                <text x={435} y={202} textAnchor="middle" fontSize={8} fontWeight="700" fill="#a78bfa">SYNC POLICY</text>
-                <text x={435} y={216} textAnchor="middle" fontSize={8} fill="#94a3b8">Source: Safe-Prod → Filter: ALL</text>
-                <text x={435} y={229} textAnchor="middle" fontSize={8} fill="#94a3b8">Targets: AWS SM + Azure KV + GCP SM</text>
-              </motion.g>
-            )}
-          </AnimatePresence>
-          {!cur.showPolicy && (
-            <>
-              <text x={435} y={202} textAnchor="middle" fontSize={8.5} fill="#475569">scan → diff → push → verify</text>
-              <text x={435} y={216} textAnchor="middle" fontSize={8.5} fill="#475569">interval-based · event-driven</text>
-            </>
-          )}
-
-          {/* Progress bar inside hub */}
-          <rect x={345} y={262} width={190} height={6} rx={3} fill="#1e293b" />
-          <motion.rect x={345} y={262} height={6} rx={3} fill="#a78bfa"
-            animate={{ width: 190 * (step / (total - 1)) }}
-            transition={{ duration: 0.4, ease: 'easeOut' }} />
-          <text x={435} y={283} textAnchor="middle" fontSize={7.5} fill="#475569">
-            {t('secretshub.step_of', { current: step + 1, total })}
-          </text>
-
-          {/* ── AWS Secrets Manager ── */}
-          <rect x={650} y={15} width={215} height={95} rx={8}
-            stroke={ns('aws', '#FF9900')} strokeWidth={1.5} fill={hiNode('aws') ? '#FF990012' : '#0f172a'}
-            style={{ transition: 'stroke 0.4s, fill 0.4s' }} />
-          <AnimatePresence>
-            {cur.showTrust && tgt('aws') && (
-              <motion.g key="trust-aws" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                <rect x={800} y={19} width={58} height={15} rx={4} fill="#FF990022" stroke="#FF990077" strokeWidth={1} />
-                <text x={829} y={30} textAnchor="middle" fontSize={7} fontWeight="700" fill="#FF9900">IAM Role ✓</text>
-              </motion.g>
-            )}
-          </AnimatePresence>
-          <text x={757} y={44} textAnchor="middle" fontSize={10} fontWeight="700"
-            fill={hiNode('aws') ? '#FF9900' : '#94a3b8'} style={{ transition: 'fill 0.4s' }}>AWS Secrets Manager</text>
-          <text x={757} y={58} textAnchor="middle" fontSize={8.5} fill="#64748b">us-east-1 · us-west-2 · multi-region</text>
-          <text x={757} y={72} textAnchor="middle" fontSize={8}
-            fill={tgt('aws') ? '#FF990099' : '#334155'} style={{ transition: 'fill 0.4s' }}>● {tgt('aws') ? 'synced · Sourced by CyberArk' : 'idle'}</text>
-          <text x={757} y={88} textAnchor="middle" fontSize={8} fill="#475569">Lambda · ECS · EKS · EC2 · CodePipeline</text>
-
-          {/* ── Azure Key Vault ── */}
-          <rect x={650} y={130} width={215} height={95} rx={8}
-            stroke={ns('azure', '#60a5fa')} strokeWidth={1.5} fill={hiNode('azure') ? '#60a5fa12' : '#0f172a'}
-            style={{ transition: 'stroke 0.4s, fill 0.4s' }} />
-          <AnimatePresence>
-            {cur.showTrust && tgt('azure') && (
-              <motion.g key="trust-azure" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                <rect x={794} y={134} width={66} height={15} rx={4} fill="#60a5fa22" stroke="#60a5fa77" strokeWidth={1} />
-                <text x={827} y={145} textAnchor="middle" fontSize={7} fontWeight="700" fill="#60a5fa">App Reg ✓</text>
-              </motion.g>
-            )}
-          </AnimatePresence>
-          <text x={757} y={159} textAnchor="middle" fontSize={10} fontWeight="700"
-            fill={hiNode('azure') ? '#60a5fa' : '#94a3b8'} style={{ transition: 'fill 0.4s' }}>Azure Key Vault</text>
-          <text x={757} y={173} textAnchor="middle" fontSize={8.5} fill="#64748b">eastus · westeurope · multi-region</text>
-          <text x={757} y={187} textAnchor="middle" fontSize={8}
-            fill={tgt('azure') ? '#60a5fa99' : '#334155'} style={{ transition: 'fill 0.4s' }}>● {tgt('azure') ? 'synced · Sourced by CyberArk' : 'idle'}</text>
-          <text x={757} y={203} textAnchor="middle" fontSize={8} fill="#475569">AKS · App Service · Azure Functions</text>
-
-          {/* ── GCP Secret Manager ── */}
-          <rect x={650} y={245} width={215} height={95} rx={8}
-            stroke={ns('gcp', '#4ade80')} strokeWidth={1.5} fill={hiNode('gcp') ? '#4ade8012' : '#0f172a'}
-            style={{ transition: 'stroke 0.4s, fill 0.4s' }} />
-          <AnimatePresence>
-            {cur.showTrust && tgt('gcp') && (
-              <motion.g key="trust-gcp" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                <rect x={794} y={249} width={66} height={15} rx={4} fill="#4ade8022" stroke="#4ade8077" strokeWidth={1} />
-                <text x={827} y={260} textAnchor="middle" fontSize={7} fontWeight="700" fill="#4ade80">Svc Acct ✓</text>
-              </motion.g>
-            )}
-          </AnimatePresence>
-          <text x={757} y={274} textAnchor="middle" fontSize={10} fontWeight="700"
-            fill={hiNode('gcp') ? '#4ade80' : '#94a3b8'} style={{ transition: 'fill 0.4s' }}>GCP Secret Manager</text>
-          <text x={757} y={288} textAnchor="middle" fontSize={8.5} fill="#64748b">us-central1 · europe-west1</text>
-          <text x={757} y={302} textAnchor="middle" fontSize={8}
-            fill={tgt('gcp') ? '#4ade8099' : '#334155'} style={{ transition: 'fill 0.4s' }}>● {tgt('gcp') ? 'synced · Sourced by CyberArk' : 'idle'}</text>
-          <text x={757} y={318} textAnchor="middle" fontSize={8} fill="#475569">GKE · Cloud Run · Cloud Functions</text>
-
-          {/* ── Workload / Developers ── */}
-          <rect x={645} y={360} width={225} height={78} rx={12}
-            stroke={ns('workload', '#4ade80')} strokeWidth={1.5} fill={nf('workload', '#4ade80')}
-            style={{ transition: 'stroke 0.4s, fill 0.4s' }} />
-          <text x={757} y={385} textAnchor="middle" fontSize={10} fontWeight="700"
-            fill={hiNode('workload') ? '#4ade80' : '#94a3b8'} style={{ transition: 'fill 0.4s' }}>
-            🖥 Developers / Workloads
-          </text>
-          <text x={757} y={399} textAnchor="middle" fontSize={8.5} fill="#64748b">Lambda · K8s pod · CI/CD · containers</text>
-          <text x={757} y={413} textAnchor="middle" fontSize={8}
-            fill={cur.showWorkloadRead ? '#4ade80' : '#334155'} style={{ transition: 'fill 0.4s' }}>
-            {cur.showWorkloadRead ? 'native SDK · zero code changes ✓' : 'reads from native store API'}
-          </text>
-          <text x={757} y={428} textAnchor="middle" fontSize={8} fill="#475569">no CyberArk SDK · no agent required</text>
-
-          {/* ── Edges ── */}
-          {EDGES.map(e => (
-            <g key={e.id}>
-              <motion.path
-                d={e.d} fill="none"
-                stroke={CK[e.ck]}
-                strokeDasharray={litEdge(e.id) ? '7 4' : '0'}
-                markerEnd={litEdge(e.id) ? `url(#arr-${e.ck})` : undefined}
-                animate={{ opacity: litEdge(e.id) ? 1 : 0, strokeWidth: litEdge(e.id) ? 2 : 0 }}
-                transition={{ duration: 0.3 }}
-              />
-              <AnimatePresence>
-                {litEdge(e.id) && (
-                  <motion.text key={`lbl-${e.id}`}
-                    x={e.lx} y={e.ly} textAnchor="middle" fontSize={8} fontWeight="700" fill={CK[e.ck]}
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                    {e.label}
-                  </motion.text>
-                )}
-              </AnimatePresence>
-            </g>
-          ))}
-        </svg>
-        </div>
-      </div>
-
-      {/* Step description */}
-      <div className="w-full max-w-5xl mt-6">
-        <div className="bg-bg-card border border-border rounded-xl p-5 min-h-[110px]">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px] font-mono text-text-muted uppercase tracking-widest">
-              {t('secretshub.step_of', { current: step + 1, total })}
-            </span>
-            <span className="text-[10px] font-mono text-text-muted">{t('secretshub.keyboard_hint')}</span>
-          </div>
-          <AnimatePresence mode="wait">
-            <motion.div key={step}
-              initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.2 }}>
-              <p className="text-sm font-semibold text-text mb-1">
-                {t(`secretshub.s${step + 1}_title`)}
-              </p>
-              <p className="text-sm text-text-muted leading-relaxed">
-                {t(`secretshub.s${step + 1}_desc`)}
-              </p>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* Controls */}
-        <div className="flex items-center justify-center gap-3 mt-4">
-          <button onClick={prev} aria-label="Previous step"
-            className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-bg-muted transition-colors">
-            <ChevronLeft size={18} aria-hidden="true" />
-          </button>
-
-          <div className="flex gap-1.5">
-            {STEPS.map((_, i) => (
-              <button key={i} onClick={() => setStep(i)} aria-label={`Go to step ${i + 1}`}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === step ? 'w-6 bg-purple-400' : 'w-1.5 bg-slate-700 hover:bg-slate-500'
-                }`} />
-            ))}
-          </div>
-
-          <button onClick={() => setPlaying(p => !p)} aria-label={playing ? 'Pause' : 'Play'}
-            className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-bg-muted transition-colors">
-            {playing ? <Pause size={18} aria-hidden="true" /> : <Play size={18} aria-hidden="true" />}
-          </button>
-
-          <button onClick={next} aria-label="Next step"
-            className="p-2 rounded-lg text-text-muted hover:text-text hover:bg-bg-muted transition-colors">
-            <ChevronRight size={18} aria-hidden="true" />
-          </button>
-        </div>
+      <div className="w-full max-w-5xl">
+        <FlowPlayer spec={spec} />
       </div>
 
       {/* Concept cards */}
@@ -367,7 +162,7 @@ export default function SecretsHubPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[1, 2, 3, 4].map(n => (
             <div key={n} className="flex gap-3 items-start">
-              <span className="text-purple-400 font-mono text-xs font-bold mt-0.5 shrink-0">{String(n).padStart(2,'0')}</span>
+              <span className="text-domain-idira font-mono text-xs font-bold mt-0.5 shrink-0">{String(n).padStart(2,'0')}</span>
               <div>
                 <p className="text-xs font-semibold text-text">{t(`secretshub.arch${n}_title`)}</p>
                 <p className="text-xs text-text-muted mt-0.5 leading-relaxed">{t(`secretshub.arch${n}_desc`)}</p>
