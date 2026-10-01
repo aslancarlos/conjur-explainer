@@ -1,348 +1,155 @@
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { useState, useCallback } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react'
+import { Box, Container, Database, Github, Leaf, Server, ShoppingCart, Vault } from 'lucide-react'
+import FlowPlayer, { type FlowSpec } from './flow/FlowPlayer'
 
-// ─── color palette ────────────────────────────────────────────────────────────
-
-type CK = 'spring' | 'dotnet' | 'gh' | 'eso' | 'gold' | 'cyan' | 'slate'
-
-const C: Record<CK, { stroke: string; text: string; border: string; bg: string }> = {
-  spring: { stroke:'#6db33f', text:'#86efac', border:'rgba(109,179,63,0.4)',  bg:'rgba(109,179,63,0.12)' },
-  dotnet: { stroke:'#7b5cf6', text:'#c4b5fd', border:'rgba(123,92,246,0.4)',  bg:'rgba(123,92,246,0.12)' },
-  gh:     { stroke:'#1f6feb', text:'#60a5fa', border:'rgba(31,111,235,0.4)',  bg:'rgba(31,111,235,0.12)' },
-  eso:    { stroke:'#f97316', text:'#fdba74', border:'rgba(249,115,22,0.4)',   bg:'rgba(249,115,22,0.12)' },
-  gold:   { stroke:'#f59e0b', text:'#fcd34d', border:'rgba(245,158,11,0.4)',  bg:'rgba(245,158,11,0.08)' },
-  cyan:   { stroke:'#00b4e0', text:'#67e8f9', border:'rgba(0,180,224,0.4)',   bg:'rgba(0,180,224,0.12)' },
-  slate:  { stroke:'#64748b', text:'#94a3b8', border:'rgba(100,116,139,0.35)' , bg:'rgba(15,30,48,0.7)' },
-}
-
-// ─── graph data ───────────────────────────────────────────────────────────────
-
-interface N { id:string; x:number; y:number; w:number; h:number; label:string; sub:string; ck:CK; feat?:boolean }
-interface E { id:string; d:string; ck:CK; tag?:string; lx?:number; ly?:number }
-
-// ViewBox: 0 0 870 415
-// Left column (apps):  x=16
-// Center (Conjur):     x=354
-// Right (K8s API):     x=618
-// Bottom right:        x=484 (vault), x=698 (db)
-const NODES: N[] = [
-  { id:'spring', x:16,  y:24,  w:164, h:58, label:'Spring Boot',    sub:'authn-jwt/eks-latam',                  ck:'spring' },
-  { id:'dotnet', x:16,  y:110, w:164, h:58, label:'.NET 8',          sub:'authn-jwt/eks-latam',                 ck:'dotnet' },
-  { id:'gha',    x:16,  y:196, w:164, h:58, label:'GitHub Actions',  sub:'OIDC → JWT',                          ck:'gh'     },
-  { id:'eso',    x:16,  y:282, w:164, h:58, label:'ESO Shop',         sub:'External Secrets Operator',          ck:'eso'    },
-  { id:'conjur', x:354, y:142, w:194, h:82, label:'Secrets Manager',  sub:'latamlab.secretsmgr.cyberark.cloud', ck:'gold', feat:true },
-  { id:'k8sapi', x:618, y:155, w:168, h:58, label:'K8s API Server',  sub:'JWT validation',                      ck:'slate'  },
-  { id:'vault',  x:484, y:334, w:166, h:58, label:'Secrets Vault',   sub:'data/vault/dev-demo-aslan/…',         ck:'cyan'   },
-  { id:'db',     x:698, y:334, w:154, h:58, label:'MySQL',            sub:'mysql.demo.local',                      ck:'spring' },
-]
-
-// Edge paths connect exact node midpoints:
-//   spring right-center : (180, 53)   conjur left-center: (354, 170-196)
-//   dotnet right-center : (180, 139)  k8sapi left-center: (618, 184)
-//   gha right-center    : (180, 225)  vault  top-center : (567, 334)
-//   eso right-center    : (180, 311)  db     left-center: (698, 363)
-//   conjur right-center : (548, 183)  conjur bottom-ctr : (451, 224)
-const EDGES: E[] = [
-  { id:'sp-cj', d:'M 180,53  C 270,53  270,170 354,170', ck:'spring', tag:'JWT',    lx:228, ly:96  },
-  { id:'dn-cj', d:'M 180,139 C 270,139 270,177 354,177', ck:'dotnet', tag:'JWT',    lx:226, ly:152 },
-  { id:'gh-cj', d:'M 180,225 C 270,225 270,184 354,184', ck:'gh',     tag:'OIDC',   lx:226, ly:222 },
-  { id:'es-cj', d:'M 180,311 C 270,311 270,191 354,191', ck:'eso',    tag:'JWT',    lx:226, ly:300 },
-  { id:'cj-k8', d:'M 548,175 L 618,175',                  ck:'gold',   tag:'verify', lx:582, ly:165 },
-  { id:'k8-cj', d:'M 618,193 L 548,193',                  ck:'slate',  tag:'✓ ok',   lx:582, ly:205 },
-  { id:'cj-vt', d:'M 451,224 C 451,292 567,292 567,334',  ck:'cyan'                               },
-  { id:'vt-db', d:'M 650,363 L 698,363',                  ck:'spring'                              },
-]
-
-// ─── step definitions ─────────────────────────────────────────────────────────
-
-const RAW: { nodes:string[]; edges:string[]; hi:string[] }[] = [
-  { nodes:['spring','dotnet','gha','eso'], edges:[],                   hi:['spring','dotnet','gha','eso'] },
-  { nodes:['conjur'],                      edges:[],                   hi:['conjur'] },
-  { nodes:['k8sapi'],                      edges:['cj-k8','k8-cj'],   hi:['conjur','k8sapi','cj-k8','k8-cj'] },
-  { nodes:[],                              edges:['sp-cj'],            hi:['spring','sp-cj','conjur'] },
-  { nodes:[],                              edges:['dn-cj'],            hi:['dotnet','dn-cj','conjur'] },
-  { nodes:[],                              edges:['gh-cj'],            hi:['gha','gh-cj','conjur'] },
-  { nodes:[],                              edges:['es-cj'],            hi:['eso','es-cj','conjur'] },
-  { nodes:['vault'],                       edges:['cj-vt'],            hi:['vault','cj-vt','conjur'] },
-  { nodes:['db'],                          edges:['vt-db'],            hi:[] },
-]
-
-// build cumulative visibility sets once at module level
-const CUM = RAW.reduce<{ nodes: Set<string>; edges: Set<string> }[]>((acc, s) => {
-  const prev = acc[acc.length - 1] ?? { nodes: new Set<string>(), edges: new Set<string>() }
-  acc.push({ nodes: new Set([...prev.nodes, ...s.nodes]), edges: new Set([...prev.edges, ...s.edges]) })
-  return acc
-}, [])
-
-const TOTAL = RAW.length
-
-// ─── component ────────────────────────────────────────────────────────────────
-
+/**
+ * /flow: how Secrets Manager authenticates the four integration patterns
+ * (FlowPlayer spec, DESIGN.md §10). Spring Boot, .NET (sidecar), ESO and
+ * GitHub Actions (OIDC) each present their own token; Secrets Manager checks
+ * Kubernetes tokens with the API server, the vault releases the credential
+ * and the app connects to MySQL. Steps: flow.s1..s9.
+ */
 export default function IntegrationFlow() {
   const { t } = useTranslation()
-  const reduce = useReducedMotion()
-  const [step, setStep] = useState(0)
 
-  const go = useCallback((d: 1 | -1) =>
-    setStep(s => Math.max(0, Math.min(TOTAL - 1, s + d))), [])
-
-  // Scoped keyboard nav: arrows only steer the stepper when it (or a child) has
-  // focus, so we don't hijack page-wide ArrowLeft/Right / scrolling.
-  const onKey = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowRight') { e.preventDefault(); go(1) }
-    if (e.key === 'ArrowLeft')  { e.preventDefault(); go(-1) }
-  }
-
-  const vis   = CUM[step]
-  const hi    = new Set(RAW[step].hi)
-  const isAll = step === TOTAL - 1
+  const spec = useMemo<FlowSpec>(() => {
+    const s = (k: string) => t(`idflow.${k}`)
+    const pend = s('st_pending')
+    const step = (n: number) => ({ title: t(`flow.s${n}_title`), desc: t(`flow.s${n}_desc`) })
+    const tokenRow = (k: string) => ({
+      label: s('r_token'), k,
+      states: [{ v: 'none', text: pend, tone: 'muted' as const }, { v: 'ok', text: s('st_ok'), tone: 'ok' as const }],
+    })
+    const auth = (n: number, edge: string, tok: string, label: string) => [
+      { t: 'packet' as const, at: 0.3, edge, label },
+      { t: 'set' as const, at: 1.2, k: 'authn', v: 'check' },
+      { t: 'set' as const, at: 1.7, k: 'authn', v: 'ok', pop: true },
+      { t: 'set' as const, at: 1.8, k: 'n', v: String(n), pop: true },
+      { t: 'packet' as const, at: 2.0, edge, label: 'API token', reverse: true },
+      { t: 'set' as const, at: 3.0, k: tok, v: 'ok', pop: true },
+    ]
+    return {
+      id: 'intflow',
+      ariaLabel: t('flow.aria_label'),
+      initial: { sp: 'none', dn: 'none', es: 'none', gh: 'none', authn: 'idle', n: '0', vault: 'idle', k8s: 'idle', db: 'idle' },
+      nodes: [
+        { id: 'spring', domain: 'k8s', Icon: Leaf, title: 'Spring Boot', sub: 'authn-jwt/eks-latam', rows: [tokenRow('sp')] },
+        { id: 'dotnet', domain: 'k8s', Icon: Container, title: '.NET 8', sub: 'Secrets Provider', rows: [tokenRow('dn')] },
+        { id: 'eso', domain: 'k8s', Icon: ShoppingCart, title: 'ESO Shop', sub: 'eso-shop-sa', rows: [tokenRow('es')] },
+        { id: 'gha', domain: 'neutral', Icon: Github, title: 'GitHub Actions', sub: 'OIDC JWT', rows: [tokenRow('gh')] },
+        { id: 'conjur', domain: 'idira', Icon: Box, title: 'IDIRA Secrets Manager', sub: 'authn-jwt · policy', rows: [
+          { label: 'authn-jwt', k: 'authn', states: [{ v: 'idle', text: s('st_idle'), tone: 'muted' }, { v: 'check', text: s('st_check'), tone: 'warn' }, { v: 'ok', text: s('st_valid'), tone: 'ok' }] },
+          { label: 'workloads', k: 'n', states: ['0', '1', '2', '3', '4'].map(v => ({ v, text: `${v}/4`, tone: v === '0' ? 'muted' as const : 'ok' as const })) },
+          { label: 'vault', k: 'vault', states: [{ v: 'idle', text: s('st_idle'), tone: 'muted' }, { v: 'ok', text: s('st_delivered'), tone: 'ok' }] },
+        ] },
+        { id: 'vault', domain: 'idira', Icon: Vault, title: t('architecture.nodes.secrets'), sub: 'data/vault/dev-demo-aslan' },
+        { id: 'k8sapi', domain: 'k8s', Icon: Server, title: 'K8s API Server', sub: 'TokenReview', rows: [
+          { label: 'JWT', k: 'k8s', states: [{ v: 'idle', text: s('st_idle'), tone: 'muted' }, { v: 'check', text: s('st_check'), tone: 'warn' }, { v: 'ok', text: s('st_valid'), tone: 'ok' }] },
+        ] },
+        { id: 'db', domain: 'svc', Icon: Database, title: 'MySQL', sub: 'mysql.demo.local', rows: [
+          { label: s('r_session'), k: 'db', states: [{ v: 'idle', text: pend, tone: 'muted' }, { v: 'ok', text: s('st_connected'), tone: 'ok' }] },
+        ] },
+      ],
+      edgeKinds: {
+        'sp-cj': 'identity', 'dn-cj': 'identity', 'es-cj': 'identity', 'gh-cj': 'identity',
+        'cj-k8': 'identity', 'vt-cj': 'secret', 'app-db': 'access',
+      },
+      layouts: {
+        wide: {
+          w: 980, h: 480,
+          boxes: {
+            spring: { x: 16, y: 56, w: 180, h: 84 },
+            dotnet: { x: 16, y: 156, w: 180, h: 84 },
+            eso: { x: 16, y: 256, w: 180, h: 84 },
+            gha: { x: 16, y: 380, w: 180, h: 84 },
+            conjur: { x: 390, y: 170, w: 220, h: 140 },
+            vault: { x: 390, y: 370, w: 220, h: 60 },
+            db: { x: 720, y: 60, w: 190, h: 84 },
+            k8sapi: { x: 720, y: 370, w: 190, h: 84 },
+          },
+          zones: [
+            { d: 'k8s', x: 6, y: 42, w: 200, h: 308 },
+            { d: 'idira', x: 380, y: 156, w: 240, h: 308 },
+            { d: 'svc', x: 710, y: 46, w: 210, h: 108 },
+            { d: 'k8s', x: 710, y: 356, w: 210, h: 108 },
+          ],
+          edges: {
+            'sp-cj': 'M 196,98 C 300,98 300,200 390,200',
+            'dn-cj': 'M 196,198 C 300,198 300,225 390,225',
+            'es-cj': 'M 196,298 C 300,298 300,255 390,255',
+            'gh-cj': 'M 196,422 C 320,422 320,282 390,282',
+            'cj-k8': 'M 610,260 C 670,260 660,412 720,412',
+            'vt-cj': 'M 500,370 L 500,310',
+            'app-db': 'M 106,56 C 106,18 815,18 815,60',
+          },
+        },
+        narrow: {
+          w: 360, h: 1040, title: 14,
+          boxes: {
+            spring: { x: 16, y: 40, w: 190, h: 84 },
+            dotnet: { x: 16, y: 140, w: 190, h: 84 },
+            eso: { x: 16, y: 240, w: 190, h: 84 },
+            gha: { x: 16, y: 360, w: 190, h: 84 },
+            conjur: { x: 40, y: 500, w: 260, h: 140 },
+            vault: { x: 70, y: 660, w: 220, h: 60 },
+            k8sapi: { x: 70, y: 800, w: 220, h: 84 },
+            db: { x: 70, y: 930, w: 220, h: 84 },
+          },
+          zones: [
+            { d: 'k8s', x: 6, y: 26, w: 210, h: 308 },
+            { d: 'idira', x: 30, y: 486, w: 280, h: 268 },
+            { d: 'k8s', x: 60, y: 786, w: 240, h: 108 },
+            { d: 'svc', x: 60, y: 916, w: 240, h: 108 },
+          ],
+          edges: {
+            'sp-cj': 'M 206,82 C 300,82 285,440 285,500',
+            'dn-cj': 'M 206,182 C 270,182 262,440 262,500',
+            'es-cj': 'M 206,282 C 245,282 239,440 239,500',
+            'gh-cj': 'M 206,402 C 220,402 216,440 216,500',
+            'cj-k8': 'M 40,610 C 12,610 12,842 70,842',
+            'vt-cj': 'M 180,660 L 180,640',
+            'app-db': 'M 206,62 C 356,62 356,972 290,972',
+          },
+        },
+      },
+      steps: [
+        { ...step(1), focus: ['spring', 'dotnet', 'eso', 'gha'], end: 0.8, fx: [] },
+        { ...step(2), focus: ['conjur'], end: 0.8, fx: [] },
+        { ...step(3), focus: ['conjur', 'k8sapi'], end: 3.0, fx: [
+          { t: 'packet', at: 0.3, edge: 'cj-k8', label: 'TokenReview' },
+          { t: 'set', at: 1.2, k: 'k8s', v: 'check' },
+          { t: 'set', at: 1.7, k: 'k8s', v: 'ok', pop: true },
+          { t: 'packet', at: 1.9, edge: 'cj-k8', label: 'ok', reverse: true },
+        ] },
+        { ...step(4), focus: ['spring', 'conjur'], end: 3.6, fx: auth(1, 'sp-cj', 'sp', 'SA JWT') },
+        { ...step(5), focus: ['dotnet', 'conjur'], end: 3.6, fx: auth(2, 'dn-cj', 'dn', 'SA JWT') },
+        { ...step(6), focus: ['gha', 'conjur'], end: 3.6, fx: auth(3, 'gh-cj', 'gh', 'OIDC JWT') },
+        { ...step(7), focus: ['eso', 'conjur'], end: 3.6, fx: auth(4, 'es-cj', 'es', 'SA JWT') },
+        { ...step(8), focus: ['vault', 'conjur'], end: 2.4, fx: [
+          { t: 'packet', at: 0.3, edge: 'vt-cj', label: 'DB_USER · DB_PASS' },
+          { t: 'set', at: 1.3, k: 'vault', v: 'ok', pop: true },
+        ] },
+        { ...step(9), focus: ['spring', 'db'], end: 3.6, fx: [
+          { t: 'packet', at: 0.3, edge: 'sp-cj', label: 'DB_PASS', kind: 'secret', reverse: true },
+          { t: 'packet', at: 1.6, edge: 'app-db', label: 'connect' },
+          { t: 'set', at: 2.7, k: 'db', v: 'ok', pop: true },
+        ] },
+      ],
+    }
+  }, [t])
 
   return (
     <section id="flow" className="py-24 px-6 bg-bg-muted/40">
       <div className="max-w-6xl mx-auto space-y-10">
-
-        {/* ── header ── */}
         <div className="text-center space-y-3">
-          <span className="badge bg-conjur-cyan/10 text-conjur-cyan border border-conjur-cyan/20">
+          <span className="badge bg-idira-blue/10 text-tone-accent border border-idira-blue/20">
             {t('flow.badge')}
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold">{t('flow.title')}</h2>
           <p className="text-text-muted max-w-2xl mx-auto text-sm">{t('flow.subtitle')}</p>
         </div>
-
-        {/* ── card ── */}
-        <div
-          className="rounded-2xl border border-border bg-bg-card overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue"
-          tabIndex={0}
-          role="group"
-          aria-label={t('flow.title')}
-          onKeyDown={onKey}
-        >
-
-          {/* step bar */}
-          <div className="border-b border-border px-5 py-3.5 flex items-center gap-4">
-            <AnimatePresence mode="wait">
-              <motion.div key={step}
-                initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.2 }}
-                className="flex-1 min-w-0"
-              >
-                <p className="text-[10px] font-mono text-conjur-gold/60 mb-0.5">
-                  {t('flow.step_of', { current: step + 1, total: TOTAL })}
-                </p>
-                <p className="text-sm font-semibold text-text leading-snug">
-                  {t(`flow.s${step + 1}_title`)}
-                </p>
-              </motion.div>
-            </AnimatePresence>
-
-            <div className="flex items-center gap-1.5 flex-shrink-0">
-              <button onClick={() => go(-1)} disabled={step === 0}
-                className="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-border text-text-muted hover:text-text hover:border-text-muted disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
-                aria-label="Previous step">
-                <ChevronLeft size={15} aria-hidden="true" />
-              </button>
-              <button onClick={() => go(1)} disabled={step === TOTAL - 1}
-                className="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-border text-text-muted hover:text-text hover:border-text-muted disabled:opacity-25 disabled:cursor-not-allowed transition-colors"
-                aria-label="Next step">
-                <ChevronRight size={15} aria-hidden="true" />
-              </button>
-              <button onClick={() => setStep(0)}
-                className="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-border text-text-muted hover:text-conjur-gold hover:border-conjur-gold/40 transition-colors"
-                aria-label="Reset" title="Reset">
-                <RotateCcw size={13} aria-hidden="true" />
-              </button>
-            </div>
-          </div>
-
-          {/* SVG graph, pinned to a fixed dark canvas so the dark-tuned diagram
-              stays legible in both light and dark themes */}
-          <div className="px-4 pt-5 pb-3">
-            <div className="overflow-x-auto rounded-xl border border-border bg-[#050d1a] p-4">
-            <svg
-              viewBox="0 0 870 415"
-              style={{ minWidth: 560, width: '100%' }}
-              role="img"
-              aria-label={t('flow.aria_label')}
-            >
-              <defs>
-                {/* arrowhead markers per color */}
-                {(Object.keys(C) as CK[]).map(k => (
-                  <marker key={k} id={`ah-${k}`}
-                    markerWidth="7" markerHeight="7"
-                    refX="6.5" refY="3.5" orient="auto">
-                    <path d="M 0 1 L 7 3.5 L 0 6 z" fill={C[k].stroke} />
-                  </marker>
-                ))}
-                {/* subtle glow filter for Conjur node */}
-                <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-                  <feGaussianBlur stdDeviation="4" result="blur" />
-                  <feMerge>
-                    <feMergeNode in="blur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              </defs>
-
-              {/* ── edges ─────────────────────────────────────────────── */}
-              {EDGES.map(e => {
-                const show   = vis.edges.has(e.id)
-                const active = hi.has(e.id) || isAll
-                return (
-                  <g key={e.id}>
-                    <motion.path
-                      d={e.d}
-                      stroke={C[e.ck].stroke}
-                      strokeWidth={active ? 2 : 1.5}
-                      fill="none"
-                      markerEnd={`url(#ah-${e.ck})`}
-                      initial={{ pathLength: 0, opacity: 0 }}
-                      animate={{
-                        pathLength: show ? 1 : 0,
-                        opacity: show ? (active ? 1 : 0.22) : 0,
-                      }}
-                      transition={{ duration: 0.75, ease: 'easeInOut' }}
-                    />
-                    {/* edge label */}
-                    {e.tag != null && (
-                      <motion.text
-                        x={e.lx} y={e.ly}
-                        fill={C[e.ck].stroke}
-                        fontSize="9"
-                        textAnchor="middle"
-                        fontFamily="JetBrains Mono, monospace"
-                        fontWeight="500"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: show ? (active ? 0.9 : 0.25) : 0 }}
-                        transition={{ delay: show ? 0.55 : 0, duration: 0.3 }}
-                      >
-                        {e.tag}
-                      </motion.text>
-                    )}
-                  </g>
-                )
-              })}
-
-              {/* ── nodes ─────────────────────────────────────────────── */}
-              {NODES.map(n => {
-                const show   = vis.nodes.has(n.id)
-                const active = hi.has(n.id) || isAll
-                const c      = C[n.ck]
-                const cx     = n.x + n.w / 2
-                const cy     = n.y + n.h / 2
-
-                return (
-                  <motion.g
-                    key={n.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: show ? 1 : 0 }}
-                    transition={{ duration: 0.4, ease: 'easeOut' }}
-                  >
-                    {/* glow ring for active featured node */}
-                    {n.feat && active && (
-                      <motion.rect
-                        x={n.x - 8} y={n.y - 8}
-                        width={n.w + 16} height={n.h + 16}
-                        rx="16"
-                        fill={c.stroke}
-                        fillOpacity={0}
-                        stroke={c.stroke}
-                        strokeWidth="1"
-                        strokeOpacity="0.35"
-                        filter="url(#glow)"
-                        animate={reduce ? { strokeOpacity: 0.35 } : { strokeOpacity: [0.2, 0.5, 0.2] }}
-                        transition={reduce ? { duration: 0 } : { duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-                      />
-                    )}
-
-                    {/* card background */}
-                    <rect
-                      x={n.x} y={n.y} width={n.w} height={n.h} rx="10"
-                      fill={active ? c.bg : 'rgba(12,24,40,0.8)'}
-                      stroke={c.border}
-                      strokeWidth={active ? 1.5 : 0.75}
-                      strokeOpacity={active ? 1 : 0.3}
-                    />
-
-                    {/* node label */}
-                    <text
-                      x={n.x + 12} y={n.y + (n.feat ? 24 : 22)}
-                      fill={active ? c.text : 'rgba(148,163,184,0.4)'}
-                      fontSize={n.feat ? 12 : 11}
-                      fontWeight="600"
-                      fontFamily="Inter, system-ui, sans-serif"
-                    >
-                      {n.label}
-                    </text>
-
-                    {/* sublabel */}
-                    <text
-                      x={n.x + 12} y={n.y + (n.feat ? 44 : 39)}
-                      fill={active ? 'rgba(148,163,184,0.6)' : 'rgba(148,163,184,0.2)'}
-                      fontSize="8.5"
-                      fontFamily="JetBrains Mono, monospace"
-                    >
-                      {n.sub}
-                    </text>
-
-                    {/* live pulse dot for active Conjur node */}
-                    {n.feat && (
-                      <motion.circle
-                        cx={n.x + n.w - 16} cy={n.y + 16} r="4"
-                        fill={c.stroke}
-                        animate={
-                          reduce
-                            ? { opacity: active ? 1 : 0.15, r: active ? 4 : 3 }
-                            : active ? { opacity:[0.4,1,0.4], r:[3,4.5,3] } : { opacity:0.15, r:3 }
-                        }
-                        transition={reduce ? { duration: 0 } : { duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                      />
-                    )}
-
-                    {/* invisible hit area for future interactivity */}
-                    <rect x={n.x} y={n.y} width={n.w} height={n.h} rx="10" fill="transparent"
-                      aria-label={n.label} role="img"
-                      style={{ cursor: 'default' }}
-                    />
-
-                    {/* suppress unused var warning */}
-                    <>{cx}{cy}</>
-                  </motion.g>
-                )
-              })}
-            </svg>
-            </div>
-          </div>
-
-          {/* description */}
-          <div className="px-5 pb-4 pt-1 min-h-[52px]">
-            <AnimatePresence mode="wait">
-              <motion.p key={step}
-                initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.22 }}
-                className="text-sm text-text-muted leading-relaxed"
-              >
-                {t(`flow.s${step + 1}_desc`)}
-              </motion.p>
-            </AnimatePresence>
-          </div>
-
-          {/* progress bar */}
-          <div className="h-0.5 bg-bg-base/50 mx-5 mb-4 rounded-full overflow-hidden">
-            <motion.div
-              className="h-full w-full origin-left rounded-full bg-conjur-cyan/50"
-              animate={{ scaleX: (step + 1) / TOTAL }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
-            />
-          </div>
-        </div>
-
-        {/* keyboard hint */}
-        <p className="text-center text-xs text-text-muted select-none">
-          {t('flow.keyboard_hint')}
-        </p>
+        <FlowPlayer spec={spec} />
       </div>
     </section>
   )
