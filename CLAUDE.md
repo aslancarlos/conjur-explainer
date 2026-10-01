@@ -89,7 +89,7 @@ If you forget `returnObjects: true`, i18next returns a comma-joined string inste
 | File | What to know |
 |---|---|
 | `src/App.tsx` | Controls section render order. To add a section, import and place it here. |
-| `src/i18n.ts` | Initialises i18next once. `fallbackLng: 'en'`. Language detection uses the browser's `navigator.language`. |
+| `src/i18n.ts` | Initialises i18next once. `fallbackLng: 'en'`. Every visit follows the browser language (`navigator.languages`, mapped to en/pt/es, unsupported falls back to en); only an explicit pick in the language switch is stored (`localStorage` key `idira-lang`, `LANG_KEY`) and wins. pt/es bundles load on demand. |
 | `tailwind.config.js` | All color tokens live here. Add new pattern colors here before using them in components. |
 | `src/index.css` | Shared component classes: `.section-card`, `.badge`, `.code-block`, `.step-connector`. Check here before creating new CSS. |
 | `k8s/kubernetes-dashboard.yaml` | Large multi-resource, multi-namespace manifest. Contains the real skip-login RBAC and the nginx proxy ConfigMap. Do not regenerate the admin-user token secret: it is already bound. |

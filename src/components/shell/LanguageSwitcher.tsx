@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import { LANG_KEY } from '../../i18n'
 
 export const LANGS = ['en', 'pt', 'es'] as const
 
@@ -45,7 +46,7 @@ export default function LanguageSwitcher({ tone = 'theme', className = '' }: { t
         <button
           key={lang}
           type="button"
-          onClick={() => i18n.changeLanguage(lang)}
+          onClick={() => { try { localStorage.setItem(LANG_KEY, lang) } catch { /* private mode */ } i18n.changeLanguage(lang) }}
           aria-pressed={current === lang}
           aria-label={lang.toUpperCase()}
           className={`inline-flex h-9 items-center gap-1.5 rounded-md px-2 text-xs font-semibold transition-colors duration-200 ${current === lang ? active : idle}`}

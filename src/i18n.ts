@@ -3,6 +3,9 @@ import { initReactI18next } from 'react-i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import en from './locales/en.json'
 
+/** localStorage key holding the visitor's explicit language choice. */
+export const LANG_KEY = 'idira-lang'
+
 // English ships in the initial bundle (it is the default and the fallback).
 // The other locales are code-split and fetched on demand the first time they
 // are selected, keeping pt/es out of the initial download.
@@ -17,6 +20,17 @@ i18n
   .init({
     resources: { en: { translation: en } },
     fallbackLng: 'en',
+    // Every visit follows the browser language (navigator.languages), mapped
+    // to the closest supported one (es-MX -> es, pt-PT -> pt, fr -> en). Only
+    // an explicit choice in the language switch is stored (LANG_KEY) and wins.
+    supportedLngs: ['en', 'pt', 'es'],
+    nonExplicitSupportedLngs: true,
+    load: 'languageOnly',
+    detection: {
+      order: ['localStorage', 'navigator', 'htmlTag'],
+      lookupLocalStorage: LANG_KEY,
+      caches: [],
+    },
     interpolation: { escapeValue: false },
     // pt/es are code-split and loaded on demand (see ensureLocale below). With
     // react-i18next's default useSuspense, a non-English detected language would
