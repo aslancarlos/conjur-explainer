@@ -133,7 +133,7 @@ A returning visitor's locale (pt/es) is loaded **before** the first render (`loc
 
 ## 7. Page anatomy
 
-**Home stays clean:** hero ("Every workload, its own identity", CTAs open the first two Concepts pages) → **flow, live** (Command Center diagram, always-dark band) → **"Learn the concepts"** cards (one per Concepts page) → compact demo links (same use case / product switch). Teaching content lives on the Concepts pages; demo detail on the demo pages.
+**Home stays clean:** hero ("Every workload, its own identity", CTAs open the first two Concepts pages) → **see it live** (`IdentityFlows`: two paths on one GSAP timeline. Path 1: Kubernetes ServiceAccount JWT → IDIRA Secrets Manager authn-jwt → access token → policy → vault → MySQL. Path 2: IDIRA SWA SVID → AWS STS AssumeRoleWithWebIdentity → temporary credentials → S3, no secret. Lazy-loaded so GSAP stays off the first paint) → **"Learn the concepts"** cards → compact demo links (same use case / product switch). Teaching content lives on the Concepts pages; demo detail on the demo pages.
 
 **Concepts pages** (`/concepts/*`, menu group *Concepts*, right under Home in both grouping views): a learning trail rendered by `ConceptLayout` (compact dark hero band with "Concepts · n/5", content, previous/next links in the order of the group in `lib/nav.ts`):
 
@@ -208,7 +208,7 @@ All interactive targets ≥ 44×44 px with ≥ 8 px spacing. Icon-only buttons n
 
 Reference implementation: `src/pages/DualAccountsPage.tsx`.
 
-**Ambient hero diagrams** (home Command Center): no GSAP, no infinite loops. One journey at a time driven by a `requestAnimationFrame` token on `getPointAtLength`, a visible **Pause** button (WCAG 2.2.2), auto-pause on hover/focus, off-screen (IntersectionObserver) and hidden tabs, static under reduced motion, nodes link to their page, and a vertical chip/stepper variant below 640 px instead of sideways scrolling.
+**Ambient diagrams** (no step controls): no GSAP, no infinite loops. One journey at a time driven by a `requestAnimationFrame` token on `getPointAtLength`, a visible **Pause** button (WCAG 2.2.2), auto-pause on hover/focus, off-screen (IntersectionObserver) and hidden tabs, static under reduced motion, nodes link to their page, and a vertical chip/stepper variant below 640 px instead of sideways scrolling.
 
 **When:** step-by-step explanations of a system flow → **GSAP** (`gsap` + `MotionPathPlugin`, own lazy chunk). Simple entrances, hovers, text crossfades → Framer Motion (already in the bundle). Don't mix both on the same element.
 
@@ -220,6 +220,7 @@ Reference implementation: `src/pages/DualAccountsPage.tsx`.
 - Derive the current step from the playhead in `onUpdate` and write progress fills via refs (no React state per frame).
 
 **Visual grammar**
+- Identity diagrams use three packet kinds, each with icon + label + colour: **identity** (Fingerprint, `tone-accent`: JWT, SVID, access token), **secret / credential** (KeyRound, `tone-live`: DB password, temporary cloud credentials), **service access** (Plug, neutral). Show the legend under the diagram.
 - Packets: pill with label, travels an edge in **1.0 s** `power1.inOut` via MotionPath; the edge overlay draws with dash-offset in sync. Data plane = `tone-live`, control plane = `tone-accent`.
 - Current-step focus = neutral ring (`stroke-text-2/60`), not a colour.
 - State changes cross-fade (0.25 s out / 0.3 s in); emphasis "pop" = scale 0.85→1, `back.out(2.2)`, 0.45 s.
