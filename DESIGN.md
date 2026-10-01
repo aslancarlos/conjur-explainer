@@ -1,10 +1,10 @@
-# DESIGN.md — demo.minha.cloud
+# DESIGN.md: demo.minha.cloud
 
 The design contract for everything served under **demo.minha.cloud** (this repo).
 Read it before building or changing any page, component, diagram or animation.
 
 **Source of truth, in order:** this file → tokens in `src/index.css` + `tailwind.config.js` → existing components.
-If code and this file disagree, fix the code or update this file in the same PR — never let them drift.
+If code and this file disagree, fix the code or update this file in the same PR: never let them drift.
 
 > Supersedes `docs/IDIRA-REDESIGN.md` (May 2026), whose palette values are out of date.
 
@@ -14,7 +14,7 @@ If code and this file disagree, fix the code or update this file in the same PR 
 
 1. **Technically true first.** This is a sales-engineering demo. Every flow, name and number must match the product docs or the real demo environment. Cite sources on the page. Never invent defaults or metrics.
 2. **Colour carries meaning, never decoration.** Status, data flow and ownership each have reserved colours (§3). If a colour doesn't mean something, use a neutral.
-3. **One idea per view.** Highlight the 1–2 elements that matter in the current step; everything else stays calm and readable.
+3. **One idea per view.** Highlight the 1-2 elements that matter in the current step; everything else stays calm and readable.
 4. **Motion explains cause → effect.** Animate what moves in the real system (a request, a credential, a status flip). Nothing loops for decoration.
 5. **Works for everyone.** WCAG AA contrast in both themes, keyboard operable, screen-reader narrated, reduced-motion safe, 390 px phones without horizontal scroll.
 
@@ -22,7 +22,7 @@ If code and this file disagree, fix the code or update this file in the same PR 
 
 ## 2. Brand & themes
 
-- Visual language follows Palo Alto Networks **IDIRA**. The top bar shows the **official "IDIRA by Palo Alto Networks" lockup** (`src/assets/brand/idira-logo-light.png` on light backgrounds, `idira-logo-dark.png` on dark — the official dark artwork ships on solid black and was converted to alpha by un-compositing it from black, which is exact: re-composited on black it differs by ≤ 6/255, the JPEG noise floor). Only margins were cropped; never recolour or redraw the mark, and don't rely on `mix-blend-mode` over the translucent top bar (it shows a box). In running text the brand reads `Palo Alto Networks | IDIRA`.
+- Visual language follows Palo Alto Networks **IDIRA**. The top bar shows the **official "IDIRA by Palo Alto Networks" lockup** (`src/assets/brand/idira-logo-light.png` on light backgrounds, `idira-logo-dark.png` on dark: the official dark artwork ships on solid black and was converted to alpha by un-compositing it from black, which is exact: re-composited on black it differs by ≤ 6/255, the JPEG noise floor). Only margins were cropped; never recolour or redraw the mark, and don't rely on `mix-blend-mode` over the translucent top bar (it shows a box). In running text the brand reads `Palo Alto Networks | IDIRA`.
 - Two themes, user-selectable (`useTheme()`, persisted in `localStorage('idira-theme')`, applied as `data-theme` + `.dark` on `<html>` before paint).
 - **Always-dark zones** ignore the theme: the hero band and the live-flow band (`bg-[#070c1c]`). Text inside them uses `text-white` / `text-slate-300/90`.
 - Official art: `src/assets/brand/security-layers-blue.png` (hero backdrop), `idira-icon-color.png`. Don't recolour or crop them.
@@ -45,17 +45,17 @@ Always use **semantic tokens** via Tailwind classes. **No raw hex in new compone
 | `text-text-2` | `--rgb-text-2` | `42 51 68` | `200 210 226` | Body / secondary |
 | `text-text-muted` | `--rgb-text-muted` | `91 100 120` | `139 150 173` | Labels, captions (≥ 5.5:1) |
 
-### 3.2 Semantic tones — *what a signal means* (theme-aware, AA as text)
+### 3.2 Semantic tones. *what a signal means* (theme-aware, AA as text)
 
 | Token | Light | Dark | Reserved meaning |
 |---|---|---|---|
 | `tone-success` | `4 120 87` | `52 211 153` | Active, healthy, ready, done |
 | `tone-warning` | `161 98 7` | `255 184 0` | Pending, stale, in grace period, rotation due |
 | `tone-danger` | `185 28 28` | `255 122 89` | Error, failed, blocked |
-| `tone-live` | `14 116 144` | `0 212 255` | **Data plane** — requests, credentials, sync |
-| `tone-accent` | `0 72 184` | `125 176 255` | **Control plane** — policy, rotation commands |
+| `tone-live` | `14 116 144` | `0 212 255` | **Data plane**: requests, credentials, sync |
+| `tone-accent` | `0 72 184` | `125 176 255` | **Control plane**. Policy, rotation commands |
 
-### 3.3 Domain colours — *who owns a component* (diagrams)
+### 3.3 Domain colours: *who owns a component* (diagrams)
 
 | Token | Light | Dark | Owns |
 |---|---|---|---|
@@ -82,7 +82,7 @@ Rules:
 
 ## 4. Typography
 
-- **Onest** (300–900) for UI and display; **IBM Plex Mono** (400–600) for identifiers, paths, code, step counters. Loaded once in `index.html` with `display=swap`.
+- **Onest** (300-900) for UI and display; **IBM Plex Mono** (400-600) for identifiers, paths, code, step counters. Loaded once in `index.html` with `display=swap`.
 - Use mono for anything the reader might copy: `data/vault/<safe>/dbuser_dual/password`, `eso-shop-db-creds`, `refreshInterval: 1m`.
 
 | Role | Classes |
@@ -90,11 +90,11 @@ Rules:
 | Hero title | `font-semibold tracking-[-0.03em] leading-[1.02] text-[clamp(34px,5.2vw,60px)]` (home: up to 80 px) + accent words in `.idira-shimmer` |
 | Section title (h2) | `text-3xl sm:text-4xl font-bold` |
 | Card / step title | `text-base sm:text-lg font-semibold` |
-| Body | `text-base leading-relaxed text-text-2`, measure `max-w-[62ch]`–`[75ch]` |
-| Small / caption | `text-sm` / `text-xs` (12 px floor — never smaller for readable text) |
+| Body | `text-base leading-relaxed text-text-2`, measure `max-w-[62ch]`-`[75ch]` |
+| Small / caption | `text-sm` / `text-xs` (12 px floor. Never smaller for readable text) |
 | Badge | `.badge` (uppercase, `text-xs`, tracking-wide) |
 
-In SVG diagrams the minimum is **11 user units** at a render scale ≥ 1 (≈ 12 px), node titles 14–15, values 12–13 mono.
+In SVG diagrams the minimum is **11 user units** at a render scale ≥ 1 (≈ 12 px), node titles 14-15, values 12-13 mono.
 Headings are sequential (`h1` once per page → `h2` → `h3`).
 
 ---
@@ -119,8 +119,8 @@ Console-style shell, aligned with sinfonia.minha.cloud (`src/components/shell/`)
 | Top bar | Fixed, `h-14`, theme-aware (`bg-bg-card/90` + blur + `.nav-iridescent` line), like sinfonia.minha.cloud. Left: sidebar toggle (≥ lg collapses, < lg opens drawer) · official logo (36 px tall). Right: `/api` status · EN/PT/ES · theme. (`tone="dark"` variants of `ApiStatus`/`ThemeToggle`/`LanguageSwitcher` exist for always-dark surfaces) |
 | Sidebar (≥ 1024 px) | Left, fixed under the top bar, `w-60` (240 px) or `w-16` icons-only, choice persisted in `localStorage('idira-sidebar-collapsed')`. Theme-aware (`bg-bg-card`, `border-r border-border`). Rows 36 px (mouse) |
 | Drawer (< 1024 px) | Same navigation, slides from the left (`w-[min(20rem,85vw)]`), 55 % scrim, focus moves to Close, Esc / scrim / navigation close it, focus returns to the menu button, page scroll locked. Rows 44 px (touch); language switch in its footer |
-| Groups | Organised like the CyberArk docs — by **how a workload gets its secret**: Home · **Identity & access** (authn-jwt, policy, SWA) · **Kubernetes** (Spring Boot, Secrets Provider, ESO, CSI) · **CI/CD & automation** (GitHub Actions, Jenkins, Ansible) · **Credential lifecycle** (Dual Accounts, Secrets Hub) · Tools. Single source: `src/lib/nav.ts` (also feeds the home catalogue via `DEMO_GROUPS`) |
-| Group by | Segmented **Use case \| Product** switch at the top of the sidebar/drawer and in the home catalogue — one shared preference (`useNavView`, `localStorage('idira-nav-view')`). Product view: Secrets Manager · Secure Workload Access · Secrets Hub · PAM & Credential Providers (each item's `product` in `lib/nav.ts`), Tools stay last. Long product names wrap, never truncate |
+| Groups | Organised like the CyberArk docs: by **how a workload gets its secret**: Home · **Identity & access** (authn-jwt, policy, SWA) · **Kubernetes** (Spring Boot, Secrets Provider, ESO, CSI) · **CI/CD & automation** (GitHub Actions, Jenkins, Ansible) · **Credential lifecycle** (Dual Accounts, Secrets Hub) · Tools. Single source: `src/lib/nav.ts` (also feeds the home catalogue via `DEMO_GROUPS`) |
+| Group by | Segmented **Use case \| Product** switch at the top of the sidebar/drawer and in the home catalogue. One shared preference (`useNavView`, `localStorage('idira-nav-view')`). Product view: Secrets Manager · Secure Workload Access · Secrets Hub · PAM & Credential Providers (each item's `product` in `lib/nav.ts`), Tools stay last. Long product names wrap, never truncate |
 | Group disclosure | Each group header is a button (chevron + label, `aria-expanded`/`aria-controls`) that shows/hides its items; hidden groups show their item count. State persisted in `localStorage('idira-nav-groups')`; the group holding the current page always opens. Icon rail shows every item, no headers |
 | Current page | Tinted row + 3 px `idira-blue` left bar + `aria-current="page"` |
 | Icons | One per page, coloured with the page accent only if it reaches 3:1 in **both** themes; otherwise a theme-aware token (`domain-idira`, `domain-cp`, `text-text-2`) |
@@ -135,7 +135,7 @@ A returning visitor's locale (pt/es) is loaded **before** the first render (`loc
 
 **Home stays clean:** hero ("Every workload, its own identity", CTAs open the first two Concepts pages) → **flow, live** (Command Center diagram, always-dark band) → **"Learn the concepts"** cards (one per Concepts page) → compact demo links (same use case / product switch). Teaching content lives on the Concepts pages; demo detail on the demo pages.
 
-**Concepts pages** (`/concepts/*`, menu group *Concepts*, right under Home in both grouping views) — a learning trail rendered by `ConceptLayout` (compact dark hero band with "Concepts · n/5", content, previous/next links in the order of the group in `lib/nav.ts`):
+**Concepts pages** (`/concepts/*`, menu group *Concepts*, right under Home in both grouping views): a learning trail rendered by `ConceptLayout` (compact dark hero band with "Concepts · n/5", content, previous/next links in the order of the group in `lib/nav.ts`):
 
 | Route | Content |
 |---|---|
@@ -184,7 +184,7 @@ Hero band recipe (copy from `DualAccountsPage.tsx` / `Hero.tsx`):
 | `.section-card` | `bg-bg-card border border-border rounded-2xl p-8`. Concept card = icon tile (`h-10 w-10 rounded-lg bg-idira-blue/10 text-tone-accent`) + `h3` + text |
 | `.badge` | Pill label; on dark bands `bg-idira-gold/10 text-idira-gold border-idira-gold/30` |
 | `.code-block` | `bg-bg-muted border border-border rounded-xl p-4 font-mono text-sm overflow-x-auto` |
-| Primary button | `h-11 min-w-11 rounded-md bg-idira-blue text-white hover:bg-idira-blue-2 active:bg-idira-blue-deep` — one per view |
+| Primary button | `h-11 min-w-11 rounded-md bg-idira-blue text-white hover:bg-idira-blue-2 active:bg-idira-blue-deep`. One per view |
 | Secondary / icon button | `h-11 w-11 rounded-md border border-border text-text-2 hover:border-idira-blue hover:text-text`; disabled `opacity-40 cursor-not-allowed` |
 | Home CTA | `.cta-diagonal` clip-path, home only |
 | Legend | Two labelled groups: **Components** (domain swatches) · **Signals** (planes + status). Shapes differ (bar vs dot vs ring) so colour is never the only cue |
@@ -196,7 +196,7 @@ All interactive targets ≥ 44×44 px with ≥ 8 px spacing. Icon-only buttons n
 ## 9. Iconography
 
 - **lucide-react only** (currently 0.408). No emoji as icons or bullets.
-- Sizes: 14 (inline/labels), 16 (chips), 18 (buttons), 20 (concept tiles). Stroke 1.75–2.
+- Sizes: 14 (inline/labels), 16 (chips), 18 (buttons), 20 (concept tiles). Stroke 1.75-2.
 - Decorative icons get `aria-hidden="true"`; meaning lives in the adjacent text.
 - In SVG, render lucide components as nested `<svg>` with `x/y/width/height`; colour via `currentColor` (`className="text-domain-k8s"`).
 - Diagram node icon = **edge chip**: 12 r circle on the card's top edge (right side), `fill-surface` + domain stroke. Never beside the title (it breaks narrow layouts).
@@ -213,7 +213,7 @@ Reference implementation: `src/pages/DualAccountsPage.tsx`.
 **When:** step-by-step explanations of a system flow → **GSAP** (`gsap` + `MotionPathPlugin`, own lazy chunk). Simple entrances, hovers, text crossfades → Framer Motion (already in the bundle). Don't mix both on the same element.
 
 **Architecture**
-- **One master timeline** per diagram, paused. Each step adds labels `sN` (start) and `sN_end` (beats done); the gap to the next label is reading time (autoplay only, ≈ 3.5 words/s, clamped 4–12 s).
+- **One master timeline** per diagram, paused. Each step adds labels `sN` (start) and `sN_end` (beats done); the gap to the next label is reading time (autoplay only, ≈ 3.5 words/s, clamped 4-12 s).
 - Steps are **data** (`STEPS[]` of `{ focus, end, fx[] }`); effects are `packet`, `set` (cross-fade a state group), `grace`, etc. Rendering is declarative JSX with `data-*` hooks (`data-ring`, `data-edge`, `data-edge-hi`, `data-pkt`, `data-k`/`data-v`).
 - **Deterministic seeking is mandatory**: every state tween is an explicit `fromTo` against state tracked at build time, with `immediateRender: false`. When a tween scales/rotates, put `transformOrigin` (and `smoothOrigin: false`) in **both** `from` and `to`, or GSAP leaves a residual translate.
 - Build inside `gsap.context(…, svg)` and `ctx.revert()` on cleanup; rebuild on layout / language / reduced-motion change and re-seek to the current step.
@@ -226,15 +226,15 @@ Reference implementation: `src/pages/DualAccountsPage.tsx`.
 - Two layouts (`WIDE` ≈ 980×500, `NARROW` 360 wide, vertical) chosen at 640 px. Short label variants use `_short` i18n keys.
 - Labels over edges get a halo: `stroke-surface` + `paint-order: stroke`.
 
-**Controls:** prev · play/pause (primary) · next · restart; segmented timeline that is click-to-replay and drag-to-scrub, exposed as `role="slider"` with `aria-valuenow/valuetext`; keyboard scoped to the player (← → Home End Space) — never global listeners.
+**Controls:** prev · play/pause (primary) · next · restart; segmented timeline that is click-to-replay and drag-to-scrub, exposed as `role="slider"` with `aria-valuenow/valuetext`; keyboard scoped to the player (← → Home End Space). Never global listeners.
 
-**Motion tokens (UI):** micro 150–300 ms, text cross-fade 200 ms `easeOut`, theme transition 250 ms `cubic-bezier(.2,.7,.2,1)`. Animate `transform`/`opacity` only.
+**Motion tokens (UI):** micro 150-300 ms, text cross-fade 200 ms `easeOut`, theme transition 250 ms `cubic-bezier(.2,.7,.2,1)`. Animate `transform`/`opacity` only.
 
 ---
 
 ## 11. Accessibility checklist
 
-- Contrast: text ≥ 4.5:1, large text/icons/meaningful strokes ≥ 3:1 — **in both themes**.
+- Contrast: text ≥ 4.5:1, large text/icons/meaningful strokes ≥ 3:1. **in both themes**.
 - Visible focus (`:focus-visible` 2 px `#2589ff`), skip link present, logical tab order.
 - Animated diagram: `role="img"` + `aria-label` that includes the current step title; narration in an `aria-live="polite"` region with a screen-reader-only "Step N of M: title".
 - `prefers-reduced-motion`: jump to each step's end state (no packets), autoplay advances by reading time; global CSS already neutralises CSS animations.
@@ -244,7 +244,9 @@ Reference implementation: `src/pages/DualAccountsPage.tsx`.
 
 ## 12. Content, i18n & data
 
-- Three locales — `en`, `pt`, `es` — always updated together with identical keys/shape (`t(key, { returnObjects: true })` for arrays).
+- **Never use the em dash (U+2014) or the en dash (U+2013), in any language, anywhere:** UI copy, docs, comments, commits. Rewrite with a colon, comma, period or parentheses; use a hyphen for ranges (`1-5`) and compound words (`zero-downtime`). Check before merging: `rg -n "\x{2014}|\x{2013}" src DESIGN.md CLAUDE.md index.html` must return nothing.
+
+- Three locales (`en`, `pt`, `es`) always updated together with identical keys/shape (`t(key, { returnObjects: true })` for arrays).
 - No user-facing strings hard-coded in components, including SVG. Exceptions: literal identifiers (`dbuser_dual`, `CurrInd`, `refreshInterval: 1m`).
 - Use the **real demo identifiers** where they exist (Safe, VirtualUserName, Secret names from the manifests). Mark illustrative values as such in review.
 - Link the product docs a page is based on (see the sources row on `/dualaccounts`).
@@ -264,7 +266,7 @@ Reference implementation: `src/pages/DualAccountsPage.tsx`.
 2. Check light + dark, en + pt + es, 1280 px and 390 px.
 3. For diagrams, run the in-browser checks used for `/dualaccounts`: no text overflowing its card, no text/icon-chip collisions, `document.documentElement.scrollWidth === innerWidth`, and a determinism test (seek to random times, then back to probe times; snapshots must match).
 4. New colours: verify contrast with the WCAG formula against `surface` **and** `bg-alt` in both themes; record the values in §3.
-5. After editing `tailwind.config.js`, **restart** `npm run dev` — the dev server does not pick up new utilities.
+5. After editing `tailwind.config.js`, **restart** `npm run dev`: the dev server does not pick up new utilities.
 
 ---
 
@@ -272,8 +274,8 @@ Reference implementation: `src/pages/DualAccountsPage.tsx`.
 
 - Older components still use raw hex (`#64748b` ×67, `#94a3b8` ×57, `#a78bfa` ×50, `#4ade80` ×44 …). Migrate to tokens when touching them.
 - `CLAUDE.md` deploy section still shows `:latest`; production pins `aslancarlos/conjur-explainer:design2026rNN`.
-- `docs/IDIRA-REDESIGN.md` palette is outdated — this file wins.
-- Pre-existing horizontal overflow at 390 px on `/spring-boot` (137 px), `/dotnet` (94 px), `/eso-shop` (36 px) — also present before the shell change.
+- `docs/IDIRA-REDESIGN.md` palette is outdated: this file wins.
+- Pre-existing horizontal overflow at 390 px on `/spring-boot` (137 px), `/dotnet` (94 px), `/eso-shop` (36 px): also present before the shell change.
 - Some older pages (e.g. `/jenkins`) still use emoji as icons; replace with lucide when touched.
 - Home copy disagrees on counts ("Eight live integration patterns" vs "Twelve patterns"); align with the real catalogue.
 

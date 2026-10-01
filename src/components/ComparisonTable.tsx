@@ -98,7 +98,7 @@ export default function ComparisonTable() {
           </table>
         </motion.div>
 
-        {/* Best-for cards — 4 columns */}
+        {/* Best-for cards. 4 columns */}
         <motion.div
           initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.7 }}

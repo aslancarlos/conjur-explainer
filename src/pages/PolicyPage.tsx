@@ -54,46 +54,46 @@ interface PStep {
 }
 
 const PSTEPS: PStep[] = [
-  // 0 – overview: empty YAML, only root/account placeholder
+  // 0. Overview: empty YAML, only root/account placeholder
   { vLines: [],
     hLines: [],
     nodes:  ['account'],
     hi:     [] },
-  // 1 – root branch (account) + first !policy
+  // 1. Root branch (account) + first !policy
   { vLines: [1,2,3,4],
     hLines: [1,2,3,4],
     nodes:  ['account','prod'],
     hi:     ['account','prod'] },
-  // 2 – nested !policy creates the "app1" branch
+  // 2, nested !policy creates the "app1" branch
   { vLines: [1,2,3,4,5,6,7],
     hLines: [5,6,7],
     nodes:  ['account','prod','app1'],
     hi:     ['prod','app1'] },
-  // 3 – resources inside the branch + fully-qualified IDs
+  // 3. Resources inside the branch + fully-qualified IDs
   { vLines: [1,2,3,4,5,6,7,8],
     hLines: [8],
     nodes:  ['account','prod','app1','var'],
     hi:     ['app1','var'],
     showFqId: true },
-  // 4 – identity statements: !host and !group
+  // 4. Identity statements: !host and !group
   { vLines: [1,2,3,4,5,6,7,8,9,10],
     hLines: [9,10],
     nodes:  ['account','prod','app1','var','host','group'],
     hi:     ['host','group'] },
-  // 5 – !permit gives privileges
+  // 5. !permit gives privileges
   { vLines: [1,2,3,4,5,6,7,8,9,10,11,12,13,14],
     hLines: [11,12,13,14],
     nodes:  ['account','prod','app1','var','host','group'],
     hi:     ['group','var'],
     permit: true },
-  // 6 – !grant adds role members
+  // 6. !grant adds role members
   { vLines: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],
     hLines: [15,16,17],
     nodes:  ['account','prod','app1','var','host','group'],
     hi:     ['host','group'],
     permit: true,
     grant:  true },
-  // 7 – review: full picture
+  // 7. Review: full picture
   { vLines: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17],
     hLines: [],
     nodes:  ['account','prod','app1','var','host','group'],
@@ -220,7 +220,7 @@ export default function PolicyPage() {
             </div>
           </div>
 
-          {/* SVG diagram — YAML (left) + tree (right) */}
+          {/* SVG diagram. YAML (left) + tree (right) */}
           <div className="px-4 pt-5 pb-3 overflow-x-auto">
             <svg viewBox="0 0 900 380" style={{ minWidth:660, width:'100%' }} role="img" aria-label="Conjur policy structure diagram">
               <defs>
@@ -257,7 +257,7 @@ export default function PolicyPage() {
                 const hiCk     = ln.ck ?? 'slate'
                 return (
                   <g key={n}>
-                    {/* highlight band — drawn first so text sits on top */}
+                    {/* highlight band: drawn first so text sits on top */}
                     <AnimatePresence>
                       {isHi && (
                         <motion.rect x={32} y={y - 8} width={350} height={16} rx={3}

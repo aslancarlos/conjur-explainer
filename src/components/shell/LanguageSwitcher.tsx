@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 
 export const LANGS = ['en', 'pt', 'es'] as const
 
-// Inline SVG flags — crisp and cross-platform (emoji flags don't render on Windows).
+// Inline SVG flags: crisp and cross-platform (emoji flags don't render on Windows).
 // EN = US, PT = Brazil (LATAM audience), ES = Spain.
 const FLAGS: Record<(typeof LANGS)[number], ReactNode> = {
   en: (

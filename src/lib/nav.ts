@@ -8,7 +8,7 @@ import type { LucideIcon } from 'lucide-react'
 /**
  * Single source of truth for site navigation (sidebar, mobile drawer, home
  * demo catalogue). Groups follow how the CyberArk Secrets Manager docs organise
- * integrations — by HOW a workload gets its secret — not "examples vs
+ * integrations (by HOW a workload gets its secret) not "examples vs
  * integrations":
  *   Identity & access    → authenticators, policy, Secure Workload Access
  *   Kubernetes           → "Secure Kubernetes" (Spring Boot on K8s JWT,
@@ -17,7 +17,7 @@ import type { LucideIcon } from 'lucide-react'
  *   Credential lifecycle → PAM side: Dual Accounts rotation, Secrets Hub sync
  *   Tools                → explorers and live dashboards
  *
- * `href` marks sibling services outside the SPA — rendered as <a>, not <Link>.
+ * `href` marks sibling services outside the SPA, rendered as <a>, not <Link>.
  * `color` is the icon accent; it must reach 3:1 in both themes (DESIGN.md §6).
  * `demo` adds the item to the home catalogue (name, mechanism, i18n desc key).
  */

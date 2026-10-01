@@ -173,7 +173,7 @@ export default function SecretsHubPage() {
           </text>
           <text x={435} y={173} textAnchor="middle" fontSize={8.5} fill="#64748b">SaaS · CyberArk Identity Security Platform</text>
 
-          {/* Sync Policy pill — visible on step 5 */}
+          {/* Sync Policy pill. Visible on step 5 */}
           <AnimatePresence>
             {cur.showPolicy && (
               <motion.g key="policy" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>

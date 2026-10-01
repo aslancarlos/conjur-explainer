@@ -14,7 +14,7 @@ const C: Record<CK, { stroke: string; text: string; border: string; bg: string }
   slate:  { stroke: '#64748b', text: '#94a3b8', border: 'rgba(100,116,139,0.35)', bg: 'rgba(15,30,48,0.7)'  },
 }
 
-// ─── layout (ViewBox 0 0 860 490) — Command-Center style, no crossing lines ───
+// ─── layout (ViewBox 0 0 860 490). Command-Center style, no crossing lines ───
 //
 // Auth handshake runs across the TOP (auth ↑ / token ↓ over K8s API);
 // secret consumption runs across the BOTTOM (read → vault, secrets ← vault,
@@ -51,40 +51,40 @@ const NODES: N[] = [
 ]
 
 const EDGES: E[] = [
-  // Step 1 — K8s projects a short-lived JWT into the pod filesystem (vertical)
+  // Step 1. K8s projects a short-lived JWT into the pod filesystem (vertical)
   { id:'jwt-proj', d:'M 148,122 L 148,156',                              ck:'gold',   tag:'projected', lx:178, ly:142 },
-  // Step 2 — App sends JWT to Secrets Manager to authenticate (TOP lane, over K8s API)
+  // Step 2. App sends JWT to Secrets Manager to authenticate (TOP lane, over K8s API)
   { id:'auth-sm',  d:'M 256,80 C 420,44 500,58 636,96',                  ck:'gold',   tag:'JWT',       lx:432, ly:48  },
-  // Step 3a — SM forwards JWT to K8s API Server for validation (short, local)
+  // Step 3a. SM forwards JWT to K8s API Server for validation (short, local)
   { id:'sm-k8',    d:'M 636,138 C 590,146 560,146 516,146',              ck:'gold',   tag:'verify',    lx:574, ly:134 },
-  // Step 3b — K8s API Server confirms the workload identity (short, below verify)
+  // Step 3b. K8s API Server confirms the workload identity (short, below verify)
   { id:'k8-sm',    d:'M 516,158 C 560,160 590,160 636,156',              ck:'slate',  tag:'✓ ok',      lx:574, ly:172 },
-  // Step 3c — SM returns a short-lived API token to the app (TOP lane, below auth)
+  // Step 3c. SM returns a short-lived API token to the app (TOP lane, below auth)
   { id:'sm-app',   d:'M 636,110 C 500,82 420,74 256,100',                ck:'cyan',   tag:'API token', lx:432, ly:78  },
-  // Step 4 — Secrets Vault surfaces credentials to Secrets Manager (Vault → SM)
+  // Step 4. Secrets Vault surfaces credentials to Secrets Manager (Vault → SM)
   { id:'sm-vt',    d:'M 516,322 C 596,318 612,240 636,168',              ck:'cyan',   tag:'secrets',   lx:588, ly:252 },
-  // Step 5 — App Container reads secret values directly from Secrets Vault (drop, right of pod)
+  // Step 5. App Container reads secret values directly from Secrets Vault (drop, right of pod)
   { id:'app-vt',   d:'M 256,106 C 318,150 318,272 352,300',             ck:'cyan',   tag:'read',      lx:326, ly:214 },
-  // Step 6 — App connects to MySQL using retrieved credentials (left gutter → external)
+  // Step 6. App connects to MySQL using retrieved credentials (left gutter → external)
   { id:'app-db',   d:'M 92,122 C 24,260 24,406 148,406',                ck:'spring', tag:'connect',   lx:66,  ly:300 },
 ]
 
 // ─── step definitions (7 steps matching architecture.flow) ───────────────────
 
 const RAW: { nodes: string[]; edges: string[]; hi: string[] }[] = [
-  // s1 — Kubernetes projects JWT into the App Pod filesystem
+  // s1. Kubernetes projects JWT into the App Pod filesystem
   { nodes:['container','jwt'], edges:['jwt-proj'],              hi:['container','jwt','jwt-proj']                              },
-  // s2 — App authenticates with Secrets Manager using the JWT
+  // s2. App authenticates with Secrets Manager using the JWT
   { nodes:['sm'],              edges:['auth-sm'],               hi:['container','jwt','auth-sm','sm']                          },
-  // s3 — SM verifies identity with K8s API; returns API token to app
+  // s3. SM verifies identity with K8s API; returns API token to app
   { nodes:['k8sapi'],          edges:['sm-k8','k8-sm','sm-app'],hi:['sm','k8sapi','sm-k8','k8-sm','sm-app','container']        },
-  // s4 — Secrets Vault provides credentials to Secrets Manager (Vault → SM)
+  // s4. Secrets Vault provides credentials to Secrets Manager (Vault → SM)
   { nodes:['vault'],           edges:['sm-vt'],                 hi:['sm','vault','sm-vt']                                      },
-  // s5 (new) — App Container reads secret values directly from Secrets Vault
+  // s5 (new). App Container reads secret values directly from Secrets Vault
   { nodes:[],                  edges:['app-vt'],                hi:['container','vault','app-vt']                              },
-  // s6 — App Container connects to MySQL with retrieved credentials
+  // s6. App Container connects to MySQL with retrieved credentials
   { nodes:['mysql'],           edges:['app-db'],                hi:['container','mysql','app-db']                              },
-  // s7 — All visible; credentials cached in memory, auto-refreshed
+  // s7. All visible; credentials cached in memory, auto-refreshed
   { nodes:[],                  edges:[],                        hi:['container','jwt','jwt-proj','auth-sm','sm','sm-k8','k8-sm','k8sapi','sm-app','sm-vt','vault','app-vt','app-db','mysql'] },
 ]
 
@@ -102,7 +102,7 @@ const AUTO_MS = 4000
 export default function ArchitectureDiagram() {
   const { t } = useTranslation()
   const [step, setStep]       = useState(0)
-  const [playing, setPlaying] = useState(false)   // start paused — presenter controls the flow
+  const [playing, setPlaying] = useState(false)   // start paused. Presenter controls the flow
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const go = useCallback((d: 1 | -1) =>
@@ -244,7 +244,7 @@ export default function ArchitectureDiagram() {
                 Kubernetes Cluster
               </text>
 
-              {/* ── App Pod boundary — appears with container ── */}
+              {/* ── App Pod boundary. Appears with container ── */}
               <motion.rect x="24" y="48" width="248" height="192" rx="10"
                 fill="rgba(0,180,224,0.03)" stroke="rgba(0,180,224,0.2)"
                 strokeWidth="1" strokeDasharray="5 4"
@@ -259,7 +259,7 @@ export default function ArchitectureDiagram() {
                 App Pod
               </motion.text>
 
-              {/* ══ Conjur Cloud SaaS boundary (SM only — outside cluster) ════════════ */}
+              {/* ══ Conjur Cloud SaaS boundary (SM only. Outside cluster) ════════════ */}
               <motion.rect x="616" y="44" width="232" height="154" rx="14"
                 fill="rgba(245,158,11,0.025)" stroke="rgba(245,158,11,0.22)"
                 strokeWidth="1" strokeDasharray="6 4"

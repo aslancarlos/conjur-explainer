@@ -128,7 +128,7 @@ export default function JwtValidatorPage() {
             {health === 'loading' && <Loader2 size={12} className="animate-spin" />}
             {health === 'ok' && <CheckCircle2 size={12} />}
             {health === 'down' && <XCircle size={12} />}
-            <span>/api/health — {health === 'ok' ? 'online' : health === 'down' ? 'offline' : '...'}</span>
+            <span>/api/health. {health === 'ok' ? 'online' : health === 'down' ? 'offline' : '...'}</span>
           </span>
           {config && (
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border bg-blue-500/10 text-blue-300 border-blue-500/30">
@@ -261,11 +261,11 @@ export default function JwtValidatorPage() {
         <div className="section-card space-y-3">
           <h2 className="text-lg font-semibold text-text">{t('jwtv.deploy_title')}</h2>
           <div className="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-xs">
-            <Row label={t('jwtv.deploy_provider')}  value={config?.provider ?? '—'} mono />
-            <Row label={t('jwtv.deploy_tenant')}    value={config?.tenant_id ?? '—'} mono />
-            <Row label={t('jwtv.deploy_audience')}  value={config?.audience ?? '—'} mono />
-            <Row label={t('jwtv.deploy_issuer')}    value={config?.issuer ?? '—'} mono />
-            <Row label={t('jwtv.deploy_jwks')}      value={config?.jwks_uri ?? '—'} mono />
+            <Row label={t('jwtv.deploy_provider')}  value={config?.provider ?? '-'} mono />
+            <Row label={t('jwtv.deploy_tenant')}    value={config?.tenant_id ?? '-'} mono />
+            <Row label={t('jwtv.deploy_audience')}  value={config?.audience ?? '-'} mono />
+            <Row label={t('jwtv.deploy_issuer')}    value={config?.issuer ?? '-'} mono />
+            <Row label={t('jwtv.deploy_jwks')}      value={config?.jwks_uri ?? '-'} mono />
             <Row label={t('jwtv.deploy_namespace')} value="apigw" mono />
           </div>
         </div>

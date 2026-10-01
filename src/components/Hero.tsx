@@ -5,7 +5,7 @@ import { ArrowDown, Fingerprint, KeyRound } from 'lucide-react'
 import securityLayers from '../assets/brand/security-layers-blue.png'
 
 /**
- * Home hero — teaches first: the headline is the machine-identity idea, and the
+ * Home hero: teaches first: the headline is the machine-identity idea, and the
  * two calls to action open the Concepts pages. The live flow diagram follows
  * in its own section (FlowSection).
  */

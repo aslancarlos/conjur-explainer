@@ -25,21 +25,21 @@ interface JStep {
 }
 
 const JSTEPS: JStep[] = [
-  // 0 – overview
+  // 0. Overview
   { litEdges:[],                          hiNodes:['pod','k8s','conjur','vault'], validatorHi:false, policyHi:false, showJwt:false },
-  // 1 – K8s projects JWT into pod
+  // 1. K8s projects JWT into pod
   { litEdges:['k8s-pod'],                 hiNodes:['k8s','pod'],                 validatorHi:false, policyHi:false, showJwt:true  },
-  // 2 – workload POSTs JWT
+  // 2. Workload POSTs JWT
   { litEdges:['pod-conjur'],              hiNodes:['pod','conjur'],              validatorHi:false, policyHi:false, showJwt:true  },
-  // 3 – Conjur fetches JWKS
+  // 3. Conjur fetches JWKS
   { litEdges:['conjur-k8s','k8s-conjur'], hiNodes:['k8s','conjur'],             validatorHi:true,  policyHi:false, showJwt:true  },
-  // 4 – signature + standard claims verified
+  // 4. Signature + standard claims verified
   { litEdges:['k8s-conjur'],             hiNodes:['conjur'],                    validatorHi:true,  policyHi:false, showJwt:true  },
-  // 5 – identity resolved via annotations
+  // 5. Identity resolved via annotations
   { litEdges:[],                          hiNodes:['conjur'],                    validatorHi:false, policyHi:true,  showJwt:true  },
-  // 6 – API token issued
+  // 6. API token issued
   { litEdges:['conjur-pod'],             hiNodes:['conjur','pod'],              validatorHi:false, policyHi:false, showJwt:true  },
-  // 7 – secrets fetched
+  // 7. Secrets fetched
   { litEdges:['conjur-vlt','vlt-pod'],   hiNodes:['conjur','vault','pod'],      validatorHi:false, policyHi:false, showJwt:true  },
 ]
 
@@ -308,7 +308,7 @@ export default function JwtPage() {
                 fill={nodeSub(isHi('pod'))} style={{ transition:'fill 0.4s ease' }}>
                 {t('jwt.node_pod_sub')}
               </text>
-              {/* JWT anatomy bars — appear from step 1 onward */}
+              {/* JWT anatomy bars. Appear from step 1 onward */}
               <AnimatePresence>
                 {cur.showJwt && (
                   <motion.g initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} transition={{ duration:0.4 }}>

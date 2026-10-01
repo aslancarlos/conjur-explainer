@@ -8,7 +8,7 @@ import securityLayers from '../../assets/brand/security-layers-blue.png'
 /**
  * Shell for the Concepts pages (DESIGN.md §7): compact always-dark hero band
  * with the IDIRA art, the page content, and previous / next links that follow
- * the order of the Concepts group in lib/nav.ts — a learning trail.
+ * the order of the Concepts group in lib/nav.ts. A learning trail.
  */
 export default function ConceptLayout({ title, subtitle, children }: {
   title: string; subtitle: string; children: ReactNode

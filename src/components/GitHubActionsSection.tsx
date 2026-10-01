@@ -128,7 +128,7 @@ export default function GitHubActionsSection() {
               </div>
             </motion.div>
 
-            {/* Workshop stages — live runner */}
+            {/* Workshop stages. Live runner */}
             <motion.div
               initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.5 }}

@@ -101,7 +101,7 @@ export default function GhaLiveRunner({ stages }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [t])
 
-  // poll until run completes — stop the interval on completion, on repeated
+  // poll until run completes. Stop the interval on completion, on repeated
   // failures, and at a hard attempt cap so we never poll the backend forever.
   useEffect(() => {
     if (!runId) return
@@ -147,7 +147,7 @@ export default function GhaLiveRunner({ stages }: Props) {
       }))
     : stages.map(s => ({
         key:        s.n,
-        name:       `${s.n} — ${s.title}`,
+        name:       `${s.n}. ${s.title}`,
         status:     'idle' as Status,
         conclusion: null as Conclusion,
         elapsed:    '',

@@ -160,7 +160,7 @@ export default function ProblemSection() {
               </div>
             </div>
 
-            {/* Pillars — the four gaps, closed */}
+            {/* Pillars. The four gaps, closed */}
             <div className="space-y-3">
               <p className="text-[10px] font-mono font-semibold uppercase tracking-[0.16em] text-conjur-cyan/80">
                 {t('problem.pillars_label')}

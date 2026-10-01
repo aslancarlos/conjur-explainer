@@ -89,7 +89,7 @@ export function FitPanel() {
 
 const ROWS = ['question', 'example', 'issuer', 'lifetime', 'leak', 'idira'] as const
 
-/** Secret vs machine identity — stacked on phones, table from sm up. */
+/** Secret vs machine identity, stacked on phones, table from sm up. */
 export function CompareTable() {
   const { t } = useTranslation()
   const head = (col: 'secret' | 'identity') => (
@@ -199,7 +199,7 @@ export function GlossaryList() {
   return (
     <dl className="grid gap-x-10 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
       {TERMS.map(k => (
-        <div key={k} id={`term-${k}`} className="scroll-mt-20 border-l-2 border-border pl-4">
+        <div key={k} id={`term-${k}`} tabIndex={-1} className="scroll-mt-20 border-l-2 border-border pl-4 rounded-r-md focus-visible:bg-bg-muted">
           <dt className="font-mono text-sm font-semibold text-text">{t(`glossary.terms.${k}.term`)}</dt>
           <dd className="mt-1.5 text-sm leading-relaxed text-text-2">{t(`glossary.terms.${k}.def`)}</dd>
         </div>

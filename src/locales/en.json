@@ -57,7 +57,7 @@
     "c_secret": "What is a secret?",
     "c_secret_sub": "Definition, examples, and why static secrets are a risk.",
     "c_identity": "What is a machine identity?",
-    "c_identity_sub": "How workloads prove who they are — and what each platform already issues.",
+    "c_identity_sub": "How workloads prove who they are, and what each platform already issues.",
     "c_compare": "Secret vs identity",
     "c_compare_sub": "Side by side, and how they fit: prove → authorize → deliver.",
     "c_k8s": "Architecture on Kubernetes",
@@ -97,43 +97,43 @@
     "s2_title": "Secrets Manager",
     "s2_desc": "Palo Alto Networks | IDIRA Secrets Manager is the central identity broker and secrets vault, running at latamlab.secretsmgr.cyberark.cloud. All four patterns authenticate to this single control plane.",
     "s3_title": "Identity verification via K8s API",
-    "s3_desc": "Secrets Manager does not trust JWTs blindly — it forwards each token to the Kubernetes API Server for validation. The API Server confirms the token is genuine and bound to a real ServiceAccount.",
+    "s3_desc": "Secrets Manager does not trust JWTs blindly: it forwards each token to the Kubernetes API Server for validation. The API Server confirms the token is genuine and bound to a real ServiceAccount.",
     "s4_title": "Spring Boot authenticates",
     "s4_desc": "Spring Boot sends its Kubernetes ServiceAccount JWT to Secrets Manager's authn-jwt/eks-latam endpoint. Secrets Manager validates the identity against its policy and returns a short-lived API token.",
     "s5_title": ".NET authenticates via sidecar",
-    "s5_desc": "The Palo Alto Networks | IDIRA Secrets Provider sidecar — not the .NET app itself — authenticates with Secrets Manager using JWT. The application never handles any credential exchange directly.",
+    "s5_desc": "The Palo Alto Networks | IDIRA Secrets Provider sidecar (not the .NET app itself) authenticates with Secrets Manager using JWT. The application never handles any credential exchange directly.",
     "s6_title": "GitHub Actions authenticates via OIDC",
     "s6_desc": "GitHub Actions uses its native OIDC token instead of a Kubernetes JWT. Secrets Manager validates the workflow identity: repository name and workflow name must match the policy exactly.",
     "s7_title": "ESO Shop authenticates via operator",
-    "s7_desc": "The External Secrets Operator authenticates to Secrets Manager using the eso-shop-sa ServiceAccount JWT. It syncs credentials into a Kubernetes Secret every 60 seconds — the app reads only env vars.",
+    "s7_desc": "The External Secrets Operator authenticates to Secrets Manager using the eso-shop-sa ServiceAccount JWT. It syncs credentials into a Kubernetes Secret every 60 seconds: the app reads only env vars.",
     "s8_title": "Secrets retrieved from vault",
     "s8_desc": "Once identity is confirmed, Secrets Manager retrieves the requested secrets from its internal vault: DB_USER, DB_PASS, and DB_HOST from the data/vault/dev-demo-aslan/dbuser_dual path.",
-    "s9_title": "Database connected — full flow complete",
+    "s9_title": "Database connected: full flow complete",
     "s9_desc": "Credentials reach the application as environment variables. The app connects to MySQL using dynamic, Secrets Manager-managed credentials. No secret ever touches source code or a container image."
   },
   "demos": {
     "kicker": "Live demos",
     "title": "See each pattern running",
-    "subtitle": "Every demo runs live with its own identity — open one to follow the flow step by step.",
+    "subtitle": "Every demo runs live with its own identity: open one to follow the flow step by step.",
     "cta": "See the flow",
     "spring": "A Spring Boot service injects DB credentials at runtime with @Value via the Secrets Manager SDK, authenticating with its Kubernetes ServiceAccount JWT. No datasource password on disk or in the image.",
-    "dotnet": "A .NET app receives its credentials through the CyberArk Secrets Provider sidecar into IConfiguration — the workload never calls the vault directly; the sidecar handles auth and injection.",
-    "gha": "A CI/CD pipeline authenticates with GitHub's OIDC token — no stored PAT — and pulls scoped secrets during the workflow run via the Conjur GitHub Action.",
+    "dotnet": "A .NET app receives its credentials through the CyberArk Secrets Provider sidecar into IConfiguration: the workload never calls the vault directly; the sidecar handles auth and injection.",
+    "gha": "A CI/CD pipeline authenticates with GitHub's OIDC token (no stored PAT) and pulls scoped secrets during the workflow run via the Conjur GitHub Action.",
     "eso": "A Kubernetes-native ecommerce app uses the External Secrets Operator to sync IDIRA secrets into the cluster, with a live secret-watcher operator and an i18n storefront.",
     "jenkins": "Jenkins pipelines fetch secrets at build time with the Secrets Manager Credentials Plugin, using a short-lived JWT signed by Jenkins itself. Values are auto-masked in the build logs.",
-    "ansible": "Playbooks retrieve secrets at run time through the cyberark.conjur lookup plugin, authenticated with a JWT from your IdP — nothing static in inventory or the playbook.",
+    "ansible": "Playbooks retrieve secrets at run time through the cyberark.conjur lookup plugin, authenticated with a JWT from your IdP, nothing static in inventory or the playbook.",
     "csi": "The Secrets Store CSI Driver mounts the secret into a read-only tmpfs volume via a projected ServiceAccount JWT, refreshing it automatically every ~2 minutes with no pod restart.",
     "dual": "Zero-downtime credential rotation in action: the CPM rotates account A while account B keeps serving, and the credential provider cache switches over seamlessly.",
-    "swa": "A workload with a SPIFFE/SVID identity exchanges its certificate for temporary AWS STS credentials and reads an S3 bucket — no static access key, all over mTLS and identity federation.",
-    "jwt": "The heart of the model: authn-jwt validates the workload's identity token (ServiceAccount, OIDC, IdP) against policy before releasing any secret — walk the full handshake, step by step.",
-    "secretshub": "Secrets Hub syncs secrets from CyberArk PAM into the cloud vault, keeping a single source of truth — apps always consume from the same API, with no duplicated credential.",
+    "swa": "A workload with a SPIFFE/SVID identity exchanges its certificate for temporary AWS STS credentials and reads an S3 bucket: no static access key, all over mTLS and identity federation.",
+    "jwt": "The heart of the model: authn-jwt validates the workload's identity token (ServiceAccount, OIDC, IdP) against policy before releasing any secret. Walk the full handshake, step by step.",
+    "secretshub": "Secrets Hub syncs secrets from CyberArk PAM into the cloud vault, keeping a single source of truth: apps always consume from the same API, with no duplicated credential.",
     "policy": "Policy as code: hosts, groups and permissions declared in YAML and versioned in git. Each identity gets least-privilege, auditable access, reviewable in a PR.",
-    "group_identity": "How a workload proves who it is — and what policy lets it read.",
+    "group_identity": "How a workload proves who it is, and what policy lets it read.",
     "group_k8s": "Pods get secrets with their ServiceAccount identity: SDK, sidecar, operator or CSI volume.",
-    "group_cicd": "Pipelines and automation fetch secrets at run time — nothing stored in the tool.",
+    "group_cicd": "Pipelines and automation fetch secrets at run time, nothing stored in the tool.",
     "group_lifecycle": "PAM-side rotation and synchronisation that consumers never notice.",
     "prod_secretsmanager": "Workload identity, policy and secret delivery for apps, Kubernetes and pipelines.",
-    "prod_swa": "SPIFFE-based workload identity (X.509/JWT-SVID) federated to clouds — no static keys.",
+    "prod_swa": "SPIFFE-based workload identity (X.509/JWT-SVID) federated to clouds: no static keys.",
     "prod_secretshub": "Syncs PAM-managed secrets into cloud-native secret stores.",
     "prod_pam": "Vaulting and CPM rotation; Dual Accounts keep consumers online during rotation."
   },
@@ -142,52 +142,52 @@
     "title": "Every pattern, the same guarantees",
     "subtitle": "Different tools, one model: identity-first, keyless, rotated, scoped by policy and fully auditable.",
     "identity_title": "Keyless workload identity",
-    "identity_desc": "Each workload authenticates with a short-lived JWT/OIDC token or cloud IAM — never a static API key stored on disk, in an image or in CI.",
+    "identity_desc": "Each workload authenticates with a short-lived JWT/OIDC token or cloud IAM: never a static API key stored on disk, in an image or in CI.",
     "rotation_title": "Automatic rotation",
-    "rotation_desc": "Secrets are re-fetched and refreshed in place — no redeploy, no pod restart. Rotate at the source and every consumer follows.",
+    "rotation_desc": "Secrets are re-fetched and refreshed in place: no redeploy, no pod restart. Rotate at the source and every consumer follows.",
     "policy_title": "Policy-based access",
-    "policy_desc": "Policy scopes exactly which identity can read which secret. Granting or revoking is a policy change — immediate, no secret redistribution.",
+    "policy_desc": "Policy scopes exactly which identity can read which secret. Granting or revoking is a policy change: immediate, no secret redistribution.",
     "audit_title": "Fully audited",
-    "audit_desc": "Every authentication and secret fetch is logged and tied to the workload identity — a complete trail of who read what, and when.",
+    "audit_desc": "Every authentication and secret fetch is logged and tied to the workload identity: a complete trail of who read what, and when.",
     "oss_title": "Open-source & reproducible",
     "oss_desc": "Every app, manifest and policy in this demo is on GitHub. Fork it, read it, run it in your own cluster.",
     "live_title": "Live & federated",
-    "live_desc": "Not slides — running infrastructure federated to GitHub, AWS and Kubernetes that you can hit right now."
+    "live_desc": "Not slides, running infrastructure federated to GitHub, AWS and Kubernetes that you can hit right now."
   },
   "problem": {
     "badge": "The Problem",
     "title": "Hardcoded credentials are a ticking time bomb",
-    "subtitle": "Each risk below maps to well-established industry frameworks — NIST SP 800-53 / 800-207, MITRE ATT&CK, OWASP and CIS Controls.",
+    "subtitle": "Each risk below maps to well-established industry frameworks: NIST SP 800-53 / 800-207, MITRE ATT&CK, OWASP and CIS Controls.",
     "maps_to": "Maps to",
     "items": [
       {
         "icon": "alert",
         "title": "Credentials in source code",
-        "desc": "Hardcoded database passwords and API keys leak through git history, forks and CI logs — the most common unsecured-credential technique in MITRE ATT&CK (T1552.001) and a top weakness in CWE-798. Verizon's DBIR consistently ranks stolen credentials as the #1 breach vector."
+        "desc": "Hardcoded database passwords and API keys leak through git history, forks and CI logs: the most common unsecured-credential technique in MITRE ATT&CK (T1552.001) and a top weakness in CWE-798. Verizon's DBIR consistently ranks stolen credentials as the #1 breach vector."
       },
       {
         "icon": "clock",
         "title": "No rotation",
-        "desc": "Static credentials that never expire violate NIST SP 800-53 IA-5 (Authenticator Management) and NIST SP 800-63B guidance. A single leak grants standing access — MITRE ATT&CK T1078, Valid Accounts — until someone manually intervenes."
+        "desc": "Static credentials that never expire violate NIST SP 800-53 IA-5 (Authenticator Management) and NIST SP 800-63B guidance. A single leak grants standing access (MITRE ATT&CK T1078, Valid Accounts) until someone manually intervenes."
       },
       {
         "icon": "eye",
         "title": "No audit trail",
-        "desc": "Who read which secret, and when? Without centralized access logging you cannot satisfy NIST SP 800-53 AU-2 / AU-12, CIS Control 8 or PCI DSS Req. 10 — and you cannot detect credential misuse."
+        "desc": "Who read which secret, and when? Without centralized access logging you cannot satisfy NIST SP 800-53 AU-2 / AU-12, CIS Control 8 or PCI DSS Req. 10, and you cannot detect credential misuse."
       }
     ],
     "solution_badge": "The Solution",
     "solution_title": "Dynamic secrets with Palo Alto Networks | IDIRA Secrets Manager",
-    "solution_desc": "Secrets Manager flips the model: a workload never holds a static password. Each one authenticates with its own platform identity — a Kubernetes ServiceAccount JWT, a GitHub OIDC token or an AWS IAM role — and receives a short-lived secret, scoped by policy, fetched at runtime over mTLS and rotated automatically with zero downtime. No secret is ever written to source, a container image or an environment variable. The result is identity-first, least-privilege, fully-audited access — exactly the model prescribed by NIST SP 800-207 Zero Trust Architecture — and it directly mitigates the MITRE ATT&CK techniques above (T1552.001 Credentials in Files, T1078 Valid Accounts).",
+    "solution_desc": "Secrets Manager flips the model: a workload never holds a static password. Each one authenticates with its own platform identity (a Kubernetes ServiceAccount JWT, a GitHub OIDC token or an AWS IAM role) and receives a short-lived secret, scoped by policy, fetched at runtime over mTLS and rotated automatically with zero downtime. No secret is ever written to source, a container image or an environment variable. The result is identity-first, least-privilege, fully-audited access (exactly the model prescribed by NIST SP 800-207 Zero Trust Architecture) and it directly mitigates the MITRE ATT&CK techniques above (T1552.001 Credentials in Files, T1078 Valid Accounts).",
     "pillars_label": "Why this closes the gaps",
     "pillars": [
       {
         "title": "Ephemeral identity, not passwords",
-        "desc": "Every workload proves who it is with a JWT, OIDC token or IAM role — there is no shared, long-lived credential to steal."
+        "desc": "Every workload proves who it is with a JWT, OIDC token or IAM role: there is no shared, long-lived credential to steal."
       },
       {
         "title": "Least privilege by policy",
-        "desc": "Each identity reads only the secrets its Conjur policy explicitly grants — nothing more, enforced centrally."
+        "desc": "Each identity reads only the secrets its Conjur policy explicitly grants, nothing more, enforced centrally."
       },
       {
         "title": "Automatic rotation",
@@ -195,7 +195,7 @@
       },
       {
         "title": "Complete audit trail",
-        "desc": "Every secret retrieval is logged — who, what and when — ready for your SIEM and compliance evidence."
+        "desc": "Every secret retrieval is logged (who, what and when) ready for your SIEM and compliance evidence."
       }
     ]
   },
@@ -212,18 +212,18 @@
       "db": "MySQL Database"
     },
     "flow": [
-      "Pod starts — Kubernetes projects a short-lived JWT token into the pod filesystem",
+      "Pod starts: Kubernetes projects a short-lived JWT token into the pod filesystem",
       "App (or Secrets Provider) authenticates with Secrets Manager using the JWT",
       "Secrets Manager validates identity against its policy and returns a short-lived API token",
       "Secrets Vault surfaces the requested credentials to Secrets Manager, which enforces policy entitlements",
       "App Container reads the secret values directly from Secrets Vault using the API token",
       "App connects to MySQL using the retrieved credentials",
-      "Credentials are cached in memory — refreshed automatically before TTL expires"
+      "Credentials are cached in memory, refreshed automatically before TTL expires"
     ],
     "step_titles": [
       "K8s Projects the Service Account JWT",
       "App Authenticates with Secrets Manager",
-      "Identity Verified — API Token Issued",
+      "Identity Verified: API Token Issued",
       "Vault Surfaces Secrets to Manager",
       "App Reads Secrets from Vault",
       "Database Connection Established",
@@ -237,7 +237,7 @@
     "title": "Spring Boot",
     "titleAccent": "Direct JWT Authentication",
     "label": "authn-jwt / Java SDK",
-    "desc": "The Spring Boot app integrates directly with Secrets Manager's REST API. It reads the Kubernetes JWT, authenticates with Secrets Manager, and fetches secrets on startup — with a 5-minute in-memory TTL cache.",
+    "desc": "The Spring Boot app integrates directly with Secrets Manager's REST API. It reads the Kubernetes JWT, authenticates with Secrets Manager, and fetches secrets on startup: with a 5-minute in-memory TTL cache.",
     "steps": [
       {
         "n": "1",
@@ -266,15 +266,15 @@
     ],
     "live_badge": "Live endpoint",
     "live_title": "Credentials status",
-    "live_note": "Masked values — actual secrets never reach the UI",
+    "live_note": "Masked values: actual secrets never reach the UI",
     "features": [
       {
         "title": "Direct API",
-        "desc": "Calls Secrets Manager REST API directly from Java — no sidecar needed"
+        "desc": "Calls Secrets Manager REST API directly from Java: no sidecar needed"
       },
       {
         "title": "TTL Cache",
-        "desc": "SimpleTtlCache with double-checked locking — one Secrets Manager call per 5 minutes"
+        "desc": "SimpleTtlCache with double-checked locking: one Secrets Manager call per 5 minutes"
       },
       {
         "title": "JWT auto-renewal",
@@ -292,7 +292,7 @@
     "title": ".NET",
     "titleAccent": "Secrets Provider for Kubernetes",
     "label": "K8s Sidecar / Zero-code",
-    "desc": "The .NET app has zero Secrets Manager code. A Palo Alto Networks | IDIRA Secrets Provider sidecar container handles authentication and injects credentials as Kubernetes Secrets — which the app reads as standard environment variables.",
+    "desc": "The .NET app has zero Secrets Manager code. A Palo Alto Networks | IDIRA Secrets Provider sidecar container handles authentication and injects credentials as Kubernetes Secrets: which the app reads as standard environment variables.",
     "steps": [
       {
         "n": "1",
@@ -314,7 +314,7 @@
       },
       {
         "n": "4",
-        "title": ".NET reads env vars — no Secrets Manager code",
+        "title": ".NET reads env vars: no Secrets Manager code",
         "code": "// .NET app reads standard environment variables\nstring dbUser = Environment.GetEnvironmentVariable(\"DB_USER\");\nstring dbPass = Environment.GetEnvironmentVariable(\"DB_PASSWORD\");\nstring dbHost = Environment.GetEnvironmentVariable(\"DB_HOST\");\n// That's it. Zero Secrets Manager integration in app code.",
         "color": "cyan"
       }
@@ -322,7 +322,7 @@
     "features": [
       {
         "title": "Zero app code",
-        "desc": "The .NET app is completely unaware of Secrets Manager — reads standard env vars"
+        "desc": "The .NET app is completely unaware of Secrets Manager: reads standard env vars"
       },
       {
         "title": "Sidecar pattern",
@@ -334,7 +334,7 @@
       },
       {
         "title": "Any language",
-        "desc": "Works for any app — Java, Go, Python, Ruby — without SDK changes"
+        "desc": "Works for any app (Java, Go, Python, Ruby) without SDK changes"
       }
     ],
     "cta": "Open .NET App →"
@@ -344,7 +344,7 @@
     "title": "GitHub Actions",
     "titleAccent": "JWT / OIDC",
     "label": "OIDC / Zero stored credentials",
-    "desc": "GitHub Actions pipelines authenticate with Palo Alto Networks | IDIRA Secrets Manager using GitHub's built-in OIDC JWT — no API keys, no stored passwords. The workflow's identity (repository + workflow name) is the credential.",
+    "desc": "GitHub Actions pipelines authenticate with Palo Alto Networks | IDIRA Secrets Manager using GitHub's built-in OIDC JWT: no API keys, no stored passwords. The workflow's identity (repository + workflow name) is the credential.",
     "flow_title": "Authentication flow",
     "stages_title": "Workshop stages",
     "steps": [
@@ -376,47 +376,47 @@
     "stages": [
       {
         "n": "01",
-        "title": "JWT Auth & Secret Retrieval — GitHub's OIDC JWT authenticates directly with Secrets Manager, no API keys"
+        "title": "JWT Auth & Secret Retrieval: GitHub's OIDC JWT authenticates directly with Secrets Manager, no API keys"
       },
       {
         "n": "02",
-        "title": "Multiple Secrets & Masking — fetch several secrets at once; values are auto-masked in logs"
+        "title": "Multiple Secrets & Masking: fetch several secrets at once; values are auto-masked in logs"
       },
       {
         "n": "03",
-        "title": "Database Connection — live MySQL connection using Secrets Manager-fetched credentials"
+        "title": "Database Connection: live MySQL connection using Secrets Manager-fetched credentials"
       },
       {
         "n": "04",
-        "title": "Hardcoded vs Secrets Manager — hardcoded password fails, Secrets Manager credential succeeds"
+        "title": "Hardcoded vs Secrets Manager, hardcoded password fails, Secrets Manager credential succeeds"
       },
       {
         "n": "05",
-        "title": "Least Privilege — authorized path succeeds, unauthorized path is denied by policy"
+        "title": "Least Privilege, authorized path succeeds, unauthorized path is denied by policy"
       },
       {
         "n": "06",
-        "title": "Real Query & Data — end-to-end: Secrets Manager delivers creds → query runs → data returned"
+        "title": "Real Query & Data: end-to-end: Secrets Manager delivers creds → query runs → data returned"
       },
       {
         "n": "07",
-        "title": "Credential Rotation — rotate in Privilege Cloud, re-run pipeline unchanged, new password works"
+        "title": "Credential Rotation: rotate in Privilege Cloud, re-run pipeline unchanged, new password works"
       },
       {
         "n": "08",
-        "title": "Environment Promotion — dev → staging → prod with human approval gate on production"
+        "title": "Environment Promotion: dev → staging → prod with human approval gate on production"
       },
       {
         "n": "09",
-        "title": "SSH Deploy with Key from Secrets Manager — key retrieved, used, deleted; never stored on runner"
+        "title": "SSH Deploy with Key from Secrets Manager: key retrieved, used, deleted; never stored on runner"
       },
       {
         "n": "10",
-        "title": "Docker Registry Login — registry credentials from Secrets Manager, docker login with --password-stdin"
+        "title": "Docker Registry Login: registry credentials from Secrets Manager, docker login with --password-stdin"
       },
       {
         "n": "11",
-        "title": "Audit Trail — query Secrets Manager audit API and display last 20 secret fetch events"
+        "title": "Audit Trail: query Secrets Manager audit API and display last 20 secret fetch events"
       }
     ],
     "features": [
@@ -426,7 +426,7 @@
       },
       {
         "title": "OIDC identity",
-        "desc": "GitHub's JWT binds to repo + workflow — any other caller is denied"
+        "desc": "GitHub's JWT binds to repo + workflow: any other caller is denied"
       },
       {
         "title": "Least privilege",
@@ -434,7 +434,7 @@
       },
       {
         "title": "Full audit trail",
-        "desc": "Every secret fetch logged in Secrets Manager — who, what, when, from which workflow"
+        "desc": "Every secret fetch logged in Secrets Manager: who, what, when, from which workflow"
       }
     ],
     "cta_repo": "View Workshop Repo",
@@ -444,9 +444,9 @@
       "btn_run": "Run workflow now",
       "btn_running": "Running…",
       "view_on_github": "Open in GitHub",
-      "pending": "Workflow dispatched — GitHub hasn't reported the new run yet. It will appear here in a few seconds; press Run again if it doesn't.",
-      "hint": "Click Run to dispatch the workshop on GitHub. Each row updates every 3 seconds while the run is in flight. Backed by aslancarlos/workshop-action — rate-limited to 1 run per IP every 10 minutes.",
-      "err_rate_limited": "You triggered a run recently — please wait ~{{wait}} before triggering another.",
+      "pending": "Workflow dispatched: GitHub hasn't reported the new run yet. It will appear here in a few seconds; press Run again if it doesn't.",
+      "hint": "Click Run to dispatch the workshop on GitHub. Each row updates every 3 seconds while the run is in flight. Backed by aslancarlos/workshop-action: rate-limited to 1 run per IP every 10 minutes.",
+      "err_rate_limited": "You triggered a run recently: please wait ~{{wait}} before triggering another.",
       "err_global_cap": "Daily run cap reached for this demo. Try again tomorrow or open the repo on GitHub.",
       "err_generic": "Couldn't start the run: {{msg}}"
     }
@@ -456,7 +456,7 @@
     "title": "ESO Shop",
     "titleAccent": "External Secrets Operator",
     "label": "ESO / K8s-native / Zero app code",
-    "desc": "A live Node.js ecommerce app that uses the External Secrets Operator to sync credentials from Palo Alto Networks | IDIRA Secrets Manager into a Kubernetes Secret — with a Python operator watching for secret changes and triggering zero-downtime rolling restarts automatically.",
+    "desc": "A live Node.js ecommerce app that uses the External Secrets Operator to sync credentials from Palo Alto Networks | IDIRA Secrets Manager into a Kubernetes Secret: with a Python operator watching for secret changes and triggering zero-downtime rolling restarts automatically.",
     "steps": [
       {
         "n": "1",
@@ -472,8 +472,8 @@
       },
       {
         "n": "3",
-        "title": "K8s Secret created — app reads env vars",
-        "code": "# ESO creates and keeps the Secret in sync\n# App deployment references it:\nenvFrom:\n  - secretRef:\n      name: eso-shop-db-creds\n# App reads DB_USER, DB_PASS, DB_HOST\n# as standard environment variables — zero Secrets Manager code",
+        "title": "K8s Secret created: app reads env vars",
+        "code": "# ESO creates and keeps the Secret in sync\n# App deployment references it:\nenvFrom:\n  - secretRef:\n      name: eso-shop-db-creds\n# App reads DB_USER, DB_PASS, DB_HOST\n# as standard environment variables. Zero Secrets Manager code",
         "color": "cyan"
       },
       {
@@ -485,7 +485,7 @@
     ],
     "live_badge": "Live endpoint",
     "live_title": "ESO Shop health",
-    "live_note": "DB user shown as-is — no plaintext passwords exposed",
+    "live_note": "DB user shown as-is: no plaintext passwords exposed",
     "features": [
       {
         "title": "ESO sync",
@@ -493,7 +493,7 @@
       },
       {
         "title": "Zero app code",
-        "desc": "Node.js app reads standard env vars — no Secrets Manager SDK or sidecar"
+        "desc": "Node.js app reads standard env vars: no Secrets Manager SDK or sidecar"
       },
       {
         "title": "Auto-restart",
@@ -509,17 +509,17 @@
     "cta_grafana": "Grafana",
     "operator_badge": "Kubernetes Operator",
     "operator_title": "Python operator: watch secret → rolling restart",
-    "operator_desc": "A custom Python controller running in-cluster watches the eso-shop-db-creds secret via the Kubernetes Watch API. When ESO updates the secret (after syncing a rotated credential from Secrets Manager), the operator detects the resourceVersion change and patches the deployment with a new annotation — triggering a rolling restart with zero downtime.",
+    "operator_desc": "A custom Python controller running in-cluster watches the eso-shop-db-creds secret via the Kubernetes Watch API. When ESO updates the secret (after syncing a rotated credential from Secrets Manager), the operator detects the resourceVersion change and patches the deployment with a new annotation, triggering a rolling restart with zero downtime.",
     "operator_steps": [
       {
         "n": "1",
         "title": "Watch Stream",
-        "desc": "Streams list_namespaced_secret with field_selector on the target secret name — no polling."
+        "desc": "Streams list_namespaced_secret with field_selector on the target secret name: no polling."
       },
       {
         "n": "2",
         "title": "Detect Change",
-        "desc": "On MODIFIED event, compares resourceVersion. Only acts when it actually changed — ignores spurious events."
+        "desc": "On MODIFIED event, compares resourceVersion. Only acts when it actually changed: ignores spurious events."
       },
       {
         "n": "3",
@@ -530,8 +530,8 @@
   },
   "compare": {
     "badge": "Comparison",
-    "title": "Four patterns — which fits your use case?",
-    "subtitle": "All four use Kubernetes or OIDC identity — no static credentials, no hardcoded passwords.",
+    "title": "Four patterns: which fits your use case?",
+    "subtitle": "All four use Kubernetes or OIDC identity: no static credentials, no hardcoded passwords.",
     "col_feature": "Feature",
     "col_spring": "Spring Boot",
     "col_dotnet": ".NET",
@@ -595,13 +595,13 @@
       },
       {
         "feature": "Works without K8s",
-        "spring": "No — requires pod JWT",
+        "spring": "No: requires pod JWT",
         "springIcon": "minus",
-        "dotnet": "No — requires pod JWT",
+        "dotnet": "No: requires pod JWT",
         "dotnetIcon": "minus",
-        "gha": "Yes — GitHub OIDC",
+        "gha": "Yes: GitHub OIDC",
         "ghaIcon": "check",
-        "eso": "No — K8s-native only",
+        "eso": "No: K8s-native only",
         "esoIcon": "minus"
       },
       {
@@ -610,7 +610,7 @@
         "springIcon": "text",
         "dotnet": "Sidecar re-injects, pod stays",
         "dotnetIcon": "check",
-        "gha": "N/A — stateless pipeline",
+        "gha": "N/A: stateless pipeline",
         "ghaIcon": "text",
         "eso": "Operator rolling restart (0 down)",
         "esoIcon": "check"
@@ -619,7 +619,7 @@
         "feature": "Migration effort",
         "spring": "SDK integration required",
         "springIcon": "minus",
-        "dotnet": "Drop-in — no code changes",
+        "dotnet": "Drop-in: no code changes",
         "dotnetIcon": "check",
         "gha": "Add one workflow step",
         "ghaIcon": "check",
@@ -629,19 +629,19 @@
     ],
     "best_for": [
       {
-        "title": "Spring Boot — Best for",
+        "title": "Spring Boot: Best for",
         "desc": "Java services needing fine-grained control, dynamic refresh, and per-secret audit visibility directly in app code."
       },
       {
-        "title": ".NET — Best for",
-        "desc": "Lift-and-shift migrations and polyglot services where zero SDK changes are required — any language reads env vars."
+        "title": ".NET: Best for",
+        "desc": "Lift-and-shift migrations and polyglot services where zero SDK changes are required: any language reads env vars."
       },
       {
-        "title": "GitHub Actions — Best for",
-        "desc": "CI/CD pipelines and deploy workflows outside Kubernetes — no cluster needed, identity comes from GitHub OIDC."
+        "title": "GitHub Actions: Best for",
+        "desc": "CI/CD pipelines and deploy workflows outside Kubernetes: no cluster needed, identity comes from GitHub OIDC."
       },
       {
-        "title": "ESO Shop — Best for",
+        "title": "ESO Shop: Best for",
         "desc": "Cloud-native apps on Kubernetes wanting secret rotation with automatic rolling restarts and zero application code changes."
       }
     ]
@@ -649,12 +649,12 @@
   "livetools": {
     "badge": "Live Tools",
     "title": "Everything running in this cluster",
-    "subtitle": "All dashboards and apps live at demo.minha.cloud — accessible now, no setup required.",
+    "subtitle": "All dashboards and apps live at demo.minha.cloud: accessible now, no setup required.",
     "live": "live",
     "open": "Open →",
     "k8s_title": "Kubernetes Dashboard",
     "k8s_badge": "Read-only · Skip login",
-    "k8s_desc": "Full cluster visibility — pods, deployments, services, secrets, CPU/memory graphs — in read-only mode. No credentials needed: click Skip to explore. Admin token available for write access.",
+    "k8s_desc": "Full cluster visibility (pods, deployments, services, secrets, CPU/memory graphs) in read-only mode. No credentials needed: click Skip to explore. Admin token available for write access.",
     "k8s_features": [
       "Read-only via Skip login",
       "CPU & memory graphs per pod",
@@ -688,7 +688,7 @@
   "dual": {
     "badge": "How It Works",
     "title": "Zero-Downtime Credential Rotation",
-    "subtitle": "Two accounts, one always active — and two ways to consume them. Follow IDIRA Dual Accounts serving the same credential to an application through the Credential Provider and to Kubernetes pods through Secrets Manager and the External Secrets Operator, with zero downtime during rotation.",
+    "subtitle": "Two accounts, one always active, and two ways to consume them. Follow IDIRA Dual Accounts serving the same credential to an application through the Credential Provider and to Kubernetes pods through Secrets Manager and the External Secrets Operator, with zero downtime during rotation.",
     "step_of": "Step {{current}} of {{total}}",
     "keyboard_hint": "← → steps · Space play/pause · drag the timeline to scrub",
     "node_vault": "IDIRA Vault",
@@ -709,11 +709,11 @@
     "cache_label": "Serving",
     "cache_stale": "(stale)",
     "key1_title": "The Active Password Never Changes",
-    "key1_desc": "CPM only changes the password of the inactive account, and only after the grace period. The account your consumers are using stays valid the whole time — no blackout window during rotation.",
+    "key1_desc": "CPM only changes the password of the inactive account, and only after the grace period. The account your consumers are using stays valid the whole time: no blackout window during rotation.",
     "key2_title": "Size the GracePeriod for the Slowest Path",
     "key2_desc": "GracePeriod (minutes, set on the rotational group platform) must cover every consumer's refresh. CyberArk recommends at least 3× the Credential Provider CacheRefreshInterval; for Kubernetes, add the Synchronizer sync (1 min), the ESO refreshInterval and the rollout time.",
     "key3_title": "Ask for the Pair, Not the Account",
-    "key3_desc": "Consumers reference the VirtualUserName — a CP query (VirtualUserName=dbuser_dual) or the Secrets Manager variable data/vault/<safe>/dbuser_dual/password. Both always resolve to the Active account.",
+    "key3_desc": "Consumers reference the VirtualUserName: a CP query (VirtualUserName=dbuser_dual) or the Secrets Manager variable data/vault/<safe>/dbuser_dual/password. Both always resolve to the Active account.",
     "pw_label": "password",
     "grace_label": "Grace period",
     "grace_idle": "not started",
@@ -765,23 +765,23 @@
     "pkt_envfrom": "envFrom",
     "pkt_update": "update",
     "pkt_rollout": "rollout",
-    "s1_title": "The Setup — One Name, Two Accounts",
+    "s1_title": "The Setup: One Name, Two Accounts",
     "s1_desc": "Account A (Index 1) and Account B (Index 2) have identical permissions and are both enabled on the MySQL database. In the Vault they share the same VirtualUserName, dbuser_dual, and belong to one rotational group: the DualAccountStatus property tags A as Active and B as Inactive. Two very different consumers use this same pair.",
-    "s2_title": "Path 1 — Application via Credential Provider",
-    "s2_desc": "The application never asks for a specific account: it queries the Credential Provider for VirtualUserName=dbuser_dual. The CP answers from its local cache with whichever account is Active — Account A — and the app logs in to MySQL as appuser_01. The cache is refreshed from the Vault every CacheRefreshInterval.",
-    "s3_title": "Path 2 — Kubernetes via Secrets Manager and ESO",
-    "s3_desc": "Every minute the Vault Synchronizer copies the pair into Secrets Manager as data/vault/<safe>/dbuser_dual/username and /password — always the Active account's values. The External Secrets Operator reads them every refreshInterval (1m) and writes the Kubernetes Secret eso-shop-db-creds; the ESO Shop pods load it through envFrom and also log in as appuser_01.",
+    "s2_title": "Path 1: Application via Credential Provider",
+    "s2_desc": "The application never asks for a specific account: it queries the Credential Provider for VirtualUserName=dbuser_dual. The CP answers from its local cache with whichever account is Active (Account A) and the app logs in to MySQL as appuser_01. The cache is refreshed from the Vault every CacheRefreshInterval.",
+    "s3_title": "Path 2: Kubernetes via Secrets Manager and ESO",
+    "s3_desc": "Every minute the Vault Synchronizer copies the pair into Secrets Manager as data/vault/<safe>/dbuser_dual/username and /password: always the Active account's values. The External Secrets Operator reads them every refreshInterval (1m) and writes the Kubernetes Secret eso-shop-db-creds; the ESO Shop pods load it through envFrom and also log in as appuser_01.",
     "s4_title": "CPM Detects the Rotation Is Due",
-    "s4_desc": "Based on the rotational group platform settings, the Central Policy Manager (CPM) determines that the pair needs a password change. Dual Accounts rotation is performed by the CPM only — the Secrets Rotation service does not support it. No password has been touched yet.",
-    "s5_title": "The Status Swap — A → Inactive, B → Active",
-    "s5_desc": "CPM switches DualAccountStatus on both accounts, updates the group's CurrInd to Account B's index and marks the now-inactive Account A for a password change — delayed by the GracePeriod. Nothing breaks: the CP cache and the Secrets Manager variables still hand out Account A, whose password is still valid.",
-    "s6_title": "Grace Period — the Credential Provider Switches to B",
-    "s6_desc": "On its next cache refresh the Credential Provider picks up the new Active account. The same query for dbuser_dual now returns Account B, and the application logs in as appuser_02 — no code change, no restart.",
-    "s7_title": "Grace Period — Kubernetes Switches to B",
+    "s4_desc": "Based on the rotational group platform settings, the Central Policy Manager (CPM) determines that the pair needs a password change. Dual Accounts rotation is performed by the CPM only: the Secrets Rotation service does not support it. No password has been touched yet.",
+    "s5_title": "The Status Swap: A → Inactive, B → Active",
+    "s5_desc": "CPM switches DualAccountStatus on both accounts, updates the group's CurrInd to Account B's index and marks the now-inactive Account A for a password change, delayed by the GracePeriod. Nothing breaks: the CP cache and the Secrets Manager variables still hand out Account A, whose password is still valid.",
+    "s6_title": "Grace Period: the Credential Provider Switches to B",
+    "s6_desc": "On its next cache refresh the Credential Provider picks up the new Active account. The same query for dbuser_dual now returns Account B, and the application logs in as appuser_02: no code change, no restart.",
+    "s7_title": "Grace Period: Kubernetes Switches to B",
     "s7_desc": "Within a minute the Vault Synchronizer updates the dbuser_dual variables to Account B. On its next refresh ESO rewrites eso-shop-db-creds, the ESO Shop operator detects the change and performs a rolling restart (maxUnavailable: 0), and the new pods log in as appuser_02 while the old ones keep serving with Account A.",
-    "s8_title": "Grace Period Ends — CPM Changes Account A",
-    "s8_desc": "Only when the GracePeriod expires does CPM run the password change task for the inactive Account A — on MySQL and in the Vault. By then no consumer is using Account A, so the change is invisible to both paths.",
-    "s9_title": "Cycle Complete — Ready for the Next Rotation",
+    "s8_title": "Grace Period Ends: CPM Changes Account A",
+    "s8_desc": "Only when the GracePeriod expires does CPM run the password change task for the inactive Account A: on MySQL and in the Vault. By then no consumer is using Account A, so the change is invisible to both paths.",
+    "s9_title": "Cycle Complete: Ready for the Next Rotation",
     "s9_desc": "Both consumers run on Account B; Account A holds a fresh password and waits as Inactive. At the next rotation the roles reverse: B becomes Inactive, A becomes Active, and B's password is changed after the grace period.",
     "key4_title": "Requirements",
     "key4_desc": "Two accounts with identical permissions, both enabled on the target, in the root of the same Safe, sharing a VirtualUserName that is unique in that Safe and grouped in one rotational group. Verify and reconcile run on the active account.",
@@ -802,7 +802,7 @@
   "jwt": {
     "badge": "JWT Authenticator",
     "title": "How JWT Authentication Works",
-    "subtitle": "From pod startup to secret retrieval — a step-by-step animation of how workloads authenticate to Secrets Manager using Kubernetes ServiceAccount JWTs without any stored credentials.",
+    "subtitle": "From pod startup to secret retrieval: a step-by-step animation of how workloads authenticate to Secrets Manager using Kubernetes ServiceAccount JWTs without any stored credentials.",
     "step_of": "Step {{current}} of {{total}}",
     "keyboard_hint": "← → arrow keys · Space to play/pause",
     "node_pod": "Workload",
@@ -817,53 +817,53 @@
     "node_policy_sub": "identity · annotations",
     "node_vault": "Secrets Vault",
     "node_vault_sub": "secret values",
-    "s1_title": "The JWT Authenticator — Actors Overview",
+    "s1_title": "The JWT Authenticator: Actors Overview",
     "s1_desc": "Four actors in the JWT authentication flow: the Workload (app container in K8s), the K8s API Server (which issues and validates JWTs via its OIDC endpoint), the Secrets Manager JWT Authenticator (validates the token and resolves identity), and the Secrets Vault (stores and returns secret values).",
     "s2_title": "K8s Projects a JWT into the Pod",
     "s2_desc": "When the pod starts, Kubernetes automatically mounts a short-lived ServiceAccount JWT at /var/run/secrets/tokens/jwt. This token is signed by K8s and contains claims about the workload identity: sub (system:serviceaccount:conjur:springboot-app), namespace, serviceaccount name, iss (https://kubernetes.default.svc), and aud (conjur). No manual credential management.",
     "s3_title": "Workload POSTs JWT to Secrets Manager",
-    "s3_desc": "The application reads the JWT from its projected volume and sends it to the authn-jwt endpoint: POST /api/authn-jwt/eks-latam/conjur/authenticate. The body contains only the URL-encoded JWT. No password, no API key — the workload's Kubernetes identity is the credential.",
+    "s3_desc": "The application reads the JWT from its projected volume and sends it to the authn-jwt endpoint: POST /api/authn-jwt/eks-latam/conjur/authenticate. The body contains only the URL-encoded JWT. No password, no API key: the workload's Kubernetes identity is the credential.",
     "s4_title": "Secrets Manager Fetches JWKS from K8s",
-    "s4_desc": "Secrets Manager reads the jwks-uri policy variable (pointing to the K8s OIDC discovery URL). It fetches the JSON Web Key Set — the RSA public keys that K8s uses to sign ServiceAccount JWTs. If the signing key changes (K8s key rotation), Secrets Manager automatically fetches the new key when it encounters a token signed with it.",
+    "s4_desc": "Secrets Manager reads the jwks-uri policy variable (pointing to the K8s OIDC discovery URL). It fetches the JSON Web Key Set: the RSA public keys that K8s uses to sign ServiceAccount JWTs. If the signing key changes (K8s key rotation), Secrets Manager automatically fetches the new key when it encounters a token signed with it.",
     "s5_title": "Signature & Standard Claims Verified",
-    "s5_desc": "Using the fetched JWKS, Secrets Manager cryptographically verifies the JWT signature — confirming it was genuinely signed by this K8s cluster. It validates: exp (not expired), iss (matches configured issuer), aud (matches configured audience). A forged token, an expired token, or a token from a different cluster all fail here.",
-    "s6_title": "Identity Resolved — Annotations Matched",
+    "s5_desc": "Using the fetched JWKS, Secrets Manager cryptographically verifies the JWT signature, confirming it was genuinely signed by this K8s cluster. It validates: exp (not expired), iss (matches configured issuer), aud (matches configured audience). A forged token, an expired token, or a token from a different cluster all fail here.",
+    "s6_title": "Identity Resolved: Annotations Matched",
     "s6_desc": "Secrets Manager extracts the claim specified in token-app-property (e.g. sub). It locates the matching host in policy (host/conjur/authn-jwt/eks-latam/springboot-app) and verifies ALL host annotations against the JWT claims: kubernetes/namespace-name: conjur ✓, kubernetes/service-account-name: springboot-app ✓. Every annotation is a mandatory constraint.",
     "s7_title": "Short-Lived API Token Issued",
-    "s7_desc": "Authentication succeeds. Secrets Manager issues a short-lived API token — valid for approximately 8 minutes. This token proves the workload's authenticated identity to the Secrets Vault. The original K8s JWT is never stored or forwarded.",
-    "s8_title": "Secrets Retrieved — Flow Complete",
+    "s7_desc": "Authentication succeeds. Secrets Manager issues a short-lived API token: valid for approximately 8 minutes. This token proves the workload's authenticated identity to the Secrets Vault. The original K8s JWT is never stored or forwarded.",
+    "s8_title": "Secrets Retrieved: Flow Complete",
     "s8_desc": "The workload uses the API token to fetch secrets: GET /api/secrets/conjur/variable/... with Authorization: Token token=\"<api-token>\". Secrets Manager enforces policy entitlements. If authorized, the secret value is returned. No credential ever touches source code, a container image, or a CI variable.",
     "key1_title": "Zero Stored Credentials",
-    "key1_desc": "The workload authenticates using its Kubernetes identity — a JWT projected by K8s itself. No API keys, no passwords, no certificates stored in the cluster. If the pod is compromised, there are no credentials to steal.",
+    "key1_desc": "The workload authenticates using its Kubernetes identity: a JWT projected by K8s itself. No API keys, no passwords, no certificates stored in the cluster. If the pod is compromised, there are no credentials to steal.",
     "key2_title": "Cryptographic Identity",
-    "key2_desc": "The JWT is signed by the Kubernetes API Server's RSA private key. Secrets Manager verifies this signature against the public JWKS before trusting any claims. Identity cannot be forged — only the real K8s cluster can produce a valid signature.",
+    "key2_desc": "The JWT is signed by the Kubernetes API Server's RSA private key. Secrets Manager verifies this signature against the public JWKS before trusting any claims. Identity cannot be forged: only the real K8s cluster can produce a valid signature.",
     "key3_title": "Policy as Code",
-    "key3_desc": "Every claim-to-identity mapping is declared in Secrets Manager policy YAML and version-controlled. Annotations on host resources define exactly which namespace, ServiceAccount, and pod labels are required. Change the policy to grant or revoke access — no credential rotation needed."
+    "key3_desc": "Every claim-to-identity mapping is declared in Secrets Manager policy YAML and version-controlled. Annotations on host resources define exactly which namespace, ServiceAccount, and pod labels are required. Change the policy to grant or revoke access: no credential rotation needed."
   },
   "secretshub": {
     "badge": "Secrets Hub",
     "title": "How IDIRA Secrets Hub Works",
-    "subtitle": "Secrets Hub bridges IDIRA Privilege Cloud and native cloud secret stores — AWS Secrets Manager, Azure Key Vault, and GCP Secret Manager — so developers keep using native APIs while security teams retain centralized control and automated rotation.",
+    "subtitle": "Secrets Hub bridges IDIRA Privilege Cloud and native cloud secret stores (AWS Secrets Manager, Azure Key Vault, and GCP Secret Manager) so developers keep using native APIs while security teams retain centralized control and automated rotation.",
     "step_of": "Step {{current}} of {{total}}",
     "keyboard_hint": "← → arrow keys · Space to play/pause",
-    "s1_title": "Secrets Hub — Four Actors Overview",
+    "s1_title": "Secrets Hub: Four Actors Overview",
     "s1_desc": "Four actors collaborate: Privilege Cloud (PAM) is the source of truth where security teams store, rotate, and audit every secret. Secrets Hub is the SaaS sync engine that reads from PAM and writes to cloud stores. Target Stores (AWS SM, Azure KV, GCP SM) are where developers and workloads consume secrets natively. Workloads read using their existing native SDKs with zero code changes.",
     "s2_title": "PAM Safe + CPM Auto-Rotation",
-    "s2_desc": "Security teams store every secret in a PAM Safe inside Privilege Cloud — database passwords, API keys, app tokens, certificates. The Central Policy Manager (CPM) automatically rotates credentials on a schedule defined by password policy. Every rotation is logged, audited, and can be forwarded to SIEM. This is the single source of truth — one place, all policies, full audit trail.",
+    "s2_desc": "Security teams store every secret in a PAM Safe inside Privilege Cloud: database passwords, API keys, app tokens, certificates. The Central Policy Manager (CPM) automatically rotates credentials on a schedule defined by password policy. Every rotation is logged, audited, and can be forwarded to SIEM. This is the single source of truth: one place, all policies, full audit trail.",
     "s3_title": "Establish Trust with Each Target Store",
-    "s3_desc": "An administrator creates a trust relationship between Secrets Hub and each cloud secret store, with no static credentials stored anywhere. For AWS Secrets Manager: an IAM Role is created via a CloudFormation template — Secrets Hub assumes this role to write secrets. For Azure Key Vault: an App Registration with Key Vault Secrets Officer role. For GCP Secret Manager: a Service Account with secretmanager.secretVersionManager permission.",
+    "s3_desc": "An administrator creates a trust relationship between Secrets Hub and each cloud secret store, with no static credentials stored anywhere. For AWS Secrets Manager: an IAM Role is created via a CloudFormation template. Secrets Hub assumes this role to write secrets. For Azure Key Vault: an App Registration with Key Vault Secrets Officer role. For GCP Secret Manager: a Service Account with secretmanager.secretVersionManager permission.",
     "s4_title": "Grant Secrets Hub Access to PAM Safes",
-    "s4_desc": "The administrator grants the Secrets Hub service user membership to the specific PAM Safes whose secrets should be synced. Secrets Hub only ever reads from PAM — it never writes back. Safe membership follows least-privilege: only the safes explicitly configured for sync are accessible. The Secrets Hub service account gets 'List accounts' and 'Retrieve accounts' permissions, nothing more.",
+    "s4_desc": "The administrator grants the Secrets Hub service user membership to the specific PAM Safes whose secrets should be synced. Secrets Hub only ever reads from PAM: it never writes back. Safe membership follows least-privilege: only the safes explicitly configured for sync are accessible. The Secrets Hub service account gets 'List accounts' and 'Retrieve accounts' permissions, nothing more.",
     "s5_title": "Create a Sync Policy",
     "s5_desc": "A Sync Policy is the rule that links a PAM Safe (source) to one or more target cloud secret stores. You define: which Safe to sync (the filter type is PAM_SAFE), which target stores to push to, and which properties to include (password only, or all secret properties). One policy can fan out to multiple targets simultaneously. Policies are active immediately and can be managed via UI, API, or Terraform provider. Secrets synced to a target store are tagged 'Sourced by IDIRA'.",
-    "s6_title": "Initial Sync — PAM Secrets Land in Cloud Stores",
-    "s6_desc": "Secrets Hub reads the secrets from the configured PAM Safe and writes them to every target store defined in the sync policy. Each synced secret appears in AWS SM, Azure KV, and GCP SM tagged with 'Sourced by IDIRA'. From this moment, developers and workloads can read secrets from their native store using their existing AWS SDK, Azure SDK, or GCP client library calls — nothing changes in application code.",
+    "s6_title": "Initial Sync: PAM Secrets Land in Cloud Stores",
+    "s6_desc": "Secrets Hub reads the secrets from the configured PAM Safe and writes them to every target store defined in the sync policy. Each synced secret appears in AWS SM, Azure KV, and GCP SM tagged with 'Sourced by IDIRA'. From this moment, developers and workloads can read secrets from their native store using their existing AWS SDK, Azure SDK, or GCP client library calls, nothing changes in application code.",
     "s7_title": "CPM Rotates → Secrets Hub Re-Syncs Automatically",
-    "s7_desc": "When CPM rotates a credential in PAM (scheduled or on-demand), Secrets Hub detects the change at the next sync cycle. It reads the new secret value from PAM and pushes the updated version to all target stores. AWS SM, Azure KV, and GCP SM all receive the fresh credential. Workloads that read from native stores on next access automatically get the rotated value — no restart, no re-deploy, no notification needed.",
-    "s8_title": "Developers Read From Native Stores — Zero Changes",
-    "s8_desc": "Developers and workloads use native cloud store APIs exactly as they did before. A Lambda function calling secretsmanager.get_secret_value(), a K8s pod reading from Azure Key Vault via CSI driver, a Cloud Run service using the GCP Secret Manager API — all work identically. No IDIRA SDK, no agent, no proxy. Security teams get centralized management and rotation; developers get native experience. Both teams win.",
+    "s7_desc": "When CPM rotates a credential in PAM (scheduled or on-demand), Secrets Hub detects the change at the next sync cycle. It reads the new secret value from PAM and pushes the updated version to all target stores. AWS SM, Azure KV, and GCP SM all receive the fresh credential. Workloads that read from native stores on next access automatically get the rotated value: no restart, no re-deploy, no notification needed.",
+    "s8_title": "Developers Read From Native Stores: Zero Changes",
+    "s8_desc": "Developers and workloads use native cloud store APIs exactly as they did before. A Lambda function calling secretsmanager.get_secret_value(), a K8s pod reading from Azure Key Vault via CSI driver, a Cloud Run service using the GCP Secret Manager API: all work identically. No IDIRA SDK, no agent, no proxy. Security teams get centralized management and rotation; developers get native experience. Both teams win.",
     "key1_title": "Zero Developer Friction",
-    "key1_desc": "Developers keep using native AWS SM, Azure KV, or GCP SM APIs — the same SDKs, the same code, the same IAM patterns. Secrets Hub is invisible to them. Adoption requires no application changes, no new dependencies, no retraining.",
+    "key1_desc": "Developers keep using native AWS SM, Azure KV, or GCP SM APIs: the same SDKs, the same code, the same IAM patterns. Secrets Hub is invisible to them. Adoption requires no application changes, no new dependencies, no retraining.",
     "key2_title": "Single Source of Truth",
     "key2_desc": "All secrets originate in and are rotated by IDIRA Privilege Cloud. CPM enforces rotation schedules, password complexity, and reconciliation. Every access and rotation is logged. One audit trail covers secrets consumed across all three cloud providers simultaneously.",
     "key3_title": "Multi-Cloud Sync in One Policy",
@@ -881,31 +881,31 @@
   "jenkins": {
     "badge": "Jenkins Integration",
     "title": "How Jenkins Fetches Secrets From IDIRA",
-    "subtitle": "The Secrets Manager Credentials Plugin lets Jenkins pipelines retrieve secrets from Secrets Manager at runtime using JWT authentication — no API keys stored in Jenkins, no credentials in Jenkinsfiles, no secrets in source code.",
+    "subtitle": "The Secrets Manager Credentials Plugin lets Jenkins pipelines retrieve secrets from Secrets Manager at runtime using JWT authentication: no API keys stored in Jenkins, no credentials in Jenkinsfiles, no secrets in source code.",
     "step_of": "Step {{current}} of {{total}}",
     "keyboard_hint": "← → arrow keys · Space to play/pause",
-    "s1_title": "Jenkins Integration — Five Components Overview",
-    "s1_desc": "Five components work together: the Jenkins Server running CI/CD pipelines with the Secrets Manager Credentials Plugin installed, the JWKS Endpoint exposed by Jenkins itself for JWT key verification, Secrets Manager with its JWT Authenticator webservice (authn-jwt/jenkins), and the Secrets Vault storing the actual secret values. No hardcoded credentials exist anywhere in this flow — not in Jenkinsfile, not in Jenkins config, not in environment.",
+    "s1_title": "Jenkins Integration: Five Components Overview",
+    "s1_desc": "Five components work together: the Jenkins Server running CI/CD pipelines with the Secrets Manager Credentials Plugin installed, the JWKS Endpoint exposed by Jenkins itself for JWT key verification, Secrets Manager with its JWT Authenticator webservice (authn-jwt/jenkins), and the Secrets Vault storing the actual secret values. No hardcoded credentials exist anywhere in this flow: not in Jenkinsfile, not in Jenkins config, not in environment.",
     "s2_title": "One-Time Admin Setup",
     "s2_desc": "Two admins configure the integration once. The Jenkins admin installs the Secrets Manager Credentials Plugin (v3.x, requires Jenkins 2.455+), then in Manage Jenkins → System sets the Secrets Manager URL, account name, and JWT Auth Webservice ID (authn-jwt/jenkins). The Secrets Manager admin creates the JWT authenticator policy with variables: jwks-uri (pointing to Jenkins' JWKS endpoint), token-app-property (e.g. sub), issuer (Jenkins URL), audience (cyberark-conjur), then defines pipeline host identities with annotations (jenkins_pronoun: Pipeline, jenkins_full_name: Project1/pipeline) and grants them access to specific secret variables via !permit blocks.",
     "s3_title": "Developer Triggers the Pipeline",
-    "s3_desc": "A developer pushes code to the repository or manually triggers a Jenkins build. The Jenkinsfile is committed to source control. It declares credentials via withCredentials([conjurSecretCredential(credentialsId: 'DB_PWD', variable: 'DB_PASSWORD')]) — only the Jenkins Credential ID appears in code. The actual secret path in Secrets Manager, the Secrets Manager URL, and the secret value are all absent from the Jenkinsfile. Security teams own the policy; developers own the pipeline.",
-    "s4_title": "withCredentials Activates the Plugin — JWT Generated",
-    "s4_desc": "When pipeline execution reaches the withCredentials block, the Secrets Manager Credentials Plugin activates. It generates a short-lived JWT (valid only 2 minutes) signed by Jenkins' own RSA private key. The JWT contains: iss (Jenkins URL), aud (cyberark-conjur), sub (the pipeline's jenkins_full_name, e.g. Project1/pipeline), and exp (now + 120 seconds). This JWT is the pipeline's identity credential — there is no API key to store, rotate, or leak. The identity is structural: the job path in Jenkins IS the credential.",
+    "s3_desc": "A developer pushes code to the repository or manually triggers a Jenkins build. The Jenkinsfile is committed to source control. It declares credentials via withCredentials([conjurSecretCredential(credentialsId: 'DB_PWD', variable: 'DB_PASSWORD')]). Only the Jenkins Credential ID appears in code. The actual secret path in Secrets Manager, the Secrets Manager URL, and the secret value are all absent from the Jenkinsfile. Security teams own the policy; developers own the pipeline.",
+    "s4_title": "withCredentials Activates the Plugin: JWT Generated",
+    "s4_desc": "When pipeline execution reaches the withCredentials block, the Secrets Manager Credentials Plugin activates. It generates a short-lived JWT (valid only 2 minutes) signed by Jenkins' own RSA private key. The JWT contains: iss (Jenkins URL), aud (cyberark-conjur), sub (the pipeline's jenkins_full_name, e.g. Project1/pipeline), and exp (now + 120 seconds). This JWT is the pipeline's identity credential: there is no API key to store, rotate, or leak. The identity is structural: the job path in Jenkins IS the credential.",
     "s5_title": "Plugin → Secrets Manager + JWKS Verification",
-    "s5_desc": "The plugin POSTs the JWT to Secrets Manager's authn-jwt/jenkins endpoint. Secrets Manager reads its jwks-uri policy variable and fetches the JSON Web Key Set from Jenkins' JWKS endpoint (https://jenkins/jwtauth/conjur-jwk-set). Using the returned RSA public key it cryptographically verifies the JWT signature — confirming the token was genuinely issued by this Jenkins instance. Standard claims are then validated: exp (not expired), iss (matches configured issuer), aud (matches cyberark-conjur).",
-    "s6_title": "Identity Resolved — Policy Check — Vault Access",
+    "s5_desc": "The plugin POSTs the JWT to Secrets Manager's authn-jwt/jenkins endpoint. Secrets Manager reads its jwks-uri policy variable and fetches the JSON Web Key Set from Jenkins' JWKS endpoint (https://jenkins/jwtauth/conjur-jwk-set). Using the returned RSA public key it cryptographically verifies the JWT signature, confirming the token was genuinely issued by this Jenkins instance. Standard claims are then validated: exp (not expired), iss (matches configured issuer), aud (matches cyberark-conjur).",
+    "s6_title": "Identity Resolved (Policy Check) Vault Access",
     "s6_desc": "Secrets Manager extracts the sub claim (Project1/pipeline) and maps it via token-app-property to a host in policy. It verifies all host annotations match JWT claims: jenkins_full_name: Project1/pipeline ✓, jenkins_pronoun: Pipeline ✓. Then it checks the !permit block: does this host have read/execute privilege on the requested variable paths? If all pass, a short-lived Secrets Manager API token is issued and the secrets are fetched from the Vault. Each variable access is logged for audit.",
     "s7_title": "Secrets Returned and Injected as Environment Variables",
     "s7_desc": "Secrets Manager returns the secret values to the plugin over HTTPS. The plugin injects each value into the build environment under the variable name specified in the Jenkinsfile (DB_PASSWORD, API_KEY, GITHUB_TOKEN, etc.). Values exist only in memory for the duration of the withCredentials block scope. They are never written to disk, never appear in build artifacts, and are never stored in Jenkins' credential store in plaintext.",
-    "s8_title": "Pipeline Executes — All Secrets Auto-Masked in Logs",
+    "s8_title": "Pipeline Executes: All Secrets Auto-Masked in Logs",
     "s8_desc": "The pipeline steps inside withCredentials execute with real secret values available as environment variables. Shell commands, deployment scripts, and test suites use $DB_PASSWORD, $API_KEY normally. Jenkins automatically intercepts all log output and replaces every occurrence of a secret value with ***. Even if a developer accidentally echoes a variable, the log shows ***. When the withCredentials block exits, all values are cleared from memory. The build succeeds with no trace of any credential in logs, artifacts, or source code.",
     "key1_title": "Zero Credentials in Code",
-    "key1_desc": "No API keys, passwords, or secret paths appear in Jenkinsfile or Jenkins configuration. Pipeline code references only Jenkins Credential IDs (like 'DB_PWD'). Security teams control the Secrets Manager policy and secret paths independently of developers — no coordination needed to rotate.",
+    "key1_desc": "No API keys, passwords, or secret paths appear in Jenkinsfile or Jenkins configuration. Pipeline code references only Jenkins Credential IDs (like 'DB_PWD'). Security teams control the Secrets Manager policy and secret paths independently of developers: no coordination needed to rotate.",
     "key2_title": "Short-Lived JWT Identity",
     "key2_desc": "Each build authenticates using a 2-minute JWT signed by Jenkins itself. No stored API key, no long-lived credential, nothing to rotate for the Jenkins identity. If a token is intercepted it expires before it can be reused. The job path in Jenkins (Project1/pipeline) is the identity.",
     "key3_title": "Automatic Log Masking + Scope Control",
-    "key3_desc": "Jenkins automatically masks all secret values in build logs. The withCredentials block is the scope boundary — secrets are available only within it and cleared on exit. Three credential tiers (Global, Folder, Job) allow shared secrets across teams with inheritance control via jenkins_pronoun annotations.",
+    "key3_desc": "Jenkins automatically masks all secret values in build logs. The withCredentials block is the scope boundary: secrets are available only within it and cleared on exit. Three credential tiers (Global, Folder, Job) allow shared secrets across teams with inheritance control via jenkins_pronoun annotations.",
     "arch_title": "Architecture Reference",
     "arch1_title": "Secrets Manager Credentials Plugin",
     "arch1_desc": "Installed via Jenkins Plugin Manager. Bridges Jenkins Credential Store with Secrets Manager. Supports JWT (keyless, recommended) and API key auth. Works with Declarative and Scripted Pipelines, and Freestyle projects.",
@@ -914,75 +914,75 @@
     "arch3_title": "Credential Inheritance Tiers",
     "arch3_desc": "Three tiers: Global (visible to all jobs), Folder (shared within a folder, inherited by subfolders), Job/Pipeline (job-specific). Each tier maps to a Secrets Manager host with annotation jenkins_pronoun: Global | Folder | Pipeline.",
     "arch4_title": "Policy-Based Access Control",
-    "arch4_desc": "Secrets Manager policy !permit blocks define exactly which pipeline host identities can read which secret variables. Changing access (grant or revoke) is a policy update — no secret rotation, no credential redistribution, immediate effect."
+    "arch4_desc": "Secrets Manager policy !permit blocks define exactly which pipeline host identities can read which secret variables. Changing access (grant or revoke) is a policy update: no secret rotation, no credential redistribution, immediate effect."
   },
   "ansible": {
     "badge": "Ansible Integration",
     "title": "How Ansible Fetches Secrets From IDIRA",
-    "subtitle": "The cyberark.conjur collection's lookup plugin lets Ansible playbooks retrieve secrets from Secrets Manager at run time — authenticated with a JWT from your IdP. No API keys in inventory, no credentials in playbooks, no secrets on managed nodes.",
+    "subtitle": "The cyberark.conjur collection's lookup plugin lets Ansible playbooks retrieve secrets from Secrets Manager at run time, authenticated with a JWT from your IdP. No API keys in inventory, no credentials in playbooks, no secrets on managed nodes.",
     "step_of": "Step {{current}} of {{total}}",
     "keyboard_hint": "← → arrow keys · Space to play/pause",
-    "s1_title": "Ansible Integration — Components Overview",
-    "s1_desc": "Five components work together: the Ansible Control Node running the playbook with the cyberark.conjur collection and its lookup plugin installed; the IdP / JWKS Endpoint that issues the JWT and exposes the public keys; Secrets Manager SaaS with its JWT Authenticator webservice (authn-jwt/ansible); and the Secrets Vault holding the actual values. No hardcoded credential exists anywhere — not in the playbook, not in inventory, not in host_vars.",
+    "s1_title": "Ansible Integration: Components Overview",
+    "s1_desc": "Five components work together: the Ansible Control Node running the playbook with the cyberark.conjur collection and its lookup plugin installed; the IdP / JWKS Endpoint that issues the JWT and exposes the public keys; Secrets Manager SaaS with its JWT Authenticator webservice (authn-jwt/ansible); and the Secrets Vault holding the actual values. No hardcoded credential exists anywhere: not in the playbook, not in inventory, not in host_vars.",
     "s2_title": "One-Time Admin Setup",
     "s2_desc": "Install the collection on the control node (ansible-galaxy collection install cyberark.conjur). The Secrets Manager admin creates the JWT authenticator policy (authn-jwt/ansible) with the variables jwks-uri (pointing at the IdP's JWKS), token-app-property, issuer and audience (cyberark-conjur), defines an ansible host identity and grants it read/execute on the secret variables via !permit. The operator supplies the connection via extra-vars or environment variables (CONJUR_APPLIANCE_URL, CONJUR_AUTHN_LOGIN, CONJUR_AUTHN_TYPE=jwt, CONJUR_AUTHN_SERVICE_ID).",
     "s3_title": "Operator Runs the Playbook",
-    "s3_desc": "The operator runs ansible-playbook retrieve-secrets.yaml. The playbook is committed to source control. It references secrets only through the Jinja2 lookup {{ lookup('cyberark.conjur.conjur_variable', 'data/ansible/db-password') }} — only the secret ID appears in the YAML. The Secrets Manager URL, host identity and the actual value are supplied out-of-band (env / extra-vars) and never live in the playbook.",
-    "s4_title": "Lookup Plugin Activates — JWT Obtained",
-    "s4_desc": "When a task hits the conjur_variable lookup, the plugin runs on the control node. With authn_type=jwt it uses a JWT obtained from your Identity Provider — typically a prior task fetches and saves the JWT from the IdP. The token carries iss (IdP), aud (cyberark-conjur) and sub (the ansible host identity). There is no static API key to store or rotate — the JWT is the control node's short-lived identity credential.",
+    "s3_desc": "The operator runs ansible-playbook retrieve-secrets.yaml. The playbook is committed to source control. It references secrets only through the Jinja2 lookup {{ lookup('cyberark.conjur.conjur_variable', 'data/ansible/db-password') }}: only the secret ID appears in the YAML. The Secrets Manager URL, host identity and the actual value are supplied out-of-band (env / extra-vars) and never live in the playbook.",
+    "s4_title": "Lookup Plugin Activates: JWT Obtained",
+    "s4_desc": "When a task hits the conjur_variable lookup, the plugin runs on the control node. With authn_type=jwt it uses a JWT obtained from your Identity Provider: typically a prior task fetches and saves the JWT from the IdP. The token carries iss (IdP), aud (cyberark-conjur) and sub (the ansible host identity). There is no static API key to store or rotate: the JWT is the control node's short-lived identity credential.",
     "s5_title": "Plugin → Secrets Manager + JWKS Verification",
     "s5_desc": "The plugin POSTs the JWT to Secrets Manager's authn-jwt/ansible endpoint. Secrets Manager reads its jwks-uri policy variable and fetches the JSON Web Key Set from the IdP. Using the public key it cryptographically verifies the JWT signature, then validates the standard claims: exp (not expired), iss (matches the configured issuer) and aud (matches cyberark-conjur).",
-    "s6_title": "Identity Resolved — Policy Check — Vault Access",
+    "s6_title": "Identity Resolved (Policy Check) Vault Access",
     "s6_desc": "Secrets Manager maps the sub claim via token-app-property to a host in policy and confirms the annotations match. It then checks the !permit block: does this ansible host have read/execute on the requested variable path? If so, a short-lived Secrets Manager access token is issued and the secret is read from the Vault. Every access is logged for audit.",
     "s7_title": "Secret Returned and Bound to an Ansible Variable",
-    "s7_desc": "Secrets Manager returns the value to the plugin over HTTPS. The lookup resolves to the plaintext value inside the play — bound to an Ansible variable or used directly in a task (template, copy, uri, etc.). The value lives only in the control node's memory for the play; it is never written to inventory, host_vars or disk.",
-    "s8_title": "Task Runs on Managed Nodes — Value Kept Off Logs",
-    "s8_desc": "Tasks apply the secret to the managed nodes (render a config template, set a DB password, deploy a key). Mark the task with no_log: true so Ansible never prints the value in output or -v logs; the PLAY RECAP shows success with the value masked. When the play ends the value is cleared from memory — no credential remains in the playbook, in inventory or on the managed hosts.",
+    "s7_desc": "Secrets Manager returns the value to the plugin over HTTPS. The lookup resolves to the plaintext value inside the play: bound to an Ansible variable or used directly in a task (template, copy, uri, etc.). The value lives only in the control node's memory for the play; it is never written to inventory, host_vars or disk.",
+    "s8_title": "Task Runs on Managed Nodes: Value Kept Off Logs",
+    "s8_desc": "Tasks apply the secret to the managed nodes (render a config template, set a DB password, deploy a key). Mark the task with no_log: true so Ansible never prints the value in output or -v logs; the PLAY RECAP shows success with the value masked. When the play ends the value is cleared from memory: no credential remains in the playbook, in inventory or on the managed hosts.",
     "key1_title": "Zero Secrets in Playbooks & Inventory",
-    "key1_desc": "Playbooks reference only Secrets Manager secret IDs via lookup(). No passwords, keys or vault paths live in YAML, inventory or host_vars. Security teams own the policy and secret paths independently of the automation authors — no coordination needed to rotate.",
+    "key1_desc": "Playbooks reference only Secrets Manager secret IDs via lookup(). No passwords, keys or vault paths live in YAML, inventory or host_vars. Security teams own the policy and secret paths independently of the automation authors: no coordination needed to rotate.",
     "key2_title": "Keyless JWT Identity (+ Other Methods)",
-    "key2_desc": "The lookup plugin supports API key, AWS IAM, Azure Managed Identity, GCP and JWT authentication. With JWT the control node authenticates using a short-lived token from your IdP — nothing static to store or rotate. If a token is intercepted it expires before it can be reused.",
+    "key2_desc": "The lookup plugin supports API key, AWS IAM, Azure Managed Identity, GCP and JWT authentication. With JWT the control node authenticates using a short-lived token from your IdP, nothing static to store or rotate. If a token is intercepted it expires before it can be reused.",
     "key3_title": "Runtime-Only, In-Memory, Off-Disk",
     "key3_desc": "Secrets are fetched at play execution and exist only in the control node's memory for that run. Combined with no_log they never appear in logs or artifacts. Optionally the conjur_host_identity role installs Summon to keep secrets off disk on managed nodes.",
     "arch_title": "Architecture Reference",
     "arch1_title": "cyberark.conjur Collection",
-    "arch1_desc": "Installed from Ansible Galaxy (ansible-galaxy collection install cyberark.conjur). Provides the conjur_variable lookup plugin and the conjur_host_identity role. Works with any playbook — the lookup path requires no changes on the managed nodes.",
+    "arch1_desc": "Installed from Ansible Galaxy (ansible-galaxy collection install cyberark.conjur). Provides the conjur_variable lookup plugin and the conjur_host_identity role. Works with any playbook: the lookup path requires no changes on the managed nodes.",
     "arch2_title": "JWT Authentication",
     "arch2_desc": "The control node sends a JWT from your IdP to the authn-jwt/ansible webservice. Secrets Manager verifies the signature against the IdP's public JWKS. No API key is stored on the control node to enable authentication.",
     "arch3_title": "Host Identity & Summon",
     "arch3_desc": "The conjur_host_identity role enrolls managed nodes with a Conjur identity (via a Host Factory token) and installs Summon, so applications on those hosts can fetch secrets and keep them off disk, injected as environment variables at start.",
     "arch4_title": "Policy-Based Access Control",
-    "arch4_desc": "Secrets Manager policy !permit blocks define exactly which host identities can read which secret variables. Granting or revoking access is a policy update — no secret rotation, no credential redistribution, immediate effect."
+    "arch4_desc": "Secrets Manager policy !permit blocks define exactly which host identities can read which secret variables. Granting or revoking access is a policy update: no secret rotation, no credential redistribution, immediate effect."
   },
   "csi": {
     "badge": "CSI Driver Integration",
     "title": "How the Secrets Store CSI Driver Delivers Secrets",
-    "subtitle": "A demo pod consumes the dbuser_dual secret from CyberArk Conjur Cloud through the Secrets Store CSI Driver (Conjur provider). The values are mounted into the pod as a read-only tmpfs volume — no Kubernetes Secret, no API key, no secret in the image — and the driver re-fetches them every 2 minutes.",
+    "subtitle": "A demo pod consumes the dbuser_dual secret from CyberArk Conjur Cloud through the Secrets Store CSI Driver (Conjur provider). The values are mounted into the pod as a read-only tmpfs volume (no Kubernetes Secret, no API key, no secret in the image) and the driver re-fetches them every 2 minutes.",
     "cta": "Open the live demo · /csidriver",
     "step_of": "Step {{current}} of {{total}}",
     "keyboard_hint": "← → arrow keys · Space to play/pause",
-    "s1_title": "CSI Secret Delivery — Components Overview",
+    "s1_title": "CSI Secret Delivery: Components Overview",
     "s1_desc": "The demo runs in the EKS your-cluster cluster (namespace conjur). Five parts work together: the pod csidriver-app (a small Python app plus a CSI-mounted tmpfs volume), the Secrets Store CSI Driver and the conjur-k8s-csi-provider (both DaemonSets in kube-system), and CyberArk Conjur Cloud (tenant your-tenant) holding the dbuser_dual secret behind the authn-jwt/your-cluster authenticator. No secret value is stored in a Kubernetes Secret, in the image, or in Git.",
     "s2_title": "One-Time Setup",
-    "s2_desc": "A SecretProviderClass (csidriver-secrets) declares the Conjur connection — applianceUrl, account, authnId (authn-jwt/your-cluster) and the CA chain — with no secretObjects, so delivery is volume-only. The pod carries a conjur.org/secrets annotation mapping each file (username.txt, password.txt, address.txt) to a Conjur variable path, exposed to the provider through a downwardAPI podinfo volume. A dedicated ServiceAccount (csidriver) is the workload identity, and on the Conjur side a matching workload with read/execute on dbuser_dual is authorized.",
+    "s2_desc": "A SecretProviderClass (csidriver-secrets) declares the Conjur connection (applianceUrl, account, authnId (authn-jwt/your-cluster) and the CA chain) with no secretObjects, so delivery is volume-only. The pod carries a conjur.org/secrets annotation mapping each file (username.txt, password.txt, address.txt) to a Conjur variable path, exposed to the provider through a downwardAPI podinfo volume. A dedicated ServiceAccount (csidriver) is the workload identity, and on the Conjur side a matching workload with read/execute on dbuser_dual is authorized.",
     "s3_title": "Browser Requests the Page",
-    "s3_desc": "A request to demo.minha.cloud/csidriver enters through the nginx-internal ingress (TLS), which rewrites the path and forwards it to csidriver-service (ClusterIP 80 → 8080). The Python app handles the request and, on every load, reads the three files under /mnt/conjur-csi-volume. Nothing about the secret lives in the app code — only the mount path.",
-    "s4_title": "Volume Mount — Projected ServiceAccount Token",
+    "s3_desc": "A request to demo.minha.cloud/csidriver enters through the nginx-internal ingress (TLS), which rewrites the path and forwards it to csidriver-service (ClusterIP 80 → 8080). The Python app handles the request and, on every load, reads the three files under /mnt/conjur-csi-volume. Nothing about the secret lives in the app code: only the mount path.",
+    "s4_title": "Volume Mount, Projected ServiceAccount Token",
     "s4_desc": "When the pod starts, the kubelet asks the Secrets Store CSI Driver to mount the volume (NodePublishVolume). The driver requests a projected ServiceAccount token for the csidriver SA with audience conjur (as declared in the CSIDriver tokenRequests) and hands it, together with the pod's conjur.org/secrets mapping, to the conjur-k8s-csi-provider running on the same node.",
     "s5_title": "Provider Authenticates to Conjur (JWT)",
-    "s5_desc": "The Conjur provider presents the projected token as a JWT to the authn-jwt/your-cluster authenticator on Conjur Cloud. Conjur cryptographically verifies the token against the cluster's public keys and validates the claims — the sub is system:serviceaccount:conjur:csidriver, the audience is conjur. This is keyless workload identity: there is no API key stored on the node or in the pod.",
-    "s6_title": "Authorization — Vault Access",
-    "s6_desc": "Conjur maps the authenticated identity to a workload and checks its permissions: does system:serviceaccount:conjur:csidriver have read/execute on data/vault/demo-safe/dbuser_dual/{username,password,address}? If so, the values are read from the Vault. A successful mount is itself the proof that the workload and permissions on the Conjur side are correct — otherwise the pod would stay in ContainerCreating.",
+    "s5_desc": "The Conjur provider presents the projected token as a JWT to the authn-jwt/your-cluster authenticator on Conjur Cloud. Conjur cryptographically verifies the token against the cluster's public keys and validates the claims: the sub is system:serviceaccount:conjur:csidriver, the audience is conjur. This is keyless workload identity: there is no API key stored on the node or in the pod.",
+    "s6_title": "Authorization: Vault Access",
+    "s6_desc": "Conjur maps the authenticated identity to a workload and checks its permissions: does system:serviceaccount:conjur:csidriver have read/execute on data/vault/demo-safe/dbuser_dual/{username,password,address}? If so, the values are read from the Vault. A successful mount is itself the proof that the workload and permissions on the Conjur side are correct: otherwise the pod would stay in ContainerCreating.",
     "s7_title": "Secrets Written to the tmpfs Volume",
-    "s7_desc": "The provider returns the values to the driver, which writes each one to its file under /mnt/conjur-csi-volume (username.txt, password.txt, address.txt) on a tmpfs, read-only volume. The values live only in the node's memory for the pod — never persisted to disk, never written to a Kubernetes Secret, and never leaving the volume.",
-    "s8_title": "App Serves the Values — Automatic Rotation",
-    "s8_desc": "The app reads the files on each request and renders the values (password masked; ?reveal=1 shows it). The driver's rotation reconciler polls Conjur every 2 minutes (rotationPollInterval 2m0s, enable-secret-rotation=true) and rewrites the files if dbuser_dual changed. The page auto-refreshes every 5 seconds, so a rotation appears within ~2 minutes — with no pod restart and no redeploy.",
+    "s7_desc": "The provider returns the values to the driver, which writes each one to its file under /mnt/conjur-csi-volume (username.txt, password.txt, address.txt) on a tmpfs, read-only volume. The values live only in the node's memory for the pod: never persisted to disk, never written to a Kubernetes Secret, and never leaving the volume.",
+    "s8_title": "App Serves the Values: Automatic Rotation",
+    "s8_desc": "The app reads the files on each request and renders the values (password masked; ?reveal=1 shows it). The driver's rotation reconciler polls Conjur every 2 minutes (rotationPollInterval 2m0s, enable-secret-rotation=true) and rewrites the files if dbuser_dual changed. The page auto-refreshes every 5 seconds, so a rotation appears within ~2 minutes: with no pod restart and no redeploy.",
     "key1_title": "Volume-Only Delivery (No K8s Secret)",
-    "key1_desc": "Secrets are delivered straight into a read-only tmpfs volume in the pod — never materialized as a Kubernetes Secret object and never baked into the image. The app knows only the mount path (/mnt/conjur-csi-volume); the value exists solely in the node's memory.",
+    "key1_desc": "Secrets are delivered straight into a read-only tmpfs volume in the pod: never materialized as a Kubernetes Secret object and never baked into the image. The app knows only the mount path (/mnt/conjur-csi-volume); the value exists solely in the node's memory.",
     "key2_title": "Keyless Workload Identity",
-    "key2_desc": "The pod authenticates with a short-lived projected ServiceAccount token (audience conjur) verified by authn-jwt/your-cluster. Nothing static is stored — no API key on the node or in the pod. The identity is the ServiceAccount itself (sub=system:serviceaccount:conjur:csidriver).",
+    "key2_desc": "The pod authenticates with a short-lived projected ServiceAccount token (audience conjur) verified by authn-jwt/your-cluster. Nothing static is stored: no API key on the node or in the pod. The identity is the ServiceAccount itself (sub=system:serviceaccount:conjur:csidriver).",
     "key3_title": "Automatic Rotation (~2 min)",
-    "key3_desc": "The driver's rotation reconciler re-fetches from Conjur every 2 minutes and rewrites the volume in place — no pod restart. requiresRepublish is false because the reconciler, not the kubelet, drives updates. Changing the interval affects every CSI-mounted app on the cluster.",
+    "key3_desc": "The driver's rotation reconciler re-fetches from Conjur every 2 minutes and rewrites the volume in place: no pod restart. requiresRepublish is false because the reconciler, not the kubelet, drives updates. Changing the interval affects every CSI-mounted app on the cluster.",
     "config_title": "How it's configured",
     "config_note": "Live values from the cluster (verified 2026-07-19), passed as environment variables to the pod.",
     "arch_title": "Architecture Reference",
@@ -991,7 +991,7 @@
     "arch2_title": "conjur-k8s-csi-provider",
     "arch2_desc": "A DaemonSet (also kube-system) that the driver calls over gRPC. It reads the pod's conjur.org/secrets mapping, authenticates to Conjur with the projected ServiceAccount JWT, and returns the requested variable values.",
     "arch3_title": "SecretProviderClass",
-    "arch3_desc": "The namespaced object (csidriver-secrets) that declares the Conjur connection — applianceUrl, account, authnId and CA chain. Here it has no secretObjects, so secrets are delivered only into the volume, not synced to a Kubernetes Secret.",
+    "arch3_desc": "The namespaced object (csidriver-secrets) that declares the Conjur connection: applianceUrl, account, authnId and CA chain. Here it has no secretObjects, so secrets are delivered only into the volume, not synced to a Kubernetes Secret.",
     "arch4_title": "Rotation Reconciler",
     "arch4_desc": "The driver control loop that polls the provider on rotation-poll-interval (2m) when enable-secret-rotation is true, rewriting the volume when the source changes. It is the update path here, since CSIDriver.requiresRepublish is false."
   },
@@ -1016,27 +1016,27 @@
     "n_host": "!host",
     "n_host_sub": "app1-host",
     "s1_title": "Policy as a Tree of Branches",
-    "s1_desc": "Secrets Manager policy is plain YAML — a list of statements. When loaded, those statements build a tree of branches rooted at a single implicit container: the account itself. Every secret, every identity and every authorization rule lives somewhere on this tree, addressable by its path. The animation will progressively introduce each piece: the root, branches created by !policy, the resources inside them, and how !permit and !grant tie identities to secrets.",
+    "s1_desc": "Secrets Manager policy is plain YAML: a list of statements. When loaded, those statements build a tree of branches rooted at a single implicit container: the account itself. Every secret, every identity and every authorization rule lives somewhere on this tree, addressable by its path. The animation will progressively introduce each piece: the root, branches created by !policy, the resources inside them, and how !permit and !grant tie identities to secrets.",
     "s2_title": "The Root and the First !policy",
-    "s2_desc": "A !policy statement at the top of the file creates a top-level branch under the root. It has three keys: id (its name, e.g. prod), owner (a role that controls the branch — usually a group like prod-admins), and body (the list of statements that live inside it). The owner has full authority over everything declared inside the branch and is the only role that can replace or delete its contents.",
-    "s3_title": "Nesting Branches — !policy Inside !policy",
+    "s2_desc": "A !policy statement at the top of the file creates a top-level branch under the root. It has three keys: id (its name, e.g. prod), owner (a role that controls the branch: usually a group like prod-admins), and body (the list of statements that live inside it). The owner has full authority over everything declared inside the branch and is the only role that can replace or delete its contents.",
+    "s3_title": "Nesting Branches: !policy Inside !policy",
     "s3_desc": "Branches nest arbitrarily. A !policy declared inside another !policy's body creates a sub-branch. Here, app1 is a sub-branch of prod. Nesting is how teams partition ownership: prod is owned by prod-admins, while app1 can declare its own owner so that the app1 team manages its own resources without touching the rest of prod.",
     "s4_title": "Resources Get Fully-Qualified IDs",
-    "s4_desc": "Every resource declared inside a branch is namespaced by it. The !variable db-password declared inside prod/app1 is referenced everywhere as prod/app1/db-password. Two branches can declare the same local name without colliding — they live in different namespaces. The fully-qualified ID is what tools, APIs and audit logs always use.",
-    "s5_title": "Roles — !host, !user, !group, !layer",
-    "s5_desc": "Roles are anything that can act. !host is a machine identity (a workload, pipeline, server), !user is a person, !group bundles roles together for delegation, and !layer groups hosts. Roles, like resources, get fully-qualified IDs. The !group admins declared inside prod/app1 is prod/app1/admins — that exact identifier is what !permit and !grant refer to.",
-    "s6_title": "!permit — Granting Privileges on a Resource",
-    "s6_desc": "!permit attaches privileges to a (role, resource) pair. Here, the admins group is permitted read and execute on db-password, meaning anyone in that group can fetch its value. The privilege set is fixed per resource type: variables support read, execute, update; policies support read, create, update, delete. !permit is additive — multiple permits on the same resource simply union the privileges.",
-    "s7_title": "!grant — Adding Members to a Role",
-    "s7_desc": "!grant adds a member role to a parent role. Granting app1-host membership in admins means app1-host inherits every privilege admins ever had — including the read/execute on db-password from the previous step. This is how indirection works: hosts and users are added to groups; groups are what permits target. To revoke access, change the grant — never touch the permit. Groups can grant into groups; layers can grant into layers; the hierarchy can be as deep as you need.",
+    "s4_desc": "Every resource declared inside a branch is namespaced by it. The !variable db-password declared inside prod/app1 is referenced everywhere as prod/app1/db-password. Two branches can declare the same local name without colliding: they live in different namespaces. The fully-qualified ID is what tools, APIs and audit logs always use.",
+    "s5_title": "Roles: !host, !user, !group, !layer",
+    "s5_desc": "Roles are anything that can act. !host is a machine identity (a workload, pipeline, server), !user is a person, !group bundles roles together for delegation, and !layer groups hosts. Roles, like resources, get fully-qualified IDs. The !group admins declared inside prod/app1 is prod/app1/admins: that exact identifier is what !permit and !grant refer to.",
+    "s6_title": "!permit, Granting Privileges on a Resource",
+    "s6_desc": "!permit attaches privileges to a (role, resource) pair. Here, the admins group is permitted read and execute on db-password, meaning anyone in that group can fetch its value. The privilege set is fixed per resource type: variables support read, execute, update; policies support read, create, update, delete. !permit is additive: multiple permits on the same resource simply union the privileges.",
+    "s7_title": "!grant, Adding Members to a Role",
+    "s7_desc": "!grant adds a member role to a parent role. Granting app1-host membership in admins means app1-host inherits every privilege admins ever had, including the read/execute on db-password from the previous step. This is how indirection works: hosts and users are added to groups; groups are what permits target. To revoke access, change the grant: never touch the permit. Groups can grant into groups; layers can grant into layers; the hierarchy can be as deep as you need.",
     "s8_title": "The Full Picture",
-    "s8_desc": "Putting it all together: branches partition the namespace and ownership, resources live inside branches with fully-qualified IDs, roles identify who can act, !permit names what they can do on each resource, and !grant binds identities into the role hierarchy. Loading this YAML produces exactly the tree on the right, addressable by paths like prod/app1/db-password. Editing the YAML and re-loading is the only way state ever changes — policy is the single source of truth.",
+    "s8_desc": "Putting it all together: branches partition the namespace and ownership, resources live inside branches with fully-qualified IDs, roles identify who can act, !permit names what they can do on each resource, and !grant binds identities into the role hierarchy. Loading this YAML produces exactly the tree on the right, addressable by paths like prod/app1/db-password. Editing the YAML and re-loading is the only way state ever changes: policy is the single source of truth.",
     "key1_title": "Branches = Namespaces",
-    "key1_desc": "Every !policy creates a branch. Resources inside it are addressed as branch/sub-branch/resource. Branches partition ownership: one team can manage prod/app1 without touching prod/app2. Nesting is unbounded — design the tree to match your org.",
+    "key1_desc": "Every !policy creates a branch. Resources inside it are addressed as branch/sub-branch/resource. Branches partition ownership: one team can manage prod/app1 without touching prod/app2. Nesting is unbounded: design the tree to match your org.",
     "key2_title": "Roles, Resources, Privileges",
     "key2_desc": "Roles (!host, !user, !group, !layer) are anything that acts. Resources (!variable, !webservice, !policy) are anything acted upon. !permit connects them with a privilege set, !grant inserts roles into the role hierarchy. Every authorization is computed from this graph.",
     "key3_title": "Policy as Code",
-    "key3_desc": "Policy is plain YAML committed to git. Loading is the only mutation: replace mode overwrites a branch, patch mode adds and removes specific items, update mode adds without deleting. Pull requests review every change to identity and access — auditable, reversible, version-controlled."
+    "key3_desc": "Policy is plain YAML committed to git. Loading is the only mutation: replace mode overwrites a branch, patch mode adds and removes specific items, update mode adds without deleting. Pull requests review every change to identity and access: auditable, reversible, version-controlled."
   },
   "footer": {
     "desc": "A live Kubernetes demo showing four Palo Alto Networks | IDIRA Secrets Manager integration patterns: direct JWT (Spring Boot), Secrets Provider sidecar (.NET), GitHub OIDC, and External Secrets Operator (ESO Shop).",
@@ -1050,11 +1050,11 @@
     "title": "JWT Validator API",
     "subtitle": "A pluggable JWT validation service running in the cluster. Accepts tokens over HTTPS, verifies signature against the issuer's JWKS, validates standard and provider-specific claims, and returns a structured response.",
     "feat1_title": "Provider-aware verification",
-    "feat1_desc": "Initial support for Microsoft Entra ID (single-tenant, v2.0 tokens). New IdPs plug in through a TokenVerifier interface — no changes to the route layer.",
+    "feat1_desc": "Initial support for Microsoft Entra ID (single-tenant, v2.0 tokens). New IdPs plug in through a TokenVerifier interface: no changes to the route layer.",
     "feat2_title": "Strict claim checks",
     "feat2_desc": "Validates signature, issuer, audience, expiry, not-before, tenant binding, and algorithm. Caches the JWKS in memory with a TTL so repeated calls cost a single signature check.",
     "feat3_title": "Stable error contract",
-    "feat3_desc": "Every rejection returns a machine-readable code (token_expired, invalid_signature, invalid_audience, …) plus a human reason — easy to map to upstream policy decisions.",
+    "feat3_desc": "Every rejection returns a machine-readable code (token_expired, invalid_signature, invalid_audience, …) plus a human reason: easy to map to upstream policy decisions.",
     "endpoints_title": "Endpoints",
     "table_method": "Method",
     "table_path": "Path",
@@ -1068,7 +1068,7 @@
     "claim_aud": "Audience matches the API's Application ID URI (api://<client-id>).",
     "claim_exp": "Token has not expired (with a small leeway for clock skew).",
     "claim_nbf": "Token is already valid (nbf claim is not in the future).",
-    "claim_iat": "Token was issued in the past — issued_at is required.",
+    "claim_iat": "Token was issued in the past: issued_at is required.",
     "claim_tid": "Entra tenant claim (tid) matches the configured tenant ID.",
     "claim_sig": "Signature verified with the JWKS key whose kid matches the JWT header.",
     "try_title": "Try it",
@@ -1095,7 +1095,7 @@
     "play": "Play",
     "pause": "Pause",
     "path": "Secret path",
-    "rotation": "CPM rotates the database credential in place — workloads keep working (Dual Accounts).",
+    "rotation": "CPM rotates the database credential in place: workloads keep working (Dual Accounts).",
     "hint": "Hover or focus a workload to trace its path · click to open its demo.",
     "injected": "injected at runtime"
   },
@@ -1104,7 +1104,7 @@
     "in_idira": "In IDIRA Secrets Manager",
     "secret": {
       "title": "What is a secret?",
-      "def": "A secret is a credential that grants access to something valuable: database passwords, API keys, TLS certificates and keys, SSH keys, cloud credentials. Whoever holds it can use it — so it must never live in code, container images or config files.",
+      "def": "A secret is a credential that grants access to something valuable: database passwords, API keys, TLS certificates and keys, SSH keys, cloud credentials. Whoever holds it can use it: so it must never live in code, container images or config files.",
       "examples": [
         "DB password",
         "API key",
@@ -1121,7 +1121,7 @@
     },
     "identity": {
       "title": "What is a machine identity?",
-      "def": "A machine (workload) identity is how a non-human actor — an app, container, CI job, script, playbook or VM — proves who it is. It is not a password the workload keeps: it is evidence its platform already issues and IDIRA can verify.",
+      "def": "A machine (workload) identity is how a non-human actor (an app, container, CI job, script, playbook or VM) proves who it is. It is not a password the workload keeps: it is evidence its platform already issues and IDIRA can verify.",
       "examples": [
         "Kubernetes ServiceAccount JWT",
         "GitHub OIDC token",
@@ -1131,7 +1131,7 @@
       "points": [
         "Represented in policy as a host, with only the privileges its job needs.",
         "Proves itself to an authenticator (authn-jwt, authn-iam, OIDC) and receives a short-lived access token.",
-        "Best practice: one identity per workload element — not one shared identity for a whole cluster or CI server."
+        "Best practice: one identity per workload element. Not one shared identity for a whole cluster or CI server."
       ],
       "doc": "Workloads in Secrets Manager"
     },
@@ -1139,7 +1139,7 @@
     "steps": {
       "prove": {
         "title": "Prove",
-        "desc": "The workload presents its identity — for example its Kubernetes ServiceAccount JWT."
+        "desc": "The workload presents its identity: for example its Kubernetes ServiceAccount JWT."
       },
       "authorize": {
         "title": "Authorize",
@@ -1147,7 +1147,7 @@
       },
       "deliver": {
         "title": "Deliver",
-        "desc": "The secret arrives at run time — rotated and audited, never stored with the workload."
+        "desc": "The secret arrives at run time, rotated and audited, never stored with the workload."
       }
     },
     "zero_title": "No “secret zero”.",
@@ -1156,11 +1156,11 @@
   "flowlive": {
     "kicker": "See it live",
     "title": "From identity to secret, step by step",
-    "subtitle": "Each workload proves who it is with its platform’s method, an IDIRA authenticator verifies it, policy authorizes, and the vault delivers the database credential — while CPM rotates it in place. One path at a time; hover a workload to trace it."
+    "subtitle": "Each workload proves who it is with its platform’s method, an IDIRA authenticator verifies it, policy authorizes, and the vault delivers the database credential: while CPM rotates it in place. One path at a time; hover a workload to trace it."
   },
   "practice": {
     "title": "Secret or identity?",
-    "subtitle": "They are often confused — and the difference is the whole point: a secret is what you protect; an identity is how a workload earns access to it.",
+    "subtitle": "They are often confused, and the difference is the whole point: a secret is what you protect; an identity is how a workload earns access to it.",
     "aspect": "Aspect",
     "col_secret": "Secret",
     "col_identity": "Machine identity",
@@ -1179,7 +1179,7 @@
       "issuer": {
         "label": "Who issues it",
         "secret": "Your team, the PAM vault or Secrets Manager (static or dynamic)",
-        "identity": "The platform the workload runs on — Kubernetes, GitHub, Jenkins, AWS or a SPIFFE server"
+        "identity": "The platform the workload runs on: Kubernetes, GitHub, Jenkins, AWS or a SPIFFE server"
       },
       "lifetime": {
         "label": "Lifetime",
@@ -1236,7 +1236,7 @@
       },
       "host": {
         "term": "Host",
-        "def": "How a workload identity is represented in Secrets Manager policy — with only the privileges its job needs."
+        "def": "How a workload identity is represented in Secrets Manager policy: with only the privileges its job needs."
       },
       "authenticator": {
         "term": "Authenticator",
@@ -1248,7 +1248,7 @@
       },
       "policy": {
         "term": "Policy",
-        "def": "Declarative YAML that defines identities, secrets and permissions — kept in git and reviewed like code."
+        "def": "Declarative YAML that defines identities, secrets and permissions: kept in git and reviewed like code."
       },
       "variable": {
         "term": "Variable",
@@ -1276,14 +1276,14 @@
       },
       "nhi": {
         "term": "Non-human identity (NHI)",
-        "def": "Umbrella term for identities that are not people — workloads, service accounts, certificates, API keys. Machine identity is how workloads prove who they are."
+        "def": "Umbrella term for identities that are not people: workloads, service accounts, certificates, API keys. Machine identity is how workloads prove who they are."
       }
     }
   },
   "concepts": {
     "definition": "Definition",
-    "secret_sub": "What it protects, what it looks like in practice, how IDIRA stores it — and why secrets left in code or images are a risk.",
-    "identity_sub": "How applications, pods, pipelines and scripts prove who they are — without a stored password — and which identity each platform already issues.",
+    "secret_sub": "What it protects, what it looks like in practice, how IDIRA stores it, and why secrets left in code or images are a risk.",
+    "identity_sub": "How applications, pods, pipelines and scripts prove who they are (without a stored password) and which identity each platform already issues.",
     "k8s_title": "Architecture on Kubernetes",
     "k8s_sub": "Step through how a pod’s ServiceAccount identity is verified by Secrets Manager and how the secret reaches the application.",
     "trail": "Concepts trail",
@@ -1293,5 +1293,32 @@
     "home_kicker": "Start here",
     "home_title": "Learn the concepts",
     "home_subtitle": "Five short pages, in order: what a secret is, what a machine identity is, how they fit, how it works on Kubernetes, and the vocabulary."
+  },
+  "shell": {
+    "site_name": "Machine Identity Lab"
+  },
+  "search": {
+    "open": "Search",
+    "placeholder": "Search pages, concepts, terms…",
+    "results": "Results",
+    "empty": "Nothing matches “{{q}}”.",
+    "hint_move": "move",
+    "hint_open": "open",
+    "hint_close": "close",
+    "trigger": "Search…"
+  },
+  "env": {
+    "title": "Environment",
+    "subtitle": "Live demo services, checked from your browser",
+    "checking": "Checking…",
+    "all_ok": "Environment OK · {{n}} services",
+    "partial": "{{ok}}/{{n}} services online",
+    "refresh": "Check now",
+    "open": "Open {{name}}",
+    "checked": "Last check {{time}} UTC",
+    "state_checking": "checking",
+    "state_ok": "online",
+    "state_maintenance": "maintenance (scaled down)",
+    "state_down": "unavailable"
   }
 }

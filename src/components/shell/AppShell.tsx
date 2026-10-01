@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Menu, PanelLeftClose, PanelLeftOpen, X } from 'lucide-react'
 import ThemeToggle from '../ThemeToggle'
-import ApiStatus from '../ApiStatus'
+import EnvStatus from './EnvStatus'
+import CommandPalette from './CommandPalette'
 import LanguageSwitcher from './LanguageSwitcher'
 import SideNav from './SideNav'
 import logoLight from '../../assets/brand/idira-logo-light.png'
@@ -19,11 +20,11 @@ function readCollapsed() {
 /**
  * Official IDIRA lockup ("IDIRA by Palo Alto Networks"), never recoloured:
  * light-background artwork in the light theme, dark-background artwork in the
- * dark theme (official black-ground artwork converted to alpha — exact, no recolour).
+ * dark theme (official black-ground artwork converted to alpha. Exact, no recolour).
  */
 function Brand() {
   return (
-    <Link to="/" aria-label="IDIRA by Palo Alto Networks — Home" className="flex items-center shrink-0 rounded-md">
+    <Link to="/" aria-label="IDIRA by Palo Alto Networks: Home" className="flex items-center shrink-0 rounded-md">
       <img src={logoLight} alt="" width={248} height={70} className="h-9 w-auto dark:hidden" />
       <img src={logoDark} alt="" width={251} height={71} className="hidden h-9 w-auto dark:block" />
     </Link>
@@ -85,9 +86,12 @@ export default function AppShell({ children }: { children: ReactNode }) {
             {collapsed ? <PanelLeftOpen size={20} aria-hidden="true" /> : <PanelLeftClose size={20} aria-hidden="true" />}
           </button>
           <div className="pl-1"><Brand /></div>
+          <span className="hidden xl:block h-7 w-px bg-border" aria-hidden="true" />
+          <span className="hidden xl:block text-sm font-semibold leading-tight text-text">{t('shell.site_name')}</span>
 
           <div className="ml-auto flex items-center gap-2">
-            <ApiStatus />
+            <CommandPalette />
+            <EnvStatus />
             <LanguageSwitcher className="hidden sm:flex" />
             <ThemeToggle />
           </div>

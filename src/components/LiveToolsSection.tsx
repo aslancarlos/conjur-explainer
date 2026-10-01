@@ -136,7 +136,7 @@ export default function LiveToolsSection() {
           <p className="text-text-muted max-w-2xl mx-auto">{t('livetools.subtitle')}</p>
         </motion.div>
 
-        {/* K8s Dashboard — featured card */}
+        {/* K8s Dashboard, featured card */}
         <motion.div
           initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.15 }}

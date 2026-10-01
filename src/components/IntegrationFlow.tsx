@@ -39,7 +39,7 @@ const NODES: N[] = [
 ]
 
 // Edge paths connect exact node midpoints:
-//   spring right-center : (180, 53)   conjur left-center: (354, 170–196)
+//   spring right-center : (180, 53)   conjur left-center: (354, 170-196)
 //   dotnet right-center : (180, 139)  k8sapi left-center: (618, 184)
 //   gha right-center    : (180, 225)  vault  top-center : (567, 334)
 //   eso right-center    : (180, 311)  db     left-center: (698, 363)
@@ -157,7 +157,7 @@ export default function IntegrationFlow() {
             </div>
           </div>
 
-          {/* SVG graph — pinned to a fixed dark canvas so the dark-tuned diagram
+          {/* SVG graph, pinned to a fixed dark canvas so the dark-tuned diagram
               stays legible in both light and dark themes */}
           <div className="px-4 pt-5 pb-3">
             <div className="overflow-x-auto rounded-xl border border-border bg-[#050d1a] p-4">

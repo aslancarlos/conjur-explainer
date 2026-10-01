@@ -6,7 +6,7 @@ import { useReducedMotion } from 'framer-motion'
 import { ChevronRight, Pause, Play } from 'lucide-react'
 
 /**
- * CommandCenterFlow — hero centrepiece in the IDIRA "Command Center" style.
+ * CommandCenterFlow: hero centrepiece in the IDIRA "Command Center" style.
  * Seven workloads → their auth method → IDIRA (authn-jwt / authn-iam feed
  * policy · vault · CPM rotation · Dual Accounts) → the database they populate.
  *
@@ -274,7 +274,7 @@ export default function CommandCenterFlow() {
           {/* invisible path the active token follows */}
           <path ref={pathRef} d={chain(journey(w))} fill="none" stroke="none" />
 
-          {/* Workload nodes — links to each demo */}
+          {/* Workload nodes. Links to each demo */}
           {WORKLOADS.map((x, i) => {
             const act = !rotating && i === active
             return (

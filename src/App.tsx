@@ -4,7 +4,7 @@ import AppShell from './components/shell/AppShell'
 import Footer from './components/Footer'
 import Loading from './components/Loading'
 import PageTransition from './components/PageTransition'
-// Home is the most-visited route — keep it eager so the landing paints instantly.
+// Home is the most-visited route: keep it eager so the landing paints instantly.
 import HomePage from './pages/HomePage'
 
 // Every other route is code-split: its JS chunk is fetched on demand, so the
