@@ -1039,11 +1039,12 @@
     "key3_desc": "Policy is plain YAML committed to git. Loading is the only mutation: replace mode overwrites a branch, patch mode adds and removes specific items, update mode adds without deleting. Pull requests review every change to identity and access: auditable, reversible, version-controlled."
   },
   "footer": {
-    "desc": "A live Kubernetes demo showing four Palo Alto Networks | IDIRA Secrets Manager integration patterns: direct JWT (Spring Boot), Secrets Provider sidecar (.NET), GitHub OIDC, and External Secrets Operator (ESO Shop).",
+    "desc": "A live machine identity lab: Palo Alto Networks | IDIRA demos on Kubernetes, CI/CD and cloud, where every workload gets its secrets, or reaches its service, with its own identity.",
     "apps": "Live Apps",
     "resources": "Resources",
     "copyright": "© 2026 Aslan Ramos · SME - Machine Identity Security, Palo Alto Networks | IDIRA",
-    "built_with": "Built with"
+    "built_with": "Built with",
+    "idira_link": "IDIRA at Palo Alto Networks"
   },
   "jwtv": {
     "badge": "Live API · /api",

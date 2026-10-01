@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { ExternalLink, Github, Shield } from 'lucide-react'
+import { ExternalLink, Shield } from 'lucide-react'
 
 export default function Footer() {
   const { t } = useTranslation()
@@ -10,8 +10,8 @@ export default function Footer() {
         <div className="grid sm:grid-cols-3 gap-8 mb-8">
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <Shield size={18} className="text-conjur-cyan" />
-              <span className="font-bold text-text text-sm">Conjur Demo</span>
+              <Shield size={18} className="text-tone-accent" aria-hidden="true" />
+              <span className="font-bold text-text text-sm">{t('shell.site_name')}</span>
             </div>
             <p className="text-xs text-text-muted leading-relaxed">{t('footer.desc')}</p>
           </div>
@@ -21,7 +21,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <a href="/dashboard/" target="_blank" rel="noopener"
-                  className="text-xs text-text-muted hover:text-conjur-cyan transition-colors flex items-center gap-1.5">
+                  className="text-xs text-text-muted hover:text-tone-accent transition-colors flex items-center gap-1.5">
                   <ExternalLink size={10} /> Kubernetes Dashboard
                 </a>
               </li>
@@ -51,7 +51,7 @@ export default function Footer() {
               </li>
               <li>
                 <a href="/grafana" target="_blank" rel="noopener"
-                  className="text-xs text-text-muted hover:text-conjur-gold transition-colors flex items-center gap-1.5">
+                  className="text-xs text-text-muted hover:text-tone-accent transition-colors flex items-center gap-1.5">
                   <ExternalLink size={10} /> Grafana
                 </a>
               </li>
@@ -62,15 +62,9 @@ export default function Footer() {
             <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">{t('footer.resources')}</p>
             <ul className="space-y-2">
               <li>
-                <a href="https://docs.conjur.org" target="_blank" rel="noopener"
-                  className="text-xs text-text-muted hover:text-conjur-cyan transition-colors flex items-center gap-1.5">
-                  <ExternalLink size={10} /> Conjur Docs
-                </a>
-              </li>
-              <li>
-                <a href="https://github.com/panwidira" target="_blank" rel="noopener"
-                  className="text-xs text-text-muted hover:text-conjur-cyan transition-colors flex items-center gap-1.5">
-                  <Github size={10} /> PANW|IDIRA GitHub
+                <a href="https://www.paloaltonetworks.com/idira" target="_blank" rel="noopener"
+                  className="text-xs text-text-muted hover:text-tone-accent transition-colors flex items-center gap-1.5">
+                  <ExternalLink size={10} aria-hidden="true" /> {t('footer.idira_link')}
                 </a>
               </li>
             </ul>
@@ -85,7 +79,7 @@ export default function Footer() {
             <span className="text-text-muted">&amp;</span>{' '}
             <span className="text-dotnet">.NET</span>{' '}
             <span className="text-text-muted">+</span>{' '}
-            <span className="text-conjur-cyan">PANW|IDIRA Conjur</span>
+            <span className="text-tone-accent">Palo Alto Networks | IDIRA</span>
           </p>
         </div>
       </div>
