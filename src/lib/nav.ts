@@ -21,8 +21,11 @@ import type { LucideIcon } from 'lucide-react'
  * `color` is the icon accent; it must reach 3:1 in both themes (DESIGN.md §6).
  * `demo` adds the item to the home catalogue (name, mechanism, i18n desc key).
  */
+export type ProductKey = 'secretsmanager' | 'swa' | 'secretshub' | 'pam'
+
 export interface NavItem {
   to: string
+  product?: ProductKey
   href?: string
   labelKey: string
   subKey?: string
@@ -48,11 +51,11 @@ export const NAV: NavGroup[] = [
     labelKey: 'nav.group_identity',
     descKey: 'demos.group_identity',
     items: [
-      { to: '/jwt', labelKey: 'nav.jwt', subKey: 'nav.jwt_sub', Icon: KeyRound, color: 'text-domain-idira',
+      { to: '/jwt', product: 'secretsmanager', labelKey: 'nav.jwt', subKey: 'nav.jwt_sub', Icon: KeyRound, color: 'text-domain-idira',
         demo: { name: 'authn-jwt', secret: 'identity handshake', descKey: 'demos.jwt' } },
-      { to: '/policy', labelKey: 'nav.policy', subKey: 'nav.policy_sub', Icon: ScrollText, color: 'text-domain-idira',
+      { to: '/policy', product: 'secretsmanager', labelKey: 'nav.policy', subKey: 'nav.policy_sub', Icon: ScrollText, color: 'text-domain-idira',
         demo: { name: 'Policy as Code', secret: 'YAML + git', descKey: 'demos.policy' } },
-      { to: '/swa-s3', href: '/swa-s3', labelKey: 'nav.swa', subKey: 'nav.swa_sub', Icon: Database, color: 'text-eso',
+      { to: '/swa-s3', product: 'swa', href: '/swa-s3', labelKey: 'nav.swa', subKey: 'nav.swa_sub', Icon: Database, color: 'text-eso',
         demo: { name: 'SWA → AWS S3', secret: 'SPIFFE/SVID → STS', descKey: 'demos.swa' } },
     ],
   },
@@ -61,13 +64,13 @@ export const NAV: NavGroup[] = [
     labelKey: 'nav.group_k8s',
     descKey: 'demos.group_k8s',
     items: [
-      { to: '/spring-boot', labelKey: 'nav.springboot', subKey: 'nav.springboot_sub', Icon: Leaf, color: 'text-spring',
+      { to: '/spring-boot', product: 'secretsmanager', labelKey: 'nav.springboot', subKey: 'nav.springboot_sub', Icon: Leaf, color: 'text-spring',
         demo: { name: 'Spring Boot', secret: 'direct JWT', descKey: 'demos.spring' } },
-      { to: '/dotnet', labelKey: 'nav.dotnet', subKey: 'nav.dotnet_sub', Icon: Hexagon, color: 'text-domain-cp',
+      { to: '/dotnet', product: 'secretsmanager', labelKey: 'nav.dotnet', subKey: 'nav.dotnet_sub', Icon: Hexagon, color: 'text-domain-cp',
         demo: { name: '.NET', secret: 'Secrets Provider sidecar', descKey: 'demos.dotnet' } },
-      { to: '/eso-shop', labelKey: 'nav.esoshop', subKey: 'nav.esoshop_sub', Icon: ShoppingCart, color: 'text-eso',
+      { to: '/eso-shop', product: 'secretsmanager', labelKey: 'nav.esoshop', subKey: 'nav.esoshop_sub', Icon: ShoppingCart, color: 'text-eso',
         demo: { name: 'ESO Shop', secret: 'External Secrets Operator', descKey: 'demos.eso' } },
-      { to: '/csi', labelKey: 'nav.csidriver', subKey: 'nav.csidriver_sub', Icon: ShipWheel, color: 'text-csi',
+      { to: '/csi', product: 'secretsmanager', labelKey: 'nav.csidriver', subKey: 'nav.csidriver_sub', Icon: ShipWheel, color: 'text-csi',
         demo: { name: 'CSI Driver', secret: 'tmpfs volume', descKey: 'demos.csi' } },
     ],
   },
@@ -76,11 +79,11 @@ export const NAV: NavGroup[] = [
     labelKey: 'nav.group_cicd',
     descKey: 'demos.group_cicd',
     items: [
-      { to: '/github-actions', labelKey: 'nav.gha', subKey: 'nav.gha_sub', Icon: Github, color: 'text-gh',
+      { to: '/github-actions', product: 'secretsmanager', labelKey: 'nav.gha', subKey: 'nav.gha_sub', Icon: Github, color: 'text-gh',
         demo: { name: 'GitHub Actions', secret: 'OIDC', descKey: 'demos.gha' } },
-      { to: '/jenkins', labelKey: 'nav.jenkins', subKey: 'nav.jenkins_sub', Icon: Server, color: 'text-spring',
+      { to: '/jenkins', product: 'secretsmanager', labelKey: 'nav.jenkins', subKey: 'nav.jenkins_sub', Icon: Server, color: 'text-spring',
         demo: { name: 'Jenkins', secret: 'plugin JWT', descKey: 'demos.jenkins' } },
-      { to: '/ansible', labelKey: 'nav.ansible', subKey: 'nav.ansible_sub', Icon: Boxes, color: 'text-ansible',
+      { to: '/ansible', product: 'secretsmanager', labelKey: 'nav.ansible', subKey: 'nav.ansible_sub', Icon: Boxes, color: 'text-ansible',
         demo: { name: 'Ansible', secret: 'lookup', descKey: 'demos.ansible' } },
     ],
   },
@@ -89,9 +92,9 @@ export const NAV: NavGroup[] = [
     labelKey: 'nav.group_lifecycle',
     descKey: 'demos.group_lifecycle',
     items: [
-      { to: '/dualaccounts', labelKey: 'nav.dualaccounts', subKey: 'nav.dualaccounts_sub', Icon: RefreshCw, color: 'text-domain-idira',
+      { to: '/dualaccounts', product: 'pam', labelKey: 'nav.dualaccounts', subKey: 'nav.dualaccounts_sub', Icon: RefreshCw, color: 'text-domain-idira',
         demo: { name: 'Dual Accounts', secret: 'zero-downtime rotation', descKey: 'demos.dual' } },
-      { to: '/secretshub', labelKey: 'nav.secretshub', subKey: 'nav.secretshub_sub', Icon: Combine, color: 'text-domain-cp',
+      { to: '/secretshub', product: 'secretshub', labelKey: 'nav.secretshub', subKey: 'nav.secretshub_sub', Icon: Combine, color: 'text-domain-cp',
         demo: { name: 'Secrets Hub', secret: 'PAM → cloud sync', descKey: 'demos.secretshub' } },
     ],
   },
@@ -108,7 +111,40 @@ export const NAV: NavGroup[] = [
   },
 ]
 
+/**
+ * Products, as named in the CyberArk / IDIRA docs spaces. Secure Workload
+ * Access is documented inside Secrets Manager SaaS but is its own SPIFFE-based
+ * offering; Dual Accounts is a PAM (CPM) capability consumed by Credential
+ * Providers and Secrets Manager.
+ */
+export const PRODUCTS: Array<{ key: ProductKey; labelKey: string; descKey: string }> = [
+  { key: 'secretsmanager', labelKey: 'nav.prod_secretsmanager', descKey: 'demos.prod_secretsmanager' },
+  { key: 'swa',            labelKey: 'nav.prod_swa',            descKey: 'demos.prod_swa' },
+  { key: 'secretshub',     labelKey: 'nav.prod_secretshub',     descKey: 'demos.prod_secretshub' },
+  { key: 'pam',            labelKey: 'nav.prod_pam',            descKey: 'demos.prod_pam' },
+]
+
+export type NavView = 'usecase' | 'product'
+
+/** The navigation grouped by use case (NAV as authored) or by product. */
+export function navBy(view: NavView): NavGroup[] {
+  if (view === 'usecase') return NAV
+  const all = NAV.flatMap(g => g.items)
+  const home = NAV.find(g => g.key === 'home')!
+  const tools = NAV.find(g => g.key === 'tools')!
+  return [
+    home,
+    ...PRODUCTS.map(p => ({
+      key: `p-${p.key}`, labelKey: p.labelKey, descKey: p.descKey,
+      items: all.filter(i => i.product === p.key),
+    })),
+    tools,
+  ]
+}
+
 /** Groups that appear in the home demo catalogue (items with `demo`). */
-export const DEMO_GROUPS = NAV
-  .map(g => ({ ...g, items: g.items.filter(i => i.demo) }))
-  .filter(g => g.items.length > 0)
+export function demoGroups(view: NavView): NavGroup[] {
+  return navBy(view)
+    .map(g => ({ ...g, items: g.items.filter(i => i.demo) }))
+    .filter(g => g.items.length > 0)
+}

@@ -3,17 +3,21 @@ import { motion, useInView, useReducedMotion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight } from 'lucide-react'
-import { DEMO_GROUPS } from '../lib/nav'
+import { demoGroups } from '../lib/nav'
+import { useNavView } from '../lib/useNavView'
+import NavViewToggle from './shell/NavViewToggle'
 
-// The catalogue mirrors the sidebar groups (lib/nav.ts) — same taxonomy, same
-// icon per concept (DESIGN.md §9), one place to add a demo.
+// The catalogue mirrors the sidebar (lib/nav.ts): same use-case / product
+// grouping and shared toggle, same icon per concept (DESIGN.md §9).
 
 export default function DemosShowcase() {
   const { t } = useTranslation()
   const reduce = useReducedMotion()
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
-  const total = DEMO_GROUPS.reduce((n, g) => n + g.items.length, 0)
+  const [view] = useNavView()
+  const groupsList = demoGroups(view)
+  const total = groupsList.reduce((n, g) => n + g.items.length, 0)
 
   let idx = 0
   return (
@@ -23,9 +27,10 @@ export default function DemosShowcase() {
           <p className="font-mono text-xs uppercase tracking-[0.16em] text-tone-live">{t('demos.kicker')}</p>
           <h2 className="mt-3 text-[clamp(26px,3.4vw,40px)] font-bold leading-tight tracking-[-0.02em] text-text">{t('demos.title')}</h2>
           <p className="mt-4 text-base leading-relaxed text-text-2">{t('demos.subtitle')}</p>
+          <div className="mt-6 max-w-sm"><NavViewToggle size="md" /></div>
         </div>
 
-        {DEMO_GROUPS.map(group => (
+        {groupsList.map(group => (
           <div key={group.key} className="mt-12">
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-border pb-3">
               <h3 className="text-lg font-semibold text-text">{t(group.labelKey!)}</h3>

@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import Hero from '../components/Hero'
 import ProblemSection from '../components/ProblemSection'
 import DemosShowcase from '../components/DemosShowcase'
+import Fundamentals from '../components/Fundamentals'
 import Capabilities from '../components/Capabilities'
 import IdiraPromise from '../components/IdiraPromise'
 import Loading from '../components/Loading'
@@ -13,9 +14,10 @@ const ArchitectureDiagram = lazy(() => import('../components/ArchitectureDiagram
 export default function HomePage() {
   return (
     <>
-      {/* Path selection first: what IDIRA does (hero) → pick a demo → why it
-          matters → guarantees → how it fits in Kubernetes → the promise. */}
+      {/* What IDIRA does (hero) → the two concepts (secret, machine identity)
+          → pick a demo → why it matters → guarantees → Kubernetes fit → promise. */}
       <Hero />
+      <Fundamentals />
       <DemosShowcase />
       <div id="problem">
         <ProblemSection />

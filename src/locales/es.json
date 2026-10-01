@@ -45,7 +45,14 @@
     "group_identity": "Identidad & acceso",
     "group_k8s": "Kubernetes",
     "group_cicd": "CI/CD & automatización",
-    "group_lifecycle": "Ciclo de vida"
+    "group_lifecycle": "Ciclo de vida",
+    "view_label": "Agrupar por",
+    "view_usecase": "Caso de uso",
+    "view_product": "Producto",
+    "prod_secretsmanager": "Secrets Manager",
+    "prod_swa": "Secure Workload Access",
+    "prod_secretshub": "Secrets Hub",
+    "prod_pam": "PAM & Credential Providers"
   },
   "hero": {
     "eyebrow": "Palo Alto Networks | IDIRA · Secrets Manager · Kubernetes · ESO · DevSecOps",
@@ -117,7 +124,11 @@
     "group_identity": "Cómo el workload prueba quién es — y qué le permite leer la policy.",
     "group_k8s": "Los pods reciben secretos con la identidad de su ServiceAccount: SDK, sidecar, operator o volumen CSI.",
     "group_cicd": "Pipelines y automatización obtienen secretos en tiempo de ejecución — nada guardado en la herramienta.",
-    "group_lifecycle": "Rotación y sincronización del lado del PAM, sin que los consumidores lo noten."
+    "group_lifecycle": "Rotación y sincronización del lado del PAM, sin que los consumidores lo noten.",
+    "prod_secretsmanager": "Identidad de workload, policy y entrega de secretos para apps, Kubernetes y pipelines.",
+    "prod_swa": "Identidad de workload basada en SPIFFE (X.509/JWT-SVID) federada a las nubes — sin claves estáticas.",
+    "prod_secretshub": "Sincroniza secretos gestionados por PAM con los almacenes nativos de las nubes.",
+    "prod_pam": "Bóveda y rotación con CPM; Dual Accounts mantienen a los consumidores en línea durante la rotación."
   },
   "caps": {
     "kicker": "Lo que comparten",
@@ -1080,5 +1091,62 @@
     "rotation": "El CPM rota la credencial de la base en el lugar — los workloads siguen funcionando (Dual Accounts).",
     "hint": "Pasa el mouse o enfoca un workload para ver su camino · haz clic para abrir la demo.",
     "injected": "inyectado en runtime"
+  },
+  "fundamentals": {
+    "kicker": "Fundamentos",
+    "title": "Dos conceptos detrás de cada demo",
+    "subtitle": "Antes de elegir un patrón, separa lo que se protege — el secreto — de quién lo pide — la identidad de máquina.",
+    "examples_label": "Ejemplos",
+    "in_idira": "En IDIRA Secrets Manager",
+    "secret": {
+      "title": "¿Qué es un secreto?",
+      "def": "Un secreto es una credencial que da acceso a algo valioso: contraseñas de bases de datos, claves de API, certificados y claves TLS, claves SSH, credenciales de nube. Quien lo tiene puede usarlo — por eso nunca debe estar en el código, en imágenes de contenedor ni en archivos de configuración.",
+      "examples": [
+        "Contraseña de BD",
+        "Clave de API",
+        "Certificado TLS",
+        "Clave SSH",
+        "Credencial de nube"
+      ],
+      "points": [
+        "Se almacena cifrado como una variable; cada acceso se controla y se audita.",
+        "Cada secreto tiene dos listas de acceso: fetchers (quién puede leerlo) y updaters (quién puede cambiarlo).",
+        "Estático, dinámico (just-in-time y de corta duración) o sincronizado cada minuto desde PAM, donde el CPM lo rota."
+      ],
+      "doc": "Secretos en Secrets Manager"
+    },
+    "identity": {
+      "title": "¿Qué es una identidad de máquina?",
+      "def": "Una identidad de máquina (de workload) es cómo un actor no humano — una aplicación, contenedor, job de CI, script, playbook o VM — prueba quién es. No es una contraseña que el workload guarda: es una evidencia que su propia plataforma ya emite y que IDIRA puede verificar.",
+      "examples": [
+        "JWT de ServiceAccount de Kubernetes",
+        "Token OIDC de GitHub",
+        "Rol de AWS IAM",
+        "SVID SPIFFE"
+      ],
+      "points": [
+        "Se representa en la policy como un host, solo con los privilegios que su función necesita.",
+        "Se identifica ante un authenticator (authn-jwt, authn-iam, OIDC) y recibe un token de acceso de corta duración.",
+        "Buena práctica: una identidad por elemento del workload — no una identidad compartida para todo un clúster o servidor de CI."
+      ],
+      "doc": "Workloads en Secrets Manager"
+    },
+    "fit_title": "Cómo encajan",
+    "steps": {
+      "prove": {
+        "title": "Probar",
+        "desc": "El workload presenta su identidad — por ejemplo, el JWT de su ServiceAccount de Kubernetes."
+      },
+      "authorize": {
+        "title": "Autorizar",
+        "desc": "La policy verifica que ese host sea fetcher del secreto que pide."
+      },
+      "deliver": {
+        "title": "Entregar",
+        "desc": "El secreto llega en tiempo de ejecución — rotado y auditado, nunca guardado junto al workload."
+      }
+    },
+    "zero_title": "Sin “secret zero”.",
+    "zero_desc": "La identidad reemplaza la contraseña de bootstrap: el workload nunca necesita un secreto para obtener sus secretos."
   }
 }

@@ -7,7 +7,8 @@ import ThemeToggle from '../ThemeToggle'
 import ApiStatus from '../ApiStatus'
 import LanguageSwitcher from './LanguageSwitcher'
 import SideNav from './SideNav'
-import idiraIcon from '../../assets/brand/idira-icon-color.png'
+import logoLight from '../../assets/brand/idira-logo-light.png'
+import logoDark from '../../assets/brand/idira-logo-dark.png'
 
 const COLLAPSE_KEY = 'idira-sidebar-collapsed'
 
@@ -15,21 +16,23 @@ function readCollapsed() {
   try { return localStorage.getItem(COLLAPSE_KEY) === '1' } catch { return false }
 }
 
+/**
+ * Official IDIRA lockup ("IDIRA by Palo Alto Networks"), never recoloured:
+ * light-background artwork in the light theme, dark-background artwork in the
+ * dark theme (its solid black JPEG ground is dropped with mix-blend: screen).
+ */
 function Brand() {
   return (
-    <Link to="/" className="flex items-center gap-2.5 font-semibold shrink-0 rounded-md">
-      <img src={idiraIcon} alt="IDIRA" width={22} height={25} className="h-6 w-auto shrink-0"
-        style={{ filter: 'drop-shadow(0 0 7px rgba(38,91,255,0.55))' }} />
-      <span className="text-sm font-bold leading-tight text-white">
-        Palo Alto Networks <span className="idira-shimmer font-extrabold">| IDIRA</span>
-      </span>
+    <Link to="/" aria-label="IDIRA by Palo Alto Networks — Home" className="flex items-center shrink-0 rounded-md">
+      <img src={logoLight} alt="" width={248} height={70} className="h-9 w-auto dark:hidden" />
+      <img src={logoDark} alt="" width={251} height={71} className="hidden h-9 w-auto mix-blend-screen dark:block" />
     </Link>
   )
 }
 
 /**
- * App shell (DESIGN.md §6): always-dark top bar with brand + status + language
- * + theme; grouped sidebar on the left (≥ lg, collapsible to icons, persisted);
+ * App shell (DESIGN.md §6): theme-aware top bar with the official IDIRA logo +
+ * status + language + theme; grouped sidebar on the left (≥ lg, collapsible to icons, persisted);
  * the same navigation as a slide-in drawer below lg.
  */
 export default function AppShell({ children }: { children: ReactNode }) {
@@ -67,26 +70,26 @@ export default function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-bg-base text-text">
       {/* ── Top bar ── */}
-      <header className="nav-iridescent fixed top-0 inset-x-0 z-50 h-14 bg-[#070c1c]/90 backdrop-blur-xl border-b border-white/10">
+      <header className="nav-iridescent fixed top-0 inset-x-0 z-50 h-14 bg-bg-card/90 backdrop-blur-xl border-b border-border">
         <div className="h-full px-2 sm:px-4 flex items-center gap-2">
           {/* < lg: opens the drawer · ≥ lg: collapses / expands the sidebar */}
           <button ref={menuBtn} type="button" onClick={() => setDrawer(true)}
             aria-label={t('nav.open_menu')} aria-expanded={drawer} aria-controls="nav-drawer"
-            className="lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-md text-slate-200 hover:bg-white/10 transition-colors">
+            className="lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-md text-text-2 hover:bg-bg-muted hover:text-text transition-colors">
             <Menu size={20} aria-hidden="true" />
           </button>
           <button type="button" onClick={() => setCollapsed(c => !c)}
             aria-label={collapsed ? t('nav.expand') : t('nav.collapse')} aria-pressed={!collapsed}
             title={collapsed ? t('nav.expand') : t('nav.collapse')}
-            className="hidden lg:inline-flex h-11 w-11 items-center justify-center rounded-md text-slate-200 hover:bg-white/10 transition-colors">
+            className="hidden lg:inline-flex h-11 w-11 items-center justify-center rounded-md text-text-2 hover:bg-bg-muted hover:text-text transition-colors">
             {collapsed ? <PanelLeftOpen size={20} aria-hidden="true" /> : <PanelLeftClose size={20} aria-hidden="true" />}
           </button>
           <div className="pl-1"><Brand /></div>
 
           <div className="ml-auto flex items-center gap-2">
-            <ApiStatus tone="dark" />
-            <LanguageSwitcher tone="dark" className="hidden sm:flex" />
-            <ThemeToggle tone="dark" />
+            <ApiStatus />
+            <LanguageSwitcher className="hidden sm:flex" />
+            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -112,10 +115,10 @@ export default function AppShell({ children }: { children: ReactNode }) {
               className="absolute inset-y-0 left-0 flex w-[min(20rem,85vw)] flex-col bg-bg-card border-r border-border shadow-2xl"
               initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
               transition={reduce ? { duration: 0 } : { type: 'tween', duration: 0.24, ease: [0.2, 0.8, 0.2, 1] }}>
-              <div className="flex h-14 items-center justify-between gap-2 border-b border-white/10 bg-[#070c1c] px-3">
+              <div className="flex h-14 items-center justify-between gap-2 border-b border-border px-3">
                 <Brand />
                 <button ref={closeBtn} type="button" onClick={() => setDrawer(false)} aria-label={t('nav.close_menu')}
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-md text-slate-200 hover:bg-white/10 transition-colors">
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-md text-text-2 hover:bg-bg-muted hover:text-text transition-colors">
                   <X size={20} aria-hidden="true" />
                 </button>
               </div>

@@ -22,7 +22,7 @@ If code and this file disagree, fix the code or update this file in the same PR 
 
 ## 2. Brand & themes
 
-- Visual language follows Palo Alto Networks **IDIRA**. Brand name renders as `Palo Alto Networks | IDIRA`.
+- Visual language follows Palo Alto Networks **IDIRA**. The top bar shows the **official "IDIRA by Palo Alto Networks" lockup** (`src/assets/brand/idira-logo-light.png` on light backgrounds, `idira-logo-dark.png` on dark — the dark artwork ships on solid black and is placed with `mix-blend-mode: screen`). Only transparent margins were cropped; never recolour or redraw the mark. In running text the brand reads `Palo Alto Networks | IDIRA`.
 - Two themes, user-selectable (`useTheme()`, persisted in `localStorage('idira-theme')`, applied as `data-theme` + `.dark` on `<html>` before paint).
 - **Always-dark zones** ignore the theme: the hero band (`bg-[#070c1c]`) and the promise band (`.idira-promise`, `#0f1b3a`). Text inside them uses `text-white` / `text-slate-300/90`.
 - Official art: `src/assets/brand/security-layers-blue.png` (hero backdrop), `idira-icon-color.png`. Don't recolour or crop them.
@@ -116,10 +116,11 @@ Console-style shell, aligned with sinfonia.minha.cloud (`src/components/shell/`)
 
 | Part | Spec |
 |---|---|
-| Top bar | Fixed, `h-14`, always dark (`bg-[#070c1c]/90` + blur + `.nav-iridescent` line). Left: sidebar toggle (≥ lg collapses, < lg opens drawer) · brand. Right: `/api` status · EN/PT/ES · theme. Dark-tone variants: `ApiStatus tone="dark"`, `ThemeToggle tone="dark"`, `LanguageSwitcher tone="dark"` |
+| Top bar | Fixed, `h-14`, theme-aware (`bg-bg-card/90` + blur + `.nav-iridescent` line), like sinfonia.minha.cloud. Left: sidebar toggle (≥ lg collapses, < lg opens drawer) · official logo (36 px tall). Right: `/api` status · EN/PT/ES · theme. (`tone="dark"` variants of `ApiStatus`/`ThemeToggle`/`LanguageSwitcher` exist for always-dark surfaces) |
 | Sidebar (≥ 1024 px) | Left, fixed under the top bar, `w-60` (240 px) or `w-16` icons-only, choice persisted in `localStorage('idira-sidebar-collapsed')`. Theme-aware (`bg-bg-card`, `border-r border-border`). Rows 36 px (mouse) |
 | Drawer (< 1024 px) | Same navigation, slides from the left (`w-[min(20rem,85vw)]`), 55 % scrim, focus moves to Close, Esc / scrim / navigation close it, focus returns to the menu button, page scroll locked. Rows 44 px (touch); language switch in its footer |
 | Groups | Organised like the CyberArk docs — by **how a workload gets its secret**: Home · **Identity & access** (authn-jwt, policy, SWA) · **Kubernetes** (Spring Boot, Secrets Provider, ESO, CSI) · **CI/CD & automation** (GitHub Actions, Jenkins, Ansible) · **Credential lifecycle** (Dual Accounts, Secrets Hub) · Tools. Single source: `src/lib/nav.ts` (also feeds the home catalogue via `DEMO_GROUPS`) |
+| Group by | Segmented **Use case \| Product** switch at the top of the sidebar/drawer and in the home catalogue — one shared preference (`useNavView`, `localStorage('idira-nav-view')`). Product view: Secrets Manager · Secure Workload Access · Secrets Hub · PAM & Credential Providers (each item's `product` in `lib/nav.ts`), Tools stay last. Long product names wrap, never truncate |
 | Group disclosure | Each group header is a button (chevron + label, `aria-expanded`/`aria-controls`) that shows/hides its items; hidden groups show their item count. State persisted in `localStorage('idira-nav-groups')`; the group holding the current page always opens. Icon rail shows every item, no headers |
 | Current page | Tinted row + 3 px `idira-blue` left bar + `aria-current="page"` |
 | Icons | One per page, coloured with the page accent only if it reaches 3:1 in **both** themes; otherwise a theme-aware token (`domain-idira`, `domain-cp`, `text-text-2`) |
@@ -130,7 +131,11 @@ A returning visitor's locale (pt/es) is loaded **before** the first render (`loc
 
 ---
 
-## 7. Page anatomy (explainer pages)
+## 7. Page anatomy
+
+**Home:** hero (Command Center flow) → **Fundamentals** (what a secret is, what a machine identity is, how they fit: prove → authorize → deliver, "no secret zero"; wording follows the Secrets Manager *Key concepts* pages and links to them) → demo catalogue (same grouping switch as the sidebar) → problem → guarantees → Kubernetes architecture → promise.
+
+**Explainer pages:**
 
 ```
 ┌ Hero band (always dark) ─────────────────────────────────────────┐
@@ -266,5 +271,6 @@ Reference implementation: `src/pages/DualAccountsPage.tsx`.
 
 | Date | Change |
 |---|---|
+| 2026-09-30 | Official IDIRA logo in a theme-aware top bar; Use case \| Product grouping; home Fundamentals section. |
 | 2026-09-30 | App shell: left sidebar + drawer (§6), `lib/nav.ts`, ambient hero diagram rules (§10), locale preload. |
 | 2026-09-30 | First version. Adds `tone-*` and `domain-*` tokens, the animated-diagram pattern, explainer page anatomy and QA checklist (from the `/dualaccounts` rebuild, PR #46). |

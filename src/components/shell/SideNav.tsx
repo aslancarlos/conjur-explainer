@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ChevronRight } from 'lucide-react'
-import { NAV, type NavItem } from '../../lib/nav'
+import { navBy, type NavItem } from '../../lib/nav'
+import { useNavView } from '../../lib/useNavView'
+import NavViewToggle from './NavViewToggle'
 
 const GROUPS_KEY = 'idira-nav-groups'
 
@@ -23,14 +25,16 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
 }) {
   const { t } = useTranslation()
   const { pathname } = useLocation()
+  const [view] = useNavView()
+  const groups = navBy(view)
   const [open, setOpen] = useState<Record<string, boolean>>(readOpen)
   const isOpen = (key: string) => open[key] !== false   // default: expanded
 
   // Navigating into a hidden group reveals it.
   useEffect(() => {
-    const g = NAV.find(gr => gr.items.some(i => i.to === pathname))
+    const g = groups.find(gr => gr.items.some(i => i.to === pathname))
     if (g && open[g.key] === false) setOpen(o => ({ ...o, [g.key]: true }))
-  }, [pathname]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pathname, view]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     try { localStorage.setItem(GROUPS_KEY, JSON.stringify(open)) } catch { /* private mode */ }
@@ -70,7 +74,8 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
 
   return (
     <div className="space-y-1">
-      {NAV.map((group, gi) => {
+      {!collapsed && <NavViewToggle className="mb-3" size={dense ? 'sm' : 'md'} />}
+      {groups.map((group, gi) => {
         const label = group.labelKey ? t(group.labelKey) : undefined
         const expanded = collapsed || !group.labelKey || isOpen(group.key)
         const listId = `${idPrefix}-grp-${group.key}`
@@ -87,7 +92,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
                     ${hasActive && !expanded ? 'text-text' : 'text-text-muted'}`}>
                   <ChevronRight size={14} strokeWidth={2.2} aria-hidden="true"
                     className={`shrink-0 transition-transform duration-150 ${expanded ? 'rotate-90' : ''}`} />
-                  <span className="flex-1 truncate">{label}</span>
+                  <span className="flex-1 py-1.5 leading-snug">{label}</span>
                   {!expanded && (
                     <span className="rounded-full bg-bg-muted px-1.5 font-mono text-[11px] normal-case tracking-normal text-text-muted tabular-nums">
                       {group.items.length}

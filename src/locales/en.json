@@ -45,7 +45,14 @@
     "group_identity": "Identity & access",
     "group_k8s": "Kubernetes",
     "group_cicd": "CI/CD & automation",
-    "group_lifecycle": "Credential lifecycle"
+    "group_lifecycle": "Credential lifecycle",
+    "view_label": "Group by",
+    "view_usecase": "Use case",
+    "view_product": "Product",
+    "prod_secretsmanager": "Secrets Manager",
+    "prod_swa": "Secure Workload Access",
+    "prod_secretshub": "Secrets Hub",
+    "prod_pam": "PAM & Credential Providers"
   },
   "hero": {
     "eyebrow": "Palo Alto Networks | IDIRA · Secrets Manager · Kubernetes · ESO · DevSecOps",
@@ -117,7 +124,11 @@
     "group_identity": "How a workload proves who it is — and what policy lets it read.",
     "group_k8s": "Pods get secrets with their ServiceAccount identity: SDK, sidecar, operator or CSI volume.",
     "group_cicd": "Pipelines and automation fetch secrets at run time — nothing stored in the tool.",
-    "group_lifecycle": "PAM-side rotation and synchronisation that consumers never notice."
+    "group_lifecycle": "PAM-side rotation and synchronisation that consumers never notice.",
+    "prod_secretsmanager": "Workload identity, policy and secret delivery for apps, Kubernetes and pipelines.",
+    "prod_swa": "SPIFFE-based workload identity (X.509/JWT-SVID) federated to clouds — no static keys.",
+    "prod_secretshub": "Syncs PAM-managed secrets into cloud-native secret stores.",
+    "prod_pam": "Vaulting and CPM rotation; Dual Accounts keep consumers online during rotation."
   },
   "caps": {
     "kicker": "What they share",
@@ -1080,5 +1091,62 @@
     "rotation": "CPM rotates the database credential in place — workloads keep working (Dual Accounts).",
     "hint": "Hover or focus a workload to trace its path · click to open its demo.",
     "injected": "injected at runtime"
+  },
+  "fundamentals": {
+    "kicker": "Fundamentals",
+    "title": "Two ideas behind every demo",
+    "subtitle": "Before picking a pattern, separate what is protected — the secret — from who asks for it — the machine identity.",
+    "examples_label": "Examples",
+    "in_idira": "In IDIRA Secrets Manager",
+    "secret": {
+      "title": "What is a secret?",
+      "def": "A secret is a credential that grants access to something valuable: database passwords, API keys, TLS certificates and keys, SSH keys, cloud credentials. Whoever holds it can use it — so it must never live in code, container images or config files.",
+      "examples": [
+        "DB password",
+        "API key",
+        "TLS certificate",
+        "SSH key",
+        "Cloud credential"
+      ],
+      "points": [
+        "Stored encrypted as a variable; every access is controlled and audited.",
+        "Each secret has two access lists: fetchers (who can read it) and updaters (who can change it).",
+        "Static, dynamic (just-in-time and short-lived) or synced every minute from PAM, where the CPM rotates it."
+      ],
+      "doc": "Secrets in Secrets Manager"
+    },
+    "identity": {
+      "title": "What is a machine identity?",
+      "def": "A machine (workload) identity is how a non-human actor — an app, container, CI job, script, playbook or VM — proves who it is. It is not a password the workload keeps: it is evidence its platform already issues and IDIRA can verify.",
+      "examples": [
+        "Kubernetes ServiceAccount JWT",
+        "GitHub OIDC token",
+        "AWS IAM role",
+        "SPIFFE SVID"
+      ],
+      "points": [
+        "Represented in policy as a host, with only the privileges its job needs.",
+        "Proves itself to an authenticator (authn-jwt, authn-iam, OIDC) and receives a short-lived access token.",
+        "Best practice: one identity per workload element — not one shared identity for a whole cluster or CI server."
+      ],
+      "doc": "Workloads in Secrets Manager"
+    },
+    "fit_title": "How they fit together",
+    "steps": {
+      "prove": {
+        "title": "Prove",
+        "desc": "The workload presents its identity — for example its Kubernetes ServiceAccount JWT."
+      },
+      "authorize": {
+        "title": "Authorize",
+        "desc": "Policy checks that this host is a fetcher of the secret it asks for."
+      },
+      "deliver": {
+        "title": "Deliver",
+        "desc": "The secret arrives at run time — rotated and audited, never stored with the workload."
+      }
+    },
+    "zero_title": "No “secret zero”.",
+    "zero_desc": "The identity replaces the bootstrap password, so a workload never needs a secret to get its secrets."
   }
 }
