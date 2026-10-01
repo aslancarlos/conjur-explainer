@@ -24,6 +24,7 @@
   --rgb-domain-idira: 0 88 230;
   --rgb-domain-cp:    96 72 214;
   --rgb-domain-k8s:   194 65 12;
+  --rgb-domain-svc:   190 24 93;
 
   color-scheme: light;
 }
@@ -46,6 +47,7 @@
   --rgb-domain-idira: 92 152 255;
   --rgb-domain-cp:    167 150 250;
   --rgb-domain-k8s:   255 138 92;
+  --rgb-domain-svc:   244 114 182;
 
   color-scheme: dark;
 }

@@ -28,9 +28,12 @@ type EdgeId = 'a-iss' | 'a-req' | 'a-res' | 'a-svc' | 'b-iss' | 'b-req' | 'b-res
 type Kind = 'identity' | 'secret' | 'access'
 
 interface Box { x: number; y: number; w: number; h: number }
+type Domain = 'idira' | 'k8s' | 'svc'
+interface Zone extends Box { d: Domain }
 interface Layout {
   w: number; h: number; title: number
   nodes: Record<NodeId, Box>
+  zones: Zone[]
   lanes: { a: [number, number]; b: [number, number] }
   edges: Record<EdgeId, string>
 }
@@ -48,6 +51,14 @@ const WIDE: Layout = {
     s3:    { x: 826, y: 286, w: 138, h: 96  },
   },
   lanes: { a: [16, 22], b: [16, 252] },
+  zones: [
+    { d: 'k8s',   x: 6,   y: 28,  w: 428, h: 150 },
+    { d: 'idira', x: 550, y: 26,  w: 230, h: 170 },
+    { d: 'svc',   x: 816, y: 44,  w: 158, h: 120 },
+    { d: 'idira', x: 6,   y: 272, w: 190, h: 122 },
+    { d: 'k8s',   x: 238, y: 262, w: 196, h: 144 },
+    { d: 'svc',   x: 550, y: 266, w: 424, h: 134 },
+  ],
   edges: {
     'a-iss': 'M 186,104 L 248,104',
     'a-req': 'M 424,92 L 560,92',
@@ -72,7 +83,15 @@ const NARROW: Layout = {
     sts:   { x: 50, y: 1002, w: 260, h: 108 },
     s3:    { x: 70, y: 1168, w: 220, h: 84  },
   },
-  lanes: { a: [16, 18], b: [16, 688] },
+  lanes: { a: [16, 14], b: [16, 682] },
+  zones: [
+    { d: 'k8s',   x: 56, y: 20,   w: 248, h: 272 },
+    { d: 'idira', x: 40, y: 318,  w: 280, h: 174 },
+    { d: 'svc',   x: 60, y: 530,  w: 240, h: 108 },
+    { d: 'idira', x: 60, y: 690,  w: 240, h: 104 },
+    { d: 'k8s',   x: 60, y: 820,  w: 240, h: 142 },
+    { d: 'svc',   x: 40, y: 990,  w: 280, h: 272 },
+  ],
   edges: {
     'a-iss': 'M 180,114 L 180,162',
     'a-req': 'M 160,282 L 160,332',
@@ -163,6 +182,14 @@ const KIND: Record<Kind, { stroke: string; fill: string; text: string; Icon: Luc
 }
 const KIND_TW: Record<Kind, string> = { identity: 'text-tone-accent', secret: 'text-tone-live', access: 'text-text-2' }
 
+// Colour = ownership (DESIGN.md §3.3): stripe, icon chip and zone tint.
+const DOM: Record<Domain, { stripe: string; chip: string; icon: string; zone: string; swatch: string }> = {
+  idira: { stripe: 'fill-domain-idira', chip: 'stroke-domain-idira/70', icon: 'text-domain-idira', zone: 'fill-domain-idira/[0.06] stroke-domain-idira/30', swatch: 'bg-domain-idira' },
+  k8s:   { stripe: 'fill-domain-k8s',   chip: 'stroke-domain-k8s/70',   icon: 'text-domain-k8s',   zone: 'fill-domain-k8s/[0.06] stroke-domain-k8s/30',     swatch: 'bg-domain-k8s' },
+  svc:   { stripe: 'fill-domain-svc',   chip: 'stroke-domain-svc/70',   icon: 'text-domain-svc',   zone: 'fill-domain-svc/[0.06] stroke-domain-svc/30',     swatch: 'bg-domain-svc' },
+}
+const NODE_DOMAIN: Record<NodeId, Domain> = { issA: 'k8s', app: 'k8s', idira: 'idira', db: 'svc', swa: 'idira', wl: 'k8s', sts: 'svc', s3: 'svc' }
+
 const clampStep = (i: number) => Math.max(0, Math.min(TOTAL - 1, i))
 const holdFor = (text: string) => Math.min(11, Math.max(4, text.trim().split(/\s+/).length / 3.5))
 
@@ -184,19 +211,20 @@ function Swap({ k, v, children }: { k: StateKey; v: string; children: ReactNode 
   return <g data-k={k} data-v={v} style={{ opacity: INITIAL[k] === v ? 1 : 0 }}>{children}</g>
 }
 
-function Card({ id, b, size, title, sub, Icon, idira, children }: {
-  id: NodeId; b: Box; size: number; title: string; sub: string; Icon: LucideIcon; idira?: boolean; children?: ReactNode
+function Card({ id, b, size, title, sub, Icon, children }: {
+  id: NodeId; b: Box; size: number; title: string; sub: string; Icon: LucideIcon; children?: ReactNode
 }) {
   const cx = b.x + b.w - 24, cy = b.y - 2
+  const d = DOM[NODE_DOMAIN[id]]
   return (
     <g>
       <rect data-ring={id} x={b.x - 5} y={b.y - 5} width={b.w + 10} height={b.h + 10} rx={16}
         className="fill-none stroke-text-2/60" strokeWidth={2} style={{ opacity: 0 }} />
       <rect x={b.x} y={b.y} width={b.w} height={b.h} rx={12} className="fill-bg-muted stroke-line" strokeWidth={1.25} />
-      {idira && <rect x={b.x + 14} y={b.y - 1.5} width={b.w - 58} height={3} rx={1.5} className="fill-domain-idira" aria-hidden="true" />}
+      <rect x={b.x + 14} y={b.y - 1.5} width={b.w - 58} height={3} rx={1.5} className={d.stripe} aria-hidden="true" />
       <g aria-hidden="true">
-        <circle cx={cx} cy={cy} r={12} className={`fill-surface ${idira ? 'stroke-domain-idira/70' : 'stroke-line'}`} strokeWidth={1.5} />
-        <Icon x={cx - 7.5} y={cy - 7.5} width={15} height={15} strokeWidth={1.9} className={idira ? 'text-domain-idira' : 'text-text-2'} />
+        <circle cx={cx} cy={cy} r={12} className={`fill-surface ${d.chip}`} strokeWidth={1.5} />
+        <Icon x={cx - 7.5} y={cy - 7.5} width={15} height={15} strokeWidth={1.9} className={d.icon} />
       </g>
       <text x={b.x + 14} y={b.y + 25} fontSize={size} className="fill-text font-sans font-semibold">{title}</text>
       <text x={b.x + 14} y={b.y + 43} fontSize={11} className="fill-text-muted font-sans">{sub}</text>
@@ -315,7 +343,8 @@ export default function IdentityFlows() {
           tl.fromTo(hi, { opacity: 1, strokeDashoffset: len }, { opacity: 1, strokeDashoffset: 0, duration: PKT, ease: 'power1.inOut', ...IR }, at)
           tl.fromTo(pkt, { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.18, ...IR }, at)
           tl.to(pkt, { motionPath: { path, start: 0, end: 1 }, duration: PKT, ease: 'power1.inOut' }, at)
-          tl.fromTo(pkt, { opacity: 1 }, { opacity: 0, duration: 0.2, ...IR }, at + PKT)
+          // fade out before the pill reaches the card so it never covers card text
+          tl.fromTo(pkt, { opacity: 1 }, { opacity: 0, duration: 0.18, ...IR }, at + PKT * 0.8)
         })
         prevLit = lit
         tl.addLabel(`s${i}_end`, t0 + s.end)
@@ -462,6 +491,12 @@ export default function IdentityFlows() {
             </marker>
           </defs>
 
+          {/* trust zones (who owns what), behind everything */}
+          {L.zones.map((z, i) => (
+            <rect key={i} x={z.x} y={z.y} width={z.w} height={z.h} rx={18} strokeWidth={1.25} strokeDasharray="5 4"
+              className={DOM[z.d].zone} aria-hidden="true" />
+          ))}
+
           {(['a', 'b'] as const).map(k => (
             <text key={k} x={L.lanes[k][0]} y={L.lanes[k][1]} fontSize={11} letterSpacing="0.06em"
               strokeWidth={6} strokeLinejoin="round" style={{ paintOrder: 'stroke' }}
@@ -486,7 +521,7 @@ export default function IdentityFlows() {
             <StateRow b={n.app} y={88} label={t('idflow.r_token')} k="appTok" states={[{ v: 'none', text: pend, tone: 'muted' }, { v: 'ok', text: t('idflow.st_ok'), tone: 'ok' }]} />
             <StateRow b={n.app} y={106} label={t('idflow.r_secret')} k="appSec" states={[{ v: 'none', text: pend, tone: 'muted' }, { v: 'ok', text: t('idflow.st_memory'), tone: 'ok' }]} />
           </Card>
-          <Card id="idira" b={n.idira} size={ts} title="IDIRA Secrets Manager" sub={t('idflow.n_idira_sub')} Icon={Vault} idira>
+          <Card id="idira" b={n.idira} size={ts} title="IDIRA Secrets Manager" sub={t('idflow.n_idira_sub')} Icon={Vault}>
             <line x1={n.idira.x + 14} x2={n.idira.x + n.idira.w - 14} y1={n.idira.y + 54} y2={n.idira.y + 54} className="stroke-line" />
             <StateRow b={n.idira} y={76} label="authn-jwt" k="authn" states={[{ v: 'idle', text: t('idflow.st_idle'), tone: 'muted' }, { v: 'check', text: t('idflow.st_check'), tone: 'warn' }, { v: 'ok', text: t('idflow.st_valid'), tone: 'ok' }]} />
             <StateRow b={n.idira} y={102} label="policy" k="policy" states={[{ v: 'idle', text: t('idflow.st_idle'), tone: 'muted' }, { v: 'check', text: t('idflow.st_check'), tone: 'warn' }, { v: 'ok', text: t('idflow.st_fetcher'), tone: 'ok' }]} />
@@ -497,7 +532,7 @@ export default function IdentityFlows() {
           </Card>
 
           {/* Path 2 */}
-          <Card id="swa" b={n.swa} size={ts} title="IDIRA SWA" sub={t('idflow.n_swa_sub')} Icon={ShieldCheck} idira />
+          <Card id="swa" b={n.swa} size={ts} title="IDIRA SWA" sub={t('idflow.n_swa_sub')} Icon={ShieldCheck} />
           <Card id="wl" b={n.wl} size={ts} title={t('idflow.n_wl')} sub={t('idflow.n_wl_sub')} Icon={HardDrive}>
             <StateRow b={n.wl} y={70} label={t('idflow.r_identity')} k="wlId" states={[{ v: 'none', text: pend, tone: 'muted' }, { v: 'ok', text: 'SVID', tone: 'ok' }]} />
             <StateRow b={n.wl} y={88} label={t('idflow.r_creds')} k="wlCred" states={[{ v: 'none', text: pend, tone: 'muted' }, { v: 'ok', text: t('idflow.st_temp'), tone: 'ok' }]} />
@@ -527,17 +562,29 @@ export default function IdentityFlows() {
         </svg>
       </div>
 
-      {/* legend: icon + label + colour */}
-      <ul className="px-4 sm:px-6 pb-3 flex flex-wrap gap-x-5 gap-y-2 text-xs text-text-2">
-        {(['identity', 'secret', 'access'] as const).map(k => {
-          const Icon = KIND[k].Icon
-          return (
-            <li key={k} className="inline-flex items-center gap-1.5">
-              <Icon size={14} strokeWidth={2} className={KIND_TW[k]} aria-hidden="true" />{t(`idflow.legend_${k}`)}
+      {/* legend: zones (ownership) + flows (icon + label + colour) */}
+      <div className="px-4 sm:px-6 pb-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-text-2">
+        <span className="font-semibold uppercase tracking-wider text-text-muted">{t('idflow.legend_zones')}</span>
+        <ul className="flex flex-wrap gap-x-4 gap-y-2">
+          {(['k8s', 'idira', 'svc'] as const).map(z => (
+            <li key={z} className="inline-flex items-center gap-1.5">
+              <span className={`h-2.5 w-2.5 rounded-sm ${DOM[z].swatch}`} aria-hidden="true" />{t(`idflow.zone_${z}`)}
             </li>
-          )
-        })}
-      </ul>
+          ))}
+        </ul>
+        <span className="hidden sm:block h-4 w-px bg-border" aria-hidden="true" />
+        <span className="font-semibold uppercase tracking-wider text-text-muted">{t('idflow.legend_flows')}</span>
+        <ul className="flex flex-wrap gap-x-4 gap-y-2">
+          {(['identity', 'secret', 'access'] as const).map(k => {
+            const Icon = KIND[k].Icon
+            return (
+              <li key={k} className="inline-flex items-center gap-1.5">
+                <Icon size={14} strokeWidth={2} className={KIND_TW[k]} aria-hidden="true" />{t(`idflow.legend_${k}`)}
+              </li>
+            )
+          })}
+        </ul>
+      </div>
 
       {/* narration */}
       <div className="border-t border-border px-4 sm:px-6 py-5 min-h-[7.5rem]" aria-live="polite" aria-atomic="true">

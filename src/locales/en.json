@@ -1371,6 +1371,11 @@
     "s10_title": "9. The workload reaches S3 directly",
     "s10_desc": "With those credentials the workload reads the S3 bucket. No secret was created, stored or distributed: the identity was the only credential.",
     "s11_title": "Two models, one principle",
-    "s11_desc": "Path 1: the identity fetches the secret just in time, and the secret never lives in the workload. Path 2: the identity is the credential, and there is no secret. In both, identity decides access."
+    "s11_desc": "Path 1: the identity fetches the secret just in time, and the secret never lives in the workload. Path 2: the identity is the credential, and there is no secret. In both, identity decides access.",
+    "legend_zones": "Zones",
+    "legend_flows": "Flows",
+    "zone_k8s": "Kubernetes",
+    "zone_idira": "IDIRA",
+    "zone_svc": "Services & cloud"
   }
 }

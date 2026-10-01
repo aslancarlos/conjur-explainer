@@ -38,6 +38,7 @@ export default {
           idira: 'rgb(var(--rgb-domain-idira) / <alpha-value>)',
           cp:    'rgb(var(--rgb-domain-cp) / <alpha-value>)',
           k8s:   'rgb(var(--rgb-domain-k8s) / <alpha-value>)',
+          svc:   'rgb(var(--rgb-domain-svc) / <alpha-value>)',
         },
 
         // ─── Brand accents (constant in both themes) ───────────────────

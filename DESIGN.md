@@ -61,7 +61,8 @@ Always use **semantic tokens** via Tailwind classes. **No raw hex in new compone
 |---|---|---|---|
 | `domain-idira` | `0 88 230` | `92 152 255` | IDIRA platform: Vault, accounts, CPM, Secrets Manager |
 | `domain-cp` | `96 72 214` | `167 150 250` | Credential Provider / application path |
-| `domain-k8s` | `194 65 12` | `255 138 92` | Kubernetes / ESO path |
+| `domain-k8s` | `194 65 12` | `255 138 92` | Kubernetes / ESO path, workloads running in a cluster |
+| `domain-svc` | `190 24 93` | `244 114 182` | Target services and cloud providers (databases, AWS STS, S3) |
 
 Rules:
 - Domain colour appears **only** on the icon chip, a 3 px top stripe and lane labels. Card fill and body text stay neutral.
@@ -220,6 +221,7 @@ Reference implementation: `src/pages/DualAccountsPage.tsx`.
 - Derive the current step from the playhead in `onUpdate` and write progress fills via refs (no React state per frame).
 
 **Visual grammar**
+- Identity diagrams show **trust zones** behind the cards (dashed outline, 6 % tint of the owner's domain colour: Kubernetes `domain-k8s`, IDIRA `domain-idira`, services & cloud `domain-svc`), a domain stripe + icon chip on every card, and a two-group legend (Zones · Flows).
 - Identity diagrams use three packet kinds, each with icon + label + colour: **identity** (Fingerprint, `tone-accent`: JWT, SVID, access token), **secret / credential** (KeyRound, `tone-live`: DB password, temporary cloud credentials), **service access** (Plug, neutral). Show the legend under the diagram.
 - Packets: pill with label, travels an edge in **1.0 s** `power1.inOut` via MotionPath; the edge overlay draws with dash-offset in sync. Data plane = `tone-live`, control plane = `tone-accent`.
 - Current-step focus = neutral ring (`stroke-text-2/60`), not a colour.
@@ -286,6 +288,7 @@ Reference implementation: `src/pages/DualAccountsPage.tsx`.
 
 | Date | Change |
 |---|---|
+| 2026-09-30 | `domain-svc` token; identity diagram trust zones and domain-coloured cards. |
 | 2026-09-30 | Concepts pages (`/concepts/*`) + lean home. |
 | 2026-09-30 | Official IDIRA logo in a theme-aware top bar; Use case \| Product grouping; home Fundamentals section. |
 | 2026-09-30 | App shell: left sidebar + drawer (§6), `lib/nav.ts`, ambient hero diagram rules (§10), locale preload. |

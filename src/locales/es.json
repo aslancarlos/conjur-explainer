@@ -1371,6 +1371,11 @@
     "s10_title": "9. El workload accede a S3 directamente",
     "s10_desc": "Con esas credenciales el workload lee el bucket S3. No se creó, guardó ni distribuyó ningún secreto: la identidad fue la única credencial.",
     "s11_title": "Dos modelos, un mismo principio",
-    "s11_desc": "Camino 1: la identidad obtiene el secreto en el momento, y el secreto nunca vive en el workload. Camino 2: la identidad es la credencial, y no existe secreto. En ambos, la identidad decide el acceso."
+    "s11_desc": "Camino 1: la identidad obtiene el secreto en el momento, y el secreto nunca vive en el workload. Camino 2: la identidad es la credencial, y no existe secreto. En ambos, la identidad decide el acceso.",
+    "legend_zones": "Zonas",
+    "legend_flows": "Flujos",
+    "zone_k8s": "Kubernetes",
+    "zone_idira": "IDIRA",
+    "zone_svc": "Servicios y nube"
   }
 }
