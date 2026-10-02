@@ -1,0 +1,272 @@
+{
+  "version": 2,
+  "icons": {
+    "pack": "color",
+    "sizes": [
+      32
+    ],
+    "color": "original (color pack)",
+    "items": {
+      "aws": {
+        "id": "33039",
+        "commonName": "amazon-web-services",
+        "file": "public/icons/tech/aws.png"
+      },
+      "azure": {
+        "id": "81727",
+        "commonName": "azure-1",
+        "file": "public/icons/tech/azure.png"
+      },
+      "gcp": {
+        "id": "20774",
+        "commonName": "google-cloud-platform",
+        "file": "public/icons/tech/gcp.png"
+      },
+      "k8s": {
+        "id": "cvzmaEA4kC0o",
+        "commonName": "kubernetes",
+        "file": "public/icons/tech/k8s.png"
+      },
+      "onprem": {
+        "id": "vvAP3cubhSN3",
+        "commonName": "data-center--v2",
+        "file": "public/icons/tech/onprem.png"
+      },
+      "mainframe": {
+        "id": "alWVtn347wHY",
+        "commonName": "server-group",
+        "file": "public/icons/tech/mainframe.png"
+      },
+      "cicd": {
+        "id": "12817",
+        "commonName": "workflow",
+        "file": "public/icons/tech/cicd.png"
+      },
+      "ai": {
+        "id": "9tRPx6QHufDN",
+        "commonName": "ai-robot",
+        "file": "public/icons/tech/ai.png"
+      },
+      "pam": {
+        "id": "13018",
+        "commonName": "safe",
+        "file": "public/icons/tech/pam.png"
+      },
+      "other": {
+        "id": "63684",
+        "commonName": "help",
+        "file": "public/icons/tech/other.png"
+      },
+      "aws_ec2": {
+        "id": "13566",
+        "commonName": "virtual-machine",
+        "file": "public/icons/tech/aws_ec2.png"
+      },
+      "aws_lambda": {
+        "id": "Y9Kxy8Xl1id8",
+        "commonName": "awslambda",
+        "file": "public/icons/tech/aws_lambda.png"
+      },
+      "aws_eks": {
+        "id": "cvzmaEA4kC0o",
+        "commonName": "kubernetes",
+        "file": "public/icons/tech/aws_eks.png"
+      },
+      "aws_ecs": {
+        "id": "60035",
+        "commonName": "docker-container",
+        "file": "public/icons/tech/aws_ecs.png"
+      },
+      "aws_sm": {
+        "id": "16190",
+        "commonName": "key-security",
+        "file": "public/icons/tech/aws_sm.png"
+      },
+      "az_vm": {
+        "id": "13566",
+        "commonName": "virtual-machine",
+        "file": "public/icons/tech/az_vm.png"
+      },
+      "az_aks": {
+        "id": "cvzmaEA4kC0o",
+        "commonName": "kubernetes",
+        "file": "public/icons/tech/az_aks.png"
+      },
+      "az_app": {
+        "id": "11871",
+        "commonName": "cloud",
+        "file": "public/icons/tech/az_app.png"
+      },
+      "azdo": {
+        "id": "13172",
+        "commonName": "infinity",
+        "file": "public/icons/tech/azdo.png"
+      },
+      "az_kv": {
+        "id": "16190",
+        "commonName": "key-security",
+        "file": "public/icons/tech/az_kv.png"
+      },
+      "gcp_ce": {
+        "id": "13566",
+        "commonName": "virtual-machine",
+        "file": "public/icons/tech/gcp_ce.png"
+      },
+      "gcp_gke": {
+        "id": "cvzmaEA4kC0o",
+        "commonName": "kubernetes",
+        "file": "public/icons/tech/gcp_gke.png"
+      },
+      "gcp_run": {
+        "id": "60035",
+        "commonName": "docker-container",
+        "file": "public/icons/tech/gcp_run.png"
+      },
+      "gcp_sm": {
+        "id": "16190",
+        "commonName": "key-security",
+        "file": "public/icons/tech/gcp_sm.png"
+      },
+      "k8s_openshift": {
+        "id": "V8TyzYpasxCk",
+        "commonName": "openshift",
+        "file": "public/icons/tech/k8s_openshift.png"
+      },
+      "k8s_other": {
+        "id": "cvzmaEA4kC0o",
+        "commonName": "kubernetes",
+        "file": "public/icons/tech/k8s_other.png"
+      },
+      "op_linux": {
+        "id": "17842",
+        "commonName": "linux",
+        "file": "public/icons/tech/op_linux.png"
+      },
+      "op_windows": {
+        "id": "M9BRw0RJZXKi",
+        "commonName": "windows-11",
+        "file": "public/icons/tech/op_windows.png"
+      },
+      "op_appservers": {
+        "id": "QFcVqyh6lBh6",
+        "commonName": "tomcat",
+        "file": "public/icons/tech/op_appservers.png"
+      },
+      "op_legacy": {
+        "id": "11898",
+        "commonName": "computer",
+        "file": "public/icons/tech/op_legacy.png"
+      },
+      "op_cf": {
+        "id": "13570",
+        "commonName": "upload-to-cloud",
+        "file": "public/icons/tech/op_cf.png"
+      },
+      "op_db": {
+        "id": "11973",
+        "commonName": "database",
+        "file": "public/icons/tech/op_db.png"
+      },
+      "op_hcv": {
+        "id": "32745",
+        "commonName": "safe-in",
+        "file": "public/icons/tech/op_hcv.png"
+      },
+      "op_iot": {
+        "id": "13106",
+        "commonName": "sensor",
+        "file": "public/icons/tech/op_iot.png"
+      },
+      "mf_zos": {
+        "id": "31754",
+        "commonName": "ibm",
+        "file": "public/icons/tech/mf_zos.png"
+      },
+      "ci_jenkins": {
+        "id": "39292",
+        "commonName": "jenkins",
+        "file": "public/icons/tech/ci_jenkins.png"
+      },
+      "ci_gitlab": {
+        "id": "34886",
+        "commonName": "gitlab",
+        "file": "public/icons/tech/ci_gitlab.png"
+      },
+      "ci_gha": {
+        "id": "63777",
+        "commonName": "github",
+        "file": "public/icons/tech/ci_gha.png"
+      },
+      "ci_bitbucket": {
+        "id": "20907",
+        "commonName": "bitbucket",
+        "file": "public/icons/tech/ci_bitbucket.png"
+      },
+      "ci_circleci": {
+        "id": "C4OYHif_29XE",
+        "commonName": "circleci",
+        "file": "public/icons/tech/ci_circleci.png"
+      },
+      "ci_octopus": {
+        "id": "16077",
+        "commonName": "octopus",
+        "file": "public/icons/tech/ci_octopus.png"
+      },
+      "ci_ansible": {
+        "id": "iGCCE2iEmh2u",
+        "commonName": "ansible",
+        "file": "public/icons/tech/ci_ansible.png"
+      },
+      "ci_terraform": {
+        "id": "kEkT1u7zTDk5",
+        "commonName": "terraform",
+        "file": "public/icons/tech/ci_terraform.png"
+      },
+      "ci_puppet": {
+        "id": "13951",
+        "commonName": "settings-3",
+        "file": "public/icons/tech/ci_puppet.png"
+      },
+      "ai_agents": {
+        "id": "9tRPx6QHufDN",
+        "commonName": "ai-robot",
+        "file": "public/icons/tech/ai_agents.png"
+      },
+      "ai_mcp": {
+        "id": "12930",
+        "commonName": "plugin",
+        "file": "public/icons/tech/ai_mcp.png"
+      },
+      "pam_pc": {
+        "id": "71524",
+        "commonName": "cloud-connection",
+        "file": "public/icons/tech/pam_pc.png"
+      },
+      "pam_sh": {
+        "id": "13051",
+        "commonName": "server",
+        "file": "public/icons/tech/pam_sh.png"
+      },
+      "app_java": {
+        "id": "13679",
+        "commonName": "java-coffee-cup-logo",
+        "file": "public/icons/tech/app_java.png"
+      },
+      "app_dotnet": {
+        "id": "1BC75jFEBED6",
+        "commonName": "net-framework",
+        "file": "public/icons/tech/app_dotnet.png"
+      },
+      "app_python": {
+        "id": "13441",
+        "commonName": "python",
+        "file": "public/icons/tech/app_python.png"
+      },
+      "app_mulesoft": {
+        "id": "21895",
+        "commonName": "api-settings",
+        "file": "public/icons/tech/app_mulesoft.png"
+      }
+    }
+  }
+}

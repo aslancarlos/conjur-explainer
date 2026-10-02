@@ -1350,7 +1350,8 @@
     "role": "DC2 | SME Machine/AI Identity Security, Palo Alto Networks",
     "contact": "Contact or report an error",
     "mail_subject": "contact / error report",
-    "mail_page": "Page"
+    "mail_page": "Page",
+    "icons_credit": "Icons by Icons8"
   },
   "fundamentals": {
     "examples_label": "Examples",

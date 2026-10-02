@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import { NAV } from '../lib/nav'
-import { APPS_ENVS, DETAIL_GROUPS, DETAILS, ENVS, GOALS, PRODUCTS, RECS, evaluate, goalEnabled, effectiveDetails } from './finderModel'
+import { APPS_ENVS, DETAIL_GROUPS, DETAILS, ENVS, GOALS, LOGO, PRODUCTS, RECS, evaluate, goalEnabled, effectiveDetails } from './finderModel'
 import type { GoalId, Prod } from './finderModel'
 
 /**
@@ -59,6 +59,19 @@ const btnGhost = 'inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 te
 
 /** Reading path: the first START pages get full cards, the rest a compact list. */
 const START = 5
+
+
+/** Technology logo on a light rounded slot (keeps dark logos legible in the dark theme). */
+function Logo({ id, size, fallback: Fallback, className = '' }: { id: string; size: number; fallback: LucideIcon; className?: string }) {
+  const src = LOGO[id]
+  if (!src) return <Fallback size={size - 4} aria-hidden="true" className={`shrink-0 ${className}`} />
+  const pad = size >= 28 ? 4 : 2
+  return (
+    <span aria-hidden="true" className="inline-flex shrink-0 items-center justify-center rounded-lg bg-white ring-1 ring-black/5" style={{ width: size + pad * 2, height: size + pad * 2 }}>
+      <img src={src} alt="" width={size} height={size} loading="lazy" decoding="async" />
+    </span>
+  )
+}
 
 export default function SolutionFinderPage() {
   const { t, i18n } = useTranslation()
@@ -220,7 +233,7 @@ export default function SolutionFinderPage() {
     const T = { Icon: ICON[id] ?? CircleHelp }
     return (
       <span key={id} className="inline-flex min-h-7 items-center gap-1.5 rounded-full bg-bg-muted px-2.5 text-xs text-text-2">
-        <T.Icon size={13} aria-hidden="true" className="shrink-0 text-text-muted" />{tileName(id)}
+        <Logo id={id} size={14} fallback={T.Icon} className="text-text-muted" />{tileName(id)}
       </span>
     )
   }
@@ -279,7 +292,7 @@ export default function SolutionFinderPage() {
           ${disabled ? 'cursor-not-allowed border-dashed border-border bg-bg-card' : on ? 'border-idira-blue bg-idira-blue/10' : 'border-border bg-bg-base hover:border-idira-blue/60 hover:bg-bg-muted'}`}>
         {disabled
           ? <Lock size={18} aria-hidden="true" className="shrink-0 text-text-muted" />
-          : <Icon size={20} aria-hidden="true" className={`shrink-0 ${on ? 'text-domain-idira' : 'text-text-2'}`} />}
+          : <Logo id={id} size={28} fallback={Icon} className={on ? 'text-domain-idira' : 'text-text-2'} />}
         <span className="min-w-0 flex-1">
           <span className={`block text-sm font-semibold leading-tight ${disabled ? 'text-text-muted' : 'text-text'}`}>{tileName(id)}</span>
           {sub && <span title={sub} className={`mt-0.5 block text-xs leading-snug ${opts.help || disabled ? '' : 'truncate'} text-text-muted`}>{sub}</span>}
@@ -336,7 +349,7 @@ export default function SolutionFinderPage() {
             return (
               <fieldset key={g.env} className="space-y-2.5">
                 <legend className="mb-2.5 inline-flex items-center gap-2 text-sm font-semibold text-text">
-                  <GIcon size={16} aria-hidden="true" className="text-text-2" />{g.env === 'apps' ? f('groups.apps') : tileName(g.env)}
+                  {g.env === 'apps' ? <GIcon size={16} aria-hidden="true" className="text-text-2" /> : <Logo id={g.env} size={16} fallback={GIcon} className="text-text-2" />}{g.env === 'apps' ? f('groups.apps') : tileName(g.env)}
                   {g.env === 'apps' && <span className="text-xs font-normal text-text-muted">{f('groups.apps_hint')}</span>}
                 </legend>
                 <div className={grid}>{g.details.map(id => TileButton(id))}</div>
@@ -523,7 +536,7 @@ export default function SolutionFinderPage() {
               return (
                 <li key={id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3">
                   <span className="inline-flex items-center gap-2.5 text-sm font-medium text-text">
-                    <T.Icon size={16} aria-hidden="true" className="shrink-0 text-text-2" />{tileName(id)}
+                    <Logo id={id} size={18} fallback={T.Icon} className="text-text-2" />{tileName(id)}
                     {T.note === 'iot' && <span className="inline-flex items-center gap-1 rounded-full bg-tone-warning/10 px-2 py-0.5 text-[11px] font-medium text-tone-warning"><TriangleAlert size={12} aria-hidden="true" />{f('no_dedicated')}</span>}
                   </span>
                   <span className="flex flex-wrap gap-1.5">

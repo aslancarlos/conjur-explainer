@@ -19,6 +19,10 @@ export default function Footer() {
           © {new Date().getFullYear()} {t('shell.site_name')} · {t('footer.made_by')}{' '}
           <span className="font-medium text-text">Aslan Carlos Ramos</span>
           <span className="block text-xs">{t('footer.role')}</span>
+          <a href="https://icons8.com" target="_blank" rel="noopener noreferrer"
+            className="mt-1 inline-block text-xs text-text-muted underline-offset-4 hover:text-text hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue rounded">
+            {t('footer.icons_credit')}
+          </a>
         </p>
         <a href={href}
           className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-bg-card px-5 text-sm font-medium text-text transition-colors duration-200 hover:border-idira-blue hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">

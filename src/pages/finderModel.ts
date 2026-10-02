@@ -44,6 +44,14 @@ export const DETAIL_GROUPS: Array<{ env: EnvId | 'apps'; details: string[] }> = 
   { env: 'pam', details: ['pam_pc', 'pam_sh'] },
   { env: 'apps', details: ['app_java', 'app_dotnet', 'app_python', 'app_mulesoft'] },
 ]
+/**
+ * Colour technology logos (Icons8 "color" pack, self-hosted 96px PNGs in
+ * public/icons/tech; lock in icons8.json). Brand logos where Icons8 has
+ * them, generic icons from the same pack otherwise.
+ */
+const LOGO_IDS = ['aws', 'azure', 'gcp', 'k8s', 'onprem', 'mainframe', 'cicd', 'ai', 'pam', 'other', 'aws_ec2', 'aws_lambda', 'aws_eks', 'aws_ecs', 'aws_sm', 'az_vm', 'az_aks', 'az_app', 'azdo', 'az_kv', 'gcp_ce', 'gcp_gke', 'gcp_run', 'gcp_sm', 'k8s_openshift', 'k8s_other', 'op_linux', 'op_windows', 'op_appservers', 'op_legacy', 'op_cf', 'op_db', 'op_hcv', 'op_iot', 'mf_zos', 'ci_jenkins', 'ci_gitlab', 'ci_gha', 'ci_bitbucket', 'ci_circleci', 'ci_octopus', 'ci_ansible', 'ci_terraform', 'ci_puppet', 'ai_agents', 'ai_mcp', 'pam_pc', 'pam_sh', 'app_java', 'app_dotnet', 'app_python', 'app_mulesoft']
+export const LOGO: Record<string, string> = Object.fromEntries(LOGO_IDS.map(id => [id, `/icons/tech/${id}.png`]))
+
 /** The applications group appears when any compute environment is picked. */
 export const APPS_ENVS: EnvId[] = ['aws', 'azure', 'gcp', 'k8s', 'onprem']
 export const DETAILS = [...new Set(DETAIL_GROUPS.flatMap(g => g.details))]
