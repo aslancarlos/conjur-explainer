@@ -2340,5 +2340,10 @@
       "authn": "SWA com a autenticação JWT do Secrets Manager",
       "support": "Suporte e escopo do Secrets Manager"
     }
+  },
+  "authnhub": {
+    "available": "disponível",
+    "not_available": "não disponível",
+    "availability": "Disponibilidade"
   }
 }
