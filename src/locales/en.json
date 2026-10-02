@@ -1369,9 +1369,9 @@
     "home_subtitle": "Five short pages, in order: what a secret is, what a machine identity is, how they fit, how it works on Kubernetes, and the vocabulary."
   },
   "shell": {
-    "site_name": "Machine Identity Lab",
-    "visits_label": "Accesses helped",
-    "visits_title": "Accesses to demo.minha.cloud since {{since}}, measured at the AWS load balancer and updated hourly. Counts visits, not unique people."
+    "site_name": "Machine Identity HUB Knowledge",
+    "visits_label": "Accesses",
+    "visits_title": "{{exact}} accesses to demo.minha.cloud since {{since}}, measured at the AWS load balancer and updated hourly. Counts visits, not unique people."
   },
   "search": {
     "open": "Search",

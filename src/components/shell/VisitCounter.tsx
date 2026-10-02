@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { HeartHandshake } from 'lucide-react'
+import { Heart } from 'lucide-react'
 
 interface Visits { accesses: number; since: string; updated: string }
 
@@ -25,14 +25,18 @@ export default function VisitCounter({ className = '' }: { className?: string })
 
   if (!data) return null
   const lang = i18n.resolvedLanguage ?? 'en'
-  const count = new Intl.NumberFormat(lang).format(data.accesses)
+  // Abbreviated and rounded down (17,666 -> 17K / 17 mil); the exact number is in the tooltip.
+  const step = data.accesses >= 1_000_000 ? 100_000 : data.accesses >= 1_000 ? 1_000 : 1
+  const count = new Intl.NumberFormat(lang, { notation: 'compact', maximumFractionDigits: 1 })
+    .format(Math.floor(data.accesses / step) * step)
+  const exact = new Intl.NumberFormat(lang).format(data.accesses)
   const since = new Intl.DateTimeFormat(lang, { dateStyle: 'medium', timeZone: 'UTC' }).format(new Date(`${data.since}T00:00:00Z`))
-  const title = t('shell.visits_title', { since })
+  const title = t('shell.visits_title', { since, exact })
 
   return (
     <div className={`items-center gap-2 rounded-full border border-border bg-bg-muted/60 px-3 py-1 text-xs ${className}`}
       title={title}>
-      <HeartHandshake size={14} strokeWidth={2} className="text-domain-idira shrink-0" aria-hidden="true" />
+      <Heart size={13} strokeWidth={2} className="shrink-0 fill-tone-danger text-tone-danger" aria-hidden="true" />
       <span className="text-text-muted">{t('shell.visits_label')}</span>
       <span className="font-semibold tabular-nums text-text">{count}</span>
       <span className="sr-only">. {title}</span>

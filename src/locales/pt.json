@@ -1369,9 +1369,9 @@
     "home_subtitle": "Cinco páginas curtas, em ordem: o que é um secret, o que é uma identidade de máquina, como se encaixam, como funciona no Kubernetes e o vocabulário."
   },
   "shell": {
-    "site_name": "Machine Identity Lab",
-    "visits_label": "Acessos ajudados",
-    "visits_title": "Acessos ao demo.minha.cloud desde {{since}}, medidos no load balancer da AWS e atualizados a cada hora. Conta visitas, não pessoas únicas."
+    "site_name": "Machine Identity HUB Knowledge",
+    "visits_label": "Acessos",
+    "visits_title": "{{exact}} acessos ao demo.minha.cloud desde {{since}}, medidos no load balancer da AWS e atualizados a cada hora. Conta visitas, não pessoas únicas."
   },
   "search": {
     "open": "Buscar",
