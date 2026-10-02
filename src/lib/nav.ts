@@ -1,7 +1,7 @@
 import {
   Home, BookOpen, ArrowLeftRight, Container, Fingerprint, FileBadge, RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
   Leaf, Hexagon, Github, ShoppingCart, Database,
-  GitCompareArrows, Wrench, LayoutDashboard, CloudCog, Network, ShieldCheck, Layers, GraduationCap, Vault, KeySquare, BadgeCheck, Cloud, Users,
+  GitCompareArrows, Wrench, LayoutDashboard, CloudCog, Network, ShieldCheck, Layers, GraduationCap, Vault, KeySquare, BadgeCheck, Cloud, Users, AppWindow, LayoutGrid, HardDrive, Globe,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -117,6 +117,18 @@ export const NAV: NavGroup[] = [
         demo: { name: 'SVID Explorer', secret: 'X.509-SVID + JWT-SVID', descKey: 'demos.svid' } },
       { to: '/swa-s3', product: 'swa', href: '/swa-s3', labelKey: 'nav.swa', subKey: 'nav.swa_sub', Icon: Database, color: 'text-eso',
         demo: { name: 'SWA → AWS S3', secret: 'SPIFFE/SVID → STS', descKey: 'demos.swa' } },
+    ],
+  },
+  {
+    key: 'cp',
+    labelKey: 'nav.group_cp',
+    descKey: 'demos.group_cp',
+    Icon: AppWindow,
+    items: [
+      { to: '/cp', product: 'pam', labelKey: 'nav.cp_hub', subKey: 'nav.cp_hub_sub', Icon: LayoutGrid, color: 'text-domain-idira' },
+      { to: '/cp/credential-provider', product: 'pam', labelKey: 'nav.cp_cp', subKey: 'nav.cp_cp_sub', Icon: HardDrive, color: 'text-domain-idira' },
+      { to: '/cp/ascp', product: 'pam', labelKey: 'nav.cp_ascp', subKey: 'nav.cp_ascp_sub', Icon: Database, color: 'text-domain-idira' },
+      { to: '/cp/ccp', product: 'pam', labelKey: 'nav.cp_ccp', subKey: 'nav.cp_ccp_sub', Icon: Globe, color: 'text-domain-idira' },
     ],
   },
   {
