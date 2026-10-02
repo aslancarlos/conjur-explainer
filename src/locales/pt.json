@@ -2098,7 +2098,8 @@
     "s7_title": "7. Trocar a senha exige uma nova versão",
     "s7_desc": "Para mudar a senha é preciso editar o código, rebuildar e reimplantar, e toda cópia antiga continua valendo até lá. Na prática, ela nunca muda.",
     "s8_title": "8. A solução: nenhum secret no código",
-    "s8_desc": "Guarde o secret num cofre e deixe a app buscá-lo em tempo de execução, provando quem ela é com a própria identidade. Os próximos conceitos mostram como."
+    "s8_desc": "Guarde o secret num cofre e deixe a app buscá-lo em tempo de execução, provando quem ela é com a própria identidade. Os próximos conceitos mostram como.",
+    "p_plain": "senha em texto puro"
   },
   "idconcept": {
     "diagram_label": "Como um workload prova quem é com uma identidade de máquina",

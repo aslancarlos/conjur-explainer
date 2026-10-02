@@ -77,7 +77,7 @@ export default function StaticSecretFlow() {
       steps: [
         { ...step(1), focus: ['db'], end: 0.6, fx: [] },
         { ...step(2), focus: ['dev', 'repo'], end: 2.2, fx: [
-          { t: 'packet', at: 0.3, edge: 'dev-repo', label: 'password=S3nh@123' }, { t: 'set', at: 1.3, k: 'code', v: 'hard', pop: true }] },
+          { t: 'packet', at: 0.3, edge: 'dev-repo', label: p('p_plain') }, { t: 'set', at: 1.3, k: 'code', v: 'hard', pop: true }] },
         { ...step(3), focus: ['repo'], end: 1.2, fx: [{ t: 'set', at: 0.3, k: 'hist', v: 'bad', pop: true }] },
         { ...step(4), focus: ['repo', 'image'], end: 2.2, fx: [
           { t: 'packet', at: 0.3, edge: 'repo-image', label: 'docker build' }, { t: 'set', at: 1.3, k: 'img', v: 'bad', pop: true }] },
@@ -86,7 +86,7 @@ export default function StaticSecretFlow() {
           { t: 'packet', at: 1.7, edge: 'app-db', label: 'login' }, { t: 'set', at: 2.7, k: 'db', v: 'ok', pop: true }] },
         { ...step(6), focus: ['repo', 'leak', 'db'], end: 3.4, fx: [
           { t: 'packet', at: 0.3, edge: 'repo-leak', label: p('p_copy') }, { t: 'set', at: 1.3, k: 'reach', v: 'yes', pop: true },
-          { t: 'packet', at: 1.7, edge: 'leak-db', label: 'password=S3nh@123' }] },
+          { t: 'packet', at: 1.7, edge: 'leak-db', label: p('p_plain') }] },
         { ...step(7), focus: ['repo', 'image', 'app'], end: 1.4, fx: [{ t: 'set', at: 0.3, k: 'rot', v: 'pain', pop: true }] },
         { ...step(8), focus: ['repo', 'image', 'app', 'leak'], end: 0.8, fx: [] },
       ],

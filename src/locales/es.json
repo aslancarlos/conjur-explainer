@@ -2098,7 +2098,8 @@
     "s7_title": "7. Rotarla exige una nueva versión",
     "s7_desc": "Para cambiar la contraseña hay que editar el código, reconstruir y desplegar, y cada copia antigua sigue valiendo hasta entonces. En la práctica, nunca cambia.",
     "s8_title": "8. La solución: ningún secreto en el código",
-    "s8_desc": "Guarda el secreto en una bóveda y deja que la app lo obtenga en tiempo de ejecución, probando quién es con su propia identidad. Los próximos conceptos muestran cómo."
+    "s8_desc": "Guarda el secreto en una bóveda y deja que la app lo obtenga en tiempo de ejecución, probando quién es con su propia identidad. Los próximos conceptos muestran cómo.",
+    "p_plain": "contraseña en texto plano"
   },
   "idconcept": {
     "diagram_label": "Cómo un workload demuestra quién es con una identidad de máquina",

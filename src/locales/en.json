@@ -2098,7 +2098,8 @@
     "s7_title": "7. Rotating it means a new release",
     "s7_desc": "To change the password you edit the code, rebuild and redeploy, and every old copy stays valid until you do. So in practice it never changes.",
     "s8_title": "8. The fix: no secret in the code",
-    "s8_desc": "Store the secret in a vault and let the app fetch it at runtime, proving who it is with its own identity. The next concepts show how."
+    "s8_desc": "Store the secret in a vault and let the app fetch it at runtime, proving who it is with its own identity. The next concepts show how.",
+    "p_plain": "plaintext password"
   },
   "idconcept": {
     "diagram_label": "How a workload proves who it is with a machine identity",
