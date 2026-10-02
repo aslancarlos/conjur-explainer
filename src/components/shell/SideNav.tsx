@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next'
 import { ChevronDown } from 'lucide-react'
 import { navBy, SECTIONS, type NavItem } from '../../lib/nav'
 
-const GROUPS_KEY = 'idira-nav-groups'
+// v2: groups now start collapsed (a fresh key so earlier 'all open' states do not stick)
+const GROUPS_KEY = 'idira-nav-groups-v2'
 
 /** Split a group's flat items into runs: plain items, or a run sharing one `section` (submenu). */
 function segments(items: NavItem[]) {
@@ -36,15 +37,15 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
   const { pathname } = useLocation()
   const groups = navBy('usecase')
   const [open, setOpen] = useState<Record<string, boolean>>(readOpen)
-  const isOpen = (key: string) => open[key] !== false   // default: expanded
+  const isOpen = (key: string) => open[key] === true    // default: collapsed
 
   // Navigating into a hidden group reveals it.
   useEffect(() => {
     const g = groups.find(gr => gr.items.some(i => i.to === pathname))
-    if (g && open[g.key] === false) setOpen(o => ({ ...o, [g.key]: true }))
+    if (g && open[g.key] !== true) setOpen(o => ({ ...o, [g.key]: true }))
     // ...and so does navigating into a hidden submenu (it can still be collapsed by hand)
     const sec = g?.items.find(i => i.to === pathname)?.section
-    if (sec && open[`sec-${sec}`] === false) setOpen(o => ({ ...o, [`sec-${sec}`]: true }))
+    if (sec && open[`sec-${sec}`] !== true) setOpen(o => ({ ...o, [`sec-${sec}`]: true }))
   }, [pathname]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -138,7 +139,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
                 const sec = SECTIONS[seg.section]
                 const key = `sec-${seg.section}`
                 const subActive = seg.items.some(i => i.to === pathname)
-                const subOpen = open[key] !== false
+                const subOpen = open[key] === true
                 const subId = `${idPrefix}-${key}`
                 return (
                   <li key={key} className="pt-2">
