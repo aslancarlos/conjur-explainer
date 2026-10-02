@@ -2,7 +2,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ChevronLeft, ChevronRight, Fingerprint, KeyRound, Pause, Play, Plug, RotateCcw, ScrollText } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Fingerprint, KeyRound, Pause, Play, Plug, RotateCcw, ScrollText, TriangleAlert } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { gsap } from 'gsap'
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
@@ -20,8 +20,8 @@ gsap.registerPlugin(MotionPathPlugin)
 // ─── spec types ───────────────────────────────────────────────────────────────
 
 export type Domain = 'idira' | 'k8s' | 'svc' | 'cp' | 'neutral'
-export type Kind = 'identity' | 'secret' | 'access' | 'control'
-export type Tone = 'muted' | 'warn' | 'ok'
+export type Kind = 'identity' | 'secret' | 'access' | 'control' | 'leak'
+export type Tone = 'muted' | 'warn' | 'ok' | 'bad'
 
 export interface Box { x: number; y: number; w: number; h: number }
 
@@ -71,10 +71,11 @@ const KIND: Record<Kind, { stroke: string; fill: string; text: string; tw: strin
   secret:   { stroke: 'stroke-tone-live',   fill: 'fill-tone-live/15',   text: 'fill-tone-live',   tw: 'text-tone-live',   Icon: KeyRound },
   access:   { stroke: 'stroke-text-2',      fill: 'fill-bg-muted',       text: 'fill-text',        tw: 'text-text-2',      Icon: Plug },
   control:  { stroke: 'stroke-domain-cp',   fill: 'fill-domain-cp/15',   text: 'fill-domain-cp',   tw: 'text-domain-cp',   Icon: ScrollText, dash: '5 4' },
+  leak:     { stroke: 'stroke-tone-danger', fill: 'fill-tone-danger/15', text: 'fill-tone-danger', tw: 'text-tone-danger', Icon: TriangleAlert, dash: '3 4' },
 }
-const TONE: Record<Tone, string> = { muted: 'fill-text-muted', warn: 'fill-tone-warning', ok: 'fill-tone-success' }
+const TONE: Record<Tone, string> = { muted: 'fill-text-muted', warn: 'fill-tone-warning', ok: 'fill-tone-success', bad: 'fill-tone-danger' }
 const ZONE_ORDER: Domain[] = ['k8s', 'idira', 'svc', 'cp', 'neutral']
-const KIND_ORDER: Kind[] = ['identity', 'secret', 'access', 'control']
+const KIND_ORDER: Kind[] = ['identity', 'secret', 'access', 'control', 'leak']
 
 const PKT = 1.0
 const holdFor = (text: string) => Math.min(11, Math.max(4, text.trim().split(/\s+/).length / 3.5))

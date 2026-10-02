@@ -1,5 +1,6 @@
 import { lazy, Suspense, type ReactNode } from 'react'
 import Metaphors from '../components/concepts/Metaphors'
+import StaticSecretFlow from '../components/flow/specs/StaticSecretFlow'
 import { useTranslation } from 'react-i18next'
 import ConceptLayout from '../components/concepts/ConceptLayout'
 import { ConceptCard, CompareTable, FitPanel, GlossaryList, PlatformsTable } from '../components/concepts/ConceptPieces'
@@ -19,6 +20,7 @@ export function SecretsConcept() {
   const { t } = useTranslation()
   return (
     <ConceptLayout title={t('fundamentals.secret.title')} subtitle={t('concepts.secret_sub')}>
+      <StaticSecretFlow />
       <ConceptCard kind="secret" />
       <Bleed><ProblemSection /></Bleed>
     </ConceptLayout>

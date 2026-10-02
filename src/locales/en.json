@@ -1480,7 +1480,8 @@
     "kind_identity": "Identity",
     "kind_secret": "Secret / credential",
     "kind_access": "Service access",
-    "kind_control": "Policy / control"
+    "kind_control": "Policy / control",
+    "kind_leak": "Leak / risk"
   },
   "sharch": {
     "title": "Secrets Manager Self‑Hosted architecture",
@@ -1805,5 +1806,48 @@
       "s11_desc": "Workloads authenticate and fetch secrets from their nearby Edge or straight from Secrets Manager SaaS. A cloud workload with internet access can call the tenant directly.",
       "st_unreachable": "unreachable"
     }
+  },
+  "secretflow": {
+    "diagram_label": "An application with a hardcoded, static secret",
+    "lane_code": "Your code and pipeline",
+    "n_dev": "Developer",
+    "n_dev_sub": "writes the app",
+    "n_repo": "Source code",
+    "n_image": "Container image",
+    "n_image_sub": "built by CI",
+    "n_app": "Application",
+    "n_app_sub": "running in production",
+    "n_db": "Database",
+    "n_db_sub": "orders",
+    "n_leak": "Anyone with access",
+    "n_leak_sub": "repo, image, backups, logs",
+    "r_history": "git history",
+    "r_conn": "connection",
+    "r_rotation": "rotation",
+    "r_session": "session",
+    "r_dbaccess": "db access",
+    "st_forever": "forever",
+    "st_baked": "baked in",
+    "st_works": "works",
+    "st_redeploy": "rebuild + redeploy",
+    "st_no": "no",
+    "st_yes": "yes",
+    "p_copy": "git clone",
+    "s1_title": "1. What is a secret?",
+    "s1_desc": "A secret is anything that grants access: a database password, an API key, a token, the private key of a certificate. Here, the password of the orders database is the secret.",
+    "s2_title": "2. The password is typed into the code",
+    "s2_desc": "To make it work quickly, the developer writes the password in a config file. This is a hardcoded, static secret, and it is the root of the problem.",
+    "s3_title": "3. Commit: the secret is in git forever",
+    "s3_desc": "After the commit, the password lives in the repository history. Deleting the line later does not remove it: every clone and fork keeps a copy.",
+    "s4_title": "4. Build: the secret is inside the image",
+    "s4_desc": "CI builds the container image with the config file in it. Anyone who can pull the image can read the password.",
+    "s5_title": "5. In production everything \"works\"",
+    "s5_desc": "The app reads the password from its own files and connects to the database. Nothing looks wrong, which is why hardcoded secrets survive for years.",
+    "s6_title": "6. The problem: whoever has a copy gets in",
+    "s6_desc": "A clone of the repo, a pulled image, a backup or a log is enough. The database cannot tell the real app from someone using the same password.",
+    "s7_title": "7. Rotating it means a new release",
+    "s7_desc": "To change the password you edit the code, rebuild and redeploy, and every old copy stays valid until you do. So in practice it never changes.",
+    "s8_title": "8. The fix: no secret in the code",
+    "s8_desc": "Store the secret in a vault and let the app fetch it at runtime, proving who it is with its own identity. The next concepts show how."
   }
 }

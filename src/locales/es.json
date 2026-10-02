@@ -1480,7 +1480,8 @@
     "kind_identity": "Identidad",
     "kind_secret": "Secreto / credencial",
     "kind_access": "Acceso al servicio",
-    "kind_control": "Policy / control"
+    "kind_control": "Policy / control",
+    "kind_leak": "Fuga / riesgo"
   },
   "sharch": {
     "title": "Arquitectura de Secrets Manager Self‑Hosted",
@@ -1805,5 +1806,48 @@
       "s11_desc": "Los workloads se autentican y obtienen secretos del Edge cercano o directamente de Secrets Manager SaaS. Un workload en la nube con acceso a internet puede llamar al tenant directamente.",
       "st_unreachable": "sin contacto"
     }
+  },
+  "secretflow": {
+    "diagram_label": "Una aplicación con un secreto estático en hardcode",
+    "lane_code": "Tu código y pipeline",
+    "n_dev": "Desarrollador",
+    "n_dev_sub": "escribe la app",
+    "n_repo": "Código fuente",
+    "n_image": "Imagen del contenedor",
+    "n_image_sub": "generada por CI",
+    "n_app": "Aplicación",
+    "n_app_sub": "en producción",
+    "n_db": "Base de datos",
+    "n_db_sub": "pedidos",
+    "n_leak": "Quien tenga acceso",
+    "n_leak_sub": "repo, imagen, backups, logs",
+    "r_history": "historial git",
+    "r_conn": "conexión",
+    "r_rotation": "rotación",
+    "r_session": "sesión",
+    "r_dbaccess": "acceso a la BD",
+    "st_forever": "para siempre",
+    "st_baked": "incrustado",
+    "st_works": "funciona",
+    "st_redeploy": "rebuild + deploy",
+    "st_no": "no",
+    "st_yes": "sí",
+    "p_copy": "git clone",
+    "s1_title": "1. ¿Qué es un secreto?",
+    "s1_desc": "Un secreto es todo lo que da acceso: la contraseña de una base de datos, una API key, un token, la clave privada de un certificado. Aquí, la contraseña de la base de pedidos es el secreto.",
+    "s2_title": "2. La contraseña se escribe en el código",
+    "s2_desc": "Para que funcione rápido, el desarrollador escribe la contraseña en un archivo de configuración. Es un secreto estático en hardcode, y es la raíz del problema.",
+    "s3_title": "3. Commit: el secreto queda en git para siempre",
+    "s3_desc": "Tras el commit, la contraseña vive en el historial del repositorio. Borrar la línea después no la elimina: cada clon y fork guarda una copia.",
+    "s4_title": "4. Build: el secreto queda dentro de la imagen",
+    "s4_desc": "CI genera la imagen del contenedor con el archivo de configuración dentro. Quien pueda descargar la imagen puede leer la contraseña.",
+    "s5_title": "5. En producción todo \"funciona\"",
+    "s5_desc": "La app lee la contraseña de sus propios archivos y se conecta a la base de datos. Nada parece mal, por eso los secretos en hardcode sobreviven años.",
+    "s6_title": "6. El problema: quien tiene una copia entra",
+    "s6_desc": "Basta un clon del repositorio, una imagen descargada, un backup o un log. La base de datos no distingue la app real de alguien con la misma contraseña.",
+    "s7_title": "7. Rotarla exige una nueva versión",
+    "s7_desc": "Para cambiar la contraseña hay que editar el código, reconstruir y desplegar, y cada copia antigua sigue valiendo hasta entonces. En la práctica, nunca cambia.",
+    "s8_title": "8. La solución: ningún secreto en el código",
+    "s8_desc": "Guarda el secreto en una bóveda y deja que la app lo obtenga en tiempo de ejecución, probando quién es con su propia identidad. Los próximos conceptos muestran cómo."
   }
 }

@@ -1480,7 +1480,8 @@
     "kind_identity": "Identidade",
     "kind_secret": "Secret / credencial",
     "kind_access": "Acesso ao serviço",
-    "kind_control": "Policy / controle"
+    "kind_control": "Policy / controle",
+    "kind_leak": "Vazamento / risco"
   },
   "sharch": {
     "title": "Arquitetura do Secrets Manager Self‑Hosted",
@@ -1805,5 +1806,48 @@
       "s11_desc": "Workloads autenticam e buscam secrets no Edge mais próximo ou direto no Secrets Manager SaaS. Um workload na nuvem com acesso à internet pode chamar o tenant diretamente.",
       "st_unreachable": "sem contato"
     }
+  },
+  "secretflow": {
+    "diagram_label": "Uma aplicação com um secret estático em hardcode",
+    "lane_code": "Seu código e pipeline",
+    "n_dev": "Desenvolvedor",
+    "n_dev_sub": "escreve a app",
+    "n_repo": "Código-fonte",
+    "n_image": "Imagem do container",
+    "n_image_sub": "gerada pelo CI",
+    "n_app": "Aplicação",
+    "n_app_sub": "rodando em produção",
+    "n_db": "Banco de dados",
+    "n_db_sub": "pedidos",
+    "n_leak": "Quem tem acesso",
+    "n_leak_sub": "repo, imagem, backups, logs",
+    "r_history": "histórico git",
+    "r_conn": "conexão",
+    "r_rotation": "rotação",
+    "r_session": "sessão",
+    "r_dbaccess": "acesso ao banco",
+    "st_forever": "para sempre",
+    "st_baked": "embutido",
+    "st_works": "funciona",
+    "st_redeploy": "rebuild + deploy",
+    "st_no": "não",
+    "st_yes": "sim",
+    "p_copy": "git clone",
+    "s1_title": "1. O que é um secret?",
+    "s1_desc": "Secret é tudo que dá acesso: a senha de um banco, uma chave de API, um token, a chave privada de um certificado. Aqui, a senha do banco de pedidos é o secret.",
+    "s2_title": "2. A senha é digitada no código",
+    "s2_desc": "Para funcionar rápido, o desenvolvedor escreve a senha num arquivo de configuração. Isso é um secret estático em hardcode, e é a raiz do problema.",
+    "s3_title": "3. Commit: o secret fica no git para sempre",
+    "s3_desc": "Depois do commit, a senha vive no histórico do repositório. Apagar a linha depois não resolve: cada clone e fork guarda uma cópia.",
+    "s4_title": "4. Build: o secret vai para dentro da imagem",
+    "s4_desc": "O CI gera a imagem do container com o arquivo de configuração dentro. Quem consegue baixar a imagem consegue ler a senha.",
+    "s5_title": "5. Em produção tudo \"funciona\"",
+    "s5_desc": "A app lê a senha dos próprios arquivos e conecta ao banco. Nada parece errado, e por isso secrets em hardcode sobrevivem por anos.",
+    "s6_title": "6. O problema: quem tem uma cópia entra",
+    "s6_desc": "Basta um clone do repositório, uma imagem baixada, um backup ou um log. O banco não distingue a app verdadeira de alguém usando a mesma senha.",
+    "s7_title": "7. Trocar a senha exige uma nova versão",
+    "s7_desc": "Para mudar a senha é preciso editar o código, rebuildar e reimplantar, e toda cópia antiga continua valendo até lá. Na prática, ela nunca muda.",
+    "s8_title": "8. A solução: nenhum secret no código",
+    "s8_desc": "Guarde o secret num cofre e deixe a app buscá-lo em tempo de execução, provando quem ela é com a própria identidade. Os próximos conceitos mostram como."
   }
 }
