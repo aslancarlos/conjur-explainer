@@ -31,6 +31,27 @@ const AzureAuthnPage = lazy(() => import('./pages/authn/AzureAuthnPage'))
 const GcpAuthnPage = lazy(() => import('./pages/authn/GcpAuthnPage'))
 const K8sAuthnPage = lazy(() => import('./pages/authn/K8sAuthnPage'))
 const UsersAuthnPage = lazy(() => import('./pages/authn/UsersAuthnPage'))
+const DynamicSecretsPage = lazy(() => import('./pages/sm/DynamicSecretsPage'))
+const CertificatesPage = lazy(() => import('./pages/sm/CertificatesPage'))
+const RotationPage = lazy(() => import('./pages/sm/RotationPage'))
+const AuditPage = lazy(() => import('./pages/sm/AuditPage'))
+const SummonPage = lazy(() => import('./pages/sm/SummonPage'))
+const McpServerPage = lazy(() => import('./pages/ai/McpServerPage'))
+const SwaAiAgentsPage = lazy(() => import('./pages/ai/SwaAiAgentsPage'))
+const SecretsProviderModesPage = lazy(() => import('./pages/k8s/SecretsProviderModesPage'))
+const SecretsReloaderPage = lazy(() => import('./pages/k8s/SecretsReloaderPage'))
+const SecretlessPage = lazy(() => import('./pages/k8s/SecretlessPage'))
+const TerraformPage = lazy(() => import('./pages/cicd/TerraformPage'))
+const GitLabPage = lazy(() => import('./pages/cicd/GitLabPage'))
+const AzureDevOpsPage = lazy(() => import('./pages/cicd/AzureDevOpsPage'))
+const BitbucketPage = lazy(() => import('./pages/cicd/BitbucketPage'))
+const CircleCiPage = lazy(() => import('./pages/cicd/CircleCiPage'))
+const OctopusPage = lazy(() => import('./pages/cicd/OctopusPage'))
+const PythonAwsPage = lazy(() => import('./pages/platforms/PythonAwsPage'))
+const CloudFoundryPage = lazy(() => import('./pages/platforms/CloudFoundryPage'))
+const PuppetPage = lazy(() => import('./pages/platforms/PuppetPage'))
+const MuleSoftPage = lazy(() => import('./pages/platforms/MuleSoftPage'))
+const ZosCpPage = lazy(() => import('./pages/cp/ZosCpPage'))
 const JwtPage = lazy(() => import('./pages/JwtPage'))
 const SecretsHubPage = lazy(() => import('./pages/SecretsHubPage'))
 const JenkinsPage = lazy(() => import('./pages/JenkinsPage'))
@@ -105,6 +126,27 @@ export default function App() {
           <Route path="/authn/gcp" element={<GcpAuthnPage />} />
           <Route path="/authn/kubernetes" element={<K8sAuthnPage />} />
           <Route path="/authn/users" element={<UsersAuthnPage />} />
+          <Route path="/sm/dynamic-secrets" element={<DynamicSecretsPage />} />
+          <Route path="/sm/certificates" element={<CertificatesPage />} />
+          <Route path="/sm/rotation" element={<RotationPage />} />
+          <Route path="/sm/audit" element={<AuditPage />} />
+          <Route path="/sm/summon" element={<SummonPage />} />
+          <Route path="/ai/mcp-server" element={<McpServerPage />} />
+          <Route path="/ai/swa-agents" element={<SwaAiAgentsPage />} />
+          <Route path="/k8s/secrets-provider-modes" element={<SecretsProviderModesPage />} />
+          <Route path="/k8s/reloader" element={<SecretsReloaderPage />} />
+          <Route path="/k8s/secretless" element={<SecretlessPage />} />
+          <Route path="/cicd/terraform" element={<TerraformPage />} />
+          <Route path="/cicd/gitlab" element={<GitLabPage />} />
+          <Route path="/cicd/azure-devops" element={<AzureDevOpsPage />} />
+          <Route path="/cicd/bitbucket" element={<BitbucketPage />} />
+          <Route path="/cicd/circleci" element={<CircleCiPage />} />
+          <Route path="/cicd/octopus" element={<OctopusPage />} />
+          <Route path="/platforms/python-aws" element={<PythonAwsPage />} />
+          <Route path="/platforms/cloud-foundry" element={<CloudFoundryPage />} />
+          <Route path="/platforms/puppet" element={<PuppetPage />} />
+          <Route path="/platforms/mulesoft" element={<MuleSoftPage />} />
+          <Route path="/cp/zos" element={<ZosCpPage />} />
           <Route path="/concepts/glossary"           element={<GlossaryConcept />} />
         </Route>
       </Routes>

@@ -112,7 +112,52 @@
     "shub_saas": "Privilege Cloud (SaaS)",
     "shub_saas_sub": "Secrets Hub with Privilege Cloud as the source",
     "shub_pamsh": "PAM Self-Hosted",
-    "shub_pamsh_sub": "Secrets Hub with your own PAM Vault as the source"
+    "shub_pamsh_sub": "Secrets Hub with your own PAM Vault as the source",
+    "h_capabilities": "Capabilities",
+    "h_ai": "AI agents",
+    "h_platforms": "Platforms",
+    "sm_dynamic": "Dynamic secrets",
+    "sm_dynamic_sub": "Just-in-time cloud credentials with TTL",
+    "sm_certs": "Certificates",
+    "sm_certs_sub": "Certificates through Certificate Manager",
+    "sm_rotation": "Rotation",
+    "sm_rotation_sub": "How secrets rotate in each edition",
+    "sm_audit": "Audit and SIEM",
+    "sm_audit_sub": "Audit trail and SIEM forwarding",
+    "sm_summon": "Summon",
+    "sm_summon_sub": "Secrets as environment variables",
+    "k8s_spmodes": "Secrets Provider modes",
+    "k8s_spmodes_sub": "Init, sidecar, push-to-file",
+    "k8s_reloader": "Reloader",
+    "k8s_reloader_sub": "Restarts pods when a secret changes",
+    "k8s_secretless": "Secretless Broker",
+    "k8s_secretless_sub": "The app never sees the credential",
+    "ci_terraform": "Terraform",
+    "ci_terraform_sub": "Provider and Summon",
+    "ci_gitlab": "GitLab CI/CD",
+    "ci_gitlab_sub": "ID token (JWT) per job",
+    "ci_azdo": "Azure DevOps",
+    "ci_azdo_sub": "Extension with Entra ID token",
+    "ci_bitbucket": "Bitbucket Pipelines",
+    "ci_bitbucket_sub": "OIDC token per step",
+    "ci_circleci": "CircleCI",
+    "ci_circleci_sub": "Orb with OIDC token",
+    "ci_octopus": "Octopus Deploy",
+    "ci_octopus_sub": "Step template with OIDC",
+    "pf_python": "Python and AWS Lambda",
+    "pf_python_sub": "Python SDK with AWS IAM",
+    "pf_cf": "Cloud Foundry / Tanzu",
+    "pf_cf_sub": "Service Broker and buildpack",
+    "pf_puppet": "Puppet",
+    "pf_puppet_sub": "Module with Deferred lookup",
+    "pf_mulesoft": "MuleSoft",
+    "pf_mulesoft_sub": "Mule connector",
+    "cp_zos": "Credential Provider for z/OS",
+    "cp_zos_sub": "Mainframe apps without hardcoded passwords",
+    "ai_mcp": "MCP server",
+    "ai_mcp_sub": "AI tools that create secrets and workloads",
+    "ai_swa": "SPIFFE for AI agents",
+    "ai_swa_sub": "JWT-SVIDs instead of API keys"
   },
   "hero": {
     "eyebrow": "Machine identity · Secrets · IDIRA by Palo Alto Networks",
@@ -4310,5 +4355,3361 @@
     "doc_dr": "Disaster recovery",
     "doc_monitor": "Monitor the CCP",
     "doc_usage": "Collect CCP usage"
+  },
+  "ai_mcp": {
+    "badge": "AI agents · MCP server (beta)",
+    "title": "Secrets Manager MCP server",
+    "subtitle": "Lets an AI coding tool (Claude Code, Cursor, VS Code Copilot) read and update IDIRA Secrets Manager through the Model Context Protocol: create branches, secrets and workloads, grant access, and generate the code that fetches the secret. The tested use case is migrating hard-coded secrets out of a repository.",
+    "flow_title": "From a hard-coded secret to an SDK call",
+    "flow_lead": "The AI tool starts the MCP server as a local container, the developer signs in as a dedicated user, and every tool call runs with that user's permissions on its own branch.",
+    "how_title": "The pieces",
+    "how_lead": "Everything runs on the developer machine except Identity and Secrets Manager. There is no service account with standing access: the MCP server only acts after an interactive sign-in.",
+    "col_component": "Component",
+    "col_role": "Role",
+    "roles": [
+      [
+        "AI tool (MCP client)",
+        "Claude Code, Cursor or VS Code Copilot. Starts the container through its MCP configuration (.mcp.json or .vscode/mcp.json) and talks to it over stdio."
+      ],
+      [
+        "MCP server container",
+        "Image downloaded from the Marketplace and loaded with docker load. Runs with -i (stdio) and -p 8080:8080 for the OAuth2 callback."
+      ],
+      [
+        "Idira Identity OAuth2 client",
+        "Custom OAuth2 client with redirect http://localhost:8080/callback. Its authorize endpoint signs the developer in; a confidential service account is the client_id."
+      ],
+      [
+        "Dedicated Secrets Manager user",
+        "User in the Secrets Manager User role, member of a group that owns only the mcp-server branch (create, read, update). Every action is audited under this user."
+      ],
+      [
+        "IDIRA Secrets Manager",
+        "Receives the REST calls: branches, secrets (variables), workloads (hosts) and permissions, always inside data/."
+      ]
+    ],
+    "tools_title": "MCP tools",
+    "tools_lead": "Commands you can type in the AI tool, or that the model calls on its own while following a prompt.",
+    "col_tool": "Tool",
+    "col_does": "What it does",
+    "tools": [
+      [
+        "get_auth_url",
+        "Returns the Identity sign-in URL. Run it first."
+      ],
+      [
+        "authenticate",
+        "Completes the sign-in after the browser login (you can also type done)."
+      ],
+      [
+        "whoami",
+        "Shows the authenticated user."
+      ],
+      [
+        "create_branch",
+        "Creates a branch, which must start with data/."
+      ],
+      [
+        "create_secret",
+        "Creates a secret (variable) and offers to grant workload access to it."
+      ],
+      [
+        "create_workload",
+        "Creates a workload (host) and returns its API key."
+      ],
+      [
+        "grant_secret_permission",
+        "Grants a workload read or execute on a secret."
+      ],
+      [
+        "list_secrets · list_hosts · list_all_resources",
+        "Lists what the authenticated user can see."
+      ],
+      [
+        "generate_fetch_code",
+        "Generates code that fetches the secret: Ruby, Go, Java or curl."
+      ]
+    ],
+    "setup_title": "Setup in six steps",
+    "setup_lead": "Requirements: Docker on the host, an Identity OAuth2 client with a service account, and a dedicated Secrets Manager user.",
+    "setup": [
+      "Create a dedicated user in Identity Administration and add it to the Secrets Manager User role.",
+      "Load a policy that creates the mcp-users group, adds the user, and makes the group owner of the mcp-server branch with create, read and update.",
+      "Create a service account (Is OAuth confidential client) and a custom OAuth2 client with redirect http://localhost:8080/callback; give both the service account and the dedicated user permission on the client.",
+      "Download the MCP server package from the Marketplace and load it with docker load -i.",
+      "Configure the AI tool to run the container with the environment variables below (.mcp.json for Claude Code, .vscode/mcp.json for Copilot).",
+      "In the AI tool, run get_auth_url, sign in with the dedicated user, then run authenticate."
+    ],
+    "env_title": "Container environment variables",
+    "env_lead": "All required except the log level. The container needs -i (stdio) and -p 8080:8080.",
+    "col_var": "Variable",
+    "col_value": "Value",
+    "env": [
+      [
+        "CONJUR_API_URL",
+        "Tenant API endpoint, for example acme.secretsmgr.cyberark.cloud."
+      ],
+      [
+        "OAUTH_APPLICATION_ID",
+        "Application ID of the Identity OAuth2 client."
+      ],
+      [
+        "OAUTH_CLIENT_ID",
+        "Login name of the client's service account."
+      ],
+      [
+        "OAUTH_ISSUER_URI",
+        "Issuer URL shown on the OAuth2 client, for example https://acme.id.cyberark.cloud."
+      ],
+      [
+        "OAUTH_REDIRECT_URI",
+        "Always http://localhost:8080/callback."
+      ],
+      [
+        "CONJUR_MCP_LOG_LEVEL",
+        "Optional: INFO (default) or DEBUG."
+      ]
+    ],
+    "when_title": "Good practice",
+    "when": [
+      "Use a dedicated, least-privileged user restricted to one branch, never an admin: the agent acts with the user's full authority.",
+      "Review the generated changes: the tested flow scans the code, creates branch, secrets and workload, replaces the literals with SDK calls and writes a .env added to .gitignore.",
+      "If the generated code has placeholders, call create_workload and then generate_fetch_code.",
+      "Keep port 8080 free for the OAuth2 callback; if sign-in fails, clear browser cookies and run get_auth_url again.",
+      "Since the December 2025 release the Create Workload page also offers AI Agent and MCP Server workload types."
+    ],
+    "diff_title": "SaaS vs Self-Hosted",
+    "diff": [
+      "SaaS only: the MCP server is documented for Secrets Manager SaaS and uses Idira Identity OAuth2 for sign-in.",
+      "Self-Hosted has no equivalent MCP server in the documentation.",
+      "Released as beta on March 4, 2026; the package version listed in the docs is 0.1.0-beta."
+    ],
+    "limits_title": "Limits and responsibilities",
+    "limits": [
+      "Development environments only: not supported in production.",
+      "The MCP server does not enforce a boundary between the AI agent and the authenticated user: the agent can reach every secret that user can reach.",
+      "You are responsible for every action the agent performs and for securing the MCP server against unauthorized access.",
+      "Tested with Claude Code v2.075 and the claude-sonnet-4-5 model; other clients are compatible but not listed as tested.",
+      "create_workload returns a workload API key: the generated .env holds a credential, so keep it out of version control."
+    ],
+    "docs_title": "Official documentation",
+    "docs": [
+      "Secrets Manager MCP server",
+      "Identity: custom OAuth2 client",
+      "Manage users (Secrets Manager SaaS)",
+      "What's new (MCP server beta, AI workload types)"
+    ],
+    "flow": {
+      "diagram_label": "Animated diagram: an AI tool starts the Secrets Manager MCP server, the developer signs in through Identity, and the AI creates a branch, secrets and a workload, then replaces a hard-coded secret with an SDK call.",
+      "st_pending": "pending",
+      "st_idle": "idle",
+      "st_check": "checking",
+      "n_ai": "AI tool",
+      "n_mcp": "MCP server",
+      "n_idp_sub": "OAuth2 client · authorize",
+      "r_code": "code",
+      "r_auth": "sign-in",
+      "r_session": "session",
+      "r_tool": "tool",
+      "r_login": "login",
+      "r_branch": "branch",
+      "r_secrets": "secrets",
+      "r_workload": "workload",
+      "st_hard": "hard-coded",
+      "st_sdk": "SDK call",
+      "st_user": "dedicated user",
+      "st_login": "dedicated user",
+      "st_policy": "mcp-users",
+      "st_created": "created",
+      "st_granted": "read granted",
+      "p_authorize": "authorize",
+      "p_code": "code → callback",
+      "p_prompt": "prompt",
+      "p_sdk": "SDK code",
+      "s1_title": "The starting point",
+      "s1_desc": "The repository has a secret written in the source code. The goal is to move it to Secrets Manager without giving the AI an admin credential.",
+      "s2_title": "Prepare a dedicated user",
+      "s2_desc": "An administrator creates a dedicated user and a policy: the mcp-users group owns only the mcp-server branch, with create, read and update. An OAuth2 client in Identity will sign this user in.",
+      "s3_title": "The AI tool starts the server",
+      "s3_desc": "From .mcp.json, the AI tool runs the container with docker run -i -p 8080:8080 and talks to it over stdio. The first tool to call is get_auth_url.",
+      "s4_title": "Interactive sign-in",
+      "s4_desc": "The browser opens the Identity login. The developer signs in as the dedicated user and Identity redirects to localhost:8080/callback, giving the MCP server an OAuth2 session.",
+      "s5_title": "authenticate",
+      "s5_desc": "Back in the AI tool, authenticate (or done) connects the MCP server to Secrets Manager as that user. whoami confirms who the agent is acting as.",
+      "s6_title": "The prompt drives the tools",
+      "s6_desc": "The developer asks: scan the repository for hard-coded secrets, upload them and replace them. The model calls create_branch, for example data/mcp-server/my-app.",
+      "s7_title": "One secret per finding",
+      "s7_desc": "For each hard-coded value the model calls create_secret. The value now lives in Secrets Manager, inside the branch the user owns.",
+      "s8_title": "Workload and permission",
+      "s8_desc": "create_workload creates a workload (host) for the application and returns its API key; grant_secret_permission lets it read the new secrets.",
+      "s9_title": "Code that fetches the secret",
+      "s9_desc": "generate_fetch_code returns SDK code (Ruby, Go, Java or curl). The model replaces the literal, writes the workload credentials to a .env and adds it to .gitignore."
+    }
+  },
+  "ai_swa": {
+    "badge": "AI agents · SPIFFE · Secure Workload Access",
+    "title": "SPIFFE identities for AI agents",
+    "subtitle": "An AI agent does not need an API key in a file or environment variable. It proves what it is through attestation, receives a short-lived JWT-SVID and uses it with each service: IDIRA Secrets Manager for secrets, and model providers such as the Claude API or Google Cloud for inference.",
+    "flow_title": "One identity, two relying parties",
+    "flow_lead": "The same agent asks for one JWT-SVID per audience. Secrets Manager and the Claude API each verify the signature against the trust domain's public keys and map the SPIFFE ID to their own permissions.",
+    "how_title": "The pieces",
+    "how_lead": "The agent never holds a long-lived credential: tokens are minted on demand, scoped by audience, and expire in minutes.",
+    "col_component": "Component",
+    "col_role": "Role",
+    "roles": [
+      [
+        "SWA Agent (or SPIRE agent)",
+        "Attests the agent process and serves the SPIFFE Workload API on a local socket: /tmp/swa-agent/public/api.sock in Kubernetes, /run/swa-agent/api.sock on VMs."
+      ],
+      [
+        "Trust domain OIDC issuer",
+        "Public, unauthenticated /.well-known/openid-configuration and JWKS endpoint, published by Secrets Manager for each SWA trust domain. Relying parties fetch signing keys from it."
+      ],
+      [
+        "AI agent workload",
+        "Your agent code. Fetches JWT-SVIDs through spiffe-helper (token file) or a Workload API client (py-spiffe, go-spiffe) and keeps them in memory."
+      ],
+      [
+        "Secrets Manager authn-jwt",
+        "JWT authenticator with jwks-uri, issuer, token-app-property=sub and identity-path=data/spiffe-apps. The workload is named after the SPIFFE ID and created with the AI Agent type."
+      ],
+      [
+        "Claude API federation",
+        "Federation issuer (fdis_), rule (fdrl_) matching sub and aud, target service account (svac_), workspace and OAuth scope. Returns an access token that the SDK refreshes."
+      ]
+    ],
+    "variants_title": "Three documented integrations",
+    "variants_lead": "Same idea, different relying party. Choose by where the agent runs and what it needs to reach.",
+    "variants": [
+      {
+        "title": "Secrets Manager (authn-jwt)",
+        "who": "Agent fetches secrets",
+        "how": "JWT authenticator pointing at the SPIFFE OIDC discovery JWKS. The sub claim maps to a workload in data/spiffe-apps that belongs to the authenticator's apps group and to the Safe consumers group.",
+        "svid": "aud: conjur · sub: spiffe://<trust-domain>/<workload>"
+      },
+      {
+        "title": "Claude API",
+        "who": "Agent calls Claude without an API key",
+        "how": "Register the trust domain as a Custom OIDC issuer in the Claude Console, create a rule pinned to the full SPIFFE ID and to the audience, and set the federation variables. The SDK does the token exchange.",
+        "svid": "aud: https://api.anthropic.com · scope: workspace:inference"
+      },
+      {
+        "title": "Gemini Enterprise",
+        "who": "Agent on Google's agent runtime",
+        "how": "SWA server group with gcp_service_account attestation (allowed project IDs). The agent sends its Google ID token to the SWA server through the SWA Python SDK and receives a JWT-SVID, usable with Google Workload Identity Federation.",
+        "svid": "spiffe://<td>/gcp/service-account/project-id/<project>/name/<sa>"
+      }
+    ],
+    "when_title": "Good practice",
+    "when": [
+      "Pin each rule to one workload: use the full SPIFFE ID, not a trailing *, which would let every workload under that prefix act as the target.",
+      "Always set an audience matcher, and create one rule and service account per scope instead of widening one.",
+      "Use the narrowest scope: workspace:inference for an agent that only sends inference requests.",
+      "With spiffe-helper, keep the token file in a memory-backed emptyDir readable only by the agent; with the Workload API client the token never touches disk.",
+      "Unset ANTHROPIC_API_KEY, ANTHROPIC_AUTH_TOKEN and ANTHROPIC_PROFILE: they take precedence over federation, even as empty strings.",
+      "Gemini Enterprise: one dedicated Google Cloud service account per agent, never shared."
+    ],
+    "diff_title": "SaaS vs Self-Hosted",
+    "diff": [
+      "SaaS: Secure Workload Access is part of Secrets Manager SaaS, which publishes the trust domain's OIDC issuer and JWKS; there is no discovery component to deploy.",
+      "SaaS: the AI Agent and MCP Server workload types appear on the Create Workload page.",
+      "Self-Hosted: these AI agent guides are not in the Self-Hosted documentation. Generic JWT authentication against your own SPIRE OIDC discovery provider follows the regular authn-jwt pages."
+    ],
+    "limits_title": "Limits and requirements",
+    "limits": [
+      "Secure Workload Access is available only in the US-EAST-1 region.",
+      "Claude API federation accepts JWT-SVIDs only; X.509 SVIDs cannot be exchanged for an Anthropic access token.",
+      "The issuer URL registered with Anthropic must match the iss claim character by character, including the scheme and any trailing slash.",
+      "The Anthropic access token lives for the lesser of token_lifetime_seconds and twice the JWT-SVID's remaining lifetime; with the default 300-second SVID, the SVID usually governs.",
+      "Gemini Enterprise: a standard Kubernetes Ingress does not carry the SWA gRPC API (port 8443) without TCP passthrough; expose the SWA server with a LoadBalancer service.",
+      "Protect the Workload API socket and any token file: any process that can read them can obtain the agent's access."
+    ],
+    "docs_title": "Official documentation",
+    "docs": [
+      "Authenticate AI agents with JWT SVIDs (SPIFFE)",
+      "SWA workloads with the Claude API",
+      "Gemini Enterprise agents with SWA",
+      "OIDC issuer values for SWA integrations",
+      "JWT authenticator",
+      "Supported regions and limits"
+    ],
+    "flow": {
+      "diagram_label": "Animated diagram: the SWA Agent attests an AI agent and issues JWT-SVIDs; the agent authenticates to Secrets Manager with one and fetches a secret, then exchanges another for a Claude API access token. Both services verify signatures with the trust domain's public JWKS.",
+      "st_pending": "pending",
+      "st_idle": "idle",
+      "st_check": "checking",
+      "n_swa": "SWA Agent",
+      "n_agent": "AI agent",
+      "n_agent_sub": "Pod · VM · agent runtime",
+      "n_ant_sub": "workload identity federation",
+      "n_oidc": "OIDC issuer",
+      "r_attest": "attestation",
+      "r_smtoken": "SM token",
+      "r_secret": "secret",
+      "r_anttoken": "Claude token",
+      "r_sig": "signature",
+      "r_map": "sub → workload",
+      "r_rule": "rule",
+      "st_received": "received",
+      "st_memory": "in memory",
+      "st_valid": "valid",
+      "st_aiagent": "AI Agent",
+      "st_allowed": "allowed",
+      "st_public": "public",
+      "p_attest": "attest",
+      "p_keys": "public keys",
+      "p_token": "access token",
+      "p_get": "GET secret",
+      "p_secret": "secret",
+      "s1_title": "An agent with nothing stored",
+      "s1_desc": "The AI agent has no API key in code, files or environment variables. It needs a secret from Secrets Manager and access to a model.",
+      "s2_title": "Attestation",
+      "s2_desc": "The agent calls the SPIFFE Workload API on the local socket. The SWA Agent attests the process (node group policy in Kubernetes, VM or cloud identity) and assigns its SPIFFE ID.",
+      "s3_title": "JWT-SVID for Secrets Manager",
+      "s3_desc": "The agent asks for a JWT-SVID with audience conjur. It is short-lived and its sub claim is the SPIFFE ID.",
+      "s4_title": "authn-jwt checks the signature",
+      "s4_desc": "The agent sends the JWT-SVID to authn-jwt/spiffe-auth. Secrets Manager fetches the trust domain's public JWKS and checks signature and issuer.",
+      "s5_title": "sub becomes a workload",
+      "s5_desc": "token-app-property=sub and identity-path=data/spiffe-apps map the SPIFFE ID to a workload of type AI Agent, a member of the authenticator's apps group.",
+      "s6_title": "Token and secret",
+      "s6_desc": "Secrets Manager returns a short-lived access token. With it the agent reads the secret through the REST API; policy allows it because the workload is in the Safe consumers group.",
+      "s7_title": "Another JWT-SVID, another audience",
+      "s7_desc": "For the model provider the agent asks for a new JWT-SVID with audience https://api.anthropic.com. One audience per relying party keeps tokens from being replayed elsewhere.",
+      "s8_title": "Token exchange",
+      "s8_desc": "The SDK posts the JWT-SVID to /v1/oauth/token (jwt-bearer). Anthropic verifies it with the registered issuer's JWKS and matches the federation rule on sub and aud.",
+      "s9_title": "Scoped access token",
+      "s9_desc": "Anthropic returns an access token for the mapped service account and workspace, for example 600 seconds. The SDK refreshes it before it expires.",
+      "s10_title": "Inference",
+      "s10_desc": "The agent calls messages.create with the narrow workspace:inference scope. The call is attributed to the service account, and no API key ever existed."
+    }
+  },
+  "sm_dynamic": {
+    "flow_title": "How it works today, step by step",
+    "how_title": "Components and their role",
+    "col_component": "Component",
+    "col_role": "Role",
+    "when_title": "When to use it",
+    "diff_title": "SaaS and Self-Hosted differences",
+    "limits_title": "Limitations and requirements",
+    "docs_title": "Official documentation",
+    "badge": "Secrets Manager · Dynamic secrets",
+    "title": "Dynamic secrets",
+    "subtitle": "Instead of storing a long-lived cloud key, IDIRA Secrets Manager creates a fresh credential at the moment the workload asks for it. The credential is valid for a short TTL and then stops working on its own: there is nothing to rotate and little left to leak.",
+    "flow_lead": "Example with AWS: the workload reads a variable under data/dynamic and receives temporary STS credentials that expire after the TTL.",
+    "how_lead": "An issuer holds how to reach the cloud; a dynamic secret says what to create; policy says who may get it.",
+    "roles": [
+      [
+        "Issuer",
+        "Created by a Secrets Manager admin. Holds the target type (aws or gcp), the maximum TTL (900 to 43,200 seconds) and references to the cloud credentials stored as secrets, never the raw values."
+      ],
+      [
+        "Cloud credentials of the issuer",
+        "AWS: an IAM user access key ID and secret access key with sts:GetFederationToken or sts:AssumeRole. GCP: a service account key that can create access tokens. Stored as secrets, ideally synced from PAM."
+      ],
+      [
+        "consumers group",
+        "conjur/issuers/{issuer}/delegation/consumers. Its members may create dynamic secrets that use the issuer."
+      ],
+      [
+        "Dynamic secret (variable)",
+        "A variable under data/dynamic with annotations dynamic/issuer and dynamic/method (federation-token, assume-role or access-token), plus optional TTL, region, inline policy or role ARN."
+      ],
+      [
+        "Workload (host)",
+        "Needs read and execute on the variable. A normal GET of the secret triggers the creation of the credential."
+      ],
+      [
+        "Cloud provider",
+        "AWS STS returns access key, secret key and session token; GCP returns a short-lived service account access token. Both expire after the TTL."
+      ]
+    ],
+    "when": [
+      "Workloads that call AWS or GCP APIs and today use a static access key or service account key.",
+      "Jobs and pipelines that need cloud access for minutes, not months.",
+      "Least privilege per workload: an inline policy (AWS) or scope list (GCP) narrows each credential.",
+      "Reducing the blast radius of a leak: a stolen credential expires by itself within the TTL."
+    ],
+    "diff": [
+      "SaaS: AWS (federation token or assumed role) and GCP (service account access token).",
+      "Self-Hosted: AWS dynamic secrets (federation token or assumed role) are documented; GCP is documented for SaaS only.",
+      "Both: issuer created via UI, REST API (POST /api/issuers/conjur) or CLI (conjur issuer create); the secret lives under data/dynamic.",
+      "Self-Hosted: the role that creates the issuer needs read permission on the two credential variables, and new issuers must use secret references (inline key values are rejected)."
+    ],
+    "limits": [
+      "Only cloud targets are covered: AWS on both platforms, GCP on SaaS. Databases and other targets are not dynamic secrets here; use rotation instead.",
+      "TTL is bounded: minimum 900 seconds (15 minutes), maximum 43,200 seconds (12 hours), and never above the issuer maximum. Without a TTL the issuer maximum applies.",
+      "The issuer depends on a long-lived IAM user key or GCP service account key. Keep it in PAM with rotation and give it only sts:AssumeRole or sts:GetFederationToken (or the token creator role).",
+      "Dynamic secrets must be created under data/dynamic, and you must own the branch (be in the group that owns it) to see or manage them.",
+      "To use an issuer you must be in its consumers group; only a Secrets Manager admin creates issuers.",
+      "Each read creates a new credential. Cache it for its TTL in the application instead of reading it on every call."
+    ],
+    "docs": [
+      "Create AWS dynamic secrets (SaaS)",
+      "Create GCP dynamic secrets (SaaS)",
+      "Manage dynamic secret resources (SaaS)",
+      "Manage issuers (SaaS)",
+      "Create AWS dynamic secrets (Self-Hosted)"
+    ],
+    "flow": {
+      "diagram_label": "AWS dynamic secret issued by IDIRA Secrets Manager",
+      "st_pending": "pending",
+      "st_idle": "idle",
+      "st_check": "checking",
+      "st_received": "received",
+      "st_valid": "valid",
+      "st_expired": "expired",
+      "st_issued": "issued",
+      "st_allowed": "allowed",
+      "st_denied": "denied",
+      "n_keys": "Issuer credentials",
+      "n_wl": "Workload",
+      "n_target": "AWS service",
+      "n_target_sub": "S3 · EC2 · any AWS API",
+      "r_token": "access token",
+      "r_creds": "AWS credentials",
+      "r_issuer": "issuer",
+      "r_perm": "permission",
+      "r_session": "session",
+      "r_access": "access",
+      "p_ref": "key reference",
+      "p_authn": "authenticate",
+      "p_token": "access token",
+      "p_get": "GET dynamic secret",
+      "p_temp": "temporary creds",
+      "p_creds": "key + secret + session token",
+      "p_call": "signed API call",
+      "p_old": "expired creds",
+      "s1_title": "1. Ready to issue",
+      "s1_desc": "The workload needs AWS access. No AWS key is stored with it: Secrets Manager will create one on demand.",
+      "s2_title": "2. The issuer points to the IAM user keys",
+      "s2_desc": "The admin created my-aws-issuer. It references the IAM user access key ID and secret access key stored as secrets (synced from PAM), and sets the maximum TTL.",
+      "s3_title": "3. The workload authenticates",
+      "s3_desc": "With any authenticator (JWT, AWS IAM, API key...) the workload proves its identity and receives a short-lived access token.",
+      "s4_title": "4. It reads the dynamic secret",
+      "s4_desc": "A normal GET on data/dynamic/my-aws-dynamic-secret. Policy checks that the host has read and execute on the variable.",
+      "s5_title": "5. Secrets Manager asks AWS STS",
+      "s5_desc": "Using the issuer keys, Secrets Manager calls AssumeRole (or GetFederationToken) with the TTL and the optional inline policy. STS creates temporary credentials.",
+      "s6_title": "6. The workload receives the credentials",
+      "s6_desc": "The response carries access_key_id, secret_access_key, session_token and the TTL (1200 seconds here). Nothing long-lived reached the workload.",
+      "s7_title": "7. It calls AWS",
+      "s7_desc": "The workload signs its AWS API calls with the temporary credentials, limited by the role and the inline policy.",
+      "s8_title": "8. The TTL ends",
+      "s8_desc": "After 1200 seconds AWS rejects the credentials. Nothing needs to be revoked; the workload simply reads the dynamic secret again for a new set."
+    }
+  },
+  "sm_certs": {
+    "flow_title": "How it works today, step by step",
+    "how_title": "Components and their role",
+    "col_component": "Component",
+    "col_role": "Role",
+    "when_title": "When to use it",
+    "diff_title": "SaaS and Self-Hosted differences",
+    "limits_title": "Limitations and requirements",
+    "docs_title": "Official documentation",
+    "badge": "Secrets Manager · Certificates",
+    "title": "Certificates for workloads",
+    "subtitle": "A workload can ask IDIRA Secrets Manager for an X.509 certificate the same way it asks for a secret. Secrets Manager forwards the request to Palo Alto Networks Certificate Manager, SaaS, and the certificate comes back signed by the CA behind the chosen issuing template.",
+    "flow_lead": "Issue request: Secrets Manager generates the CSR, Certificate Manager signs it, and the workload receives certificate, chain and private key in one response.",
+    "how_lead": "Three products meet here: Identity authenticates Secrets Manager to Certificate Manager, Certificate Manager applies the template, Secrets Manager applies policy.",
+    "roles": [
+      [
+        "Certificate Manager issuer",
+        "Issuer of type pki_cert_mgr_saas created by a member of Conjur_Cloud_Admins. Holds the service account token URL, the default zone and the allowed zones."
+      ],
+      [
+        "Identity service user",
+        "An OAuth confidential client in Idira Identity. Its credentials are stored in Secrets Manager (synced from PAM with the Identity Service User CPM plugin, or as static secrets) and used to get a token for Certificate Manager."
+      ],
+      [
+        "Certificate Manager service account",
+        "Custom API Integration account with the Certificate Issuance scope, trusting the Identity tenant OIDC issuer and the service user UUID."
+      ],
+      [
+        "Zone",
+        "application\\issuing-template in Certificate Manager. The template decides CA, key algorithms and maximum validity. A request may pick any allowed zone; otherwise the default zone is used."
+      ],
+      [
+        "operators and executors groups",
+        "Created with the issuer. Operators (conjur/issuers/{issuer}/operators) add workloads to executors; executors (.../delegation/executors) may request certificates."
+      ],
+      [
+        "Workload",
+        "Authenticates as usual, then calls POST /api/issuers/{issuer}/issue (Secrets Manager builds the CSR) or /sign (the workload sends its own CSR)."
+      ]
+    ],
+    "when": [
+      "Workloads that need TLS or mTLS server or client certificates without opening tickets or handling CSRs by hand.",
+      "Teams that already authenticate to Secrets Manager and want one API for secrets and certificates.",
+      "Keeping the corporate CA and templates (validity, key type) under Certificate Manager control while developers self-serve.",
+      "Sign requests when the private key must never leave the workload: only the CSR travels."
+    ],
+    "diff": [
+      "SaaS: available through the Certificate Manager issuer (Certificate Manager, SaaS).",
+      "Self-Hosted: no Certificate Manager issuer is documented for Secrets Manager Self-Hosted.",
+      "For SPIFFE workload identity certificates (X.509-SVID) see Secure Workload Access instead; this page is about certificates from your CA."
+    ],
+    "limits": [
+      "SaaS only, and only with Palo Alto Networks Certificate Manager, SaaS as the back end.",
+      "Setup spans three admins: Identity (service user), Certificate Manager (application, issuing template, service account) and Secrets Manager (issuer and groups).",
+      "The Identity tenant ID in the issuer and JWKS URLs must be lowercase.",
+      "ttl must be an ISO 8601 duration (for example P3M). Without it the template validity is used; key_type must be one the template allows (RSA takes precedence over EC when omitted).",
+      "Issue requests store certificate and private key in Secrets Manager; sign requests store only the certificate. Keys and CSRs are not listed as resources in UI, API or CLI.",
+      "To replace a certificate with the same common_name, SANs and zone (for example to change validity) the request must set the replace option.",
+      "The workload must belong to the issuer executors group (execute permission); otherwise the request returns 403."
+    ],
+    "docs": [
+      "Palo Alto Networks Certificate Manager issuer",
+      "Certificate issue and sign API",
+      "Issuer API"
+    ],
+    "flow": {
+      "diagram_label": "Certificate issued to a workload through IDIRA Secrets Manager and Certificate Manager",
+      "st_pending": "pending",
+      "st_idle": "idle",
+      "st_check": "checking",
+      "st_received": "received",
+      "st_ready": "ready",
+      "st_generated": "generated",
+      "st_signed": "signed",
+      "st_trusted": "trusted",
+      "n_svcuser": "Identity service user",
+      "n_wl": "Workload",
+      "n_wl_sub": "web server · API · service",
+      "n_peer": "Client or peer",
+      "r_token": "access token",
+      "r_cert": "certificate",
+      "r_key": "private key",
+      "r_conn": "connection",
+      "r_perm": "permission",
+      "r_template": "issuing template",
+      "r_handshake": "handshake",
+      "p_creds": "service user creds",
+      "p_authn": "authenticate",
+      "p_token": "access token",
+      "p_signed": "certificate + chain",
+      "p_tls": "TLS handshake",
+      "s1_title": "1. A workload needs a certificate",
+      "s1_desc": "The workload will serve TLS. Instead of a ticket to the PKI team, it asks Secrets Manager, which brokers the request to Certificate Manager.",
+      "s2_title": "2. The issuer can reach Certificate Manager",
+      "s2_desc": "The issuer uses the Identity service user credentials stored in Secrets Manager to get a token for the Certificate Manager service account.",
+      "s3_title": "3. The workload authenticates",
+      "s3_desc": "With its usual authenticator (JWT, AWS IAM, certificate...) the workload receives a short-lived access token.",
+      "s4_title": "4. It sends an issue request",
+      "s4_desc": "POST /api/issuers/{issuer}/issue with common_name, optional SANs, ttl (P3M) and zone. Secrets Manager checks that the workload is in the executors group.",
+      "s5_title": "5. Secrets Manager builds the CSR",
+      "s5_desc": "For an issue request Secrets Manager generates the key pair and CSR, then forwards them with the zone to Certificate Manager.",
+      "s6_title": "6. Certificate Manager signs",
+      "s6_desc": "The issuing template of the zone decides CA, key type and validity. The signed certificate and its chain return to Secrets Manager.",
+      "s7_title": "7. The workload receives it",
+      "s7_desc": "One JSON with certificate, chain and private_key (private_key is empty for sign requests, where the workload sent its own CSR).",
+      "s8_title": "8. TLS with a trusted certificate",
+      "s8_desc": "The workload presents the certificate; clients that trust the corporate CA complete the handshake."
+    }
+  },
+  "sm_rotation": {
+    "flow_title": "How it works today, step by step",
+    "how_title": "Components and their role",
+    "col_component": "Component",
+    "col_role": "Role",
+    "when_title": "When to use it",
+    "diff_title": "SaaS and Self-Hosted differences",
+    "limits_title": "Limitations and requirements",
+    "docs_title": "Official documentation",
+    "badge": "Secrets Manager · Rotation",
+    "title": "Secret rotation",
+    "subtitle": "The longer a secret stays the same, the more it is worth to an attacker. In IDIRA Secrets Manager the recommended path is to let the PAM Central Policy Manager (CPM) rotate the password on the target and sync the new value to Secrets Manager, where workloads read it.",
+    "flow_lead": "The CPM changes the database password, the Vault keeps the new value and the sync delivers it to Secrets Manager. The workload that re-reads the secret keeps working.",
+    "how_lead": "Rotation happens in PAM; Secrets Manager distributes the current value to workloads.",
+    "roles": [
+      [
+        "CPM (Central Policy Manager)",
+        "Part of Privilege Cloud and PAM Self-Hosted. Changes the password on the target system according to the platform policy (for example every 30 days) and verifies it."
+      ],
+      [
+        "Safe and account",
+        "The account lives in a Safe that is associated with Secrets Manager. Each account becomes secrets under data/vault/{safe}/{account}: one for the password and one per property."
+      ],
+      [
+        "Sync (ConjurSync / Conjur Sync user)",
+        "Member of the Safe with Use, Retrieve and List accounts. Privilege Cloud changes sync in near real time; PAM Self-Hosted syncs every minute."
+      ],
+      [
+        "Workload",
+        "Reads the secret through Secrets Manager. It must fetch the value again when a login fails or on a schedule, instead of caching it forever."
+      ],
+      [
+        "Dual accounts",
+        "Two accounts that take turns: one is in use while the other rotates, so a workload never reads a password just before it changes."
+      ],
+      [
+        "Local rotators (Self-Hosted)",
+        "Built-in rotation through rotation/rotator and rotation/ttl annotations, for AWS secret access keys and PostgreSQL passwords. For a single server or development only."
+      ]
+    ],
+    "when": [
+      "Database, service account and cloud passwords that applications use and must change regularly.",
+      "Credentials already onboarded in PAM that now also need to reach applications.",
+      "Compliance requirements for periodic password change without application downtime (with dual accounts).",
+      "When the target cannot issue short-lived credentials; for AWS and GCP prefer dynamic secrets."
+    ],
+    "diff": [
+      "SaaS: rotation comes from Privilege Cloud or PAM Self-Hosted through Safe sync. Static secrets created in Secrets Manager are never rotated automatically.",
+      "Self-Hosted: the same PAM CPM path is the recommended one for clusters (Vault Synchronizer).",
+      "Self-Hosted only: local rotators (AWS secret access key, PostgreSQL password) for a single Secrets Manager server or a development environment.",
+      "Both: dual accounts are supported for secrets synced from PAM."
+    ],
+    "limits": [
+      "Secrets Manager SaaS has no built-in rotator: a secret only rotates if it comes from PAM. A static secret must be updated by hand.",
+      "Self-Hosted local rotation is disabled by default, is meant for a single server or development, and must be enabled again after every Leader upgrade and after any failover.",
+      "Local rotators exist only for AWS secret access keys and PostgreSQL passwords; each requires variables with fixed names (for example region, access_key_id, secret_access_key).",
+      "A local rotation that fails is retried after 2/5 of the TTL (with a TTL of 30 days, every 12 days) until it succeeds.",
+      "After the first value is set, a local rotation runs almost immediately (within 1 second); after that it follows rotation/ttl in ISO 8601 (for example P1D).",
+      "Applications that cache the old password fail after a rotation. Read the secret again on authentication errors or use dual accounts."
+    ],
+    "docs": [
+      "Sync Safes and accounts from PAM (SaaS)",
+      "Static secrets are not rotated (SaaS)",
+      "Dual accounts (SaaS)",
+      "Secrets rotation with CPM (Self-Hosted)",
+      "Local rotators (Self-Hosted)"
+    ],
+    "flow": {
+      "diagram_label": "Password rotated by the PAM CPM and delivered through IDIRA Secrets Manager",
+      "st_idle": "idle",
+      "st_check": "rotating",
+      "st_v2": "v2 new",
+      "st_changed": "changed",
+      "st_connected": "connected",
+      "st_denied": "login failed",
+      "n_pam": "PAM Vault + CPM",
+      "n_db": "Target system",
+      "n_wl": "Workload",
+      "n_wl_sub": "application",
+      "r_password": "password",
+      "r_value": "synced value",
+      "r_cached": "value in use",
+      "r_session": "db session",
+      "l_cpm": "CPM policy · e.g. every 30 days",
+      "l_sync": "sync · near real time to 1 min",
+      "p_change": "change password",
+      "p_sync": "sync v2",
+      "p_old": "login with v1",
+      "p_get": "GET secret",
+      "p_new": "password v2",
+      "p_login": "login with v2",
+      "s1_title": "1. Everyone has v1",
+      "s1_desc": "The database password is v1 in the target, in the PAM Vault, in Secrets Manager and in the running application.",
+      "s2_title": "2. The CPM rotates the password",
+      "s2_desc": "The platform policy says it is time. The CPM sets a new random password v2 on the database and stores it in the Vault account.",
+      "s3_title": "3. The sync reaches Secrets Manager",
+      "s3_desc": "The Safe is associated with Secrets Manager. The new value replaces the secret under data/vault/{safe}/{account}: near real time from Privilege Cloud, within a minute from PAM Self-Hosted.",
+      "s4_title": "4. A cached v1 stops working",
+      "s4_desc": "The application still holds v1 in memory. Its next login fails: this is why caching a secret forever breaks rotation.",
+      "s5_title": "5. The workload reads the secret again",
+      "s5_desc": "On the authentication error the application authenticates to Secrets Manager and fetches the secret again, receiving v2.",
+      "s6_title": "6. Back in business",
+      "s6_desc": "Login with v2 succeeds. With dual accounts this gap disappears: the application uses one account while the other one rotates."
+    }
+  },
+  "k8s_spmodes": {
+    "badge": "Kubernetes · Secrets Provider",
+    "title": "Secrets Provider: deployment modes",
+    "subtitle": "The Secrets Provider for Kubernetes pulls secrets from Secrets Manager and hands them to the application in one of two ways: inside a native Kubernetes Secret or as a file on a shared volume (Push-to-File). It can run as an init container, a sidecar, a Kubernetes Job or a standalone Deployment.",
+    "flow_title": "How it works",
+    "flow_lead": "Pick the destination to see the flow. The diagram shows the Provider inside the application Pod (init container or sidecar), the most common setup.",
+    "mode_label": "Secret destination",
+    "mode_k8s": "Kubernetes Secrets",
+    "mode_p2f": "Push-to-File",
+    "mode_note_k8s": "The Provider reads the conjur-map of each Kubernetes Secret listed for the Pod, fetches the matching variables and writes the values into those Secrets through the Kubernetes API. The application consumes them as usual: environment variables or a mounted volume.",
+    "mode_note_p2f": "The Provider reads secret groups from Pod annotations (Downward API volume), fetches the variables and renders one file per group on a volume shared with the application container. No Kubernetes Secret is created.",
+    "flow": {
+      "lane_ns": "Namespace · application Pod",
+      "lane_sm": "Secrets Manager",
+      "n_sp_sub": "init container | sidecar",
+      "n_sm_sub": "host = workload identity",
+      "r_auth": "auth",
+      "st_token": "access token",
+      "r_refresh": "refresh",
+      "st_changed": "updated",
+      "r_host": "host",
+      "r_value": "secret",
+      "st_rotated": "v2 (rotated)",
+      "st_empty": "empty",
+      "n_app": "Application",
+      "r_app": "container",
+      "st_running": "running",
+      "p_values": "values",
+      "k8s_diagram_label": "Diagram: the Secrets Provider authenticates to Secrets Manager, fetches the mapped variables and writes them into a Kubernetes Secret that the application consumes.",
+      "k8s_n_cfg": "Kubernetes API",
+      "k8s_n_cfg_sub": "Secret · conjur-map",
+      "k8s_r_cfg": "conjur-map",
+      "k8s_n_store": "Kubernetes Secret",
+      "k8s_n_store_sub": "db-credentials",
+      "k8s_r_store": "data",
+      "k8s_n_app_sub": "env | volume from the Secret",
+      "k8s_lbl_cfg": "K8s API · RBAC",
+      "k8s_lbl_write": "PATCH Secret",
+      "k8s_lbl_consume": "env | volume",
+      "k8s_p_read": "GET Secret",
+      "k8s_p_write": "PATCH data",
+      "k8s_p_consume": "secretKeyRef",
+      "k8s_s1_title": "Read the mapping",
+      "k8s_s1_desc": "The Provider starts in the application Pod and, with the Pod's service account (RBAC get on Secrets), reads each Kubernetes Secret listed in K8S_SECRETS. Its conjur-map says which Secrets Manager variable fills which key.",
+      "k8s_s2_title": "Authenticate with the Pod identity",
+      "k8s_s2_desc": "The Provider authenticates to Secrets Manager with the configured authenticator, usually authn-jwt with the projected service account token (SaaS and Self-Hosted; Self-Hosted also offers authn-k8s). The host policy is checked and an access token comes back.",
+      "k8s_s3_title": "Fetch the secrets",
+      "k8s_s3_desc": "With the access token, the Provider retrieves only the variables the host may read, or every allowed variable when fetch all is used.",
+      "k8s_s4_title": "Update the Kubernetes Secret",
+      "k8s_s4_desc": "For each mapping, the Provider writes the value into the Kubernetes Secret through the API server (RBAC update or patch). Nothing is stored in the image or in the manifest.",
+      "k8s_s5_title": "The application consumes it",
+      "k8s_s5_desc": "The application container starts and reads the Secret like any native Kubernetes Secret: envFrom, secretKeyRef or a mounted volume. As an init container, the Provider has already exited.",
+      "k8s_s6_title": "Sidecar: refresh and rotation",
+      "k8s_s6_desc": "Only as a sidecar: at each interval (conjur.org/secrets-refresh-interval) the Provider fetches again and compares SHA-256 checksums. A rotated value is written to the Secret; a deleted or revoked variable is removed from it.",
+      "k8s_s7_title": "Takeaway",
+      "k8s_s7_desc": "Mounted Secret volumes pick up the new value on their own; environment variables only after a restart. To restart automatically, combine with Reloader.",
+      "p2f_diagram_label": "Diagram: the Secrets Provider reads secret groups from Pod annotations, fetches the variables from Secrets Manager and writes secrets files to a volume shared with the application.",
+      "p2f_n_cfg": "Pod annotations",
+      "p2f_n_cfg_sub": "Downward API volume",
+      "p2f_r_cfg": "secret groups",
+      "p2f_n_store": "Shared volume",
+      "p2f_n_store_sub": "/conjur/secrets/app.yaml",
+      "p2f_r_store": "file",
+      "p2f_n_app_sub": "reads the secrets file",
+      "p2f_lbl_cfg": "Downward API",
+      "p2f_lbl_write": "write file",
+      "p2f_lbl_consume": "read file",
+      "p2f_p_read": "annotations",
+      "p2f_p_write": "render file",
+      "p2f_p_consume": "open file",
+      "p2f_s1_title": "Parse the annotations",
+      "p2f_s1_desc": "The Provider starts in the Pod and parses the Pod annotations exposed through a Downward API volume. Each secret group (conjur.org/secret-group.*) lists the variable paths, the file format and how values map to fields.",
+      "p2f_s2_title": "Authenticate with the Pod identity",
+      "p2f_s2_desc": "The Provider authenticates to Secrets Manager with the configured authenticator, usually authn-jwt with the projected service account token (SaaS and Self-Hosted; Self-Hosted also offers authn-k8s). The host policy is checked and an access token comes back.",
+      "p2f_s3_title": "Fetch the secrets",
+      "p2f_s3_desc": "The Provider reads every Secrets Manager variable needed across all secret groups.",
+      "p2f_s4_title": "Render the secrets files",
+      "p2f_s4_desc": "For each group, the Provider renders a file (YAML by default, or JSON, dotenv, bash, properties or a custom template) and writes it to the shared volume, with permissions 644 by default.",
+      "p2f_s5_title": "The application reads the file",
+      "p2f_s5_desc": "The application container starts and reads the file from the shared volume, the way it already reads configuration files. No Kubernetes Secret object exists.",
+      "p2f_s6_title": "Sidecar: refresh and rotation",
+      "p2f_s6_desc": "Only as a sidecar: at each interval the Provider fetches again and compares SHA-256 checksums. A rotated value rewrites the file (also if the app deleted it after reading); a deleted or revoked variable removes the file.",
+      "p2f_s7_title": "Takeaway",
+      "p2f_s7_desc": "The application must re-read the file to use a rotated value. Push-to-File works with the init container and the sidecar only, not with the Job or standalone modes."
+    },
+    "deploy_title": "Deployment options",
+    "deploy_lead": "The same image, four ways to run it. Where it runs decides which destinations and which update behavior you get.",
+    "deploy_cols": [
+      "Option",
+      "Where it runs",
+      "Destinations",
+      "Updates after start"
+    ],
+    "deploy": [
+      [
+        "Init container",
+        "Inside the application Pod; runs to completion before the app starts",
+        "Kubernetes Secrets or Push-to-File",
+        "No: secrets are delivered once, at Pod start"
+      ],
+      [
+        "Sidecar",
+        "Inside the application Pod, next to the app for its whole life",
+        "Kubernetes Secrets or Push-to-File",
+        "Yes: refresh interval, SHA-256 change detection, rotation"
+      ],
+      [
+        "Kubernetes Job",
+        "Its own Pod (application mode, Helm chart); serves every app in the namespace",
+        "Kubernetes Secrets",
+        "No: runs once; rerun the Job (for example from a CronJob) to refresh"
+      ],
+      [
+        "Standalone",
+        "Long-running Deployment (Helm chart), outside the application Pods",
+        "Kubernetes Secrets only",
+        "Yes: reconciles labeled Secrets every 5 minutes by default and when they change, across allowlisted namespaces"
+      ]
+    ],
+    "dest_title": "Kubernetes Secrets vs Push-to-File",
+    "dest_lead": "Both destinations use the same authentication and the same secrets; what changes is where the value lands and how the app reads it.",
+    "dest_cols": [
+      "Topic",
+      "Kubernetes Secrets",
+      "Push-to-File"
+    ],
+    "dest": [
+      [
+        "Where the value lands",
+        "A native Kubernetes Secret in the namespace, updated through the API server",
+        "A file on a volume shared inside the Pod; no Kubernetes Secret object"
+      ],
+      [
+        "What configures it",
+        "The K8S_SECRETS list plus a conjur-map in each Secret",
+        "Pod annotations per secret group (conjur.org/secret-group.*), read through the Downward API"
+      ],
+      [
+        "How the app reads it",
+        "envFrom, secretKeyRef or a mounted Secret volume",
+        "Opens the file: yaml, json, dotenv, bash, properties or a custom template"
+      ],
+      [
+        "Kubernetes RBAC",
+        "get plus update or patch on the mapped Secrets",
+        "Not needed for Secrets: values are written inside the Pod"
+      ],
+      [
+        "Supported options",
+        "Init container, sidecar, Job and standalone",
+        "Init container and sidecar only"
+      ],
+      [
+        "Good fit",
+        "Apps already built around Kubernetes Secrets",
+        "Apps that read config files, or teams that keep secrets out of Kubernetes Secret objects"
+      ]
+    ],
+    "roles_title": "Components",
+    "roles_lead": "Who does what in a Secrets Provider deployment.",
+    "roles": [
+      [
+        "Secrets Provider",
+        "Image cyberark-secrets-provider-for-k8s: authenticates, fetches and delivers the secrets. Runs as init container, sidecar, Job or standalone Deployment."
+      ],
+      [
+        "Secrets Manager host",
+        "The Provider's workload identity in policy (for authn-jwt, named after the namespace and service account), with read access to the variables."
+      ],
+      [
+        "Authenticator",
+        "authn-jwt with the projected service account token, authn-iam, authn-azure or authn-gcp. Self-Hosted also supports authn-k8s (mutual TLS)."
+      ],
+      [
+        "Golden ConfigMap / conjur-connect",
+        "Secrets Manager connection details that the Provider reads as environment variables."
+      ],
+      [
+        "Kubernetes Secret + conjur-map",
+        "Kubernetes Secrets mode: the target object; conjur-map maps each key to a variable path."
+      ],
+      [
+        "Pod annotations (Downward API)",
+        "Push-to-File mode: secret groups with variable paths, file format, file path and permissions."
+      ],
+      [
+        "Shared volume",
+        "Push-to-File mode: a volume mounted by both containers, where the files are written."
+      ],
+      [
+        "Helm chart",
+        "Deploys the Job and standalone options with their RBAC. Standalone manages Secrets labeled conjur.org/managed-by-provider: \"true\"."
+      ]
+    ],
+    "caps_title": "Capabilities",
+    "caps": [
+      [
+        "Fetch all",
+        "Map every variable the host can read instead of listing them. Keys become the variable path with / replaced by . (trim-path-segments shortens them)."
+      ],
+      [
+        "File formats",
+        "yaml (default), json, dotenv, bash, properties or template (Go template from an annotation or a ConfigMap mounted at /conjur/templates)."
+      ],
+      [
+        "Base64 decoding",
+        "content-type: base64 decodes values stored Base64-encoded in Secrets Manager."
+      ],
+      [
+        "Change detection",
+        "The sidecar compares SHA-256 checksums at each interval; standalone reconciles at its refresh interval and when a labeled Secret changes."
+      ],
+      [
+        "Revocation",
+        "If a variable is deleted or the host loses access, the Provider removes the value from the Secret or deletes the file."
+      ],
+      [
+        "Automatic restart",
+        "The Job and standalone options can enable Reloader (autoReload.enabled) to roll Deployments when a Secret changes."
+      ]
+    ],
+    "when_title": "When to use",
+    "when": [
+      "Apps that already read Kubernetes Secrets and should not change code: Kubernetes Secrets mode.",
+      "Apps that read a config file, or when secrets should not exist as Kubernetes Secret objects: Push-to-File.",
+      "Secrets that rotate while the Pod runs: the sidecar (or standalone, for Kubernetes Secrets).",
+      "Many apps in one namespace that need the secrets once: the Job, deployed with the Helm chart.",
+      "One central provider keeping labeled Secrets in sync across several namespaces: standalone.",
+      "Short-lived Pods that only need secrets at startup: the init container is the lightest option."
+    ],
+    "diff_title": "SaaS vs Self-Hosted",
+    "diff": [
+      [
+        "Availability",
+        "Every option (init container, sidecar, Job, standalone) and both destinations are documented for SaaS and Self-Hosted."
+      ],
+      [
+        "Authenticators",
+        "SaaS: authn-jwt, authn-iam, authn-azure, authn-gcp. Self-Hosted: the same, plus authn-k8s (certificate based, mutual TLS)."
+      ],
+      [
+        "Endpoint",
+        "SaaS: the Secrets Manager SaaS tenant. Self-Hosted: the Leader or, more often, a Follower close to the cluster."
+      ],
+      [
+        "Configuration",
+        "Same annotations, conjur-map and Helm values; only the connection details change."
+      ]
+    ],
+    "limits_title": "Limitations and requirements",
+    "limits": [
+      "Updates after start only with the sidecar (and standalone). An init container or a Job delivers secrets once; the Job must be rerun, for example by a CronJob.",
+      "Push-to-File works only with the init container and the sidecar. Standalone supports Kubernetes Secrets only and does not accept an explicit k8sSecrets list.",
+      "Job (application mode): up to 50 secrets with variable paths of about 100 characters on average. For more, deploy several Secrets Providers.",
+      "Fetch all: at most 500 secrets (error CSPFK010D), no aliases (keys are the full paths), and the bash, dotenv and properties formats are not supported. Paths that collapse into the same key fail (CSPFK098E).",
+      "Fetch all widens what a compromised host exposes: keep the host scoped to one app and a few variables (least privilege).",
+      "Containers that read secrets as environment variables only see a new value after a restart; mounted volumes update on their own. Reloader automates the restart.",
+      "Custom templates cannot reference a variable path directly (they are validated before the secrets are fetched): use aliases.",
+      "Standalone: a wider namespaceAllowlist means a wider RBAC surface (often a ClusterRole) and more load on the Secrets Manager and Kubernetes APIs."
+    ],
+    "limits_source": "Secrets Provider limitations in the docs",
+    "docs_title": "Official documentation",
+    "doc_overview": "Secrets Provider for Kubernetes (SaaS)",
+    "doc_k8s": "Init container / sidecar: Kubernetes Secrets mode",
+    "doc_p2f": "Init container / sidecar: Push-to-File mode",
+    "doc_job": "Deploy as a Kubernetes Job",
+    "doc_standalone": "Deploy in standalone mode",
+    "doc_ref": "Secrets Provider configuration reference",
+    "doc_sh_overview": "Secrets Provider for Kubernetes (Self-Hosted)",
+    "doc_sh_convert": "Convert a deployment to Push-to-File (Self-Hosted)",
+    "col_component": "Component",
+    "col_role": "Role",
+    "col_capability": "Capability",
+    "col_detail": "Detail",
+    "col_topic": "Topic"
+  },
+  "k8s_reloader": {
+    "badge": "Kubernetes · Secrets Provider",
+    "title": "Reloader: automatic restart",
+    "subtitle": "When a Kubernetes Secret changes, Reloader rolls the Deployments and StatefulSets that use it, so new Pods start with the new value. It is an optional part of the Secrets Provider Helm chart (application and standalone modes).",
+    "flow_title": "How it works",
+    "flow_lead": "Pick the Secrets Provider mode. Reloader behaves the same in both; what changes is who notices the new secret.",
+    "mode_label": "Secrets Provider mode",
+    "mode_standalone": "Standalone",
+    "mode_job": "Job (application mode)",
+    "mode_note_standalone": "Standalone: the Secrets Provider runs as a Deployment and refreshes on its own interval, so a new value travels from Secrets Manager to the Kubernetes Secret and on to the Pods with nothing else involved.",
+    "mode_note_job": "Application mode: the Secrets Provider is a Job that runs once. To pick up a new value, an external trigger such as a CronJob must rerun the Job; Reloader takes it from there.",
+    "flow": {
+      "lane_cluster": "Kubernetes cluster",
+      "n_sm_sub": "source of truth",
+      "r_value": "secret",
+      "st_changed": "v2 (changed)",
+      "r_state": "state",
+      "st_running": "fetching",
+      "st_updated": "Secret updated",
+      "r_trigger": "trigger",
+      "st_fired": "fired",
+      "n_reloader_sub": "Stakater · autoReload",
+      "r_watch": "watch",
+      "st_watching": "watching",
+      "st_detected": "change seen",
+      "n_app": "Deployment",
+      "r_pods": "Pods",
+      "st_rolling": "rolling",
+      "standalone_diagram_label": "Diagram: in standalone mode the Secrets Provider Deployment detects a changed secret on its refresh interval, updates the Kubernetes Secret, and Reloader rolls the annotated Deployment.",
+      "standalone_n_sp_sub": "Deployment · standalone",
+      "standalone_n_trigger": "Refresh interval",
+      "standalone_n_trigger_sub": "5 min default + Secret watch",
+      "standalone_lbl_trigger": "every 5 min",
+      "standalone_p_trigger": "refresh",
+      "standalone_s1_title": "A secret changes",
+      "standalone_s1_desc": "A value changes in Secrets Manager: a manual update or a rotation.",
+      "standalone_s2_title": "The Provider notices",
+      "standalone_s2_desc": "The standalone Secrets Provider runs all the time and, at its refresh interval (five minutes by default) or when a labeled Secret changes, starts a reconciliation.",
+      "standalone_s3_title": "Fetch the new value",
+      "standalone_s3_desc": "The Provider authenticates with its service account identity and fetches the current value from Secrets Manager.",
+      "standalone_s4_title": "Update the Kubernetes Secret",
+      "standalone_s4_desc": "The Provider writes v2 into the Kubernetes Secret (labeled conjur.org/managed-by-provider: \"true\").",
+      "standalone_s5_title": "Reloader sees the change",
+      "standalone_s5_desc": "Reloader watches the Kubernetes Secrets in its scope and detects that db-credentials changed.",
+      "standalone_s6_title": "Rolling restart",
+      "standalone_s6_desc": "Reloader triggers a rolling restart of each Deployment or StatefulSet annotated with conjur.org/automatic-restart or conjur.org/restart-secrets that references this Secret.",
+      "standalone_s7_title": "Takeaway",
+      "standalone_s7_desc": "New Pods read v2 when they start, even apps that read secrets only from environment variables. Standalone plus Reloader keeps Pods current with no scheduled Job.",
+      "job_diagram_label": "Diagram: in application mode a CronJob reruns the Secrets Provider Job, the Job updates the Kubernetes Secret, and Reloader rolls the annotated Deployment.",
+      "job_n_sp_sub": "Job · runs once",
+      "job_n_trigger": "CronJob",
+      "job_n_trigger_sub": "external trigger, on a schedule",
+      "job_lbl_trigger": "rerun Job",
+      "job_p_trigger": "run Job",
+      "job_s1_title": "A secret changes",
+      "job_s1_desc": "A value changes in Secrets Manager: a manual update or a rotation.",
+      "job_s2_title": "A trigger reruns the Job",
+      "job_s2_desc": "The Job finished after its first run, so nothing is watching Secrets Manager. An external trigger, for example a CronJob, starts the Secrets Provider Job again on a schedule.",
+      "job_s3_title": "Fetch the new value",
+      "job_s3_desc": "The Provider authenticates with its service account identity and fetches the current value from Secrets Manager.",
+      "job_s4_title": "Update the Kubernetes Secret",
+      "job_s4_desc": "The Job writes v2 into the Kubernetes Secrets mapped for the namespace and completes.",
+      "job_s5_title": "Reloader sees the change",
+      "job_s5_desc": "Reloader watches the Kubernetes Secrets in its scope and detects that db-credentials changed.",
+      "job_s6_title": "Rolling restart",
+      "job_s6_desc": "Reloader triggers a rolling restart of each Deployment or StatefulSet annotated with conjur.org/automatic-restart or conjur.org/restart-secrets that references this Secret.",
+      "job_s7_title": "Takeaway",
+      "job_s7_desc": "Freshness depends on the CronJob schedule. Reloader is a separate, always-on Deployment, even though the Provider itself is a short-lived Job."
+    },
+    "roles_title": "Components",
+    "roles_lead": "Reloader is open source (Stakater, Apache License 2.0) and is installed as a subchart of the Secrets Provider Helm chart.",
+    "roles": [
+      [
+        "Secrets Provider (Helm chart)",
+        "Writes Secrets Manager values into Kubernetes Secrets, in application mode (Job) or standalone mode (Deployment)."
+      ],
+      [
+        "Reloader",
+        "Persistent Deployment that watches Kubernetes Secrets in its scope and triggers rolling restarts."
+      ],
+      [
+        "Annotated workload",
+        "Deployment or StatefulSet with conjur.org/automatic-restart or conjur.org/restart-secrets that references the Secret directly."
+      ],
+      [
+        "External trigger",
+        "Application mode only: a CronJob (or similar) that reruns the Secrets Provider Job on a schedule."
+      ],
+      [
+        "Reloader RBAC",
+        "Separate from the Provider's: list and watch Secrets; get, update and patch Deployments, DaemonSets and StatefulSets; Events; Leases when HA is on."
+      ]
+    ],
+    "ann_title": "Workload annotations",
+    "ann_lead": "Annotate the Deployment or StatefulSet. The Pod spec must reference the Secret through envFrom, env.valueFrom.secretKeyRef or a volume.",
+    "ann": [
+      [
+        "conjur.org/automatic-restart: \"true\"",
+        "Restart when any Kubernetes Secret the workload references is updated."
+      ],
+      [
+        "conjur.org/restart-secrets: \"db-credentials\"",
+        "Restart only when the named Secret changes. Accepts a comma-separated list, for example db-credentials,api-keys."
+      ]
+    ],
+    "cfg_title": "Helm values",
+    "cfg_lead": "Reloader stays off until you enable it in the Secrets Provider chart values.yaml.",
+    "cfg": [
+      [
+        "autoReload.enabled: true",
+        "Turns Reloader on (installs the subchart and its RBAC)."
+      ],
+      [
+        "reloader.reloader.watchGlobally",
+        "false by default: watches only the Helm release namespace. Must be true when standalone.namespaceAllowlist is * or lists several namespaces."
+      ],
+      [
+        "reloader.reloader.enableHA + deployment.replicas",
+        "Several replicas with leader election (Lease objects), so one replica down does not miss updates."
+      ],
+      [
+        "reloader.image.digest + imageDigestReference.pullReference",
+        "Pinned to the bundled image. When you mirror the image or change the tag, update both."
+      ]
+    ],
+    "modes_title": "Application mode vs standalone",
+    "modes_cols": [
+      "Topic",
+      "Application mode (Job)",
+      "Standalone (Deployment)"
+    ],
+    "modes": [
+      [
+        "Who detects a change",
+        "Nobody, until the Job is rerun",
+        "The Provider, at each refresh interval or Secret change"
+      ],
+      [
+        "Extra pieces",
+        "A CronJob or another trigger to rerun the Job",
+        "None"
+      ],
+      [
+        "Running Pods",
+        "Reloader (always on); the Job Pod only while it runs",
+        "Provider Deployment plus Reloader"
+      ],
+      [
+        "Namespaces",
+        "The Job's namespace",
+        "One or more, from standalone.namespaceAllowlist"
+      ],
+      [
+        "Recommended for",
+        "Infrequent changes where a scheduled refresh is acceptable",
+        "Continuous updates without a scheduled Job (the docs' recommendation)"
+      ]
+    ],
+    "when_title": "When to use",
+    "when": [
+      "Apps that read secrets from environment variables and must pick up rotated values.",
+      "Rotation in Secrets Manager should reach the Pods automatically, without a manual rollout.",
+      "A standalone Secrets Provider already keeps Kubernetes Secrets in sync across namespaces.",
+      "Teams that prefer a restart over changing code to re-read secrets."
+    ],
+    "diff_title": "SaaS vs Self-Hosted",
+    "diff": [
+      [
+        "Availability",
+        "Same feature and same Helm values in SaaS and Self-Hosted."
+      ],
+      [
+        "What differs",
+        "Only how the Secrets Provider connects and authenticates (SaaS tenant vs Leader or Follower; Self-Hosted adds authn-k8s). Reloader itself never talks to Secrets Manager."
+      ]
+    ],
+    "limits_title": "Limitations and requirements",
+    "limits": [
+      "Requires the Secrets Provider Helm chart in application or standalone mode. It does not apply to the init container or sidecar setups.",
+      "The docs cover Deployments and StatefulSets, and only when the Pod spec references the Secret directly (envFrom, secretKeyRef or volume).",
+      "Application mode needs an external trigger (for example a CronJob) to rerun the Job; without it the Secret never changes and nothing restarts.",
+      "Reloader always runs as a persistent Deployment, adding a running Pod even when the Provider is a short-lived Job.",
+      "Namespace-scoped by default. With a multi-namespace allowlist you must set watchGlobally: true or Helm rejects the install, and the wider scope needs a ClusterRole.",
+      "One replica by default: if it is down when a Secret changes, Pods keep the stale value until a manual restart or the next change. Enable HA where that matters.",
+      "Every change rolls the annotated workloads. In busy clusters, watch traffic and controller memory grow."
+    ],
+    "limits_source": "Reloader in the docs",
+    "docs_title": "Official documentation",
+    "doc_reloader": "Configure automatic restart with Reloader (SaaS)",
+    "doc_standalone": "Secrets Provider in standalone mode",
+    "doc_job": "Secrets Provider as a Kubernetes Job",
+    "doc_sh_reloader": "Configure automatic restart with Reloader (Self-Hosted)",
+    "doc_upstream": "Reloader on GitHub (Stakater)",
+    "col_component": "Component",
+    "col_role": "Role",
+    "col_annotation": "Annotation",
+    "col_behavior": "Behavior",
+    "col_value": "Value",
+    "col_detail": "Detail",
+    "col_topic": "Topic"
+  },
+  "k8s_secretless": {
+    "badge": "Kubernetes · Self-Hosted",
+    "title": "Secretless Broker",
+    "subtitle": "The application connects to a local Secretless Broker with no credentials at all. Secretless fetches them from Secrets Manager, authenticates to the database or service on the app's behalf and then streams the traffic. The app never holds the secret.",
+    "flow_title": "How it works",
+    "flow_lead": "Secretless runs as a sidecar in the application Pod and listens on a local socket. Follow a PostgreSQL connection, including a rotation.",
+    "flow": {
+      "lane_pod": "Application Pod",
+      "lane_follower": "Follower (Self-Hosted)",
+      "lane_target": "Target service",
+      "diagram_label": "Diagram: the application connects to the Secretless sidecar without credentials; Secretless authenticates to the Follower, fetches the database password, authenticates to PostgreSQL and streams the traffic.",
+      "n_app": "Application",
+      "n_app_sub": "client, no credentials",
+      "r_creds": "credentials",
+      "st_none": "none",
+      "r_conn": "connection",
+      "n_sl_sub": "sidecar · listens on :5432",
+      "r_auth": "auth",
+      "st_token": "access token",
+      "r_held": "secret",
+      "st_v1_mem": "v1 in memory",
+      "st_v2_mem": "v2 in memory",
+      "n_sm_sub": "authn-k8s",
+      "r_value": "password",
+      "st_rotated": "v2 (rotated)",
+      "n_db": "PostgreSQL",
+      "n_db_sub": "target service",
+      "r_sess": "auth",
+      "st_auth_ok": "authenticated",
+      "st_new_conn": "new conn · v2",
+      "p_connect": "connect, no password",
+      "p_creds": "credentials",
+      "p_handshake": "auth handshake",
+      "s1_title": "Connect without credentials",
+      "s1_desc": "The application opens a normal database connection to localhost:5432 (or a Unix socket), where Secretless listens. It sends no password, or a dummy one that Secretless replaces.",
+      "s2_title": "Secretless authenticates",
+      "s2_desc": "Secretless authenticates to the Follower with the Kubernetes Authenticator (authn-k8s). The host identity comes from the Pod (namespace, service account), and the container must carry the name set in the host annotation, for example secretless.",
+      "s3_title": "Fetch the credentials",
+      "s3_desc": "With its access token, Secretless retrieves the database credentials. They stay inside the Secretless process.",
+      "s4_title": "Authenticate to the target",
+      "s4_desc": "Secretless opens the connection to PostgreSQL and performs the authentication phase of the protocol with the real credentials, over TLS to the database.",
+      "s5_title": "Stream the traffic",
+      "s5_desc": "After the handshake, Secretless pipes the data between the application and the database without changing it.",
+      "s6_title": "Rotation with no restart",
+      "s6_desc": "When the password is rotated in Secrets Manager, Secretless picks up the new value and uses it for new connections. Nothing restarts.",
+      "s7_title": "Takeaway",
+      "s7_desc": "The application, its logs and its environment never contain the password, so a code bug, a log line or an environment dump cannot leak it."
+    },
+    "roles_title": "Components",
+    "roles_lead": "Inside Secretless, each configured service gets a listener, a connector and one or more secret providers.",
+    "roles": [
+      [
+        "Client application",
+        "Connects to Secretless as if it were the target; only knows where Secretless listens."
+      ],
+      [
+        "Secretless Broker (sidecar)",
+        "Local proxy in the same Pod; keeps the identity and the secrets inside its own process."
+      ],
+      [
+        "Listener (listenOn)",
+        "One socket per service: tcp://localhost:port or unix:///path."
+      ],
+      [
+        "Service connector",
+        "Speaks the target protocol and performs the authentication handshake (pg, mysql, mssql, ssh, ssh-agent, HTTP)."
+      ],
+      [
+        "Secret provider",
+        "Where the credentials come from; in production, Secrets Manager (identifier conjur)."
+      ],
+      [
+        "Configuration",
+        "secretless.yml (version 2) or a Kubernetes CRD listing each service, its connector and its credentials."
+      ],
+      [
+        "Follower + authn-k8s",
+        "Self-Hosted Follower in the cluster that authenticates the Secretless container and serves the secrets."
+      ]
+    ],
+    "conn_title": "Service connectors",
+    "conn_lead": "Secretless only brokers protocols it has a connector for.",
+    "conn": [
+      [
+        "PostgreSQL",
+        "Database connector. The client may send dummy credentials; between client and Secretless, sslmode disable is the safest choice."
+      ],
+      [
+        "MySQL",
+        "Database connector with the same model; TLS to the server (sslmode, sslrootcert) is set in Secretless."
+      ],
+      [
+        "MSSQL",
+        "SQL Server Authentication only, over TCP/IP only, with the limits of the go-mssqldb library."
+      ],
+      [
+        "SSH",
+        "Man in the middle that authenticates inbound SSH connections without exposing passwords or keys."
+      ],
+      [
+        "SSH Agent",
+        "Replaces ssh-agent over a socket (SSH_AUTH_SOCK) without exposing keys."
+      ],
+      [
+        "HTTP: Basic, AWS, Generic",
+        "Injects credentials into HTTP requests: Authorization header, AWS signature, or any header or query field."
+      ]
+    ],
+    "prov_title": "Secret providers",
+    "prov_lead": "Built-in sources Secretless can read credentials from.",
+    "prov": [
+      [
+        "Secrets Manager (conjur)",
+        "The production choice: authenticates with the workload identity and fetches variables."
+      ],
+      [
+        "Kubernetes Secrets (kubernetes)",
+        "Reads a Kubernetes Secret; the Pod needs read access to it."
+      ],
+      [
+        "Environment, file, keychain, literal",
+        "Local sources. The docs recommend fetching from a vault in production."
+      ]
+    ],
+    "caps_title": "Capabilities",
+    "caps": [
+      [
+        "No code change",
+        "The app keeps its normal driver; only the connection URL (or a proxy setting) points to Secretless."
+      ],
+      [
+        "Rotation without restart",
+        "New connections use the new secret automatically."
+      ],
+      [
+        "Smaller threat surface",
+        "Leaks through logs, source control, environment dumps or app vulnerabilities cannot expose a secret the app never had."
+      ],
+      [
+        "Short-lived handling",
+        "HTTP and SSH credentials are fetched per connection and zeroized after the authentication."
+      ],
+      [
+        "Extensible",
+        "A connector plugin interface adds new protocols."
+      ]
+    ],
+    "when_title": "When to use",
+    "when": [
+      "Apps that connect to supported databases, SSH or HTTP APIs and must never see the password.",
+      "Legacy apps you cannot change to call an SDK or read files.",
+      "Frequent rotation where restarts are not acceptable.",
+      "Kubernetes or OpenShift on Secrets Manager Self-Hosted, with a Follower in the cluster."
+    ],
+    "diff_title": "SaaS vs Self-Hosted",
+    "diff": [
+      [
+        "Availability",
+        "Documented only for Secrets Manager Self-Hosted. The SaaS docs have no Secretless pages; on SaaS, use the Secrets Provider, the CSI driver or the SDKs."
+      ],
+      [
+        "Authentication",
+        "The Kubernetes sidecar guide uses authn-k8s with a Follower deployed in the cluster."
+      ]
+    ],
+    "limits_title": "Limitations and requirements",
+    "limits": [
+      "Self-Hosted only: Secretless is not documented for Secrets Manager SaaS.",
+      "Only protocols with a connector work (PostgreSQL, MySQL, MSSQL, SSH, SSH agent, HTTP). A new protocol needs code, through the connector plugin interface.",
+      "HTTP: the client must call Secretless with plain http:// so Secretless can read the request; TLS runs from Secretless to the target. One HTTP backend per socket.",
+      "Generic HTTP cannot handle schemes that sign the request body with a secret key.",
+      "MSSQL: SQL Server Authentication only and TCP/IP only, plus the limits of go-mssqldb.",
+      "AWS: the client needs http_proxy pointing at Secretless, an http:// endpoint and dummy AWS credentials.",
+      "The channel to Secretless must not leave the Pod: over TCP, listen only on localhost; with Unix sockets, protect the file with OS permissions.",
+      "Kubernetes guide prerequisites: a Follower with the Kubernetes Authenticator in the cluster, a database that supports SSL, and the sidecar named as in the host annotation."
+    ],
+    "limits_source": "Secretless service connectors in the docs",
+    "docs_title": "Official documentation",
+    "doc_overview": "What is Secretless?",
+    "doc_how": "How Secretless works",
+    "doc_security": "Secretless security",
+    "doc_sidecar": "Secretless Broker sidecar on Kubernetes",
+    "doc_connectors": "Secretless service connectors",
+    "doc_providers": "Secret providers (Secretless)",
+    "doc_mssql": "MSSQL connector",
+    "doc_http": "HTTP connectors",
+    "col_component": "Component",
+    "col_role": "Role",
+    "col_connector": "Connector",
+    "col_provider": "Provider",
+    "col_capability": "Capability",
+    "col_detail": "Detail",
+    "col_topic": "Topic"
+  },
+  "ci_terraform": {
+    "badge": "CI/CD · Infrastructure as code",
+    "title": "Terraform and Secrets Manager",
+    "subtitle": "The open source Secrets Manager provider (terraform-provider-conjur) authenticates Terraform to Secrets Manager and reads secrets inside the manifest, so no password, key or token is hard coded in the .tf files.",
+    "flow_title": "How a pipeline gets a secret into Terraform",
+    "flow_lead": "Example with JWT authentication, the usual choice in a CI job. The provider also accepts API key, AWS IAM, Azure and GCP; the policy and fetch steps are the same.",
+    "caps_title": "What the provider does",
+    "caps_lead": "Configured in the Terraform manifest itself; access to every value is still decided by Secrets Manager policy.",
+    "caps": [
+      [
+        "Read secrets",
+        "The conjur_secret data source (or its ephemeral form) fetches a variable by name and exposes it to the rest of the manifest."
+      ],
+      [
+        "Five authenticators",
+        "API key, AWS IAM, Azure, GCP and JWT (a valid JWT from a third party, such as the CI platform)."
+      ],
+      [
+        "Sensitive values",
+        "Mark outputs with sensitive = true so the value never appears in the plan, in logs or on screen."
+      ],
+      [
+        "Keep secrets out of state",
+        "Ephemeral conjur_secret (Terraform 1.10+) and write-only secret arguments (Terraform 1.11+) avoid persisting values in the state file."
+      ],
+      [
+        "Manage Secrets Manager as code",
+        "Resources for policy branches, workloads (hosts), groups, memberships, permissions, secrets and authenticators."
+      ],
+      [
+        "Certificates (SaaS)",
+        "conjur_certificate_issue and conjur_certificate_sign data sources, with the Certificate Manager integration."
+      ]
+    ],
+    "roles_title": "Components",
+    "roles_lead": "Who does what when terraform plan or apply runs in a pipeline.",
+    "col_component": "Component",
+    "col_role": "Role",
+    "roles": [
+      [
+        "terraform-provider-conjur",
+        "Plugin loaded by terraform init (Terraform Registry cyberark/conjur, binary, Homebrew or source). Authenticates and fetches."
+      ],
+      [
+        "provider \"conjur\" block",
+        "appliance_url, account, authn_type, service_id and the credential. Each field can come from CONJUR_* environment variables; the block wins when both exist."
+      ],
+      [
+        "Workload (host)",
+        "Identity that represents Terraform, with the chosen authenticator enabled for it."
+      ],
+      [
+        "Authenticator",
+        "authn (API key), authn-iam, authn-azure, authn-gcp or authn-jwt/{service-id}."
+      ],
+      [
+        "Policy",
+        "execute on each variable read; create or update on the parent policy for each resource Terraform manages."
+      ],
+      [
+        "Summon (Self-Hosted docs)",
+        "Alternative: summon terraform apply injects secrets as TF_VAR_name environment variables, listed in secrets.yml."
+      ]
+    ],
+    "when_title": "When to use",
+    "when": [
+      "Infrastructure pipelines that need database passwords, cloud keys or certificates while creating resources.",
+      "You want to remove credentials from .tf files, terraform.tfvars and CI variables.",
+      "You want the Secrets Manager structure itself (branches, workloads, grants) versioned and reviewed as Terraform code.",
+      "Your team already uses Summon: the Self-Hosted docs describe summon terraform apply with no extra installation."
+    ],
+    "diff_title": "SaaS vs Self-Hosted",
+    "diff_lead": "Same provider and same manifest syntax; what changes is the endpoint, the identity paths and a few extras.",
+    "col_topic": "Topic",
+    "col_detail": "Difference",
+    "diff": [
+      [
+        "Endpoint",
+        "SaaS: appliance_url is the API URL (https://<subdomain>.secretsmgr.cyberark.cloud/api) and account is conjur. Self-Hosted: your own server URL and account name."
+      ],
+      [
+        "Identity paths",
+        "SaaS workloads live under data/ (for example data/repo-id). Self-Hosted examples use the path you defined (for example repo-id)."
+      ],
+      [
+        "Certificate data sources",
+        "conjur_certificate_issue and conjur_certificate_sign are documented only for SaaS (Certificate Manager integration)."
+      ],
+      [
+        "Managed resources",
+        "SaaS lists conjur_host and conjur_secret as resources too; the Self-Hosted page lists authenticator, policy branch, group, membership and permission."
+      ],
+      [
+        "Summon option",
+        "Documented only for Self-Hosted (Terraform with the Summon utility)."
+      ],
+      [
+        "API key on workloads",
+        "SaaS: a workload that uses API key needs the annotation authn/api-key: true."
+      ]
+    ],
+    "limits_title": "Documented limitations and cautions",
+    "limits": [
+      "Terraform stores data source values in the state file. Only the ephemeral form (Terraform 1.10+) or write-only arguments (Terraform 1.11+) keep a secret out of state: protect the state file anyway.",
+      "sensitive = true hides a value in output and logs, but does not stop it from being written to state.",
+      "Secrets Manager might reject concurrent changes under the same branch: if you see conflicts, run with -parallelism=1 and re-run terraform apply.",
+      "Nothing can be added to a policy branch before it exists or after it is destroyed: declare explicit dependencies (depends_on or attribute references).",
+      "Changes made outside Terraform (CLI, API, policy loads) cause state drift: always review terraform plan.",
+      "Never put sensitive fields such as api_key in the .tf file: use environment variables or Terraform sensitive variables.",
+      "Requires Terraform 0.13.0 or later; Go 1.25.3 or later only to compile from source. Supported on macOS, Linux and Windows.",
+      "In JWT mode, host_id is required when the authenticator does not define token-app-property and identity-path.",
+      "Summon (Self-Hosted): The documentation recommends the provider if you are not already familiar with Summon, and Summon must run on the same machine where authentication is configured."
+    ],
+    "limits_source": "Source: Secrets Manager docs, Terraform (Best practices and limitations)",
+    "docs_title": "Official documentation",
+    "doc_saas": "Terraform provider (SaaS)",
+    "doc_sh_overview": "Terraform integration overview (Self-Hosted)",
+    "doc_sh": "Secrets Manager Terraform Provider (Self-Hosted)",
+    "doc_sh_summon": "Terraform with the Summon utility (Self-Hosted)",
+    "doc_github": "terraform-provider-conjur on GitHub",
+    "flow": {
+      "diagram_label": "Animated diagram: a CI job runs Terraform with the Secrets Manager provider, authenticates with a JWT, reads a secret with execute permission and applies it without storing it in state.",
+      "st_pending": "pending",
+      "st_idle": "idle",
+      "st_check": "checking",
+      "n_idp": "CI platform",
+      "n_idp_sub": "issues the job JWT",
+      "n_run": "Terraform job",
+      "n_tgt": "Cloud resource",
+      "n_tgt_sub": "database, cluster, VM",
+      "r_sig": "signature",
+      "st_loaded": "loaded",
+      "st_received": "received",
+      "st_sensitive": "sensitive",
+      "st_nostate": "not in state",
+      "st_valid": "valid",
+      "st_match": "match",
+      "st_issued": "issued",
+      "st_allowed": "allowed",
+      "st_applied": "applied",
+      "p_jwt": "job JWT",
+      "p_token": "access token",
+      "p_get": "GET secret",
+      "p_secret": "secret value",
+      "s1_title": "Overview",
+      "s1_desc": "The job runs Terraform. The conjur provider block points to Secrets Manager and says how to authenticate; no secret is written in the manifest.",
+      "s2_title": "terraform init loads the provider",
+      "s2_desc": "Terraform installs cyberark/conjur. Fields such as appliance_url and account can come from CONJUR_* environment variables.",
+      "s3_title": "The CI platform issues a JWT",
+      "s3_desc": "The job receives a short-lived JWT from its platform and passes it to the provider as authn_jwt_token (or an environment variable).",
+      "s4_title": "Provider authenticates with authn-jwt",
+      "s4_desc": "Secrets Manager checks the JWT signature against the issuer JWKS and validates the iss claim configured on the authenticator.",
+      "s5_title": "Claim maps to the workload",
+      "s5_desc": "token-app-property and identity-path turn a claim into the workload (host) ID. Secrets Manager returns a short-lived access token.",
+      "s6_title": "conjur_secret reads the value",
+      "s6_desc": "The workload needs execute on the variable. Using the ephemeral form, the value lives only during the operation.",
+      "s7_title": "Apply without leaking",
+      "s7_desc": "The resource is created with the secret. Outputs marked sensitive stay hidden, and the ephemeral value is not written to the state file."
+    }
+  },
+  "ci_gitlab": {
+    "badge": "CI/CD · GitLab",
+    "title": "GitLab CI and Secrets Manager",
+    "subtitle": "An official Docker image with a small Go binary authenticates the job with its GitLab ID token (JWT) and prints the requested secrets to STDOUT, so the pipeline needs no stored credential at all.",
+    "flow_title": "How a GitLab job gets a secret",
+    "flow_lead": "The job proves who it is with the JWT that GitLab mints for it. Secrets Manager trusts GitLab's public keys, maps a claim to a workload and checks the project and branch before releasing anything.",
+    "caps_title": "What the integration provides",
+    "caps_lead": "Works with GitLab Enterprise Edition and self-hosted GitLab.",
+    "caps": [
+      [
+        "Secretless pipeline",
+        "No API key or password in CI/CD variables: the only credential is the job ID token, which GitLab issues per run."
+      ],
+      [
+        "Ready-made images",
+        "authn-jwt-gitlab for Alpine, Ubuntu and UBI-FIPS, used as the job image."
+      ],
+      [
+        "Claim-based identity",
+        "token-app-property (for example namespace_path) and identity-path map the JWT to a workload (host)."
+      ],
+      [
+        "Project and branch pinning",
+        "Workload annotations such as authn-jwt/gitlab/project_path and authn-jwt/gitlab/ref restrict which project and ref can authenticate."
+      ],
+      [
+        "Policy per secret",
+        "The workload only reads variables it has execute on, including secrets synced from PAM Safes."
+      ],
+      [
+        "UI or policy as code",
+        "Authenticator and workload can be created in the UI (GitLab type) or with policy files and the CLI."
+      ]
+    ],
+    "roles_title": "Components",
+    "roles_lead": "Pieces you configure on each side.",
+    "col_component": "Component",
+    "col_role": "Role",
+    "roles": [
+      [
+        "id_tokens in .gitlab-ci.yml",
+        "Asks GitLab for an ID token (ID_TOKEN_1) whose aud must match the authenticator audience."
+      ],
+      [
+        "authn-jwt-gitlab image",
+        "Job image with the /authn-jwt-gitlab binary. It reads CONJUR_* variables, authenticates and prints the secret."
+      ],
+      [
+        "CONJUR_* variables",
+        "CONJUR_APPLIANCE_URL, CONJUR_ACCOUNT, CONJUR_AUTHN_JWT_SERVICE_ID (gitlab, without authn-jwt/), CONJUR_AUTHN_JWT_TOKEN and CONJUR_SECRET_ID."
+      ],
+      [
+        "JWT authenticator",
+        "authn-jwt/gitlab with jwks-uri (https://gitlab.com/oauth/discovery/keys), issuer, audience, token-app-property and identity-path."
+      ],
+      [
+        "Workload (host)",
+        "For example data/gitlab-apps/namespace1, member of the authenticator apps group, with ref and project_path annotations."
+      ],
+      [
+        "GitLab Runner",
+        "Docker runner that executes the job; self-hosted GitLab and Runner setup scripts are in the docs."
+      ]
+    ],
+    "when_title": "When to use",
+    "when": [
+      "GitLab pipelines that deploy, migrate databases or call APIs and today keep credentials in masked CI/CD variables.",
+      "You want access tied to the project and branch, not to a long-lived key that anyone with maintainer access can read.",
+      "Self-hosted GitLab or GitLab EE: both are supported.",
+      "You need a single audit trail of which pipeline read which secret."
+    ],
+    "diff_title": "SaaS vs Self-Hosted",
+    "diff_lead": "The image, the variables and the JWT logic are the same; the differences are in the endpoint and in how the authenticator is enabled.",
+    "col_topic": "Topic",
+    "col_detail": "Difference",
+    "diff": [
+      [
+        "Endpoint and account",
+        "SaaS: CONJUR_APPLIANCE_URL is https://<subdomain>.secretsmgr.cyberark.cloud/api and CONJUR_ACCOUNT must be conjur. Self-Hosted: your server URL and account name."
+      ],
+      [
+        "Self-signed certificate",
+        "Self-Hosted adds CONJUR_SSL_CERTIFICATE or CONJUR_CERT_FILE when the server uses a self-signed certificate."
+      ],
+      [
+        "Creating the authenticator",
+        "SaaS: UI wizard (JSON Web Token, GitLab type) or CLI; requires Authn_Admins or Conjur_Cloud_Admins. Self-Hosted: policy loaded into root with the CLI, then the authenticator must be allowlisted (enabled) on the server."
+      ],
+      [
+        "Workload paths",
+        "SaaS workloads live under data/ (data/gitlab-apps). Secret IDs follow, for example data/vault/<safe>/<secret>."
+      ],
+      [
+        "Self-hosted GitLab",
+        "Use your GitLab URL (for example http://gitlab.example.com:9080) for jwks-uri and issuer instead of https://gitlab.com."
+      ]
+    ],
+    "limits_title": "Documented limitations and requirements",
+    "limits": [
+      "Requires Docker, Go 1.20.2 or later, GitLab on Docker 15.11.2 or later, GitLab Runner on Docker 15.8.2 or later and the Secrets Manager CLI v9.x.",
+      "Images are available only for Alpine, Ubuntu and UBI-FIPS.",
+      "The binary returns each secret to STDOUT: one call per CONJUR_SECRET_ID, captured into a variable by the job script.",
+      "The ID token aud must exactly match the authenticator audience variable, or authentication fails.",
+      "CONJUR_AUTHN_JWT_SERVICE_ID takes only the authenticator name (gitlab), not authn-jwt/gitlab.",
+      "SaaS: CONJUR_ACCOUNT must be conjur.",
+      "Creating the JWT authenticator requires admin rights (create on the authn-jwt policy, through Authn_Admins or Conjur_Cloud_Admins).",
+      "The policies in the docs are samples only: adapt them to your environment."
+    ],
+    "limits_source": "Source: Secrets Manager docs, GitLab integration",
+    "docs_title": "Official documentation",
+    "doc_saas": "GitLab integration (SaaS)",
+    "doc_sh": "GitLab integration (Self-Hosted)",
+    "doc_saas_uc": "Use case: JWT authentication with GitLab",
+    "doc_saas_jwt": "Authenticate JWT (guidelines)",
+    "flow": {
+      "diagram_label": "Animated diagram: a GitLab job gets an ID token, the authn-jwt-gitlab binary authenticates to Secrets Manager, which checks GitLab's JWKS, the workload and its annotations, then the secret is printed to STDOUT and used in the deploy.",
+      "st_pending": "pending",
+      "st_idle": "idle",
+      "st_check": "checking",
+      "n_idp_sub": "issues ID tokens, publishes JWKS",
+      "n_run": "Pipeline job",
+      "n_tgt": "Deploy target",
+      "n_tgt_sub": "app, database, API",
+      "r_sig": "signature",
+      "r_annot": "ref, project",
+      "st_received": "received",
+      "st_captured": "captured",
+      "st_env": "in variable",
+      "st_valid": "valid",
+      "st_match": "match",
+      "st_allowed": "allowed",
+      "st_done": "done",
+      "p_token": "access token",
+      "p_secret": "secret value",
+      "p_use": "uses secret",
+      "s1_title": "Overview",
+      "s1_desc": "A GitLab job runs on the authn-jwt-gitlab image. It holds no stored credential; GitLab will vouch for it.",
+      "s2_title": "GitLab issues the ID token",
+      "s2_desc": "id_tokens in .gitlab-ci.yml asks for ID_TOKEN_1 with aud conjur. The job passes it in CONJUR_AUTHN_JWT_TOKEN.",
+      "s3_title": "The binary authenticates",
+      "s3_desc": "/authn-jwt-gitlab posts the JWT to the authenticator named in CONJUR_AUTHN_JWT_SERVICE_ID (gitlab).",
+      "s4_title": "Signature, issuer and audience",
+      "s4_desc": "Secrets Manager validates the signature with GitLab's JWKS (/oauth/discovery/keys) and checks iss and aud against the authenticator.",
+      "s5_title": "Claim maps to the workload",
+      "s5_desc": "namespace_path (namespace1) under identity-path data/gitlab-apps gives the workload. Its annotations require ref master and project_path namespace1/jwt-example.",
+      "s6_title": "Short-lived access token",
+      "s6_desc": "Every check passed, so Secrets Manager returns an access token to the binary.",
+      "s7_title": "Fetch and print",
+      "s7_desc": "For each CONJUR_SECRET_ID the workload needs execute. The value goes to STDOUT and the script captures it, for example export DB_PASS=$(...).",
+      "s8_title": "Use in the job",
+      "s8_desc": "Later script lines use the variable to deploy. Nothing was stored in GitLab settings."
+    }
+  },
+  "ci_azdo": {
+    "badge": "CI/CD · Azure DevOps",
+    "title": "Azure DevOps and Secrets Manager",
+    "subtitle": "The Idira Conjur Service Connector is an Azure DevOps extension that authenticates the pipeline to Secrets Manager and fetches a batch of secrets into environment variables. JWT through an Azure identity is recommended; API key is also supported.",
+    "flow_title": "How an Azure pipeline gets its secrets",
+    "flow_lead": "JWT mode: the pipeline borrows an Entra ID token from an Azure Resource Manager service connection, so no Secrets Manager credential is stored in Azure DevOps.",
+    "caps_title": "What the extension does",
+    "caps_lead": "Installed from the Visual Studio Marketplace into your Azure DevOps organization.",
+    "caps": [
+      [
+        "Batch retrieval",
+        "Every secret listed in a secrets.yml file is fetched in one go and assigned to the pipeline environment variable you name."
+      ],
+      [
+        "JWT with an Azure identity",
+        "Uses a managed identity or an app registration through an Azure Resource Manager service connection. Recommended."
+      ],
+      [
+        "API key option",
+        "Conjur Batch Secrets Server Connection with a workload ID and its API key, when JWT is not possible."
+      ],
+      [
+        "Claim mapping",
+        "token-app-property (for example sub, the identity Object ID) names the workload; an annotation such as appid pins the client."
+      ],
+      [
+        "Classic or YAML",
+        "Add the Conjur Secret Retrieval Connector task from the Tasks panel or as a YAML step."
+      ],
+      [
+        "Troubleshooting path",
+        "System diagnostics plus a documented AzureCLI pipeline to dump and decode the JWT on a 401."
+      ]
+    ],
+    "roles_title": "Components",
+    "roles_lead": "Pieces on the Azure, Azure DevOps and Secrets Manager sides.",
+    "col_component": "Component",
+    "col_role": "Role",
+    "roles": [
+      [
+        "Managed identity or app registration",
+        "Azure identity whose token authenticates. Client ID is the token appid; Object ID is the token sub."
+      ],
+      [
+        "Azure Resource Manager service connection",
+        "JWT only: generates the Entra ID token for that identity inside the pipeline."
+      ],
+      [
+        "Conjur JWT Batch Secrets Server Connection",
+        "Service connection with the Secrets Manager URL, account, Service ID (authenticator name without authn-jwt/) and optional Host ID."
+      ],
+      [
+        "Conjur Batch Secrets Server Connection",
+        "API key mode: URL, account, Username (host/<workload path>) and the workload API key."
+      ],
+      [
+        "secrets.yml",
+        "File in the triggering repo: ENV_VAR: !var <secret id>, one line per secret."
+      ],
+      [
+        "authn-jwt/azure-devops",
+        "jwks-uri https://login.windows.net/common/discovery/keys, issuer https://sts.windows.net/<tenant-id>/, identity-path and token-app-property."
+      ]
+    ],
+    "when_title": "When to use",
+    "when": [
+      "Azure Pipelines that deploy to Azure or elsewhere and keep secrets in variable groups or pipeline variables today.",
+      "You already run a managed identity or app registration for the pipeline and want Secrets Manager to trust it.",
+      "You want one place (Secrets Manager policy) to decide which pipeline reads which secret, with audit.",
+      "Read-only consumption is enough: the extension does not write secrets."
+    ],
+    "diff_title": "SaaS vs Self-Hosted",
+    "diff_lead": "Same extension and same service connection types; the differences are the endpoint, the account and how the authenticator is enabled.",
+    "col_topic": "Topic",
+    "col_detail": "Difference",
+    "diff": [
+      [
+        "Endpoint",
+        "SaaS: the API endpoint https://<subdomain>.secretsmgr.cyberark.cloud/api. Self-Hosted: your server URL (for example https://acme.conjur.com)."
+      ],
+      [
+        "Account name",
+        "SaaS: must be conjur. Self-Hosted: your Secrets Manager account name."
+      ],
+      [
+        "Workload IDs",
+        "SaaS: host/data/<workload>. Self-Hosted: host/<workload> in the path you defined."
+      ],
+      [
+        "CA certificate",
+        "SaaS: generally not required. Self-Hosted: required when the server uses a self-signed certificate."
+      ],
+      [
+        "Enabling the authenticator",
+        "SaaS: CLI command to enable it. Self-Hosted: add authn-jwt/azure-devops to the authenticators list in conjur.yml on the server and apply the change."
+      ]
+    ],
+    "limits_title": "Documented limitations and requirements",
+    "limits": [
+      "The Idira Conjur Service Connector does not support creating, updating or removing secrets.",
+      "JWT mode needs an Azure identity (managed identity or app registration) and an Azure Resource Manager service connection.",
+      "The pipeline must be able to read secrets.yml: keep the file in the repository that triggers the pipeline.",
+      "Host ID is required only when the JWT authenticator does not define token-app-property and identity-path.",
+      "Service ID takes the authenticator name only (azure-devops), not authn-jwt/azure-devops.",
+      "SaaS: Conjur Account Name must be conjur.",
+      "On a 401, the documented check is to dump the JWT with an AzureCLI job, decode it twice and compare issuer, identity-path, token-app-property, jwks-uri, workload ID and annotation."
+    ],
+    "limits_source": "Source: Secrets Manager docs, Azure DevOps (Limitations)",
+    "docs_title": "Official documentation",
+    "doc_saas": "Azure DevOps extension (SaaS)",
+    "doc_saas_e2e": "Azure DevOps step-by-step guide (SaaS)",
+    "doc_sh": "Azure DevOps extension (Self-Hosted)",
+    "doc_sh_e2e": "Azure DevOps step-by-step guide (Self-Hosted)",
+    "doc_marketplace": "Idira Conjur Service Connector on the Marketplace",
+    "flow": {
+      "diagram_label": "Animated diagram: an Azure pipeline reads secrets.yml, gets an Entra ID token through its service connection, authenticates to Secrets Manager, which checks the JWKS, the workload and the appid annotation, then fetches all secrets in one batch into environment variables.",
+      "st_pending": "pending",
+      "st_idle": "idle",
+      "st_check": "checking",
+      "n_idp_sub": "managed identity or app registration",
+      "n_tgt": "Deploy target",
+      "n_tgt_sub": "app, database, API",
+      "r_sig": "signature",
+      "st_read": "read",
+      "st_received": "received",
+      "st_set": "set",
+      "st_valid": "valid",
+      "st_match": "match",
+      "st_allowed": "allowed",
+      "st_done": "done",
+      "l_arm": "ARM service connection",
+      "p_jwt": "Entra ID token",
+      "p_token": "access token",
+      "p_batch": "batch GET",
+      "p_secret": "secret values",
+      "p_use": "uses secrets",
+      "s1_title": "Overview",
+      "s1_desc": "A pipeline runs the Conjur Secret Retrieval Connector task with the Conjur JWT Batch Secrets Server Connection.",
+      "s2_title": "Read secrets.yml",
+      "s2_desc": "The task reads the file from the repo: each line maps a pipeline environment variable to a secret ID.",
+      "s3_title": "Entra ID issues a token",
+      "s3_desc": "The Azure Resource Manager service connection gets a JWT for the managed identity or app registration.",
+      "s4_title": "Authenticate with authn-jwt",
+      "s4_desc": "The task sends the JWT to authn-jwt/azure-devops. Secrets Manager checks the signature with the login.windows.net JWKS and the sts.windows.net issuer.",
+      "s5_title": "Workload and annotation",
+      "s5_desc": "The sub claim, under identity-path, is the workload ID; the appid annotation must match. Secrets Manager returns an access token.",
+      "s6_title": "Batch fetch",
+      "s6_desc": "With execute on every listed variable, the values come back in one batch and become pipeline environment variables.",
+      "s7_title": "Use in later steps",
+      "s7_desc": "Following tasks read the environment variables to deploy. No Secrets Manager credential was stored in Azure DevOps."
+    }
+  },
+  "ci_bitbucket": {
+    "badge": "CI/CD · Bitbucket Pipelines",
+    "title": "Bitbucket Pipelines: secrets through the Bitbucket Pipe",
+    "subtitle": "A pipeline step with OIDC enabled proves who it is with a Bitbucket-signed JWT. The Bitbucket Pipe trades that token at the JWT authenticator, fetches only the secrets you list and hands them to the rest of the step. No API key is stored in Bitbucket.",
+    "flow_title": "How a pipeline step gets its secrets",
+    "flow_lead": "Play the steps: OIDC token, JWT authenticator, workload match by repository UUID, then the .secrets folder and load_secrets.sh.",
+    "caps_title": "What the integration does",
+    "caps": [
+      "Authenticates with the Bitbucket OIDC token of the step (oidc: true), so no long-lived credential is kept in repository variables.",
+      "Maps the repositoryUuid claim to a workload (host) named after the repository UUID, so each repository gets its own identity and its own grants.",
+      "Fetches a comma-separated list of secret IDs in one pipe call.",
+      "Writes the values to .secrets/secrets.env (dotenv format, key = last part of the secret ID, for example secret1).",
+      "Ships load_secrets.sh, which exports the values into the shell and deletes secrets.env right after.",
+      "Works with secrets synced from PAM Safes: grant the workload the Safe's consumers group."
+    ],
+    "how_title": "Components",
+    "how_lead": "Who does what between Bitbucket and Secrets Manager.",
+    "col_component": "Component",
+    "col_role": "Role",
+    "roles": [
+      [
+        "Bitbucket OIDC provider",
+        "Signs a JWT for the step. Issuer: https://api.bitbucket.org/2.0/workspaces/{workspace}/pipelines-config/identity/oidc; keys at …/oidc/keys.json."
+      ],
+      [
+        "Pipeline step (oidc: true)",
+        "Runs the pipe cyberark-conjur/conjur-bitbucket-pipe inside the step and receives the OIDC token."
+      ],
+      [
+        "JWT authenticator authn-jwt/bitbucket",
+        "Validates signature and issuer, reads token-app-property = repositoryUuid and looks for the workload under identity-path data/bitbucket-pipes."
+      ],
+      [
+        "Workload (host) {repositoryUuid}",
+        "Named after the repository UUID, annotated authn-jwt/bitbucket/repositoryUuid, member of the authenticator's apps group."
+      ],
+      [
+        "Secret consumer groups",
+        "Grant read access, for example vault/{safe}/delegation/consumers for secrets synced from PAM."
+      ],
+      [
+        ".secrets folder",
+        "secrets.env with the values and load_secrets.sh to export them and delete the file."
+      ]
+    ],
+    "fields_title": "Pipe variables",
+    "fields_lead": "What goes under variables: in bitbucket-pipelines.yml.",
+    "col_field": "Variable",
+    "col_meaning": "Meaning",
+    "fields": [
+      [
+        "CONJUR_URL (required)",
+        "SaaS: the API URL, https://{subdomain}.secretsmgr.cyberark.cloud/api. Self-Hosted: your Secrets Manager server URL."
+      ],
+      [
+        "CONJUR_ACCOUNT (optional)",
+        "SaaS: if set, must be conjur. Self-Hosted: your account name, defaults to conjur."
+      ],
+      [
+        "CONJUR_SERVICE_ID (required)",
+        "Name of the JWT authenticator, for example bitbucket."
+      ],
+      [
+        "SECRETS (required)",
+        "Comma-separated secret IDs, for example data/bitbucket-pipes/secret1,data/bitbucket-pipes/secret2."
+      ]
+    ],
+    "when_title": "When to use it",
+    "when": [
+      "Your code lives in Bitbucket Cloud and pipelines need database, API or cloud credentials.",
+      "You want to remove secured repository variables and long-lived API keys from Bitbucket.",
+      "You want one identity per repository, auditable in Secrets Manager.",
+      "The credentials already live in PAM Safes and are synced to Secrets Manager."
+    ],
+    "diff_title": "SaaS vs Self-Hosted",
+    "diff": [
+      "Creating the authenticator: SaaS through the UI (JSON Web Token, Other), the CLI (policy loaded into conjur/authn-jwt) or the APIv2. Self-Hosted: policy with id conjur/authn-jwt/bitbucket loaded at root.",
+      "Discovery: SaaS sets jwks-uri plus issuer. The Self-Hosted guide sets provider-uri (the Bitbucket OIDC URL) instead.",
+      "Enabling: SaaS runs conjur authenticator enable --id authn-jwt/bitbucket. Self-Hosted adds authn-jwt/bitbucket to the authenticators list in conjur.yml and runs evoke configuration apply.",
+      "Workload: SaaS offers a Bitbucket workload type in the UI and Access to Safes for PAM-synced secrets. Self-Hosted defines the host and its grant in policy.",
+      "Pipe variables: SaaS uses the /api URL and account conjur. Self-Hosted uses the server URL and your account name."
+    ],
+    "limits_title": "Limitations",
+    "limits": [
+      "Secrets are written to a subdirectory of the current working directory in the container. Every process in the pipeline step can read it, so be careful not to expose secrets to unauthorized processes.",
+      "Because of the .env file format, secrets with special characters other than _ are not supported, and variable names cannot start with a number.",
+      "If you load secrets.env yourself instead of using load_secrets.sh, you must delete the file afterwards.",
+      "Requires a Bitbucket Cloud repository and a step with oidc: true.",
+      "The workload name and its annotation must be the repository UUID, braces included, exactly as shown in Repository settings, OpenID Connect.",
+      "On SaaS, CONJUR_ACCOUNT, when set, must be conjur."
+    ],
+    "docs_title": "Official documentation",
+    "docs": [
+      "Bitbucket integration (SaaS)",
+      "Bitbucket integration (Self-Hosted)",
+      "conjur-bitbucket-pipe on GitHub",
+      "JWT authenticator"
+    ],
+    "flow": {
+      "st_pending": "pending",
+      "st_idle": "idle",
+      "st_check": "checking",
+      "st_signed": "signed",
+      "st_received": "received",
+      "st_fetched": "fetched",
+      "st_valid": "valid",
+      "st_issued": "issued",
+      "st_match": "match",
+      "st_allowed": "allowed",
+      "st_target": "authenticated",
+      "r_token": "access token",
+      "r_secrets": "secrets",
+      "r_sig": "JWT signature",
+      "r_issued": "access token",
+      "r_group": "apps group",
+      "r_target": "credential",
+      "n_host": "Workload (host)",
+      "p_authn": "POST JWT",
+      "p_keys": "public keys",
+      "p_token": "access token",
+      "p_get": "GET secrets",
+      "p_secrets": "secret values",
+      "p_use": "credential",
+      "diagram_label": "Animated diagram: a Bitbucket pipeline step authenticates to IDIRA Secrets Manager with its OIDC token and receives secrets in the .secrets folder.",
+      "n_idp": "Bitbucket OIDC",
+      "n_idp_sub": "workspace identity provider",
+      "n_job": "Pipeline step",
+      "n_job_sub": "conjur-bitbucket-pipe",
+      "n_out": ".secrets folder",
+      "n_out_sub": "secrets.env · load_secrets.sh",
+      "n_target": "Deploy target",
+      "n_target_sub": "database, API, cloud",
+      "r_out": "secrets.env",
+      "st_out": "written",
+      "st_done": "exported, deleted",
+      "p_out": "secrets.env",
+      "s1_title": "The players",
+      "s1_desc": "A Bitbucket pipeline step, the Bitbucket OIDC provider and IDIRA Secrets Manager. Nothing secret is stored in the repository.",
+      "s2_title": "Step receives an OIDC token",
+      "s2_desc": "With oidc: true, Bitbucket signs a JWT for the step. Claims include iss (workspace), repositoryUuid, branchName and stepUuid.",
+      "s3_title": "Pipe presents the JWT",
+      "s3_desc": "conjur-bitbucket-pipe posts the token to the authenticator named in CONJUR_SERVICE_ID (bitbucket).",
+      "s4_title": "Signature and issuer checked",
+      "s4_desc": "Secrets Manager validates the signature with the workspace keys.json and compares iss with the configured issuer.",
+      "s5_title": "Repository mapped to a workload",
+      "s5_desc": "token-app-property = repositoryUuid: the claim value names the workload under data/bitbucket-pipes. Its annotation must match and it must be in the apps group.",
+      "s6_title": "Short-lived access token",
+      "s6_desc": "Secrets Manager returns an access token for that workload only.",
+      "s7_title": "Only the listed secrets",
+      "s7_desc": "The pipe reads each ID in SECRETS. Policy decides: the workload needs read access, for example through a Safe's consumers group.",
+      "s8_title": "Values land in .secrets",
+      "s8_desc": "The pipe writes secrets.env (dotenv, key = last part of the ID). Any process in the step can read this folder.",
+      "s9_title": "Exported, file removed",
+      "s9_desc": "load_secrets.sh exports the values into the shell and deletes secrets.env. Later scripts in the step use them to reach the target."
+    }
+  },
+  "ci_circleci": {
+    "badge": "CI/CD · CircleCI",
+    "title": "CircleCI: secrets through the orb",
+    "subtitle": "Each CircleCI job can get an OIDC token signed by your organization. The orb trades it at the JWT authenticator and exports the secrets you list as environment variables for the job. No API key lives in CircleCI.",
+    "flow_title": "How a job gets its secrets",
+    "flow_lead": "Play the steps: OIDC token, JWT authenticator with audience, workload match by project and sub, then environment variables.",
+    "caps_title": "What the integration does",
+    "caps": [
+      "Authenticates with the job's CircleCI OIDC token, so no long-lived credential is stored in CircleCI.",
+      "Checks the audience: aud must be your CircleCI organization ID.",
+      "Maps oidc.circleci.com/project-id to a workload named after the project ID, and the workload's sub annotation pins organization, project, user, repository and ref.",
+      "Fetches a semicolon-separated list of secret IDs with the retrieve_secret job step.",
+      "Exports each value as an environment variable named after the last part of the secret ID, or a custom name with the | syntax.",
+      "Accepts a PEM certificate when Secrets Manager uses a self-signed certificate.",
+      "The connection fields can live in a CircleCI context instead of the config file."
+    ],
+    "how_title": "Components",
+    "how_lead": "Who does what between CircleCI and Secrets Manager.",
+    "col_component": "Component",
+    "col_role": "Role",
+    "roles": [
+      [
+        "CircleCI OIDC provider",
+        "Signs the job token. Issuer: https://oidc.circleci.com/org/{org-id}; keys at …/.well-known/jwks-pub.json."
+      ],
+      [
+        "CircleCI job",
+        "Uses the orb cyberark/conjur-circleci-orb and its retrieve_secret step."
+      ],
+      [
+        "JWT authenticator authn-jwt/circle-ci",
+        "Validates signature, issuer and audience, reads token-app-property = oidc.circleci.com/project-id, identity-path data/circleci-apps."
+      ],
+      [
+        "Workload (host) {project-id}",
+        "Named after the project ID, annotated authn-jwt/circle-ci/sub with the full sub claim, member of the apps group."
+      ],
+      [
+        "Secret consumer groups",
+        "Grant read access, for example vault/{safe}/delegation/consumers for PAM-synced secrets."
+      ],
+      [
+        "Job environment",
+        "Receives one environment variable per secret."
+      ]
+    ],
+    "fields_title": "retrieve_secret fields",
+    "fields_lead": "What the orb step needs in .circleci/config.yml (or in a context).",
+    "col_field": "Field",
+    "col_meaning": "Meaning",
+    "fields": [
+      [
+        "url",
+        "SaaS: the API URL, https://{subdomain}.secretsmgr.cyberark.cloud/api. Self-Hosted: your Secrets Manager server URL."
+      ],
+      [
+        "account",
+        "SaaS: must be conjur. Self-Hosted: your account name."
+      ],
+      [
+        "service_id",
+        "Name of the JWT authenticator, for example circle-ci."
+      ],
+      [
+        "certificate (optional)",
+        "Server certificate in PEM, when Secrets Manager uses a self-signed certificate."
+      ],
+      [
+        "secrets",
+        "Semicolon-separated secret IDs. Add |name to choose the variable, for example data/circleci-apps/secret1|DB_USER."
+      ]
+    ],
+    "when_title": "When to use it",
+    "when": [
+      "Your pipelines run on CircleCI and need credentials for deploys, tests or cloud APIs.",
+      "You want to stop storing secrets in CircleCI project settings or contexts.",
+      "You want access tied to a specific project, repository and branch.",
+      "The credentials already live in PAM Safes and are synced to Secrets Manager."
+    ],
+    "diff_title": "SaaS vs Self-Hosted",
+    "diff": [
+      "Creating the authenticator: SaaS through the UI (JSON Web Token, Other), the CLI (policy loaded into conjur/authn-jwt) or the APIv2. Self-Hosted: policy loaded at root, then variables set with the CLI.",
+      "Enabling: SaaS runs conjur authenticator enable --id authn-jwt/circle-ci. Self-Hosted adds authn-jwt/circle-ci to conjur.yml and runs evoke configuration apply.",
+      "Identity path: the SaaS example uses data/circleci-apps. The Self-Hosted example uses circleci-apps.",
+      "Workload: SaaS offers Access to Safes for PAM-synced secrets in the UI. Self-Hosted defines the host in policy.",
+      "Orb fields: SaaS uses the /api URL and account conjur. Self-Hosted uses the server URL and your account name."
+    ],
+    "limits_title": "Limitations and requirements",
+    "limits": [
+      "The CircleCI guide has no Limitations section. The items below are requirements stated in the guide.",
+      "The workload's sub annotation holds the full sub claim: organization, project, user, repository and ref. A run started by another user or from another branch carries a different sub and will not match that workload.",
+      "The audience must be set to your CircleCI organization ID.",
+      "On SaaS, account must be conjur.",
+      "If Secrets Manager uses a self-signed certificate, you must pass it in PEM through the certificate field.",
+      "secrets is a semicolon-separated list. Without a custom name (|name), the variable takes the last part of the secret ID."
+    ],
+    "docs_title": "Official documentation",
+    "docs": [
+      "CircleCI integration (SaaS)",
+      "CircleCI integration (Self-Hosted)",
+      "CircleCI OIDC tokens",
+      "JWT authenticator"
+    ],
+    "flow": {
+      "st_pending": "pending",
+      "st_idle": "idle",
+      "st_check": "checking",
+      "st_signed": "signed",
+      "st_received": "received",
+      "st_fetched": "fetched",
+      "st_valid": "valid",
+      "st_issued": "issued",
+      "st_match": "match",
+      "st_allowed": "allowed",
+      "st_target": "authenticated",
+      "r_token": "access token",
+      "r_secrets": "secrets",
+      "r_sig": "JWT signature",
+      "r_issued": "access token",
+      "r_group": "apps group",
+      "r_target": "credential",
+      "n_host": "Workload (host)",
+      "p_authn": "POST JWT",
+      "p_keys": "public keys",
+      "p_token": "access token",
+      "p_get": "GET secrets",
+      "p_secrets": "secret values",
+      "p_use": "credential",
+      "diagram_label": "Animated diagram: a CircleCI job authenticates to IDIRA Secrets Manager with its OIDC token and receives secrets as environment variables.",
+      "n_idp": "CircleCI OIDC",
+      "n_idp_sub": "organization identity provider",
+      "n_job": "CircleCI job",
+      "n_job_sub": "conjur orb · retrieve_secret",
+      "n_out": "Job environment",
+      "n_out_sub": "one variable per secret",
+      "n_target": "Deploy target",
+      "n_target_sub": "database, API, cloud",
+      "r_out": "env vars",
+      "st_out": "exported",
+      "st_done": "in use",
+      "p_out": "env vars",
+      "s1_title": "The players",
+      "s1_desc": "A CircleCI job, the CircleCI OIDC provider for your organization and IDIRA Secrets Manager.",
+      "s2_title": "Job receives an OIDC token",
+      "s2_desc": "CircleCI signs a JWT for the job. aud is the organization ID; sub joins org, project, user, vcs-origin and vcs-ref.",
+      "s3_title": "Orb presents the JWT",
+      "s3_desc": "retrieve_secret posts the token to the authenticator named in service_id (circle-ci).",
+      "s4_title": "Signature, issuer, audience",
+      "s4_desc": "Secrets Manager validates the signature with jwks-pub.json and checks iss and aud against the configured values.",
+      "s5_title": "Project mapped to a workload",
+      "s5_desc": "token-app-property = oidc.circleci.com/project-id names the workload under data/circleci-apps; its sub annotation must equal the token's sub.",
+      "s6_title": "Short-lived access token",
+      "s6_desc": "Secrets Manager returns an access token for that workload only.",
+      "s7_title": "Only the listed secrets",
+      "s7_desc": "The orb reads each ID in secrets. The workload needs read access, for example through a Safe's consumers group.",
+      "s8_title": "Values become variables",
+      "s8_desc": "Each value is exported as an environment variable: the last part of the ID, or the name after |.",
+      "s9_title": "Job uses the credential",
+      "s9_desc": "Later steps of the job read the variables to reach the target. Nothing was stored in CircleCI settings."
+    }
+  },
+  "ci_octopus": {
+    "badge": "CI/CD · Octopus Deploy",
+    "title": "Octopus Deploy: secrets through a step template",
+    "subtitle": "Octopus signs a JWT through a Generic OIDC account. The step template CyberArk Secrets Manager, Retrieve Secrets (JWT) trades it at the JWT authenticator and publishes each secret as an output variable for the next deployment steps. Works with Octopus Cloud and self-hosted Octopus.",
+    "flow_title": "How a deployment gets its secrets",
+    "flow_lead": "Play the steps: Generic OIDC account, JWT authenticator, workload match by sub, then output variables for later steps.",
+    "caps_title": "What the integration does",
+    "caps": [
+      "Uses Octopus native OpenID Connect: a Generic OIDC account with audience conjur, referenced by a project variable.",
+      "Builds the sub claim from the values you pick (recommended: space, project, environment), so each project and environment can be its own workload.",
+      "Fetches a multi-line list of secret IDs, each with an optional custom output name (secret-id | name).",
+      "Publishes the values as output variables of the step for later steps (PowerShell, Bash, Python examples in the guide).",
+      "Accepts a trusted server certificate in PEM for a self-signed Secrets Manager.",
+      "Can log the output variable names (Print Output Variable Names), disabled by default."
+    ],
+    "how_title": "Components",
+    "how_lead": "Who does what between Octopus and Secrets Manager.",
+    "col_component": "Component",
+    "col_role": "Role",
+    "roles": [
+      [
+        "Octopus OIDC (Generic OIDC account)",
+        "Issuer https://{company}.octopus.app, keys at /.well-known/jwks, audience conjur. sub looks like space:default:project:get-secrets:environment:development."
+      ],
+      [
+        "Project variable",
+        "References the OIDC account; the step reads it through CyberArk.SecretsManager.Jwt."
+      ],
+      [
+        "Step template Retrieve Secrets (JWT)",
+        "Community step template that posts the JWT and fetches the secrets."
+      ],
+      [
+        "JWT authenticator authn-jwt/octopus",
+        "Validates signature, issuer and audience, token-app-property = sub, identity-path data/octopus-apps."
+      ],
+      [
+        "Workload (host) {sub}",
+        "Named after the sub value, annotated authn-jwt/octopus/sub, member of the apps group."
+      ],
+      [
+        "Output variables",
+        "Octopus.Action[...].Output.{name} for the following steps."
+      ]
+    ],
+    "fields_title": "Step template parameters",
+    "fields_lead": "Parameters of CyberArk Secrets Manager, Retrieve Secrets (JWT).",
+    "col_field": "Parameter",
+    "col_meaning": "Meaning",
+    "fields": [
+      [
+        "Secrets Manager Account (optional)",
+        "CyberArk.SecretsManager.Account. SaaS: if set, must be conjur. Self-Hosted: your account name, defaults to conjur."
+      ],
+      [
+        "Secrets Manager URL (required)",
+        "CyberArk.SecretsManager.Url. SaaS: https://{subdomain}.secretsmgr.cyberark.cloud/api. Self-Hosted: your server URL."
+      ],
+      [
+        "Authenticator Service ID (optional)",
+        "CyberArk.SecretsManager.ServiceId. Name of the JWT authenticator, default octopus."
+      ],
+      [
+        "OIDC Account (required)",
+        "CyberArk.SecretsManager.Jwt. The project variable that references the Generic OIDC account."
+      ],
+      [
+        "Secrets Manager Variables (required)",
+        "CyberArk.SecretsManager.Variables. One per line: secret-id | output-name. Without a name, the secret ID is the output name."
+      ],
+      [
+        "Trusted Server Certificate (optional)",
+        "CyberArk.SecretsManager.Certificate. PEM certificate, for example for a self-signed server."
+      ],
+      [
+        "Print Output Variable Names (optional)",
+        "CyberArk.SecretsManager.PrintVariableNames. Logs the names, disabled by default."
+      ]
+    ],
+    "when_title": "When to use it",
+    "when": [
+      "Your releases and runbooks run in Octopus Deploy (Cloud or self-hosted).",
+      "You want per-environment access: development and production deployments of the same project get different workloads.",
+      "You want to stop keeping credentials as Octopus sensitive variables.",
+      "The credentials already live in PAM Safes and are synced to Secrets Manager."
+    ],
+    "diff_title": "SaaS vs Self-Hosted",
+    "diff": [
+      "Creating the authenticator: SaaS through the UI (JSON Web Token, Other), the CLI (policy loaded into conjur/authn-jwt) or the APIv2. Self-Hosted: policy loaded at root, variables set with the CLI.",
+      "Enabling: SaaS runs conjur authenticator enable --id authn-jwt/octopus. Self-Hosted adds authn-jwt/octopus to conjur.yml and runs evoke configuration apply.",
+      "Workload: SaaS offers an Octopus Deploy workload type and Access to Safes in the UI. Self-Hosted defines the host in policy.",
+      "Step parameters: SaaS uses the /api URL and account conjur. Self-Hosted uses the server URL and your account name.",
+      "Failure behaviour: only the SaaS guide states that one missing or inaccessible secret fails the whole step."
+    ],
+    "limits_title": "Limitations",
+    "limits": [
+      "If several secrets are mapped to the same custom variable, the last one wins and the previous values are overwritten.",
+      "If one secret is inaccessible or does not exist, the step fails and no secrets are retrieved (stated in the SaaS guide).",
+      "The workload name and its sub annotation must equal the sub claim, which depends on the values chosen in the Generic OIDC account (space, project, environment are recommended).",
+      "The Generic OIDC account audience must be conjur, matching the authenticator's audience.",
+      "On SaaS, Secrets Manager Account, when set, must be conjur."
+    ],
+    "docs_title": "Official documentation",
+    "docs": [
+      "Octopus integration (SaaS)",
+      "Octopus integration (Self-Hosted)",
+      "conjur-octopus-deploy on GitHub",
+      "JWT authenticator"
+    ],
+    "flow": {
+      "st_pending": "pending",
+      "st_idle": "idle",
+      "st_check": "checking",
+      "st_signed": "signed",
+      "st_received": "received",
+      "st_fetched": "fetched",
+      "st_valid": "valid",
+      "st_issued": "issued",
+      "st_match": "match",
+      "st_allowed": "allowed",
+      "st_target": "authenticated",
+      "r_token": "access token",
+      "r_secrets": "secrets",
+      "r_sig": "JWT signature",
+      "r_issued": "access token",
+      "r_group": "apps group",
+      "r_target": "credential",
+      "n_host": "Workload (host)",
+      "p_authn": "POST JWT",
+      "p_keys": "public keys",
+      "p_token": "access token",
+      "p_get": "GET secrets",
+      "p_secrets": "secret values",
+      "p_use": "credential",
+      "diagram_label": "Animated diagram: an Octopus deployment authenticates to IDIRA Secrets Manager with a Generic OIDC token and publishes secrets as output variables.",
+      "n_idp": "Octopus OIDC",
+      "n_idp_sub": "Generic OIDC account",
+      "n_job": "Deployment step",
+      "n_job_sub": "Retrieve Secrets (JWT)",
+      "n_out": "Output variables",
+      "n_out_sub": "Octopus.Action[...].Output",
+      "n_target": "Deploy target",
+      "n_target_sub": "next steps, database, API",
+      "r_out": "outputs",
+      "st_out": "published",
+      "st_done": "in use",
+      "p_out": "outputs",
+      "s1_title": "The players",
+      "s1_desc": "An Octopus deployment or runbook, the Octopus server acting as OIDC issuer and IDIRA Secrets Manager.",
+      "s2_title": "Step receives a JWT",
+      "s2_desc": "The Generic OIDC account signs a token with aud conjur and a sub built from space, project and environment.",
+      "s3_title": "Template presents the JWT",
+      "s3_desc": "The step template posts the token to the authenticator in Authenticator Service ID (octopus by default).",
+      "s4_title": "Signature, issuer, audience",
+      "s4_desc": "Secrets Manager validates the signature with the Octopus /.well-known/jwks keys and checks iss and aud.",
+      "s5_title": "sub mapped to a workload",
+      "s5_desc": "token-app-property = sub: the value, for example space:default:project:get-secrets:environment:development, names the workload under data/octopus-apps.",
+      "s6_title": "Short-lived access token",
+      "s6_desc": "Secrets Manager returns an access token for that workload only.",
+      "s7_title": "Only the listed secrets",
+      "s7_desc": "The step reads each line of Secrets Manager Variables. If one is missing or not allowed, the step fails and returns nothing.",
+      "s8_title": "Values become outputs",
+      "s8_desc": "Each value is published as an output variable: the custom name, or the secret ID. Same name twice: the last one wins.",
+      "s9_title": "Next steps use them",
+      "s9_desc": "Later steps read Octopus.Action[...].Output.{name} to reach the target."
+    }
+  },
+  "pf_python": {
+    "badge": "Platforms · Python",
+    "title": "Python: SDK and AWS IAM client",
+    "subtitle": "Two official ways for Python code to read secrets: the general Python SDK (conjur-api) and the AWS IAM client for Python, which lets an EC2 instance authenticate with its own IAM role, with no stored credential.",
+    "flow_title": "How the AWS IAM client gets a secret",
+    "flow_lead": "The script never holds a password. It signs a request with the role that AWS gave the instance, and Secrets Manager checks that signature with AWS STS.",
+    "how_title": "Who does what",
+    "how_lead": "The pieces you install, configure and call.",
+    "col_component": "Component",
+    "col_role": "Role",
+    "roles": [
+      [
+        "conjur-api (Python SDK)",
+        "General client: login, get, get_many, set, policy load/replace/update, list, Host Factory, API key rotation. Installed with pip3 install conjur-api. Python 3.10 or later."
+      ],
+      [
+        "Credentials provider",
+        "Holds the login data and hands it to the client only when needed. SimpleCredentialsProvider for tests, or your own CredentialsProviderInterface (for example a keyring)."
+      ],
+      [
+        "Authentication strategy",
+        "Keeps the login logic apart from the client: AuthnAuthenticationStrategy on both platforms; LdapAuthenticationStrategy and JWTAuthenticationStrategy on Self-Hosted."
+      ],
+      [
+        "conjur_iam_client (AWS IAM client)",
+        "create_conjur_iam_api_key builds the signed STS header; get_conjur_iam_session_token exchanges it for an access token; create_conjur_iam_client returns a ready Python client."
+      ],
+      [
+        "IAM authenticator (authn-iam)",
+        "Validates the signed request with AWS STS and matches AccountID/RoleName to the workload ID host/.../{aws-account-id}/{iam-role-name}."
+      ],
+      [
+        "Policy",
+        "Grants the workload read and execute on the secrets. Without a grant, a valid identity still gets nothing."
+      ]
+    ],
+    "when_title": "When to use",
+    "when": [
+      "Python code on EC2 that should not carry any secret zero: the IAM role is the identity.",
+      "Scripts and services that need more than reading: loading policy, creating hosts with Host Factory or rotating API keys (Python SDK).",
+      "Self-Hosted estates that already use LDAP or a JWT issuer and want Python to authenticate the same way.",
+      "Automation that reads many secrets at once: get_many returns a dictionary in one call."
+    ],
+    "diff_title": "SaaS and Self-Hosted",
+    "diff": [
+      "Python SDK on SaaS: only Authn (API key) authentication is documented.",
+      "Python SDK on Self-Hosted: Authn, LDAP and JWT strategies; LDAP and JWT need the authenticator service_id in ConjurConnectionInfo.",
+      "AWS IAM client: same flow on both. On SaaS the workload lives under data/ and cert_file can be None; on Self-Hosted you pass the server CA file.",
+      "whoami() needs Secrets Manager v1.9 or later on Self-Hosted."
+    ],
+    "limits_title": "Documented limitations",
+    "limits": [
+      "The AWS IAM client cannot delete or update secrets: it is read only.",
+      "The client from create_conjur_iam_client does not refresh its token. It works for five to eight minutes; after that you must call the function again.",
+      "The AWS IAM client is installed from the GitHub source (git clone + pip3 install), not from a release on PyPI.",
+      "Python 3.10 or later is required for both libraries.",
+      "SimpleCredentialsProvider keeps credentials in process memory; for production, implement CredentialsProviderInterface with a proper store.",
+      "On SaaS the SDK documents only API key authentication: an API key is a secret zero that must be protected and rotated."
+    ],
+    "docs_title": "Official documentation",
+    "docs": [
+      "Python API (SaaS)",
+      "Python API (Self-Hosted)",
+      "AWS IAM client for Python (SaaS)",
+      "AWS IAM client for Python (Self-Hosted)",
+      "conjur-api-python on GitHub",
+      "conjur-authn-iam-client-python on GitHub"
+    ],
+    "flow": {
+      "diagram_label": "Animated diagram: a Python script on EC2 uses its IAM role to get a Secrets Manager token and read a secret",
+      "n_creds": "IAM role credentials",
+      "n_creds_sub": "EC2 instance metadata",
+      "n_app": "Python script on EC2",
+      "r_creds": "Role",
+      "r_header": "Signed header",
+      "r_token": "Access token",
+      "r_client": "Client",
+      "r_secret": "Secret",
+      "r_identity": "Identity",
+      "r_caller": "Caller",
+      "st_pending": "pending",
+      "st_idle": "idle",
+      "st_check": "checking",
+      "st_role": "loaded",
+      "st_minutes": "5 to 8 min",
+      "st_expired": "expired",
+      "st_new": "new token",
+      "st_memory": "in memory",
+      "st_match": "match",
+      "st_allowed": "allowed",
+      "st_arn": "role ARN",
+      "p_creds": "role credentials",
+      "p_signed": "signed STS header",
+      "p_arn": "AccountID / Role",
+      "p_token": "access token",
+      "p_secret": "secret value",
+      "s1_title": "Two libraries, one identity",
+      "s1_desc": "The AWS IAM client for Python wraps the Python SDK. The script runs on EC2 with an IAM role, and that role is the only proof of identity it needs.",
+      "s2_title": "Read the role credentials",
+      "s2_desc": "The client reads the temporary role credentials from the EC2 instance metadata. Nothing is stored on disk or in the code.",
+      "s3_title": "Sign the request",
+      "s3_desc": "create_conjur_iam_api_key builds a JSON header with an AWS SigV4 signature for sts:GetCallerIdentity. This header replaces the API key.",
+      "s4_title": "Secrets Manager asks AWS",
+      "s4_desc": "get_conjur_iam_session_token posts the header to authn-iam. Secrets Manager replays it to AWS STS and compares the returned account and role with the workload ID.",
+      "s5_title": "Token and client",
+      "s5_desc": "On a match, Secrets Manager returns an access token and create_conjur_iam_client returns a ready Python client built on that token.",
+      "s6_title": "Read the secret",
+      "s6_desc": "client.get(id) asks for the variable. Policy must grant the workload read and execute; the value comes back as bytes and stays in memory.",
+      "s7_title": "The token runs out",
+      "s7_desc": "The client does not refresh its token. After five to eight minutes requests fail, so the script calls create_conjur_iam_client again and repeats the signed login."
+    }
+  },
+  "pf_cf": {
+    "badge": "Platforms · Cloud Foundry",
+    "title": "Cloud Foundry and VMware Tanzu",
+    "subtitle": "A Service Broker gives every Cloud Foundry application its own identity in Secrets Manager, and a buildpack injects the secrets into the app environment at start. Documented for Self-Hosted only.",
+    "flow_title": "From cf push to a database login",
+    "flow_lead": "The developer never sees an API key. Binding the app to the service creates its identity; the buildpack uses it at start-up.",
+    "how_title": "Who does what",
+    "how_lead": "The parts of the integration and what each one owns.",
+    "col_component": "Component",
+    "col_role": "Role",
+    "roles": [
+      [
+        "Service Broker (tile)",
+        "Registers the cyberark-conjur service with the community plan in the Marketplace. Adds and removes host identities in its policy branch as apps are bound and unbound."
+      ],
+      [
+        "Service instance",
+        "One per space (cf create-service). Creates org and space groups in Secrets Manager, named by their GUIDs, so you can entitle a whole org or space."
+      ],
+      [
+        "Binding",
+        "cf bind-service (or the manifest) creates a host whose ID is the binding ID. The login appears as authn_login in VCAP_SERVICES."
+      ],
+      [
+        "Buildpack (conjur_buildpack)",
+        "Runs Summon at app start: reads secrets.yml, fetches each !var with the bound identity and puts the values in the process environment (or a temp file with !var:file)."
+      ],
+      [
+        "Broker host",
+        "The Secrets Manager host the tile logs in with. Needs create and update on the dedicated policy branch (or on root if there is none)."
+      ],
+      [
+        "Policy",
+        "Grants read and execute to the org, space or app host. Secrets are best kept in a branch outside the one the broker manages."
+      ]
+    ],
+    "when_title": "When to use",
+    "when": [
+      "Applications on Tanzu Application Service or open source Cloud Foundry that should get secrets without a credential in the manifest.",
+      "Teams that want least privilege per org, per space or per application.",
+      "Apps that read configuration from environment variables: Summon fills them, no code change.",
+      "Concourse pipelines on Tanzu: Concourse supports Secrets Manager natively as a credential manager."
+    ],
+    "diff_title": "Identity models",
+    "diff": [
+      "App-scoped (default): one host per bound app. Each bind talks to the Leader.",
+      "Space-scoped (Enable Space-scoped App Identities): one host per space, shared by every app. Binding only needs a Follower, which helps availability and scale.",
+      "With space-scoped identities, grant access only to the org and space groups: individual apps cannot be entitled.",
+      "Tile versions before 1.5.0 used layers instead of groups for org and space."
+    ],
+    "limits_title": "Documented limitations",
+    "limits": [
+      "Documented for Secrets Manager Self-Hosted only. There is no SaaS page for Cloud Foundry or Tanzu.",
+      "Each space needs its own service instance: instances cannot be shared across spaces.",
+      "Without a dedicated policy branch, the broker host needs create and update on root, which lets it edit any policy.",
+      "Secrets are fetched once at start-up. A rotated value reaches the app only after a restart or restage.",
+      "Rotating an app-scoped API key means unbind and bind: that issues a new identity, so app-specific grants must be given again.",
+      "Rotating a space host key means updating the key in Secrets Manager, then rebinding and restaging every app in the space.",
+      "Compatibility: Ops Manager v2.7 to v3.0, TAS v4, v5, v6 and 10.2. Multiple buildpacks need cf CLI newer than 6.38."
+    ],
+    "docs_title": "Official documentation",
+    "docs": [
+      "Cloud Foundry (Self-Hosted)",
+      "VMware Tanzu overview",
+      "Service Broker for VMware Tanzu",
+      "Install and configure the Service Broker",
+      "Use the Service Broker",
+      "Service Broker on GitHub",
+      "Buildpack on GitHub"
+    ],
+    "flow": {
+      "diagram_label": "Animated diagram: the Service Broker creates an identity for a Cloud Foundry app and the buildpack fetches its secrets at start",
+      "n_cli_sub": "developer",
+      "n_broker": "Service Broker",
+      "n_app": "Cloud Foundry app",
+      "n_sm_sub": "Self-Hosted · policy branch",
+      "n_db": "Database",
+      "n_db_sub": "credentials from Secrets Manager",
+      "r_instance": "Instance",
+      "r_binding": "Binding",
+      "r_identity": "Identity",
+      "r_summon": "Summon",
+      "r_secret": "Secrets",
+      "r_groups": "Groups",
+      "r_session": "Session",
+      "st_pending": "pending",
+      "st_idle": "idle",
+      "st_check": "checking",
+      "st_space": "per space",
+      "st_env": "in env",
+      "st_created": "created",
+      "st_allowed": "allowed",
+      "st_connected": "connected",
+      "l_leader": "app bind · Leader",
+      "l_follower": "HTTPS · Follower",
+      "p_groups": "org/space groups",
+      "p_host": "host = binding ID",
+      "p_vcap": "authn_login",
+      "p_auth": "authenticate",
+      "p_secret": "secret values",
+      "p_login": "DB login",
+      "s1_title": "Broker, buildpack, Secrets Manager",
+      "s1_desc": "The Service Broker manages identities; the buildpack uses them. Both talk to a Self-Hosted Secrets Manager, which can live outside Cloud Foundry.",
+      "s2_title": "Create the service in the space",
+      "s2_desc": "cf create-service cyberark-conjur community creates one instance in the space. The broker adds groups for the org and the space, named by their GUIDs.",
+      "s3_title": "Push and bind",
+      "s3_desc": "When the app is pushed and bound, the broker creates a host whose ID is the binding ID and adds it to the org and space groups.",
+      "s4_title": "Identity in VCAP_SERVICES",
+      "s4_desc": "The binding credentials, including authn_login, reach the app in VCAP_SERVICES. They are visible only to the app, not to other users.",
+      "s5_title": "Summon at start-up",
+      "s5_desc": "The buildpack runs Summon, which reads secrets.yml and authenticates with the bound identity. Policy checks the grants on each !var.",
+      "s6_title": "Values in the environment",
+      "s6_desc": "The values are injected into the app process environment only, and disappear when the process exits. !var:file writes a temp file instead.",
+      "s7_title": "Use the secret",
+      "s7_desc": "The app reads DB_PASSWORD from its environment and logs in. No secret was ever written to the manifest or the repository."
+    }
+  },
+  "pf_puppet": {
+    "badge": "Platforms · Puppet",
+    "title": "Puppet",
+    "subtitle": "An official Puppet module configures workload identity at scale: each node gets its own Secrets Manager identity and fetches secrets with it, instead of having them compiled into the catalog. Documented for Self-Hosted only.",
+    "flow_title": "How a node gets a secret during a Puppet run",
+    "flow_lead": "The catalog carries a deferred call, not the value. The agent resolves it with its own identity at apply time.",
+    "how_title": "Who does what",
+    "how_lead": "The page in the documentation is short and points to the module README; these are the moving parts.",
+    "col_component": "Component",
+    "col_role": "Role",
+    "roles": [
+      [
+        "Puppet module",
+        "Open source, hosted on GitHub and published to the Puppet Forge. Configures the workload so it can make authenticated calls to Secrets Manager."
+      ],
+      [
+        "Puppet Server",
+        "Compiles the catalog. With a Deferred function the secret is not resolved on the server, so it does not land in the catalog or in reports."
+      ],
+      [
+        "Puppet agent (node)",
+        "Holds the node identity (a host and its API key), authenticates to Secrets Manager and fetches the secret when the catalog is applied."
+      ],
+      [
+        "Secrets Manager host",
+        "One identity per node or per group of nodes, declared in policy like any other workload."
+      ],
+      [
+        "Policy",
+        "Grants the node host read and execute on the variables it needs."
+      ]
+    ],
+    "when_title": "When to use",
+    "when": [
+      "Estates already managed by Puppet that need to place passwords, keys or certificates in configuration files and services.",
+      "Removing secrets from Hiera data, manifests and the compiled catalog.",
+      "Giving every node its own identity so access can be granted and revoked per node.",
+      "Linux and Windows fleets configured the same way at scale."
+    ],
+    "diff_title": "What to know before you start",
+    "diff": [
+      "The documentation page is a pointer: the module README on GitHub is the full reference (parameters, identity setup, examples).",
+      "Deferred functions, which let the agent fetch at apply time, need Puppet 6 or later.",
+      "The node identity is an API key: protect it on disk and rotate it like any other secret zero.",
+      "The module is open source, so check its supported Puppet and OS versions in the README before rollout."
+    ],
+    "limits_title": "Documented limitations",
+    "limits": [
+      "Documented for Secrets Manager Self-Hosted only. There is no SaaS page for Puppet.",
+      "The official page gives no feature matrix; all details live in the module documentation on GitHub.",
+      "Authentication uses a host API key on the node: anyone who copies it can authenticate until it is rotated.",
+      "A secret resolved on the server instead of with Deferred ends up in the catalog, PuppetDB and reports."
+    ],
+    "docs_title": "Official documentation",
+    "docs": [
+      "Puppet (Self-Hosted)",
+      "Puppet module on GitHub",
+      "Module on the Puppet Forge"
+    ],
+    "flow": {
+      "diagram_label": "Animated diagram: a Puppet agent uses its own identity to fetch a secret at apply time",
+      "n_srv_sub": "compiles the catalog",
+      "n_agent": "Puppet agent",
+      "n_agent_sub": "node · Puppet module",
+      "n_tgt": "Managed resource",
+      "n_tgt_sub": "config file · service",
+      "r_catalog": "Catalog",
+      "r_identity": "Identity",
+      "r_token": "Access token",
+      "r_secret": "Secret",
+      "r_state": "State",
+      "st_pending": "pending",
+      "st_idle": "idle",
+      "st_check": "checking",
+      "st_novalue": "no value",
+      "st_received": "received",
+      "st_apply": "at apply",
+      "st_valid": "valid",
+      "st_allowed": "allowed",
+      "st_applied": "applied",
+      "p_catalog": "catalog + Deferred",
+      "p_auth": "host API key",
+      "p_token": "access token",
+      "p_secret": "secret value",
+      "p_apply": "write config",
+      "s1_title": "The node has its own identity",
+      "s1_desc": "With the Puppet module, every node is a workload in Secrets Manager. The server orchestrates, but the node is the one that asks for secrets.",
+      "s2_title": "Identity on the agent",
+      "s2_desc": "The node is configured once with its host ID and API key. From then on it can make authenticated calls on its own.",
+      "s3_title": "A catalog without the value",
+      "s3_desc": "Puppet Server compiles a catalog where the secret is a Deferred call. What travels to the agent is the instruction, not the password.",
+      "s4_title": "The agent authenticates",
+      "s4_desc": "At apply time the agent sends its API key to the authn endpoint and receives a short-lived access token.",
+      "s5_title": "Fetch at apply time",
+      "s5_desc": "The deferred function asks for the variable. Policy checks the node grant and the value comes back only to that agent.",
+      "s6_title": "Configure the resource",
+      "s6_desc": "The agent writes the file or configures the service with the value. The secret never sat in the catalog, PuppetDB or Hiera."
+    }
+  },
+  "pf_mulesoft": {
+    "badge": "Platforms · MuleSoft",
+    "title": "MuleSoft Connector",
+    "subtitle": "A Mule connector that retrieves secrets from Secrets Manager inside a flow, so Mule applications stop carrying passwords for the systems they integrate. It authenticates with a workload API key.",
+    "flow_title": "How a Mule flow gets its secrets",
+    "flow_lead": "The Retrieve secret operation runs inside the flow: authenticate, ask for a list of secrets, pass the values to the next step.",
+    "how_title": "Who does what",
+    "how_lead": "What you add to the Mule project and what you set up in Secrets Manager.",
+    "col_component": "Component",
+    "col_role": "Role",
+    "roles": [
+      [
+        "conjur-mule-connector",
+        "Mule plugin (Maven Central or built from GitHub) that adds the Retrieve secret operation (ConjurVaultConnector)."
+      ],
+      [
+        "Connection properties",
+        "Account, Secrets Manager URL, workload ID, workload API key and, for Edge or Self-Hosted, the SSL certificate (.pem) or cert file (.der)."
+      ],
+      [
+        "Secure properties",
+        "Placeholders such as ${secure::conjur.*} in a conjur.properties file keep the API key out of the configuration XML."
+      ],
+      [
+        "Workload (host)",
+        "Declared with authn/api-key: true on SaaS (or created on the Workloads page). Its API key is the connector login."
+      ],
+      [
+        "Policy",
+        "Grants the workload the Safe consumers group, for example delegation/consumers under data/vault/{safe}."
+      ]
+    ],
+    "when_title": "When to use",
+    "when": [
+      "Mule applications that call databases, APIs or SaaS systems and today keep those credentials in properties files.",
+      "Secrets that live in a PAM Safe and are synced to Secrets Manager.",
+      "Teams that build in Anypoint Studio and want a drag-and-drop operation instead of REST calls.",
+      "Fetching several secrets in one operation (comma-separated key list)."
+    ],
+    "diff_title": "SaaS and Self-Hosted",
+    "diff": [
+      "SaaS: account is conjur, the URL is https://{subdomain}.secretsmgr.cyberark.cloud, the workload lives under data/ and secret IDs start with data/vault/.",
+      "SaaS: the SSL certificate or cert file is needed only when connecting to an Edge.",
+      "Self-Hosted: account is the one set at deployment, the host is loaded in root, secret IDs start with vault/, and a certificate file is required.",
+      "Both: secrets synced from your PAM solution (Privilege Cloud or PAM Self-Hosted)."
+    ],
+    "limits_title": "Documented limitations",
+    "limits": [
+      "API key authentication only: the connector holds a secret zero. Protect it with secure properties and rotate it.",
+      "Read only: the connector cannot create, update or remove secrets.",
+      "Requires Java 8 or 11 and Mule SDK 4.4.0.",
+      "The secrets list is comma-separated and does not accept spaces.",
+      "At least one certificate file (.pem or .der) is required for Edge (SaaS) and for Self-Hosted."
+    ],
+    "docs_title": "Official documentation",
+    "docs": [
+      "MuleSoft (SaaS)",
+      "MuleSoft (Self-Hosted)",
+      "conjur-mulesoft-connector on GitHub",
+      "conjur-mule-connector on Maven Central"
+    ],
+    "flow": {
+      "diagram_label": "Animated diagram: a Mule flow authenticates with an API key, retrieves secrets and calls a backend",
+      "n_props_sub": "secure:: placeholders",
+      "n_client": "REST client",
+      "n_client_sub": "calls the Mule flow",
+      "n_mule": "Mule application",
+      "n_backend": "Backend system",
+      "n_backend_sub": "database · API",
+      "r_config": "Connection",
+      "r_token": "Access token",
+      "r_secret": "Secrets",
+      "r_response": "Response",
+      "r_session": "Session",
+      "st_pending": "pending",
+      "st_idle": "idle",
+      "st_check": "checking",
+      "st_loaded": "loaded",
+      "st_received": "received",
+      "st_flow": "in the flow",
+      "st_valid": "valid",
+      "st_connected": "connected",
+      "p_props": "URL · workload · API key",
+      "p_request": "HTTP request",
+      "p_auth": "workload API key",
+      "p_token": "access token",
+      "p_secret": "secret values",
+      "p_login": "login",
+      "p_response": "response",
+      "s1_title": "A connector inside the flow",
+      "s1_desc": "The Mule application uses the Retrieve secret operation to get credentials from Secrets Manager when the flow runs.",
+      "s2_title": "Load the connection",
+      "s2_desc": "Account, URL, workload ID and API key come from conjur.properties through secure placeholders, not from values typed into the XML.",
+      "s3_title": "A request starts the flow",
+      "s3_desc": "Any REST client calls the deployed Mule application, and the flow reaches the Retrieve secret step.",
+      "s4_title": "Authenticate with the API key",
+      "s4_desc": "The connector sends the workload API key to Secrets Manager and receives an access token.",
+      "s5_title": "Retrieve the secrets",
+      "s5_desc": "With the token, the connector asks for the comma-separated list of secret IDs. Policy checks that the workload belongs to the Safe consumers group.",
+      "s6_title": "Use and respond",
+      "s6_desc": "The next step of the flow logs in to the backend with the values, and the Mule application answers the client."
+    }
+  },
+  "sm_summon": {
+    "badge": "Secrets Manager · Resources",
+    "title": "Summon",
+    "subtitle": "An open source CLI that fetches secrets from Secrets Manager and hands them to a process as environment variables, so they never live in source code, config files or shell history.",
+    "caps_title": "What Summon does",
+    "caps_lead": "One small binary plus a provider. It works with any language, because the application only reads environment variables.",
+    "caps": [
+      {
+        "title": "Environment variables for a child process",
+        "desc": "Summon reads secrets.yml, fetches each !var and starts your command with the values injected. They exist only in that process and vanish when it exits."
+      },
+      {
+        "title": "Files when an app needs them",
+        "desc": "Besides environment variables, Summon can write secrets to files in JSON, YAML or dotenv format, or render them through custom Go templates."
+      },
+      {
+        "title": "Pluggable providers",
+        "desc": "The Secrets Manager provider is one of several: Summon also has providers for AWS S3 and AWS Secrets Manager, so the same secrets.yml pattern works across stores."
+      }
+    ],
+    "flow_title": "How it works, step by step",
+    "flow_lead": "Summon runs on the same machine as the command it wraps. The provider authenticates with the identity already configured there, fetches only what secrets.yml lists and starts the child process.",
+    "flow": {
+      "diagram_label": "Summon flow: secrets.yml, Summon and its provider, Secrets Manager, the child process and the target system",
+      "n_yml_sub": "paths only, no values",
+      "n_sm_sub": "policy: execute on variables",
+      "n_child": "Child process",
+      "n_target": "Target system",
+      "n_target_sub": "database · cloud API",
+      "lane_host": "Same host",
+      "r_config": "secrets.yml",
+      "r_identity": "identity",
+      "r_values": "values",
+      "r_authn": "authn",
+      "r_audit": "audit",
+      "r_disk": "disk",
+      "r_session": "session",
+      "st_pending": "pending",
+      "st_idle": "idle",
+      "st_check": "checking",
+      "st_read": "read",
+      "st_token": "token",
+      "st_memory": "in memory",
+      "st_discarded": "discarded",
+      "st_valid": "valid",
+      "st_logged": "logged",
+      "st_exited": "process ended",
+      "st_nothing": "nothing written",
+      "st_connected": "connected",
+      "p_yml": "secrets.yml",
+      "p_authn": "authenticate",
+      "p_token": "access token",
+      "p_get": "GET !var",
+      "p_secret": "secret value",
+      "p_login": "login",
+      "s1_title": "Declare what the process needs",
+      "s1_desc": "secrets.yml maps environment variable names to Secrets Manager variable paths with the !var tag. It holds paths only, never values, so it can live in Git next to the code.",
+      "s2_title": "The provider authenticates",
+      "s2_desc": "Summon calls its Secrets Manager provider (summon-conjur), which authenticates with the identity already set up on the host, for example a CLI login or a host API key, and receives a short-lived access token.",
+      "s3_title": "Fetch only the listed secrets",
+      "s3_desc": "For each !var the provider requests the value. Policy must grant the identity execute (or update) on the variable, and every fetch is written to the audit trail.",
+      "s4_title": "Start the child with the values",
+      "s4_desc": "Summon starts the wrapped command, for example terraform apply, with the values as environment variables. With Terraform, names use the TF_VAR_ prefix so they become Terraform variables.",
+      "s5_title": "The child uses the secret",
+      "s5_desc": "The application reads DB_PASSWORD like any environment variable and connects. No SDK and no code change are needed.",
+      "s6_title": "Process ends, secrets go with it",
+      "s6_desc": "When the child exits, its environment is gone. Nothing was written to disk, and on the next run Summon fetches the current value again, so rotations are picked up at restart."
+    },
+    "roles_title": "Who does what",
+    "roles_lead": "Every piece lives outside your application code.",
+    "col_component": "Component",
+    "col_role": "Role",
+    "roles": [
+      [
+        "secrets.yml",
+        "Declares environment variable names and the Secrets Manager paths behind them (!var). Safe to commit: it carries no values."
+      ],
+      [
+        "Summon",
+        "Open source CLI from Palo Alto Networks. Parses secrets.yml, calls the provider, then starts the child process with the values."
+      ],
+      [
+        "Provider (summon-conjur)",
+        "Small executable that talks to Secrets Manager: authenticates with the host identity and fetches each variable."
+      ],
+      [
+        "IDIRA Secrets Manager",
+        "Checks the identity and the policy (execute or update on each variable), returns the values and records every fetch in the audit trail."
+      ],
+      [
+        "Child process",
+        "Any command: terraform, a script, a systemd service. Reads secrets as plain environment variables."
+      ]
+    ],
+    "example_title": "Example: Terraform with Summon",
+    "example_lead": "From the docs: map the TF_VAR_ names in secrets.yml, declare the variables in the manifest (variable \"access_key\" {}) and wrap the command. The second line shows the inline form used in a systemd ExecStart.",
+    "example_yml": "secrets.yml",
+    "example_run": "Run",
+    "when_title": "When to use Summon",
+    "when": [
+      "You already use Summon in the organization and want the same pattern for Terraform, scripts or services.",
+      "Legacy apps or scripts that read environment variables and cannot take an SDK.",
+      "systemd services: wrap ExecStart so the password is fetched at every start and never stored on disk.",
+      "Ansible managed nodes: the Secrets Manager Ansible role installs Summon on each node for local retrieval.",
+      "CI steps and local development, where a one line wrapper beats changing code."
+    ],
+    "diff_title": "Summon or another option?",
+    "diff_lead": "Summon is the lightest path. When a native integration exists, the docs usually point to it first.",
+    "col_topic": "Topic",
+    "col_detail": "Detail",
+    "diff": [
+      [
+        "Terraform",
+        "The docs recommend the Secrets Manager Terraform provider if you are not already familiar with Summon. The Summon route needs no installation besides Summon itself."
+      ],
+      [
+        "Kubernetes",
+        "Prefer Secrets Provider, the CSI driver or ESO. Summon can run inside a pod next to the Kubernetes Authenticator Client, which supplies the identity."
+      ],
+      [
+        "SDK or REST API",
+        "SDKs give per call control (refresh, error handling). Summon fetches once at start: a rotated value is only seen on the next run."
+      ],
+      [
+        "Edition",
+        "Works with Self-Hosted and SaaS: Summon is a client tool and only needs a reachable Secrets Manager plus an identity with access."
+      ]
+    ],
+    "limits_title": "Limits and caveats",
+    "limits": [
+      "Values are read once, when Summon starts the child. A long running process keeps the old value after a rotation until it restarts.",
+      "Environment variables are visible to the process, its children and anyone who can inspect that process on the host. Restrict host access accordingly.",
+      "Summon does not authenticate by itself: the provider relies on an identity already configured on the machine (CLI login, host API key or another supported method).",
+      "The identity needs execute or update privilege on every variable listed in secrets.yml, granted with permit statements in policy.",
+      "Summon is open source and versioned on its own (0.13.0 is listed with Self-Hosted 13.10). Install it from the GitHub repository; it is not part of the server."
+    ],
+    "limits_source": "Source: Terraform with the Summon utility (docs)",
+    "docs_title": "Official documentation",
+    "doc_summon": "Summon: inject secrets",
+    "doc_tf_summon": "Terraform with the Summon utility",
+    "doc_tf": "Terraform integrations overview",
+    "doc_ansible": "Ansible (SaaS): retrieve secrets with Summon",
+    "doc_site": "Summon website and provider list",
+    "doc_repo": "Summon on GitHub"
+  },
+  "sm_audit": {
+    "badge": "Secrets Manager · Resources",
+    "title": "Audit and SIEM",
+    "subtitle": "Every authentication, secret fetch and policy change leaves an event. See where those events land in Self-Hosted and in SaaS, and how they reach your SIEM.",
+    "env_sh": "Self-Hosted",
+    "env_saas": "SaaS",
+    "env_label": "Secrets Manager edition",
+    "caps_title": "What the audit trail gives you",
+    "caps_lead": "Accountability for machine identities: who (user or host) did what, on which resource, from where, and whether it worked.",
+    "caps": [
+      {
+        "title": "Who, what, which resource",
+        "desc": "Events tell whether the requester is a host or a user and carry the full ID of the resource involved, for example the variable that was fetched."
+      },
+      {
+        "title": "Standard formats",
+        "desc": "Self-Hosted follows Syslog RFC 5424 and also writes one JSON event per line. SaaS events live in the Audit service and export as CSV or through the SIEM API."
+      },
+      {
+        "title": "Built for detection",
+        "desc": "Send events to Splunk or another SIEM and alert, for example, when a host keeps trying to fetch a secret it is not allowed to read."
+      }
+    ],
+    "flow_title": "Where events go",
+    "flow_lead_sh": "Self-Hosted: the Leader and every Follower produce events; the Leader aggregates them and exposes files for your SIEM.",
+    "flow_lead_saas": "SaaS: events go to the platform Audit service; your SIEM pulls them through an API or the Splunk add-on.",
+    "flow": {
+      "diagram_label_sh": "Self-Hosted audit flow: workload, Follower, Leader, audit files and SIEM",
+      "diagram_label_saas": "SaaS audit flow: workload, Edge, Secrets Manager SaaS, Audit service and SIEM",
+      "n_wl": "Workload",
+      "n_wl_sub": "host identity",
+      "n_edge_sub": "Secrets Manager Edge",
+      "n_audit": "Audit service",
+      "n_audit_sub": "Activities · reports",
+      "n_follower_sub": "read-only replica",
+      "n_leader_sub": "aggregates the cluster",
+      "n_siem_sub_sh": "Splunk · log aggregator",
+      "lane_network": "Your network",
+      "lane_cloud": "IDIRA cloud",
+      "lane_cluster": "Secrets Manager cluster",
+      "lbl_siem_api": "OAuth2 + SIEM API",
+      "lbl_forwarder": "forwarder",
+      "r_request": "request",
+      "r_forward": "requests",
+      "r_edge_logs": "own logs",
+      "r_event": "event",
+      "r_source": "source",
+      "r_activities": "Activities",
+      "r_role": "role",
+      "r_report": "report",
+      "r_stoken": "token",
+      "r_sevents": "events",
+      "r_copy": "local copy",
+      "r_agg": "events",
+      "r_db": "audit DB",
+      "r_written": "written",
+      "r_indexed": "indexed",
+      "r_alert": "alert",
+      "st_pending": "pending",
+      "st_idle": "idle",
+      "st_fetched": "fetched",
+      "st_denied": "denied",
+      "st_forwarded": "forwarded",
+      "st_local": "on Edge only",
+      "st_workload": "workload",
+      "st_listed": "listed",
+      "st_ingested": "ingested",
+      "st_kept": "kept",
+      "st_received": "received",
+      "st_searchable": "searchable",
+      "st_line": "1 line/event",
+      "st_daily": "daily",
+      "st_30d": "kept 30 days",
+      "st_fired": "fired",
+      "p_fetch": "fetch secret",
+      "p_event": "audit event",
+      "p_query": "query (7 days)",
+      "p_events": "events",
+      "p_forwarded": "forwarded call",
+      "p_write": "append",
+      "p_denied": "fetch denied",
+      "p_failure": "failure event",
+      "sh_s1_title": "A workload fetches a secret",
+      "sh_s1_desc": "The request hits a Follower, which serves reads. It generates a Fetch Secret Value event. Followers only produce events for read operations such as Login, Authenticate, Check Permission and Fetch.",
+      "sh_s2_title": "The Follower keeps a local copy",
+      "sh_s2_desc": "Secrets Manager writes the event to syslog-ng over a UNIX socket, which writes audit.log and audit.json locally. Nothing is lost if the Follower loses contact with the Leader.",
+      "sh_s3_title": "Forwarded to the Leader over mTLS",
+      "sh_s3_desc": "syslog-ng forwards the event to the Leader on port 1999 with mutual TLS, and sends an empty MARK message every 30 seconds to keep the connection alive through proxies and load balancers.",
+      "sh_s4_title": "Stored in the audit database",
+      "sh_s4_desc": "On the Leader, events from the whole cluster land in a dedicated internal Postgres audit database on port 5433. That is what the Secrets Manager UI searches.",
+      "sh_s5_title": "Written to audit.json and audit.log",
+      "sh_s5_desc": "The Leader also writes every event to /var/log/conjur: audit.log in Syslog format and audit.json with one JSON event per line. logrotate rotates both daily and deletes compressed files after 30 days by default.",
+      "sh_s6_title": "Your SIEM ingests the file",
+      "sh_s6_desc": "Mount /var/log/conjur on the host and point a forwarder at audit.json. In Splunk, choose _json as the source type and every field is parsed.",
+      "sh_s7_title": "Alert on suspicious behavior",
+      "sh_s7_desc": "When a host keeps trying to fetch a secret it has no access to, the failure events reach the SIEM and an alert can go straight to the security team.",
+      "saas_s1_title": "A workload fetches a secret",
+      "saas_s1_desc": "Secrets Manager SaaS records the request as an audit event, here fetch-fetch. Other examples: authn-authenticate, update-update, policy-add, policy-change and policy-remove.",
+      "saas_s2_title": "The event reaches the Audit service",
+      "saas_s2_desc": "Events go to the platform Audit service, where the Activities page lists them with timestamp, event, username, action and service.",
+      "saas_s3_title": "Auditors review and export",
+      "saas_s3_desc": "Only users with the Global auditor role see the Audit service. They filter by day, week, month or a custom range and create CSV reports of up to 10,000 rows each.",
+      "saas_s4_title": "The SIEM pulls events",
+      "saas_s4_desc": "A service user tied to an OAuth2 client credentials app gets a token and calls the SIEM integration API, which returns events from the previous 7 days. Splunk can use the Audit add-on instead, and plugins exist for QRadar and Sentinel.",
+      "saas_s5_title": "Edge: forwarded calls are audited, Edge logs stay local",
+      "saas_s5_desc": "Requests that an Edge forwards to SaaS produce events in the Audit service. The Edge machine's own audits and logs are not there: collect them on the Edge itself."
+    },
+    "roles_title": "Who does what",
+    "roles_lead_sh": "Self-Hosted: syslog-ng on every node, aggregation on the Leader.",
+    "roles_lead_saas": "SaaS: the platform keeps the trail; you consume it.",
+    "col_component": "Component",
+    "col_role": "Role",
+    "roles_sh": [
+      [
+        "Leader and Followers",
+        "Generate events for API requests. Followers have a read-only database, so they only produce read events (login, authenticate, check permission, fetch)."
+      ],
+      [
+        "syslog-ng",
+        "Receives events over a UNIX socket, writes audit.log and audit.json and forwards Follower events to the Leader over mTLS on port 1999."
+      ],
+      [
+        "Audit database (Leader)",
+        "Internal Postgres on port 5433 with the events of the whole cluster. The UI uses it to search audit events."
+      ],
+      [
+        "logrotate",
+        "Rotates audit files daily (or above 40 MB), compresses the previous day and deletes files after 30 days. Configured in /etc/logrotate.d/conjur-audit."
+      ],
+      [
+        "SIEM or aggregator",
+        "Reads audit.json (or audit.log) from the host mount, for example with a Splunk universal forwarder."
+      ],
+      [
+        "Standbys",
+        "Do not serve traffic, so they produce no events unless promoted to Leader."
+      ]
+    ],
+    "roles_saas": [
+      [
+        "Secrets Manager SaaS",
+        "Creates an event for every request, including requests forwarded by an Edge."
+      ],
+      [
+        "Audit service",
+        "Platform service with the Activities page and Activities reports (CSV)."
+      ],
+      [
+        "Global auditor",
+        "Identity Administration role required to see the Audit service tile."
+      ],
+      [
+        "Service user and OAuth2 app",
+        "OAuth2 Server web app (jwtRS256 tokens, scope isp.audit.events:read) plus a confidential client user that your SIEM uses to call the API."
+      ],
+      [
+        "SIEM",
+        "Pulls events through the SIEM integration API, the Splunk add-on (Splunkbase) or the QRadar and Sentinel plugins."
+      ],
+      [
+        "Edge",
+        "Keeps its own audits and logs on the Edge machine."
+      ]
+    ],
+    "events_title": "Events you will see",
+    "events_lead_sh": "Self-Hosted event messages and what triggers them. Read-only events are the only ones a Follower can emit.",
+    "events_lead_saas": "Examples of SaaS audit event names, from the Audit documentation.",
+    "col_event": "Event",
+    "col_trigger": "Trigger",
+    "events_sh": [
+      [
+        "Login",
+        "Log in with username and password (read-only)"
+      ],
+      [
+        "Authenticate",
+        "Authenticate with Secrets Manager (read-only)"
+      ],
+      [
+        "Validate Authenticator Status",
+        "Check that an authenticator is configured (read-only)"
+      ],
+      [
+        "Check Permission",
+        "Check whether a role can perform an action on a resource (read-only)"
+      ],
+      [
+        "Fetch Secret Value",
+        "Retrieve the value of a secret (read-only)"
+      ],
+      [
+        "Set Secret Value",
+        "Add a new value to a secret"
+      ],
+      [
+        "Change Password",
+        "Change a user's password"
+      ],
+      [
+        "Rotate API Key",
+        "Rotate a role's API key"
+      ],
+      [
+        "Policy Add, Change, Remove",
+        "Load a policy that creates, updates or deletes a policy object"
+      ]
+    ],
+    "events_saas": [
+      [
+        "authn-authenticate",
+        "A workload or user authenticated"
+      ],
+      [
+        "fetch-fetch",
+        "A secret was retrieved"
+      ],
+      [
+        "update-update",
+        "A secret value was updated"
+      ],
+      [
+        "policy-add",
+        "A policy was created"
+      ],
+      [
+        "policy-change",
+        "A policy was updated"
+      ],
+      [
+        "policy-remove",
+        "A policy was removed"
+      ]
+    ],
+    "when_title": "When this matters",
+    "when": [
+      "Compliance evidence: prove which workload read which secret, and when.",
+      "Forensics after an incident: trace a leaked credential back to the hosts that fetched it.",
+      "Detection: alert on repeated denied fetches or unexpected policy changes.",
+      "Troubleshooting: see failed authentications and why a workload cannot read a variable."
+    ],
+    "diff_title": "Self-Hosted vs SaaS",
+    "diff_lead": "Same purpose, different plumbing.",
+    "col_topic": "Topic",
+    "col_detail": "Detail",
+    "diff": [
+      [
+        "Where events live",
+        "Self-Hosted: audit database plus audit.log and audit.json on the Leader (Followers keep local copies). SaaS: the platform Audit service."
+      ],
+      [
+        "Format",
+        "Self-Hosted: Syslog RFC 5424 plus JSON lines. SaaS: Activities view, CSV reports and the SIEM API."
+      ],
+      [
+        "Getting events to a SIEM",
+        "Self-Hosted: forward the files from the host mount. SaaS: OAuth2 service user and SIEM API, Splunk add-on, or QRadar and Sentinel plugins."
+      ],
+      [
+        "Retention",
+        "Self-Hosted: logrotate settings (30 days by default) plus whatever your SIEM keeps. SaaS: the SIEM API looks back 7 days and generated reports stay listed for 30 days, so pull events continuously."
+      ],
+      [
+        "Who can see them",
+        "Self-Hosted: the Secrets Manager UI audit search and whoever can read the files on the host. SaaS: users with the Global auditor role."
+      ]
+    ],
+    "limits_title_sh": "Self-Hosted limits and caveats",
+    "limits_sh": [
+      "Audits collected on the Leader are local and not replicated to other nodes: export them to a central system.",
+      "Default retention on disk is 30 days (daily rotation, or earlier when a file exceeds 40 MB). Customize /etc/logrotate.d/conjur-audit on the Leader and copy it to every Standby and Follower.",
+      "Standbys produce no events unless promoted to Leader.",
+      "Since version 13.10 the free text body of membership, members and resources events uses JSON for query parameters: update parsers, or read the structured_data fields.",
+      "Docker deployments must mount /var/log/conjur on the host so a forwarder can read the files (the AMI already does)."
+    ],
+    "limits_title_saas": "SaaS limits and caveats",
+    "limits_saas": [
+      "Only users with the Global auditor role see the Audit service.",
+      "Edge audits and logs are not in the Audit service; they stay on the Edge machine.",
+      "Activities reports are capped at 10,000 rows, exclude the last 24 hours, and at most ten reports run at once per region.",
+      "The SIEM integration API returns events from the previous 7 days only.",
+      "The Splunk add-on uses AWS IoT authentication and is not available in eu-south-1 (Milan), ap-southeast-3 (Jakarta) and il-central-1 (Tel Aviv)."
+    ],
+    "limits_source": "Source: official docs (audit service, reports, log rotation)",
+    "docs_title_sh": "Official documentation (Self-Hosted)",
+    "docs_title_saas": "Official documentation (SaaS)",
+    "doc_sh_overview": "Audit service",
+    "doc_sh_events": "Audit event reference",
+    "doc_sh_structure": "Audit log structure",
+    "doc_sh_thirdparty": "Integrate audit logs with third-party software",
+    "doc_sh_rotate": "Audit log file rotation",
+    "doc_sh_splunk": "Splunk integration",
+    "doc_sh_arch": "Architecture: audits on the Leader",
+    "doc_saas_lp": "Secrets Manager activity (SaaS)",
+    "doc_saas_events": "Secrets Manager SaaS audit events",
+    "doc_saas_activities": "View system activities",
+    "doc_saas_reports": "Generate activities reports",
+    "doc_saas_siem": "Integrate Audit with third-party SIEM applications",
+    "doc_saas_siem_api": "SIEM integration API",
+    "doc_saas_splunk": "Integrate Audit with Splunk"
+  },
+  "cp_zos": {
+    "badge": "Credential Providers",
+    "title": "Credential Provider for z/OS",
+    "subtitle": "Mainframe jobs and programs get passwords from the Vault at run time instead of keeping them in JCL, datasets or code. A local provider on each LPAR caches them and reaches the Vault through the Central Credential Provider.",
+    "caps_title": "What it does",
+    "caps_lead": "The same model as the other Credential Providers, adapted to z/OS: a started task, JCL friendly SDKs and a Windows Central CP as the bridge.",
+    "caps": [
+      {
+        "title": "Java and C/C++ SDKs",
+        "desc": "Jobs call clipasswordsdk.jar from JCL (request in SYSIN, password in CREDOUT) or link the C/C++ SDK natively or under USS."
+      },
+      {
+        "title": "Persistent secure cache",
+        "desc": "Passwords, application details and access rules are cached encrypted on the LPAR and refreshed every 180 seconds by default, so jobs keep running if the Vault or the network is down."
+      },
+      {
+        "title": "Rotation in sync",
+        "desc": "The CPM marks passwords before a scheduled change; the provider then reads them from the Vault instead of the cache, so it never hands out a stale password."
+      }
+    ],
+    "flow_title": "How it works, step by step",
+    "flow_lead": "Pick the PAM back end. On z/OS every Vault operation goes through the Central Credential Provider on Windows IIS.",
+    "flow": {
+      "diagram_label_sh": "z/OS Credential Provider flow with PAM Self-Hosted: job, z/OS provider, Central Credential Provider, Digital Vault, CPM and target system",
+      "diagram_label_saas": "z/OS Credential Provider flow with Privilege Cloud: job, z/OS provider, Central Credential Provider, Privilege Cloud, CPM and target system",
+      "n_job": "Batch job (JCL)",
+      "n_zcp_sub": "started task (STC)",
+      "n_ccp": "Central CP",
+      "n_cpm_sub_sh": "Central Policy Manager",
+      "n_cpm_sub_saas": "on the Connector",
+      "n_target": "Target system",
+      "n_target_sub": "database · FTP",
+      "lane_lpar": "z/OS LPAR",
+      "lane_network": "Your network",
+      "lane_dc": "Your data center",
+      "r_auth": "app auth",
+      "r_cache": "cache",
+      "r_log": "audit",
+      "r_fwd": "request",
+      "r_rotate": "password",
+      "r_mark": "notice",
+      "r_session": "session",
+      "st_pending": "pending",
+      "st_idle": "idle",
+      "st_check": "checking",
+      "st_password": "password",
+      "st_machine_user": "machine + user",
+      "st_empty": "empty",
+      "st_persistent": "persistent",
+      "st_refresh": "refreshing",
+      "st_logged": "logged",
+      "st_client_cert": "client cert",
+      "st_forwarded": "forwarded",
+      "st_allowed": "allowed",
+      "st_changed": "changed",
+      "st_marked": "marked",
+      "st_connected": "connected",
+      "p_request": "AppID + query",
+      "p_refresh": "cache refresh",
+      "p_get": "get password",
+      "p_secret": "password",
+      "p_password": "CREDOUT",
+      "p_login": "login",
+      "p_rotate": "new password",
+      "p_store": "store",
+      "s1_title": "No password in the JCL",
+      "s1_desc": "A batch job needs a database or FTP password. Instead of a dataset or a hardcoded value, it asks the z/OS Credential Provider, a started task on the same LPAR.",
+      "s2_title": "The job asks through the SDK",
+      "s2_desc": "A job step runs clipasswordsdk.jar through the JZOS launcher. SYSIN carries the AppID and a query (Safe, PolicyID, Username, Address), sent to the provider on port 18923.",
+      "s3_title": "The provider authenticates the application",
+      "s3_desc": "The application must be defined in the Vault with access to the Safe. On z/OS the provider checks allowed machines and the OS user; path, hash and certificate methods are not available.",
+      "s4_title": "Secure channel to the Central CP",
+      "s4_desc": "The provider reaches the Central Credential Provider web service over HTTPS, and a client certificate (mTLS) can be added. Plain HTTP works but is not recommended.",
+      "s5_title": "The Central CP fetches from the Vault",
+      "s5_desc": "The Central Credential Provider retrieves the password from the Vault or Privilege Cloud, which logs the access. The z/OS provider keeps it in its encrypted persistent cache.",
+      "s6_title": "Password delivered to the job",
+      "s6_desc": "The provider returns the password and the SDK writes it to the CREDOUT dataset. The docs advise restricting that dataset and keeping it only as long as needed. The provider logs the request.",
+      "s7_title": "The job connects",
+      "s7_desc": "The next job step uses the password on the target, for example an FTP transfer or a database login.",
+      "s8_title": "Rotation without stale passwords",
+      "s8_desc": "Before a scheduled change the CPM marks the password (ChangeNotificationPeriod), changes it on the target and stores it. On its next refresh the provider sees the mark and reads the password from the Vault instead of the cache."
+    },
+    "roles_title": "Who does what",
+    "roles_lead": "Every z/OS LPAR runs its own provider; the Central CP serves all of them.",
+    "col_component": "Component",
+    "col_role": "Role",
+    "roles": [
+      [
+        "Batch job or program",
+        "Calls the Java SDK (clipasswordsdk.jar, IBM JVM 1.8) or the C/C++ SDK against the provider on the same LPAR."
+      ],
+      [
+        "z/OS Credential Provider",
+        "Started task (STC) in the system PROCLIB, running under a UID 0 user. Authenticates applications, keeps the encrypted cache and writes audit, console and trace logs."
+      ],
+      [
+        "Central Credential Provider",
+        "Windows Credential Provider plus web service on IIS, which can be load balanced. Performs every Vault operation for the z/OS providers."
+      ],
+      [
+        "Digital Vault or Privilege Cloud",
+        "Stores the accounts in Safes, holds the application definitions and logs every access."
+      ],
+      [
+        "CPM",
+        "Changes and verifies passwords on the targets and marks them before a change so caches stay in sync."
+      ],
+      [
+        "PVWA",
+        "Web interface where you define applications, accounts and their dependencies."
+      ]
+    ],
+    "jcl_title": "Example: request a password from JCL",
+    "jcl_lead": "From the docs. SYSIN holds the request; CREDOUT receives the password and should be a fixed blocked sequential dataset.",
+    "when_title": "When to use it",
+    "when": [
+      "Mainframe batch jobs (FTP, database, file transfer) that today read passwords from datasets or JCL.",
+      "Compliance programs that require regular password changes on z/OS without editing jobs.",
+      "Sites that already run a Central Credential Provider and want to extend it to the mainframe.",
+      "Business critical jobs that must keep running during a Vault or network outage (persistent cache)."
+    ],
+    "diff_title": "PAM Self-Hosted vs Privilege Cloud",
+    "diff_lead": "The mainframe side is identical; what changes is where the Vault lives.",
+    "col_topic": "Topic",
+    "col_detail": "Detail",
+    "diff": [
+      [
+        "Vault",
+        "Self-Hosted: Digital Vault v12.2 or later in your data center. Privilege Cloud: the SaaS Vault."
+      ],
+      [
+        "Minimum versions",
+        "z/OS Credential Provider 14.2 needs Central Credential Provider 14.2 or later. With Privilege Cloud, z/OS based providers are supported only from version 14.2."
+      ],
+      [
+        "Central CP",
+        "Always yours: installed on Windows IIS in your network, in both models."
+      ],
+      [
+        "CPM",
+        "Self-Hosted: your CPM server. Privilege Cloud: the CPM on the Privilege Cloud Connector."
+      ],
+      [
+        "Connectivity",
+        "z/OS providers only talk to the Central CP; the Central CP talks to the Vault."
+      ]
+    ],
+    "limits_title": "Limits and caveats",
+    "limits": [
+      "Supported z/OS versions: 2.5, 3.1 and 3.2, with IBM Java 8, SMP/E V3R6 or later, IBM XML Toolkit V1.11 and JZOS.",
+      "IPv4 only.",
+      "One provider per LPAR, and the SDKs only talk to a provider on the same LPAR.",
+      "Application authentication is limited to allowed machines and OS user: no path, hash or certificate methods.",
+      "The STC must run under a UID 0 user, and changes to local_appprovider.conf need a provider restart.",
+      "Rotation sync does not cover one-time password policies (MinValidityPeriod) or Exclusive Safes. ChangeNotificationPeriod must be at least three times the combined refresh intervals.",
+      "Clocks on the z/OS server and the Vault must be synchronized to UTC (for example with NTP).",
+      "External processes using the SDKs (CICS, IMS, WAS) can affect provider performance."
+    ],
+    "limits_source": "Source: z/OS Credential Provider system requirements (docs)",
+    "config_title": "Key settings (local_appprovider.conf)",
+    "config_lead": "Validated at startup: an invalid value stops the provider and the error shows in the console log.",
+    "col_param": "Parameter",
+    "col_reco": "Default and guidance",
+    "config": [
+      [
+        "Port",
+        "18923. Where the provider listens for SDK requests."
+      ],
+      [
+        "ThreadPoolSize",
+        "3 threads to handle requests."
+      ],
+      [
+        "RemoteServerAddress",
+        "URL of the Central Credential Provider web service. Replace the default before the first start."
+      ],
+      [
+        "CacheLevel",
+        "None (Vault on every request) or Persistent (encrypted file plus memory, survives restarts)."
+      ],
+      [
+        "CacheFile",
+        "appprovider_cache.db, used with the Persistent level."
+      ],
+      [
+        "CacheRefreshInterval",
+        "180 seconds."
+      ],
+      [
+        "ChangeNotificationPeriod",
+        "Set in the CPM password policy: at least 3 times the provider plus Central CP refresh intervals (600 s and 400 s give 3000)."
+      ]
+    ],
+    "docs_title": "Official documentation",
+    "doc_solution": "The Credential Provider for z/OS",
+    "doc_sysreq": "System requirements",
+    "doc_sdk": "Application Password SDK",
+    "doc_java": "Java Application Password SDK (JCL)",
+    "doc_conf": "Local configuration file",
+    "doc_tls": "Secure communication with the Central CP",
+    "doc_sync": "Synchronize automatic password changes",
+    "doc_manage": "Manage the service",
+    "doc_authn": "Application authentication methods",
+    "doc_capacity": "Capacity and Privilege Cloud limitations"
   }
 }
