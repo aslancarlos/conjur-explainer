@@ -70,11 +70,9 @@
     "c_sh_sub": "Leader, Standbys e Followers",
     "c_swa": "Arquitetura do SWA",
     "c_swa_sub": "Server, agents, SVIDs e federação",
-    "sec_arch": "Arquiteturas",
-    "c_k8s_short": "Kubernetes",
-    "c_saas_short": "Secrets Manager SaaS",
-    "c_sh_short": "Secrets Manager Self-Hosted",
-    "group_swa": "Secure Workload Access"
+    "group_swa": "Secure Workload Access",
+    "group_sm": "Secrets Manager",
+    "sec_usecases": "Casos de uso"
   },
   "hero": {
     "eyebrow": "Identidade de máquina · Secrets · IDIRA by Palo Alto Networks",
@@ -145,7 +143,8 @@
     "prod_secretshub": "Sincroniza segredos gerenciados pelo PAM com os cofres nativos das nuvens.",
     "prod_pam": "Cofre e rotação pelo CPM; Dual Accounts mantêm os consumidores no ar durante a rotação.",
     "svid": "Um workload atestado recebe na hora sua identidade SPIFFE do Secure Workload Access: um X.509-SVID para mTLS e um JWT-SVID para a audience escolhida, lado a lado, com quando usar cada um.",
-    "group_swa": "Identidades SPIFFE para workloads: a arquitetura, um SVID ao vivo e acesso à nuvem sem chaves guardadas."
+    "group_swa": "Identidades SPIFFE para workloads: a arquitetura, um SVID ao vivo e acesso à nuvem sem chaves guardadas.",
+    "group_sm": "Arquiteturas, autenticação, policy e casos de uso: como os workloads recebem seus secrets."
   },
   "caps": {
     "kicker": "O que compartilham",
