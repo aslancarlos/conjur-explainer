@@ -1,11 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ChevronDown } from 'lucide-react'
 import { navBy, SECTIONS, type NavItem } from '../../lib/nav'
-
-// v2: groups now start collapsed (a fresh key so earlier 'all open' states do not stick)
-const GROUPS_KEY = 'idira-nav-groups-v2'
 
 /** Split a group's flat items into runs: plain items, or a run sharing one `section` (submenu). */
 function segments(items: NavItem[]) {
@@ -18,14 +15,12 @@ function segments(items: NavItem[]) {
   return out
 }
 
-function readOpen(): Record<string, boolean> {
-  try { return JSON.parse(localStorage.getItem(GROUPS_KEY) || '{}') } catch { return {} }
-}
-
 /**
  * Grouped site navigation (sidebar + mobile drawer).
- * - Each group header is a disclosure button: show / hide its items. Choice is
- *   persisted; the group holding the current page always opens.
+ * - Each group header is a disclosure button: show / hide its items. Every
+ *   group and submenu starts collapsed on each visit (nothing is persisted);
+ *   what the visitor opens stays open while they navigate. A collapsed group
+ *   that holds the current page gets a tinted header.
  * - Current page: tinted row + left accent bar + aria-current.
  * - `collapsed` (icon rail): no headers, every item visible, labels kept for
  *   screen readers and as tooltips.
@@ -36,21 +31,8 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
   const { t } = useTranslation()
   const { pathname } = useLocation()
   const groups = navBy('usecase')
-  const [open, setOpen] = useState<Record<string, boolean>>(readOpen)
+  const [open, setOpen] = useState<Record<string, boolean>>({})
   const isOpen = (key: string) => open[key] === true    // default: collapsed
-
-  // Navigating into a hidden group reveals it.
-  useEffect(() => {
-    const g = groups.find(gr => gr.items.some(i => i.to === pathname))
-    if (g && open[g.key] !== true) setOpen(o => ({ ...o, [g.key]: true }))
-    // ...and so does navigating into a hidden submenu (it can still be collapsed by hand)
-    const sec = g?.items.find(i => i.to === pathname)?.section
-    if (sec && open[`sec-${sec}`] !== true) setOpen(o => ({ ...o, [`sec-${sec}`]: true }))
-  }, [pathname]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    try { localStorage.setItem(GROUPS_KEY, JSON.stringify(open)) } catch { /* private mode */ }
-  }, [open])
 
   const toggle = (key: string) => {
     const opening = !isOpen(key)
