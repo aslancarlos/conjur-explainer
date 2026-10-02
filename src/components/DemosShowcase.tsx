@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight } from 'lucide-react'
 import { demoGroups } from '../lib/nav'
-import { useNavView } from '../lib/useNavView'
-import NavViewToggle from './shell/NavViewToggle'
 
 // The catalogue mirrors the sidebar (lib/nav.ts): same use-case / product
 // grouping and shared toggle, same icon per concept (DESIGN.md §9).
@@ -15,8 +13,7 @@ export default function DemosShowcase() {
   const reduce = useReducedMotion()
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
-  const [view] = useNavView()
-  const groupsList = demoGroups(view)
+  const groupsList = demoGroups('usecase')
 
   // Compact on purpose: the home teaches; this is the jump-off into the demos.
   return (
@@ -28,7 +25,6 @@ export default function DemosShowcase() {
             <h2 className="mt-3 text-[clamp(26px,3.4vw,40px)] font-bold leading-tight tracking-[-0.02em] text-text">{t('demos.title')}</h2>
             <p className="mt-4 text-base leading-relaxed text-text-2">{t('demos.subtitle')}</p>
           </div>
-          <div className="w-full max-w-sm"><NavViewToggle size="md" /></div>
         </div>
 
         <motion.div

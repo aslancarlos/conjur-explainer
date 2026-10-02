@@ -3,8 +3,6 @@ import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ChevronRight } from 'lucide-react'
 import { navBy, type NavItem } from '../../lib/nav'
-import { useNavView } from '../../lib/useNavView'
-import NavViewToggle from './NavViewToggle'
 
 const GROUPS_KEY = 'idira-nav-groups'
 
@@ -25,8 +23,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
 }) {
   const { t } = useTranslation()
   const { pathname } = useLocation()
-  const [view] = useNavView()
-  const groups = navBy(view)
+  const groups = navBy('usecase')
   const [open, setOpen] = useState<Record<string, boolean>>(readOpen)
   const isOpen = (key: string) => open[key] !== false   // default: expanded
 
@@ -34,7 +31,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
   useEffect(() => {
     const g = groups.find(gr => gr.items.some(i => i.to === pathname))
     if (g && open[g.key] === false) setOpen(o => ({ ...o, [g.key]: true }))
-  }, [pathname, view]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [pathname]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     try { localStorage.setItem(GROUPS_KEY, JSON.stringify(open)) } catch { /* private mode */ }
@@ -74,7 +71,6 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
 
   return (
     <div className="space-y-1">
-      {!collapsed && <NavViewToggle className="mb-3" size={dense ? 'sm' : 'md'} />}
       {groups.map((group, gi) => {
         const label = group.labelKey ? t(group.labelKey) : undefined
         const expanded = collapsed || !group.labelKey || isOpen(group.key)
