@@ -10,7 +10,7 @@ function readInitial(): Theme {
     const saved = localStorage.getItem(STORAGE_KEY) as Theme | null
     if (saved === 'light' || saved === 'dark') return saved
   } catch {
-    // localStorage blocked — fall through to system pref
+    // localStorage blocked. Fall through to system pref
   }
   return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
 }
@@ -22,7 +22,7 @@ function applyTheme(theme: Theme) {
 }
 
 /**
- * useTheme — IDIRA dark/light theme hook.
+ * useTheme. IDIRA dark/light theme hook.
  *
  * - Reads initial theme from `localStorage('idira-theme')`,
  *   falling back to `prefers-color-scheme`.

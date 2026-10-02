@@ -1,8 +1,30 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { readFileSync } from 'node:fs'
+import type { Plugin } from 'vite'
+
+// Local dev only: serve a sample of the access counter that production
+// publishes at /stats/visits.json (see k8s/site-stats/) and a fake like counter.
+const devVisits = (): Plugin => ({
+  name: 'dev-visits',
+  apply: 'serve',
+  configureServer(server) {
+    server.middlewares.use('/stats/visits.json', (_req, res) => {
+      res.setHeader('Content-Type', 'application/json')
+      res.end(readFileSync('k8s/site-stats/sample-visits.json'))
+    })
+    // like counter (site-likes) simulated in memory
+    let likes = 42
+    server.middlewares.use('/api/likes', (req, res) => {
+      if (req.method === 'POST') likes += 1
+      res.setHeader('Content-Type', 'application/json')
+      res.end(JSON.stringify({ likes, accepted: req.method === 'POST' }))
+    })
+  },
+})
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), devVisits()],
   base: '/',
   build: {
     // Split long-lived vendor libraries into their own chunks so that an app

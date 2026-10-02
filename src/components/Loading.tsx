@@ -2,7 +2,8 @@
 export default function Loading() {
   return (
     <div
-      className="min-h-[60vh] flex items-center justify-center"
+      // full viewport height keeps the footer below the fold while the chunk loads (no CLS)
+      className="min-h-[calc(100dvh-3.5rem)] flex items-center justify-center"
       role="status"
       aria-live="polite"
       aria-label="Loading"

@@ -2,6 +2,7 @@ import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ExternalLink, Puzzle } from 'lucide-react'
+import SidecarFlow from './flow/specs/SidecarFlow'
 
 const colorMap: Record<string, string> = {
   purple: 'text-dotnet border-dotnet/30 bg-dotnet/5',
@@ -31,17 +32,21 @@ export default function DotNetSection() {
           transition={{ duration: 0.5 }}
           className="space-y-3"
         >
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="badge bg-dotnet/10 text-dotnet border border-dotnet/20">{t('dotnet.badge')}</span>
             <span className="badge bg-bg-card border-border text-text-muted">{t('dotnet.label')}</span>
+            <span className="badge bg-bg-card border-border text-text-muted">{t('dotnet.example')}</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold flex items-center gap-3">
+          <h1 className="text-3xl sm:text-4xl font-bold flex items-center gap-3">
             <Puzzle size={32} className="text-dotnet" />
             {t('dotnet.title')}
             <span className="text-dotnet">{t('dotnet.titleAccent')}</span>
-          </h2>
+          </h1>
           <p className="text-text-muted leading-relaxed max-w-2xl">{t('dotnet.desc')}</p>
         </motion.div>
+
+        {/* How it works (FlowPlayer, DESIGN.md §10) */}
+        <SidecarFlow />
 
         {/* Zero-code highlight */}
         <motion.div
@@ -50,9 +55,9 @@ export default function DotNetSection() {
           className="section-card border-dotnet/20 bg-gradient-to-r from-dotnet/5 to-bg-card"
         >
           <p className="text-center text-2xl font-bold">
-            <span className="text-dotnet">Zero Conjur code</span>{' '}
-            <span className="text-text-muted font-normal text-lg">in the .NET application.</span>{' '}
-            <span className="text-text">The sidecar does the work.</span>
+            <span className="text-dotnet">{t('dotnet.banner_zero')}</span>{' '}
+            <span className="text-text-muted font-normal text-lg">{t('dotnet.banner_app')}</span>{' '}
+            <span className="text-text">{t('dotnet.banner_sidecar')}</span>
           </p>
         </motion.div>
 
@@ -88,36 +93,6 @@ export default function DotNetSection() {
 
           {/* Features + sidecar diagram */}
           <div className="space-y-6">
-            {/* Sidecar visual */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="section-card border-dotnet/20 space-y-4"
-            >
-              <h4 className="font-semibold text-text text-sm">Pod anatomy</h4>
-              <div className="rounded-xl border border-border bg-bg-base p-4 space-y-3">
-                {/* Pod container */}
-                <div className="text-xs text-text-muted font-mono mb-2">K8s Pod</div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-lg border border-dotnet/30 bg-dotnet/5 p-3 space-y-1">
-                    <div className="text-xs font-bold text-dotnet">secrets-provider</div>
-                    <div className="text-xs text-text-muted">authenticates with Conjur</div>
-                    <div className="text-xs text-text-muted">writes K8s Secret</div>
-                    <div className="w-2 h-2 rounded-full bg-dotnet animate-pulse-slow" />
-                  </div>
-                  <div className="rounded-lg border border-conjur-cyan/30 bg-conjur-cyan/5 p-3 space-y-1">
-                    <div className="text-xs font-bold text-conjur-cyan">dotnet app</div>
-                    <div className="text-xs text-text-muted">reads env vars</div>
-                    <div className="text-xs text-text-muted">DB_USER / DB_PASS</div>
-                    <div className="w-2 h-2 rounded-full bg-conjur-cyan animate-pulse-slow" />
-                  </div>
-                </div>
-                <div className="text-xs text-center text-text-muted font-mono">
-                  ↑ both share the same pod, different containers
-                </div>
-              </div>
-            </motion.div>
-
             {/* Features */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {features.map((f, i) => (
@@ -139,7 +114,7 @@ export default function DotNetSection() {
               href="/dotnet/usuarios"
               target="_blank"
               rel="noopener"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-dotnet text-white text-sm font-semibold hover:bg-dotnet/80 transition-colors"
+              className="inline-flex min-h-11 items-center gap-2 px-5 rounded-full bg-dotnet-solid text-white text-sm font-semibold hover:bg-dotnet-solid/90 transition-colors"
             >
               {t('dotnet.cta')} <ExternalLink size={14} />
             </motion.a>

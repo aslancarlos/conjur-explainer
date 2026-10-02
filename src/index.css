@@ -13,17 +13,29 @@
   --rgb-text-2:     42 51 68;
   --rgb-text-muted: 91 100 120;
 
-  /* Semantic tones — foreground-safe (≥ 4.5:1 on surface and bg-alt) */
+  /* Semantic tones: foreground-safe (≥ 4.5:1 on surface and bg-alt) */
   --rgb-tone-accent:  0 72 184;
   --rgb-tone-live:    14 116 144;
   --rgb-tone-success: 4 120 87;
-  --rgb-tone-warning: 161 98 7;
+  --rgb-tone-warning: 138 80 4;
   --rgb-tone-danger:  185 28 28;
 
-  /* Domain colours — who owns a component (never used for status) */
+  /* Domain colours: who owns a component (never used for status) */
   --rgb-domain-idira: 0 88 230;
   --rgb-domain-cp:    96 72 214;
   --rgb-domain-k8s:   194 65 12;
+  --rgb-domain-svc:   190 24 93;
+
+  /* Demo brand accents (text/icons/tints), AA on light surfaces */
+  --rgb-spring:  22 120 50;
+  --rgb-dotnet:  96 72 214;
+  --rgb-gh:      0 88 230;
+  --rgb-eso:     176 55 8;
+  --rgb-ansible: 185 28 28;
+  --rgb-csi:     37 90 210;
+  --rgb-conjur-red:  194 65 12;
+  --rgb-conjur-cyan: 14 116 144;
+  --rgb-conjur-gold: 138 80 4;
 
   color-scheme: light;
 }
@@ -46,6 +58,18 @@
   --rgb-domain-idira: 92 152 255;
   --rgb-domain-cp:    167 150 250;
   --rgb-domain-k8s:   255 138 92;
+  --rgb-domain-svc:   244 114 182;
+
+  /* Demo brand accents, AA on dark surfaces */
+  --rgb-spring:  74 222 128;
+  --rgb-dotnet:  167 150 250;
+  --rgb-gh:      125 176 255;
+  --rgb-eso:     255 138 92;
+  --rgb-ansible: 255 122 122;
+  --rgb-csi:     125 165 255;
+  --rgb-conjur-red:  250 88 45;
+  --rgb-conjur-cyan: 0 212 255;
+  --rgb-conjur-gold: 255 184 0;
 
   color-scheme: dark;
 }
@@ -91,7 +115,7 @@
 }
 .skip-link:focus { transform: translateY(0); }
 
-/* Iridescent shimmer — official IDIRA palette (cyan → sky → blue) */
+/* Iridescent shimmer: official IDIRA palette (cyan → sky → blue) */
 .idira-shimmer {
   background: linear-gradient(95deg, #4ad1f0 0%, #00c0e8 26%, #2589ff 62%, #265bff 100%);
   background-size: 200% 100%;
@@ -130,9 +154,9 @@
   }
 }
 
-/* ─── Modern IDIRA home: mesh, grid, promise band (PANTONE palette) ─── */
+/* ─── Modern IDIRA home: mesh and grid (PANTONE palette) ─── */
 
-/* Animated iridescent mesh — official IDIRA blues/cyan + subtle orange accent */
+/* Animated iridescent mesh: official IDIRA blues/cyan + subtle orange accent */
 .hero-mesh {
   background:
     radial-gradient(ellipse 55% 50% at 78% 26%, rgba(38, 91, 255, 0.40), transparent 60%),
@@ -158,50 +182,7 @@
 /* Diagonal-cut primary CTA */
 .cta-diagonal { clip-path: polygon(0 0, 100% 0, calc(100% - 13px) 100%, 0 100%); }
 
-/* Promise band — always deep navy, rotating conic PANTONE gradient behind */
-.idira-promise {
-  background: #0f1b3a;
-  color: #f0f4fc;
-  border-radius: 28px;
-  padding: clamp(48px, 7vw, 96px) clamp(26px, 6vw, 64px);
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-.idira-promise::before {
-  content: '';
-  position: absolute;
-  top: -40%; right: -12%;
-  width: 72%; height: 200%;
-  background: conic-gradient(from 210deg, #0f1b3a, #265bff 24%, #4ad1f0 48%, #007bff 70%, #fa582d 88%, #0f1b3a 100%);
-  filter: blur(92px);
-  opacity: 0.55;
-  z-index: -1;
-  animation: idira-spin 42s linear infinite;
-}
-@keyframes idira-spin { to { transform: rotate(360deg); } }
-
-.idira-promise-zero {
-  display: inline-block;
-  position: relative;
-  font: 800 clamp(150px, 21vw, 290px)/0.85 'Onest', system-ui, sans-serif;
-  letter-spacing: -0.07em;
-  background: linear-gradient(180deg, #ffffff 0%, rgba(184, 196, 220, 0.38) 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-}
-.idira-promise-zero::after {
-  content: '';
-  position: absolute;
-  bottom: 0.2em; right: -0.16em;
-  width: 0.13em; height: 0.13em;
-  background: #fa582d;
-  border-radius: 50%;
-  box-shadow: 0 0 26px 6px rgba(250, 88, 45, 0.55);
-}
-
-/* Navbar — modern iridescent line matching the hero */
+/* Navbar: modern iridescent line matching the hero */
 .nav-iridescent::after {
   content: '';
   position: absolute;
@@ -209,4 +190,13 @@
   height: 1px;
   background: linear-gradient(90deg, transparent 0%, rgba(74, 209, 240, 0.55) 22%, rgba(37, 137, 255, 0.55) 48%, rgba(38, 91, 255, 0.45) 72%, transparent 100%);
   opacity: 0.75;
+}
+
+/* Sidebar / drawer navigation: a soft fade on the bottom edge hints that the
+   list scrolls; the nav's bottom padding keeps the last item clear of it. */
+.nav-scroll {
+  scrollbar-gutter: stable;
+  scroll-padding-block: 16px 48px;   /* auto-reveal stops clear of the fade */
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+          mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
 }

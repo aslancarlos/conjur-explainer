@@ -263,7 +263,7 @@ function Ring({ id, b }: { id: NodeId; b: Box }) {
 
 const ICON = 15
 
-/** Lucide icon in a round chip sitting on the card's top edge — never competes
+/** Lucide icon in a round chip sitting on the card's top edge. Never competes
  *  with the title for width, so it works on the narrow layout too. */
 function CardIcon({ b, Icon, domain, cls }: { b: Box; Icon: LucideIcon; domain: Domain; cls?: string }) {
   const cx = b.x + b.w - 24, cy = b.y - 2
@@ -594,7 +594,7 @@ export default function DualAccountsPage() {
 
   const restart = () => go(0)
 
-  // Keyboard is scoped to the player card — it never hijacks the page.
+  // Keyboard is scoped to the player card: it never hijacks the page.
   const onKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
     const onButton = (e.target as HTMLElement).tagName === 'BUTTON'
     switch (e.key) {
@@ -648,7 +648,7 @@ export default function DualAccountsPage() {
 
   return (
     <section id="dualaccounts" className="bg-bg-muted/40">
-      {/* Hero band — always deep navy with the official IDIRA "security layers"
+      {/* Hero band. Always deep navy with the official IDIRA "security layers"
           backdrop, mesh and dot grid, mirroring the home page Hero. */}
       <header className="relative overflow-hidden bg-[#070c1c] text-white">
         <img src={securityLayers} alt="" aria-hidden="true"
@@ -769,7 +769,7 @@ export default function DualAccountsPage() {
                   className={PLANE[id] === 'data' ? 'stroke-tone-live' : 'stroke-tone-accent'} />
               ))}
 
-              {/* lane labels — haloed so edges passing underneath never cut the text */}
+              {/* lane labels, haloed so edges passing underneath never cut the text */}
               {(['cp', 'k8s'] as const).map(k => {
                 const LaneIcon = k === 'cp' ? ServerCog : Container
                 const d = DOMAIN[k]
@@ -924,7 +924,7 @@ export default function DualAccountsPage() {
                 <LoginValue k="loginPods" b={n.pods} y={96} t={t} />
               </NodeCard>
 
-              {/* packets — on top of everything */}
+              {/* packets. On top of everything */}
               {packets.map(p => {
                 const w = pillWidth(p.label)
                 const data = PLANE[p.edge] === 'data'
@@ -943,7 +943,7 @@ export default function DualAccountsPage() {
             </svg>
           </div>
 
-          {/* legend — two groups: who owns a component vs. what a signal means */}
+          {/* legend. Two groups: who owns a component vs. what a signal means */}
           <div className="px-4 sm:px-6 pb-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-text-2">
             <span className="font-semibold uppercase tracking-wider text-text-muted">{t('dual.legend_components')}</span>
             <ul className="flex flex-wrap gap-x-4 gap-y-2">
@@ -1006,7 +1006,7 @@ export default function DualAccountsPage() {
           <span>{t('dual.sources_label')}</span>
           {(['manage', 'configure', 'repr'] as const).map(k => (
             <a key={k} href={DOCS[k]} target="_blank" rel="noreferrer"
-              className="inline-flex items-center gap-1 text-tone-accent hover:underline underline-offset-4">
+              className="inline-flex min-h-11 items-center gap-1 text-tone-accent hover:underline underline-offset-4">
               {t(`dual.src_${k}`)}<ExternalLink size={12} aria-hidden="true" />
             </a>
           ))}

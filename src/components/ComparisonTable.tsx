@@ -54,7 +54,7 @@ export default function ComparisonTable() {
           <span className="badge bg-conjur-gold/10 text-conjur-gold border border-conjur-gold/20">
             {t('compare.badge')}
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold">{t('compare.title')}</h2>
+          <h1 className="text-3xl sm:text-4xl font-bold">{t('compare.title')}</h1>
           <p className="text-text-muted max-w-2xl mx-auto">{t('compare.subtitle')}</p>
         </motion.div>
 
@@ -98,7 +98,7 @@ export default function ComparisonTable() {
           </table>
         </motion.div>
 
-        {/* Best-for cards — 4 columns */}
+        {/* Best-for cards. 4 columns */}
         <motion.div
           initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.7 }}

@@ -1,5 +1,8 @@
 # IDIRA Redesign — UX & Visual Language
 
+> **Superseded by [`DESIGN.md`](../DESIGN.md) (2026-09-30).** Palette values below are historical.
+
+
 **Date:** 2026-05-27
 **Scope:** Full reskin of `demo.minha.cloud` (this repo) following the visual language of [paloaltonetworks.com/idira](https://www.paloaltonetworks.com/idira), plus a user-selectable dark / light theme and a pass of WCAG-aligned accessibility fixes.
 

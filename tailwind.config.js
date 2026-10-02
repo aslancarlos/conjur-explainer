@@ -38,6 +38,7 @@ export default {
           idira: 'rgb(var(--rgb-domain-idira) / <alpha-value>)',
           cp:    'rgb(var(--rgb-domain-cp) / <alpha-value>)',
           k8s:   'rgb(var(--rgb-domain-k8s) / <alpha-value>)',
+          svc:   'rgb(var(--rgb-domain-svc) / <alpha-value>)',
         },
 
         // ─── Brand accents (constant in both themes) ───────────────────
@@ -53,18 +54,27 @@ export default {
         },
 
         // ─── Per-workload accents ──────────────────────────────────────
-        spring:  '#2d8a3e',
-        dotnet:  '#6048d6',
-        gh:      '#0067ff',
-        eso:     '#fa582d',
-        ansible: '#ee0000',
-        csi:     '#326ce5',
+        // Demo brand accents: theme-aware for text/icons/tints (AA in both themes);
+        // *-solid are fixed darker fills for buttons with white text (>= 4.5:1).
+        spring:  'rgb(var(--rgb-spring) / <alpha-value>)',
+        dotnet:  'rgb(var(--rgb-dotnet) / <alpha-value>)',
+        gh:      'rgb(var(--rgb-gh) / <alpha-value>)',
+        eso:     'rgb(var(--rgb-eso) / <alpha-value>)',
+        ansible: 'rgb(var(--rgb-ansible) / <alpha-value>)',
+        csi:     'rgb(var(--rgb-csi) / <alpha-value>)',
+        'spring-solid':  '#167832',
+        'dotnet-solid':  '#5a3fd0',
+        'gh-solid':      '#0058e6',
+        'eso-solid':     '#c2410c',
+        'ansible-solid': '#b91c1c',
+        'csi-solid':     '#255ad2',
 
         // ─── Legacy CyberArk-era names kept as aliases on IDIRA tones ──
+        // theme-aware (AA in both themes): vivid on dark, deeper on light
         conjur: {
-          red:  '#fa582d',
-          cyan: '#00d4ff',
-          gold: '#ffb800',
+          red:  'rgb(var(--rgb-conjur-red) / <alpha-value>)',
+          cyan: 'rgb(var(--rgb-conjur-cyan) / <alpha-value>)',
+          gold: 'rgb(var(--rgb-conjur-gold) / <alpha-value>)',
         },
       },
       fontFamily: {

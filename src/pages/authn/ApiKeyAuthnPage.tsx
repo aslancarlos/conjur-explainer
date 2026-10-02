@@ -1,0 +1,53 @@
+import { useTranslation } from 'react-i18next'
+import PageHeader from '../../components/PageHeader'
+import ApiKeyFlow from '../../components/flow/specs/authn/ApiKeyFlow'
+import { DocLinks, LimitsCallout, RoleTable, Section, SupportChips } from '../../components/authn/AuthnPieces'
+
+const DOCS = [
+  { key: 'doc_saas', href: 'https://docs.cyberark.com/secrets-manager-saas/latest/en/content/operations/authn/authn-default.htm' },
+  { key: 'doc_saas_api', href: 'https://docs.cyberark.com/secrets-manager-saas/latest/en/content/developer/conjur_api_api-key-authn.htm' },
+  { key: 'doc_saas_tokens', href: 'https://docs.cyberark.com/secrets-manager-saas/latest/en/content/conjurcloud/ccl-authentication.htm' },
+  { key: 'doc_sh', href: 'https://docs.cyberark.com/secrets-manager-sh/latest/en/content/operations/services/default_authn.htm' },
+] as const
+
+/** Authentication methods: the default API key authenticator (authn). */
+export default function ApiKeyAuthnPage() {
+  const { t } = useTranslation()
+  const p = (k: string) => t(`authn_apikey.${k}`)
+  const list = (k: string) => t(`authn_apikey.${k}`, { returnObjects: true }) as string[]
+  const rows = t('authn_apikey.roles', { returnObjects: true }) as Array<[string, string]>
+
+  return (
+    <section className="min-h-screen bg-bg-base px-6 py-16">
+      <div className="mx-auto max-w-5xl space-y-10">
+        <PageHeader badge={p('badge')} title={p('title')} subtitle={p('subtitle')}>
+          <SupportChips saas selfHosted />
+        </PageHeader>
+
+        <ApiKeyFlow />
+
+        <Section title={p('roles_title')} lead={p('roles_lead')}>
+          <RoleTable caption={p('roles_title')} colA={p('col_component')} colB={p('col_role')} rows={rows} />
+        </Section>
+
+        <Section title={p('when_title')}>
+          <ul className="grid gap-3 sm:grid-cols-2">
+            {list('when').map(w => (
+              <li key={w} className="rounded-xl border border-border bg-bg-card px-4 py-3 text-sm leading-relaxed text-text-2">{w}</li>
+            ))}
+          </ul>
+        </Section>
+
+        <LimitsCallout title={p('limits_title')} items={list('limits')}
+          source={{ label: p('limits_source'), href: DOCS[0].href }} />
+
+        <Section title={p('diff_title')}>
+          <RoleTable caption={p('diff_title')} colA={p('col_topic')} colB={p('col_detail')}
+            rows={t('authn_apikey.diff', { returnObjects: true }) as Array<[string, string]>} />
+        </Section>
+
+        <DocLinks title={p('docs_title')} links={DOCS.map(d => ({ label: p(d.key), href: d.href }))} />
+      </div>
+    </section>
+  )
+}

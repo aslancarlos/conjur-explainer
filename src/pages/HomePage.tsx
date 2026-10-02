@@ -1,28 +1,19 @@
-import { lazy, Suspense } from 'react'
 import Hero from '../components/Hero'
-import ProblemSection from '../components/ProblemSection'
+import FlowSection from '../components/FlowSection'
+import ConceptsGrid from '../components/ConceptsGrid'
 import DemosShowcase from '../components/DemosShowcase'
-import Capabilities from '../components/Capabilities'
-import IdiraPromise from '../components/IdiraPromise'
-import Loading from '../components/Loading'
 
-// Heavy below-the-fold SVG diagram — split out so it doesn't weigh down the
-// initial paint of the landing page.
-const ArchitectureDiagram = lazy(() => import('../components/ArchitectureDiagram'))
-
+/**
+ * Clean home (DESIGN.md §7): the idea (hero) → the flow, live → the Concepts
+ * trail (each topic is its own page) → jump into the demos.
+ */
 export default function HomePage() {
   return (
     <>
       <Hero />
-      <div id="problem">
-        <ProblemSection />
-      </div>
+      <FlowSection />
+      <ConceptsGrid />
       <DemosShowcase />
-      <Capabilities />
-      <Suspense fallback={<Loading />}>
-        <ArchitectureDiagram />
-      </Suspense>
-      <IdiraPromise />
     </>
   )
 }

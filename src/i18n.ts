@@ -3,6 +3,9 @@ import { initReactI18next } from 'react-i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import en from './locales/en.json'
 
+/** localStorage key holding the visitor's explicit language choice. */
+export const LANG_KEY = 'idira-lang'
+
 // English ships in the initial bundle (it is the default and the fallback).
 // The other locales are code-split and fetched on demand the first time they
 // are selected, keeping pt/es out of the initial download.
@@ -17,14 +20,28 @@ i18n
   .init({
     resources: { en: { translation: en } },
     fallbackLng: 'en',
+    // Every visit follows the browser language (navigator.languages), mapped
+    // to the closest supported one (es-MX -> es, pt-PT -> pt, fr -> en). Only
+    // an explicit choice in the language switch is stored (LANG_KEY) and wins.
+    supportedLngs: ['en', 'pt', 'es'],
+    nonExplicitSupportedLngs: true,
+    load: 'languageOnly',
+    detection: {
+      order: ['localStorage', 'navigator', 'htmlTag'],
+      lookupLocalStorage: LANG_KEY,
+      caches: [],
+    },
     interpolation: { escapeValue: false },
     // pt/es are code-split and loaded on demand (see ensureLocale below). With
     // react-i18next's default useSuspense, a non-English detected language would
-    // make useTranslation() suspend on first render — and NavBar sits outside the
+    // make useTranslation() suspend on first render, and NavBar sits outside the
     // app's Suspense boundary, so the whole tree fails to mount (blank screen).
     // Disable suspense: components render the `en` fallback immediately and
     // re-render once the real bundle arrives.
-    react: { useSuspense: false },
+    // bindI18nStore 'added': re-render every consumer when a lazy bundle lands,
+    // otherwise components that don't re-render for other reasons (sidebar,
+    // hero) keep showing the English fallback.
+    react: { useSuspense: false, bindI18nStore: 'added' },
   })
 
 async function ensureLocale(lng?: string) {
@@ -46,7 +63,9 @@ function syncDocumentLang(lng?: string) {
 }
 
 // Load the detected language at startup (if not English) and on every change.
-ensureLocale(i18n.language)
+// main.tsx awaits `localeReady` before the first render, so a returning pt/es
+// visitor never sees an English flash (and no component misses the update).
+export const localeReady = ensureLocale(i18n.language).catch(() => undefined)
 syncDocumentLang(i18n.language)
 i18n.on('languageChanged', (lng) => {
   ensureLocale(lng)

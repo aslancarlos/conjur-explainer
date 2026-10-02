@@ -2,6 +2,7 @@ import { motion, useInView } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ExternalLink, RefreshCw, ShoppingCart, BarChart2 } from 'lucide-react'
+import EsoFlow from './flow/specs/EsoFlow'
 
 interface HealthResponse {
   status: string
@@ -35,7 +36,8 @@ export default function ESOShopSection() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       setData(await res.json())
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'fetch failed')
+      console.warn('live endpoint unavailable:', e)
+      setError(t('shell.live_unavailable'))
     } finally {
       setLoading(false)
     }
@@ -60,17 +62,21 @@ export default function ESOShopSection() {
           transition={{ duration: 0.5 }}
           className="space-y-3"
         >
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <span className="badge bg-eso/10 text-eso border border-eso/20">{t('esoshop.badge')}</span>
             <span className="badge bg-bg-card border-border text-text-muted">{t('esoshop.label')}</span>
+            <span className="badge bg-bg-card border-border text-text-muted">{t('esoshop.example')}</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold flex items-center gap-3">
+          <h1 className="text-3xl sm:text-4xl font-bold flex items-center gap-3">
             <ShoppingCart size={32} className="text-eso" />
             {t('esoshop.title')}
             <span className="text-eso">{t('esoshop.titleAccent')}</span>
-          </h2>
+          </h1>
           <p className="text-text-muted leading-relaxed max-w-2xl">{t('esoshop.desc')}</p>
         </motion.div>
+
+        {/* How it works (FlowPlayer, DESIGN.md §10) */}
+        <EsoFlow />
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Steps */}
@@ -120,16 +126,16 @@ export default function ESOShopSection() {
                   onClick={fetchHealth}
                   disabled={loading}
                   aria-label="Refresh"
-                  className="p-1.5 rounded-lg text-text-muted hover:text-eso hover:bg-eso/10 transition-colors"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-text-muted hover:text-eso hover:bg-eso/10 transition-colors"
                 >
                   <RefreshCw size={14} aria-hidden="true" className={loading ? 'animate-spin' : ''} />
                 </button>
               </div>
 
-              <h4 className="font-semibold text-text">{t('esoshop.live_title')}</h4>
+              <h3 className="font-semibold text-text">{t('esoshop.live_title')}</h3>
 
               {error && (
-                <p className="text-xs text-conjur-red bg-conjur-red/10 rounded-lg px-3 py-2">{error}</p>
+                <p role="status" className="text-xs text-tone-warning bg-tone-warning/10 border border-tone-warning/30 rounded-lg px-3 py-2">{error}</p>
               )}
               {data && (
                 <div className="code-block space-y-1 text-xs">
@@ -178,7 +184,7 @@ export default function ESOShopSection() {
                 href="/k8s-eso/"
                 target="_blank"
                 rel="noopener"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-eso text-white text-sm font-semibold hover:bg-eso/80 transition-colors"
+                className="inline-flex min-h-11 items-center gap-2 px-5 rounded-full bg-eso-solid text-white text-sm font-semibold hover:bg-eso-solid/90 transition-colors"
               >
                 <ShoppingCart size={14} /> {t('esoshop.cta_shop')}
               </a>
@@ -186,7 +192,7 @@ export default function ESOShopSection() {
                 href="/k8s-eso/dashboard"
                 target="_blank"
                 rel="noopener"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-eso/30 text-eso text-sm font-semibold hover:bg-eso/10 transition-colors"
+                className="inline-flex min-h-11 items-center gap-2 px-5 rounded-full border border-eso/30 text-eso text-sm font-semibold hover:bg-eso/10 transition-colors"
               >
                 <BarChart2 size={14} /> {t('esoshop.cta_dashboard')}
               </a>
@@ -194,7 +200,7 @@ export default function ESOShopSection() {
                 href="/grafana"
                 target="_blank"
                 rel="noopener"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-conjur-gold/30 text-conjur-gold text-sm font-semibold hover:bg-conjur-gold/10 transition-colors"
+                className="inline-flex min-h-11 items-center gap-2 px-5 rounded-full border border-conjur-gold/30 text-conjur-gold text-sm font-semibold hover:bg-conjur-gold/10 transition-colors"
               >
                 <ExternalLink size={14} /> {t('esoshop.cta_grafana')}
               </a>

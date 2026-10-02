@@ -31,18 +31,18 @@ interface ApiRun {
 
 function StatusIcon({ status, conclusion }: { status: Status; conclusion: Conclusion }) {
   if (status === 'completed') {
-    if (conclusion === 'success')                             return <CheckCircle2 size={14} className="text-emerald-400" />
-    if (conclusion === 'failure' || conclusion === 'timed_out')return <XCircle      size={14} className="text-red-400"     />
-    if (conclusion === 'cancelled')                            return <MinusCircle  size={14} className="text-slate-500"   />
-    if (conclusion === 'skipped')                              return <Circle       size={14} className="text-slate-600"   />
-    if (conclusion === 'action_required')                      return <CircleDot    size={14} className="text-amber-400"   />
-    return <Circle size={14} className="text-slate-500" />
+    if (conclusion === 'success')                             return <CheckCircle2 size={14} className="text-tone-success" />
+    if (conclusion === 'failure' || conclusion === 'timed_out')return <XCircle      size={14} className="text-tone-danger"     />
+    if (conclusion === 'cancelled')                            return <MinusCircle  size={14} className="text-text-muted"   />
+    if (conclusion === 'skipped')                              return <Circle       size={14} className="text-text-muted"   />
+    if (conclusion === 'action_required')                      return <CircleDot    size={14} className="text-tone-warning"   />
+    return <Circle size={14} className="text-text-muted" />
   }
-  if (status === 'in_progress')                                return <Loader2 size={14} className="text-blue-400 animate-spin" />
+  if (status === 'in_progress')                                return <Loader2 size={14} className="text-tone-accent animate-spin" />
   if (status === 'waiting' || status === 'pending' || status === 'requested')
-                                                               return <CircleDot size={14} className="text-amber-400" />
-  if (status === 'queued')                                     return <Circle size={14} className="text-slate-500 animate-pulse" />
-  return <Circle size={14} className="text-slate-700" />
+                                                               return <CircleDot size={14} className="text-tone-warning" />
+  if (status === 'queued')                                     return <Circle size={14} className="text-text-muted animate-pulse" />
+  return <Circle size={14} className="text-text-muted" />
 }
 
 function fmtElapsed(start?: string | null, end?: string | null) {
@@ -101,7 +101,7 @@ export default function GhaLiveRunner({ stages }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [t])
 
-  // poll until run completes — stop the interval on completion, on repeated
+  // poll until run completes. Stop the interval on completion, on repeated
   // failures, and at a hard attempt cap so we never poll the backend forever.
   useEffect(() => {
     if (!runId) return
@@ -147,7 +147,7 @@ export default function GhaLiveRunner({ stages }: Props) {
       }))
     : stages.map(s => ({
         key:        s.n,
-        name:       `${s.n} — ${s.title}`,
+        name:       `${s.n}. ${s.title}`,
         status:     'idle' as Status,
         conclusion: null as Conclusion,
         elapsed:    '',
@@ -160,14 +160,14 @@ export default function GhaLiveRunner({ stages }: Props) {
     <div className="section-card border-gh/20 space-y-3">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2 min-w-0">
-          <h4 className="font-semibold text-text text-sm">{t('gha.runner.title')}</h4>
+          <h3 className="font-semibold text-text text-sm">{t('gha.runner.title')}</h3>
           {isLive && (
             <span className={`badge text-[10px] ${
               data!.run.status === 'completed'
                 ? data!.run.conclusion === 'success'
-                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                  : 'bg-red-500/10 text-red-400 border border-red-500/30'
-                : 'bg-blue-500/10 text-blue-400 border border-blue-500/30'
+                  ? 'bg-tone-success/10 text-tone-success border border-tone-success/30'
+                  : 'bg-tone-danger/10 text-tone-danger border border-tone-danger/30'
+                : 'bg-tone-accent/10 text-tone-accent border border-tone-accent/30'
             }`}>
               {data!.run.status === 'completed'
                 ? (data!.run.conclusion ?? 'completed')
@@ -183,7 +183,7 @@ export default function GhaLiveRunner({ stages }: Props) {
             </a>
           )}
           <button onClick={start} disabled={!!stillRunning} aria-busy={!!stillRunning}
-            className="inline-flex items-center justify-center gap-2 px-4 min-h-[44px] rounded-lg bg-gh text-white text-xs font-semibold hover:bg-gh/80 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+            className="inline-flex items-center justify-center gap-2 px-4 min-h-[44px] rounded-lg bg-gh-solid text-white text-xs font-semibold hover:bg-gh-solid/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
             {stillRunning
               ? <><Loader2 size={12} className="animate-spin" /> {t('gha.runner.btn_running')}</>
               : <><Play    size={12} />                          {t('gha.runner.btn_run')}    </>
@@ -193,13 +193,13 @@ export default function GhaLiveRunner({ stages }: Props) {
       </div>
 
       {err && (
-        <div role="alert" className="flex items-start gap-2 text-xs text-amber-600 dark:text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-lg px-3 py-2">
+        <div role="alert" className="flex items-start gap-2 text-xs text-tone-warning bg-tone-warning/10 border border-tone-warning/30 rounded-lg px-3 py-2">
           <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" aria-hidden="true" />
           <span>{err}</span>
         </div>
       )}
       {pending && !err && (
-        <div role="status" className="flex items-start gap-2 text-xs text-blue-600 dark:text-blue-300 bg-blue-500/10 border border-blue-500/30 rounded-lg px-3 py-2">
+        <div role="status" className="flex items-start gap-2 text-xs text-tone-accent bg-tone-accent/10 border border-tone-accent/30 rounded-lg px-3 py-2">
           <Loader2 size={12} className="mt-0.5 flex-shrink-0 animate-spin" />
           <span>{t('gha.runner.pending')}</span>
         </div>

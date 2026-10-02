@@ -1,0 +1,123 @@
+# Like counter for demo.minha.cloud (source: site-likes/). The count lives in
+# ConfigMap conjur/site-likes, which is created ONCE by hand (see README.md) and
+# deliberately not declared here, so re-applying this file never resets it.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: site-likes
+  namespace: conjur
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: site-likes
+  namespace: conjur
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    resourceNames: ["site-likes"]
+    verbs: ["get", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: site-likes
+  namespace: conjur
+subjects:
+  - kind: ServiceAccount
+    name: site-likes
+    namespace: conjur
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: site-likes
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: site-likes
+  namespace: conjur
+  labels:
+    app: site-likes
+spec:
+  replicas: 1            # single writer: the count is kept in memory and flushed
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: site-likes
+  template:
+    metadata:
+      labels:
+        app: site-likes
+    spec:
+      serviceAccountName: site-likes
+      imagePullSecrets:
+        - name: dockerhub-pull
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: site-likes
+          image: aslancarlos/site-likes:1.0.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ALLOWED_ORIGIN
+              value: https://demo.minha.cloud
+            - name: IP_WINDOW
+              value: 12h
+            - name: DAILY_CAP
+              value: "500"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests: { memory: "16Mi", cpu: "10m" }
+            limits: { memory: "48Mi", cpu: "100m" }
+          readinessProbe:
+            httpGet: { path: /api/likes/healthz, port: 8080 }
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /api/likes/healthz, port: 8080 }
+            initialDelaySeconds: 5
+            periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: site-likes
+  namespace: conjur
+spec:
+  selector:
+    app: site-likes
+  ports:
+    - port: 80
+      targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: site-likes
+  namespace: conjur
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: nginx-internal
+  tls:
+    - hosts: [demo.minha.cloud]
+      secretName: k8scert
+  rules:
+    - host: demo.minha.cloud
+      http:
+        paths:
+          - path: /api/likes
+            pathType: Prefix
+            backend:
+              service:
+                name: site-likes
+                port:
+                  number: 80
