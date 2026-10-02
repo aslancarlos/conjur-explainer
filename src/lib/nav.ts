@@ -1,7 +1,7 @@
 import {
   Home, BookOpen, ArrowLeftRight, Container, Fingerprint, FileBadge, RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
   Leaf, Hexagon, Github, ShoppingCart, Database,
-  GitCompareArrows, Wrench, LayoutDashboard, CloudCog, Network, ShieldCheck, Layers, GraduationCap, Vault, KeySquare, BadgeCheck, Cloud, Users,
+  GitCompareArrows, Wrench, LayoutDashboard, CloudCog, Network, ShieldCheck, Layers, GraduationCap, Vault, KeySquare, BadgeCheck, Cloud, Users, AppWindow, LayoutGrid, HardDrive, Globe,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -120,15 +120,28 @@ export const NAV: NavGroup[] = [
     ],
   },
   {
-    key: 'lifecycle',
-    labelKey: 'nav.group_lifecycle',
-    Icon: RefreshCw,
-    descKey: 'demos.group_lifecycle',
+    key: 'cp',
+    labelKey: 'nav.group_cp',
+    descKey: 'demos.group_cp',
+    Icon: AppWindow,
     items: [
+      { to: '/cp', product: 'pam', labelKey: 'nav.cp_hub', subKey: 'nav.cp_hub_sub', Icon: LayoutGrid, color: 'text-domain-idira' },
+      { to: '/cp/credential-provider', product: 'pam', labelKey: 'nav.cp_cp', subKey: 'nav.cp_cp_sub', Icon: HardDrive, color: 'text-domain-idira' },
+      { to: '/cp/ascp', product: 'pam', labelKey: 'nav.cp_ascp', subKey: 'nav.cp_ascp_sub', Icon: Database, color: 'text-domain-idira' },
+      { to: '/cp/ccp', product: 'pam', labelKey: 'nav.cp_ccp', subKey: 'nav.cp_ccp_sub', Icon: Globe, color: 'text-domain-idira' },
       { to: '/dualaccounts', product: 'pam', labelKey: 'nav.dualaccounts', subKey: 'nav.dualaccounts_sub', Icon: RefreshCw, color: 'text-domain-idira',
         demo: { name: 'Dual Accounts', secret: 'zero-downtime rotation', descKey: 'demos.dual' } },
-      { to: '/secretshub', product: 'secretshub', labelKey: 'nav.secretshub', subKey: 'nav.secretshub_sub', Icon: Combine, color: 'text-domain-cp',
+    ],
+  },
+  {
+    key: 'secretshub',
+    labelKey: 'nav.group_shub',
+    descKey: 'demos.group_shub',
+    Icon: Combine,
+    items: [
+      { to: '/secretshub', product: 'secretshub', labelKey: 'nav.shub_saas', subKey: 'nav.shub_saas_sub', Icon: Cloud, color: 'text-domain-cp',
         demo: { name: 'Secrets Hub', secret: 'PAM → cloud sync', descKey: 'demos.secretshub' } },
+      { to: '/secretshub?env=pamsh', product: 'secretshub', labelKey: 'nav.shub_pamsh', subKey: 'nav.shub_pamsh_sub', Icon: Server, color: 'text-domain-cp' },
     ],
   },
   {

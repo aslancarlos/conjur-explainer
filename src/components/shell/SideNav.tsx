@@ -29,7 +29,14 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
   collapsed?: boolean; dense?: boolean; idPrefix?: string
 }) {
   const { t } = useTranslation()
-  const { pathname } = useLocation()
+  const { pathname, search } = useLocation()
+  // Items may deep-link a page state (e.g. /secretshub?env=pamsh): such an item is
+  // active only with its query; the plain path item yields when a sibling matches.
+  const all = navBy('usecase').flatMap(g => g.items)
+  const isActive = (to: string) => {
+    if (to.includes('?')) return pathname + search === to
+    return pathname === to && !all.some(o => o.to.includes('?') && o.to === pathname + search)
+  }
   const groups = navBy('usecase')
   const [open, setOpen] = useState<Record<string, boolean>>({})
   const isOpen = (key: string) => open[key] === true    // default: collapsed
@@ -46,7 +53,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
   }
 
   const row = (item: NavItem, nested = false) => {
-    const active = pathname === item.to
+    const active = isActive(item.to)
     const label = t(nested && item.shortKey ? item.shortKey : item.labelKey)
     const cls =
       'group relative flex items-center gap-3 rounded-lg transition-colors duration-150 ' +
@@ -99,7 +106,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
         const label = group.labelKey ? t(group.labelKey) : undefined
         const expanded = collapsed || !group.labelKey || isOpen(group.key)
         const listId = `${idPrefix}-grp-${group.key}`
-        const hasActive = group.items.some(i => i.to === pathname)
+        const hasActive = group.items.some(i => isActive(i.to))
         return (
           <div key={group.key} className={gi === 0 ? '' : dense ? 'pt-2' : 'pt-3'}>
             {label && (collapsed
@@ -129,7 +136,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
                 // down when open, item count when closed, children under a guide line.
                 const sec = SECTIONS[seg.section]
                 const key = `sec-${seg.section}`
-                const subActive = seg.items.some(i => i.to === pathname)
+                const subActive = seg.items.some(i => isActive(i.to))
                 const subOpen = open[key] === true
                 const subId = `${idPrefix}-${key}`
                 return (

@@ -19,6 +19,10 @@ const DualAccountsPage = lazy(() => import('./pages/DualAccountsPage'))
 const SaasArchitecturePage = lazy(() => import('./pages/concepts/SaasArchitecturePage'))
 const SelfHostedArchitecturePage = lazy(() => import('./pages/concepts/SelfHostedArchitecturePage'))
 const SwaArchitecturePage = lazy(() => import('./pages/concepts/SwaArchitecturePage'))
+const CpHubPage = lazy(() => import('./pages/cp/CpHubPage'))
+const CredentialProviderPage = lazy(() => import('./pages/cp/CredentialProviderPage'))
+const AscpPage = lazy(() => import('./pages/cp/AscpPage'))
+const CcpPage = lazy(() => import('./pages/cp/CcpPage'))
 const AuthnHubPage = lazy(() => import('./pages/authn/AuthnHubPage'))
 const ApiKeyAuthnPage = lazy(() => import('./pages/authn/ApiKeyAuthnPage'))
 const CertAuthnPage = lazy(() => import('./pages/authn/CertAuthnPage'))
@@ -89,6 +93,10 @@ export default function App() {
           <Route path="/concepts/saas-architecture"  element={<SaasArchitecturePage />} />
           <Route path="/concepts/self-hosted-architecture" element={<SelfHostedArchitecturePage />} />
           <Route path="/concepts/swa-architecture"   element={<SwaArchitecturePage />} />
+          <Route path="/cp" element={<CpHubPage />} />
+          <Route path="/cp/credential-provider" element={<CredentialProviderPage />} />
+          <Route path="/cp/ascp" element={<AscpPage />} />
+          <Route path="/cp/ccp" element={<CcpPage />} />
           <Route path="/authn" element={<AuthnHubPage />} />
           <Route path="/authn/api-key" element={<ApiKeyAuthnPage />} />
           <Route path="/authn/certificate" element={<CertAuthnPage />} />

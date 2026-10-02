@@ -98,7 +98,21 @@
     "a_k8s_sub": "Native mTLS authenticator, Self-Hosted",
     "a_users": "Human users",
     "a_users_sub": "Identity, OIDC and LDAP",
-    "a_jwt": "JWT"
+    "a_jwt": "JWT",
+    "group_cp": "Credential Providers",
+    "cp_hub": "Overview & comparison",
+    "cp_hub_sub": "CP, ASCP and CCP side by side",
+    "cp_cp": "Credential Provider (CP)",
+    "cp_cp_sub": "Agent on the application host",
+    "cp_ascp": "Application Server CP (ASCP)",
+    "cp_ascp_sub": "JDBC data sources in app servers",
+    "cp_ccp": "Central Credential Provider (CCP)",
+    "cp_ccp_sub": "Central REST web service, no agent",
+    "group_shub": "Secrets Hub",
+    "shub_saas": "Privilege Cloud (SaaS)",
+    "shub_saas_sub": "Secrets Hub with Privilege Cloud as the source",
+    "shub_pamsh": "PAM Self-Hosted",
+    "shub_pamsh_sub": "Secrets Hub with your own PAM Vault as the source"
   },
   "hero": {
     "eyebrow": "Machine identity · Secrets · IDIRA by Palo Alto Networks",
@@ -144,7 +158,9 @@
     "prod_pam": "Vaulting and CPM rotation; Dual Accounts keep consumers online during rotation.",
     "svid": "An attested workload receives its SPIFFE identity live from Secure Workload Access: an X.509-SVID for mTLS and a JWT-SVID for a chosen audience, side by side, with when to use each.",
     "group_swa": "SPIFFE identities for workloads: the architecture, a live SVID and cloud access with no stored keys.",
-    "group_sm": "Architectures, authentication, policy and use cases: how workloads get their secrets."
+    "group_sm": "Architectures, authentication, policy and use cases: how workloads get their secrets.",
+    "group_cp": "Applications fetch PAM-managed credentials at run time: agent, app server or central web service.",
+    "group_shub": "Sync PAM-managed secrets to the cloud secret stores (AWS, Azure, GCP, HashiCorp Vault)."
   },
   "caps": {
     "kicker": "What they share",
@@ -3399,5 +3415,900 @@
     "doc_sh_authn": "Authentication (Self-Hosted)",
     "doc_sh_oidc": "OIDC for UI and CLI (Self-Hosted)",
     "doc_sh_ldap": "LDAP authentication (Self-Hosted)"
+  },
+  "cphub": {
+    "platform_sh": "PAM Self-Hosted",
+    "platform_saas": "Privilege Cloud (SaaS)",
+    "platform_label": "PAM platform",
+    "badge": "Credential Providers",
+    "title": "Credential Providers: application passwords from the PAM Vault",
+    "subtitle": "Applications, scripts and application servers get privileged account passwords from the Vault at run time instead of keeping them in code or configuration files. The Vault stores, audits and rotates them.",
+    "problem_title": "Three ways to remove a hardcoded password",
+    "problem_lead": "All three use the same Vault, the same application definitions and the same Safe permissions. They differ in where the provider runs and how the application calls it.",
+    "off_cp_title": "Credential Provider (CP)",
+    "off_cp_desc": "An agent installed on each application server. The application asks it for the password through an Application Password SDK (Java, .NET, C/C++ or CLI). Recommended for business critical applications.",
+    "off_ascp_title": "Application Server Credential Provider (ASCP)",
+    "off_ascp_desc": "Removes credentials from the data sources of application servers (Tomcat, WebLogic, WebSphere, JBoss) with a configuration change and no code change, using the Credential Provider features.",
+    "off_ccp_title": "Central Credential Provider (CCP)",
+    "off_ccp_desc": "A central web service (AIMWebService on IIS) that applications call over REST, so nothing is installed on each application machine. Recommended for non mission critical applications or when agents are hard to deploy.",
+    "open_page": "Open the page",
+    "flow_title": "How the three providers reach the Vault",
+    "flow_lead": "Choose your PAM platform. The applications and providers are the same; what changes is where the Vault and the CPM run.",
+    "compare_title": "Side by side",
+    "compare_lead": "From the Credential Providers documentation (offerings, system requirements and best practices).",
+    "col_topic": "Topic",
+    "compare": [
+      {
+        "k": "Who calls it",
+        "cp": "An application on the same machine, through an Application Password SDK",
+        "ascp": "The application server itself, for its data sources (JDBC connection pools)",
+        "ccp": "Remote applications and scripts, over the network"
+      },
+      {
+        "k": "Where it runs",
+        "cp": "On each application server (Windows, Linux, AIX, Solaris)",
+        "ascp": "Inside the application server, on top of the local Credential Provider",
+        "ccp": "On a separate Windows Server with IIS 10"
+      },
+      {
+        "k": "Interface",
+        "cp": "Java, .NET, C/C++ and CLI SDKs (the SDK must run on the same machine as the CP)",
+        "ascp": "Configuration change in the data source; no code change",
+        "ccp": "REST web service: GET /AIMWebService/api/Accounts (and POST)"
+      },
+      {
+        "k": "Cache",
+        "cp": "Local encrypted cache (None, Memory or Persistent)",
+        "ascp": "Uses the Credential Provider cache",
+        "ccp": "Credential Provider cache on the CCP server"
+      },
+      {
+        "k": "App authentication",
+        "cp": "Allowed machines, OS user, path, hash",
+        "ascp": "Allowed machines, OS user, path, hash (depends on the application server type)",
+        "ccp": "Allowed machines, OS user, certificate serial number, certificate attribute"
+      },
+      {
+        "k": "PAM Self-Hosted",
+        "cp": "Yes (Vault 14.0 and later)",
+        "ascp": "Yes",
+        "ccp": "Yes (Vault 14.0 and later)"
+      },
+      {
+        "k": "Privilege Cloud",
+        "cp": "Yes",
+        "ascp": "Yes",
+        "ccp": "Yes (can run on the Privilege Cloud Connector machine)"
+      },
+      {
+        "k": "Main limitation",
+        "cp": "An agent on every application server; up to 10 applications per CP recommended",
+        "ascp": "Only the supported application server versions; IPv4 only",
+        "ccp": "Network round trip per request; for high availability use at least two CCPs behind a load balancer (up to 500 applications per pair)"
+      }
+    ],
+    "auth_title": "Application authentication methods",
+    "auth_lead": "Every application has a unique application ID (AppID) in the Vault. Extra characteristics registered for that AppID are checked by the provider before any password is returned.",
+    "col_method": "Method",
+    "col_drivers": "JDBC / LDAP drivers",
+    "m_machines": "Allowed machines",
+    "m_osuser": "OS user",
+    "m_path": "Path",
+    "m_hash": "Hash",
+    "m_certserial": "Certificate serial number",
+    "m_certattr": "Certificate attribute",
+    "yes": "Yes",
+    "no": "No",
+    "auth_notes": [
+      "Using an application with no authentication method configured is not recommended in any scenario.",
+      "Best practice is to configure all methods for each application; this enforces more restricted access to the secrets in the Vault.",
+      "For applications on the same machine as the Credential Provider, always use OS user and allowed machines authentication.",
+      "The provider must validate every authentication type defined for the application, and at least one value of each type.",
+      "Methods are defined in the PVWA (Idira user portal in Privilege Cloud) or with the REST API (Add Authentication)."
+    ],
+    "caching_title": "Caching",
+    "caching_lead": "To reduce the load on the Vault, always configure a caching mechanism. The cache is encrypted and is refreshed from the Vault in the background.",
+    "col_level": "Level",
+    "col_behaviour": "Behaviour",
+    "caching": [
+      [
+        "None",
+        "The provider does not cache passwords and goes to the Vault for every request."
+      ],
+      [
+        "Memory",
+        "Passwords are cached in memory; the cache is rebuilt every time the provider restarts."
+      ],
+      [
+        "Persistent",
+        "Everything the provider needs is kept in a local secure cache file and in memory, so it keeps serving passwords when the Vault cannot be reached. The cache key is stored locally or in the Vault (AppProviderCacheSafe, more secure)."
+      ]
+    ],
+    "more_title": "Also in the family",
+    "zos_title": "Credential Provider for z/OS",
+    "zos_desc": "A Credential Provider for mainframe applications. With Privilege Cloud, the z/OS Credential Provider and the Central Credential Provider based on z/OS are supported from version 14.2.",
+    "dual_title": "Dual accounts",
+    "dual_desc": "Supported by all Credential Provider products: the application always has a valid password because the account it is using is never the one being changed. Recommended for high load and critical applications.",
+    "limits_title": "Limitations and recommendations for all providers",
+    "limits": [
+      "Always configure caching; without it every request goes to the Vault or Privilege Cloud.",
+      "Keep the number of Safes the provider accesses, and the accounts in each Safe, to a minimum; always include the Safe name in queries.",
+      "Up to 10 applications per Credential Provider is recommended.",
+      "With caching, a provider should not fetch more than 10,000 accounts; more than 50,000 makes it unstable.",
+      "PAM Self-Hosted: each Vault supports up to 6,000 providers (more with specific v14 configurations and professional services guidance).",
+      "Central Credential Provider: at least two behind a load balancer for high availability, and up to 500 applications per load balanced pair.",
+      "Privilege Cloud: the connection between ISPSS and the providers is configured by Idira Cloud Services, only the default provider configuration is supported, and outbound traffic must always leave through the same public IP.",
+      "Privilege Cloud: providers and CCP based on z/OS are supported from version 14.2.",
+      "Use the same version of the Credential Provider and the Application Password SDK, and link the SDKs dynamically."
+    ],
+    "limits_source": "Recommendations for best performance and limitations",
+    "docs_title": "Official documentation",
+    "doc_overview": "Credential Providers overview",
+    "doc_offerings": "Offerings",
+    "doc_authmethods": "Application authentication methods",
+    "doc_caching": "Caching",
+    "doc_capacity": "Best performance and limitations",
+    "doc_pcloud": "Privilege Cloud integration with Credential Providers",
+    "doc_restflow": "Build the environment with REST APIs",
+    "flow": {
+      "diagram_label": "Credential Provider, Application Server Credential Provider and Central Credential Provider retrieving passwords from the Vault",
+      "lane_apps": "Your applications",
+      "lane_pam": "PAM Self-Hosted",
+      "lane_cloud": "Privilege Cloud (SaaS)",
+      "lane_net": "Your network",
+      "n_appA": "Application",
+      "n_appA_sub": "calls an SDK",
+      "n_cp_sub": "agent on the app host",
+      "n_appB": "Application server",
+      "n_appB_sub": "JDBC data sources",
+      "n_ascp_sub": "uses the local CP",
+      "n_remote": "Remote app / script",
+      "n_remote_sub": "no agent installed",
+      "n_vault_sh": "Vault",
+      "n_vault_sh_sub": "on premises",
+      "n_vault_saas_sub": "Idira Vault in the cloud",
+      "n_cpm_sh_sub": "Central Policy Manager",
+      "n_cpm_saas": "Connector (CPM)",
+      "n_cpm_saas_sub": "Privilege Cloud Connector",
+      "r_appauth": "application",
+      "r_safe": "Safe",
+      "st_empty": "empty",
+      "st_cached": "cached",
+      "st_valid": "valid",
+      "st_allowed": "allowed",
+      "st_rotated": "rotated",
+      "lbl_rotate": "rotation",
+      "p_appid": "AppID + query",
+      "p_provuser": "provider user",
+      "p_datasource": "data source",
+      "p_newpw": "new password",
+      "s1_title": "1. No password in the application",
+      "s1_desc_selfhosted": "Three kinds of callers need a privileged password: an application with its own code, an application server with JDBC data sources, and a remote script. None of them keeps the password; they ask a provider.",
+      "s1_desc_saas": "Three kinds of callers need a privileged password: an application with its own code, an application server with JDBC data sources, and a remote script. None of them keeps the password; they ask a provider.",
+      "s2_title": "2. Credential Provider on the application host",
+      "s2_desc_selfhosted": "The application calls the local Credential Provider through an SDK with its AppID and a query. The provider authenticates to the on-premises Vault with its provider user, gets the password and keeps it in its encrypted cache.",
+      "s2_desc_saas": "The application calls the local Credential Provider through an SDK with its AppID and a query. The provider authenticates to Privilege Cloud with its provider user, gets the password and keeps it in its encrypted cache.",
+      "s3_title": "3. ASCP inside the application server",
+      "s3_desc_selfhosted": "The application server data source is configured to get its credentials from the ASCP, which uses the Credential Provider on that machine. No application code changes.",
+      "s3_desc_saas": "The application server data source is configured to get its credentials from the ASCP, which uses the Credential Provider on that machine. No application code changes; the Vault is Privilege Cloud.",
+      "s4_title": "4. Central Credential Provider for remote callers",
+      "s4_desc_selfhosted": "A remote application or script calls the REST web service AIMWebService on the CCP server. The CCP authenticates the caller and fetches the password from the Vault like any Credential Provider.",
+      "s4_desc_saas": "A remote application or script calls the REST web service AIMWebService on the CCP server, which can run on the Privilege Cloud Connector machine. The CCP authenticates the caller and fetches the password from Privilege Cloud.",
+      "s5_title": "5. The Vault decides",
+      "s5_desc_selfhosted": "The application must be defined in the Vault with its authentication methods, and both the provider user and the application must be members of the Safe with list and retrieve permissions. Every request is logged.",
+      "s5_desc_saas": "The application must be defined in Privilege Cloud with its authentication methods, and both the provider user and the application must be members of the Safe with list and retrieve permissions. Every request is logged.",
+      "s6_title": "6. CPM rotates, providers follow",
+      "s6_desc_selfhosted": "The CPM changes the password on the target and in the Vault. The providers pick up the new value on their next background cache refresh, so applications keep working without a redeploy.",
+      "s6_desc_saas": "The CPM, running on the Privilege Cloud Connector in your network, changes the password on the target and in Privilege Cloud. The providers pick up the new value on their next background cache refresh.",
+      "s7_title": "7. In short",
+      "s7_desc_selfhosted": "Same Vault, same Safe permissions, same audit: choose the CP for critical apps on their own servers, the ASCP for application server data sources, and the CCP when you cannot install an agent.",
+      "s7_desc_saas": "Same Privilege Cloud, same Safe permissions, same audit: choose the CP for critical apps on their own servers, the ASCP for application server data sources, and the CCP when you cannot install an agent."
+    }
+  },
+  "cp_cp": {
+    "badge": "Credential Providers · Credential Provider",
+    "title": "Credential Provider (CP)",
+    "subtitle": "An agent installed on the application server. Applications ask it for privileged passwords through an Application Password SDK; it authenticates them, retrieves the password from the Vault, keeps it in an encrypted cache and follows CPM rotations.",
+    "caps_title": "Capabilities",
+    "caps_lead": "What the Credential Provider does, according to its documentation.",
+    "caps": [
+      {
+        "title": "No hardcoded passwords",
+        "desc": "Static credentials leave source code, scripts and configuration files; the developer never needs to know the value."
+      },
+      {
+        "title": "Application authentication",
+        "desc": "Each request carries the AppID; the CP checks the registered characteristics: allowed machines, OS user, path and hash."
+      },
+      {
+        "title": "Encrypted local cache",
+        "desc": "None, Memory or Persistent cache levels; persistent keeps serving passwords during a network or Vault outage."
+      },
+      {
+        "title": "Follows rotations",
+        "desc": "Background cache refresh picks up CPM password changes, and dual accounts remove the rotation edge case."
+      },
+      {
+        "title": "Audit",
+        "desc": "Vault requests go to the Vault activity log with the application and provider; cache hits go to the local APPAudit.log."
+      },
+      {
+        "title": "Many platforms and SDKs",
+        "desc": "Windows, Linux, AIX and Solaris; Java, .NET (Framework and Standard), C/C++ and CLI SDKs."
+      }
+    ],
+    "flow_title": "How it works, step by step",
+    "flow_lead": "Choose PAM Self-Hosted or Privilege Cloud. The Credential Provider and the SDKs are the same; the Vault, the admin console and the CPM location change.",
+    "roles_title": "Components and their role",
+    "roles_lead": "What is created and used, from installation to the first password.",
+    "col_component": "Component",
+    "col_role": "Role",
+    "roles": [
+      [
+        "Application + SDK",
+        "Calls the local provider with its AppID, a query (Safe, folder, object or account properties) and the properties it wants back. The SDK must run on the same machine as the CP."
+      ],
+      [
+        "Credential Provider",
+        "Authenticates the application, retrieves the password from the Vault or its cache, and returns it. Runs as a service (root on Unix)."
+      ],
+      [
+        "Provider user (Prov_<host>)",
+        "Vault user created at installation, with a credential file bound to the host name. It must be a member of every password Safe it reads (List, Retrieve, View Safe Members)."
+      ],
+      [
+        "AppProviderConf Safe",
+        "Holds the main configuration file of the provider (history cleared every five days)."
+      ],
+      [
+        "AppProviderCacheSafe",
+        "Holds the cache encryption key when the persistent cache uses the Vault key storage mode."
+      ],
+      [
+        "Application (AppID)",
+        "Defined in the PVWA (Idira user portal in Privilege Cloud) with its authentication methods, and added as a Safe member with List and Retrieve."
+      ],
+      [
+        "CPM",
+        "Rotates the password on the target system and in the Vault according to the platform policy."
+      ],
+      [
+        "Vault.ini",
+        "Tells the provider which Vault (or Privilege Cloud) to reach; several addresses can be listed for high availability and DR."
+      ]
+    ],
+    "when_title": "When to use it",
+    "when": [
+      "Business critical applications that need the highest availability, performance and anti tampering protection.",
+      "Applications on their own servers where you can install an agent.",
+      "When applications must keep working through a network or Vault outage (persistent cache).",
+      "Scripts and batch jobs on the server, through the CLI SDK."
+    ],
+    "diff_title": "PAM Self-Hosted vs Privilege Cloud",
+    "diff_lead": "From the Credential Providers and Privilege Cloud integration documentation.",
+    "col_topic": "Topic",
+    "col_detail": "Detail",
+    "diff": [
+      [
+        "Vault",
+        "Self-Hosted: your own Digital Vault, version 14.0 or later. Privilege Cloud: the Idira Vault in the cloud."
+      ],
+      [
+        "Admin console",
+        "Self-Hosted: PVWA. Privilege Cloud: the Idira user portal (Privilege Cloud Administrators, Auditors or the applications user role)."
+      ],
+      [
+        "Connection setup",
+        "Self-Hosted: you configure Vault.ini. Privilege Cloud: the connection between ISPSS and the providers is configured by Idira Cloud Services."
+      ],
+      [
+        "Configuration",
+        "Self-Hosted: tune the provider configuration file. Privilege Cloud: only the default configuration is supported."
+      ],
+      [
+        "Network",
+        "Privilege Cloud: outbound traffic from the provider server must always leave through the same public IP."
+      ],
+      [
+        "CPM",
+        "Self-Hosted: CPM in your environment. Privilege Cloud: CPM runs on the Privilege Cloud Connector."
+      ],
+      [
+        "License terms",
+        "Self-Hosted: Software License Agreement. Privilege Cloud: SaaS Terms of Service (accepted in the installation parameters)."
+      ]
+    ],
+    "limits_title": "Limitations and requirements",
+    "limits": [
+      "Supported platforms (v15.2): AIX 7.2 and 7.3; RHEL 8, 9 and 10, Oracle Linux 8 and 9, CentOS Stream 9 and 10, Ubuntu 22 and 24 LTS, Rocky Linux 8, 9 and 10, Debian 12; Solaris SPARC 11.4; Windows Server 2016 to 2025 (Windows 11 for developer endpoints).",
+      "Works with Digital Vault 14.0 and later and with Privilege Cloud; IPv6 only on Linux and Windows.",
+      "The Application Password SDKs must run on the same machine as the CP; this CP works with SDKs 12.1 and later, and SDKs 12.0 or earlier must be replaced. Use the same CP and SDK versions.",
+      "Installation needs an administrative Vault or Privilege Cloud user (Add Safes, Audit Users, Add/Update Users and related permissions), or the environment must be created manually later.",
+      "The provider user must be a member of every password Safe with List, Retrieve and View Safe Members; the application needs List and Retrieve; with object level access both need access to the account.",
+      "The application OS user needs read and write on /tmp, or an alternative folder in AIM_TEMP_FOLDER that both the application and the CP can use.",
+      "Recommended capacity: up to 10 applications per CP and up to 10,000 cached accounts; more than 50,000 accounts makes the CP unstable.",
+      "Removing a permission does not remove a cached password immediately; it is removed on the next background refresh.",
+      "If the provider user is suspended (authentication error), the CP stops trying the Vault until it is restarted.",
+      "Privilege Cloud: default configuration only, connection set up by Idira Cloud Services, fixed public egress IP."
+    ],
+    "limits_source": "Recommendations for best performance and limitations",
+    "config_title": "Recommended configuration",
+    "config_lead": "Documented values for optimal performance of each provider.",
+    "col_param": "Parameter",
+    "col_reco": "Recommendation",
+    "config": [
+      [
+        "CacheLevel=persistent",
+        "Use a cache file and the memory cache."
+      ],
+      [
+        "CacheRefreshInterval=1500",
+        "Refresh the cache every 25 minutes."
+      ],
+      [
+        "ChangeNotificationPeriod=3001",
+        "Wait more than two refresh intervals before a password change; block password changes on the application side to avoid lockouts."
+      ],
+      [
+        "AutomaticParmsRefreshInterval=86400",
+        "Refresh the provider configuration every 24 hours."
+      ],
+      [
+        "MaxConcurrentRequests=40",
+        "Accept up to 40 concurrent requests from the SDK."
+      ],
+      [
+        "VaultAccessInterval=31536000",
+        "Expire the cache after one year."
+      ],
+      [
+        "MaximumRetries=1, MinDelayBetweenRetries=30",
+        "Reduce the load on the Vault after a failed password change."
+      ]
+    ],
+    "docs_title": "Official documentation",
+    "doc_lp": "Credential Provider",
+    "doc_sysreq": "System requirements",
+    "doc_env": "Build the Credential Provider environment",
+    "doc_authproc": "Authentication process",
+    "doc_caching": "Caching",
+    "doc_sdks": "Application Password SDKs",
+    "doc_capacity": "Best performance and limitations",
+    "doc_audit": "Audit trail",
+    "doc_pcloud": "Privilege Cloud integration",
+    "flow": {
+      "diagram_label": "Credential Provider retrieving a password for a local application",
+      "lane_host": "Application server",
+      "lane_pam": "PAM Self-Hosted",
+      "lane_cloud": "Privilege Cloud (SaaS)",
+      "lane_net": "Your network",
+      "n_admin": "Admin",
+      "n_admin_sub_saas": "Idira user portal",
+      "n_app": "Application",
+      "n_cp_sub": "on the app host",
+      "n_vault_sh": "Vault",
+      "n_vault_sh_sub": "on premises",
+      "n_vault_saas_sub": "Idira Vault in the cloud",
+      "n_cpm_sh_sub": "Central Policy Manager",
+      "n_cpm_saas": "Connector (CPM)",
+      "n_cpm_saas_sub": "Privilege Cloud Connector",
+      "n_target": "Target system",
+      "n_target_sub": "database or server",
+      "r_appauth": "app auth",
+      "r_app": "application",
+      "r_session": "session",
+      "st_received": "received",
+      "st_new": "new value",
+      "st_valid": "valid",
+      "st_empty": "empty",
+      "st_encrypted": "encrypted",
+      "st_refreshed": "refreshed",
+      "st_logged": "logged",
+      "st_defined": "defined",
+      "st_allowed": "allowed",
+      "st_rotated": "rotated",
+      "lbl_portal": "user portal",
+      "lbl_rotate": "rotation",
+      "lbl_change": "password change",
+      "p_appdef": "AppID + methods",
+      "p_request": "AppID + query",
+      "p_login": "login",
+      "p_change": "change",
+      "p_newpw": "new password",
+      "s1_title": "1. Install and register the provider",
+      "s1_desc_selfhosted": "The installer, run with an administrative Vault user, creates the provider user Prov_<host> with a credential file bound to the host, and the AppProviderConf and AppProviderCacheSafe Safes.",
+      "s1_desc_saas": "The installer, run with an administrative Privilege Cloud user, creates the provider user Prov_<host> with a credential file bound to the host, and the AppProviderConf and AppProviderCacheSafe Safes. The ISPSS connection is configured by Idira Cloud Services.",
+      "s2_title": "2. Define the application",
+      "s2_desc_selfhosted": "In the PVWA the admin adds the application (AppID) with its authentication methods and adds the provider user (List, Retrieve, View Safe Members) and the application (List, Retrieve) as members of the password Safe.",
+      "s2_desc_saas": "In the Idira user portal the admin adds the application (AppID) with its authentication methods and adds the provider user (List, Retrieve, View Safe Members) and the application (List, Retrieve) as members of the password Safe.",
+      "s3_title": "3. The application asks the local provider",
+      "s3_desc_selfhosted": "Through an Application Password SDK (Java, .NET, C/C++ or CLI) on the same machine, the application sends its AppID, a query that identifies the account (Safe, folder, object) and the properties it needs.",
+      "s3_desc_saas": "Through an Application Password SDK (Java, .NET, C/C++ or CLI) on the same machine, the application sends its AppID, a query that identifies the account (Safe, folder, object) and the properties it needs.",
+      "s4_title": "4. The provider authenticates the application",
+      "s4_desc_selfhosted": "It compares the caller with the details registered for the AppID: allowed machines, OS user, path, hash. Every defined type must match with at least one value; otherwise no password is returned.",
+      "s4_desc_saas": "It compares the caller with the details registered for the AppID: allowed machines, OS user, path, hash. Every defined type must match with at least one value; otherwise no password is returned.",
+      "s5_title": "5. First request: fetch from the Vault",
+      "s5_desc_selfhosted": "On a cache miss the provider connects to the Vault with its provider user (Vault protocol, default port 1858). The Vault checks that the application and the provider may read the account, returns it, and the provider stores it encrypted in its cache.",
+      "s5_desc_saas": "On a cache miss the provider connects to Privilege Cloud with its provider user (Vault protocol, default port 1858, from a fixed public egress IP). Privilege Cloud checks the permissions, returns the account, and the provider stores it encrypted in its cache.",
+      "s6_title": "6. The application uses the password",
+      "s6_desc_selfhosted": "The SDK returns the password and the requested properties. The application connects to the target system; the value never lived in its code or configuration.",
+      "s6_desc_saas": "The SDK returns the password and the requested properties. The application connects to the target system; the value never lived in its code or configuration.",
+      "s7_title": "7. Cache and background refresh",
+      "s7_desc_selfhosted": "Next requests are served from the cache. A background process refreshes it from the Vault (recommended every 1500 seconds) and removes entries that were deleted, lost permission or expired by TTL. A persistent cache keeps working if the Vault is unreachable.",
+      "s7_desc_saas": "Next requests are served from the cache. A background process refreshes it from Privilege Cloud (recommended every 1500 seconds) and removes entries that were deleted, lost permission or expired by TTL. A persistent cache keeps working if Privilege Cloud is unreachable.",
+      "s8_title": "8. CPM rotates the password",
+      "s8_desc_selfhosted": "The CPM changes the password on the target and in the Vault. Passwords with an upcoming change are fetched again, and the documented ChangeNotificationPeriod (3001 seconds, more than two refresh intervals) gives every provider time to catch up. Dual accounts avoid the edge case entirely.",
+      "s8_desc_saas": "The CPM on the Privilege Cloud Connector changes the password on the target and in Privilege Cloud. Passwords with an upcoming change are fetched again, and ChangeNotificationPeriod gives every provider time to catch up. Dual accounts avoid the edge case entirely.",
+      "s9_title": "9. Everything is audited",
+      "s9_desc_selfhosted": "Requests that reach the Vault are written to the Vault activity log with the application and the provider. Requests served from the cache are written to the local APPAudit.log, and errors are also copied to the system log.",
+      "s9_desc_saas": "Requests that reach Privilege Cloud are written to its activity log with the application and the provider. Requests served from the cache are written to the local APPAudit.log, and errors are also copied to the system log."
+    }
+  },
+  "cp_ascp": {
+    "badge": "Credential Providers · ASCP",
+    "title": "Application Server Credential Provider (ASCP)",
+    "subtitle": "Removes hard-coded credentials from the data sources of application servers such as WebSphere, WebLogic, JBoss and Tomcat. No code changes: a configuration change makes the data source request its credentials from the Credential Provider at runtime.",
+    "flow_title": "How it works today, step by step",
+    "flow_lead": "This is the JDBC Driver Proxy model, the current ASCP solution. Choose where the PAM Vault runs: your own PAM Self-Hosted Vault or Privilege Cloud. The application side is the same in both.",
+    "switch_sh": "The Credential Provider connects to your own Vault.",
+    "switch_saas": "The Credential Provider connects to Privilege Cloud.",
+    "diagram_label": "ASCP JDBC Driver Proxy retrieving a database credential from a PAM Self-Hosted Vault",
+    "diagram_label_saas": "ASCP JDBC Driver Proxy retrieving a database credential from Privilege Cloud",
+    "n_app": "Application server",
+    "r_driver": "driver",
+    "r_config_pw": "password in config",
+    "st_dummy": "dummy value",
+    "r_pool": "connection pool",
+    "st_pooled": "pooled",
+    "r_request": "request",
+    "st_requested": "AppID + query",
+    "st_injected": "credential injected",
+    "n_cp": "Credential Provider",
+    "n_cp_sub": "same host · Java Password SDK",
+    "r_app_auth": "app authentication",
+    "r_cache": "secure cache",
+    "st_empty": "empty",
+    "n_vault_sub": "PAM Self-Hosted, your data center",
+    "n_vault_sub_saas": "PAM as a service",
+    "r_safe": "Safe permission",
+    "st_retrieve": "allowed",
+    "r_account": "account",
+    "r_audit": "audit",
+    "st_logged": "logged",
+    "n_cpm_sub": "rotates per platform policy",
+    "r_rotation": "rotation",
+    "st_rotated": "password changed",
+    "n_db": "Database",
+    "r_session": "session",
+    "lane_host": "Application host",
+    "lane_target": "Target database",
+    "lane_pam": "PAM Self-Hosted",
+    "lane_pam_saas": "Privilege Cloud (SaaS)",
+    "lbl_jdbc": "JDBC (native driver)",
+    "lbl_change": "change password",
+    "p_request": "AppID + query",
+    "p_get": "get password",
+    "p_credential": "credential",
+    "p_login": "JDBC login",
+    "p_change": "change password",
+    "s1_title": "1. Four pieces, no password in the application",
+    "s1_desc": "The application server keeps its data source, but the data source uses the ASCP driver. The ASCP driver asks the Credential Provider installed on the same host, and the Credential Provider gets the account from the Vault, where the CPM rotates it.",
+    "s1_desc_saas": "The application server keeps its data source, but the data source uses the ASCP driver. The ASCP driver asks the Credential Provider installed on the same host, and the Credential Provider gets the account from Privilege Cloud, where it is stored and rotated.",
+    "s2_title": "2. The data source points to the ASCP driver",
+    "s2_desc": "The driver class becomes com.cyberark.jdbc.ASCPDriver, the URL gets the jdbc:ascp: prefix and the properties carry ascp_AppId, ascp_Query (Safe, Object or Username, and so on) and ascp_VendorClass. User name and password in the configuration are meaningless values.",
+    "s3_title": "3. The application asks the pool for a connection",
+    "s3_desc": "When no free connection exists, the application server creates a new one and invokes the ASCP driver with the request details stored in the data source.",
+    "s4_title": "4. ASCP asks the local Credential Provider",
+    "s4_desc": "The ASCP driver uses the Java Password SDK to pass the request to the Credential Provider on the same machine, by default on port 18923, with the application ID and the query.",
+    "s5_title": "5. The Credential Provider authenticates the application",
+    "s5_desc": "It compares the application with what is registered for the application ID: allowed machines, OS user, path and hash are the methods available for the ASCP JDBC driver. Every configured method must validate.",
+    "s6_title": "6. Safe permission check and secret retrieval",
+    "s6_desc": "If the account is not in the cache, the Credential Provider connects to the Vault (port 1858 by default), checks that the application has access to the account in the Safe and keeps the credential in its encrypted cache.",
+    "s6_desc_saas": "If the account is not in the cache, the Credential Provider connects to Privilege Cloud (port 1858 by default), checks that the application has access to the account in the Safe and keeps the credential in its encrypted cache.",
+    "s7_title": "7. The driver opens the connection",
+    "s7_desc": "Only after the credential is returned is the request handed to the native JDBC driver. The ASCP driver opens the connection, stores it in the pool and the application now has a valid connection to the database.",
+    "s8_title": "8. The CPM rotates the password",
+    "s8_desc": "The CPM changes the password on the database and in the Vault. The Credential Provider picks up the new value on its next cache refresh (CacheRefreshInterval) and new connections use it. For critical applications, dual accounts keep a valid credential available during the change.",
+    "s8_desc_saas": "The password is changed on the database and in Privilege Cloud. The Credential Provider picks up the new value on its next cache refresh (CacheRefreshInterval) and new connections use it. Dual accounts are supported in Privilege Cloud through the Marketplace templates and scripts, not by manual configuration.",
+    "s9_title": "9. Every request is audited",
+    "s9_desc": "All password requests are added to the Vault activity logs with the application that requested them, and the Credential Provider keeps its own audit log. ascp_Reason adds a reason to the audit records.",
+    "cap_title": "Capabilities and supported platforms",
+    "cap_lead": "ASCP version 14.2 is available for every platform below. Data source and database support come from the ASCP JDBC Driver Proxy system requirements.",
+    "col_server": "Application server",
+    "col_versions": "Versions",
+    "col_datasources": "Data sources",
+    "col_databases": "Databases",
+    "servers": [
+      [
+        "JBoss / Wildfly",
+        "JBoss EAP 8.0; Wildfly 26, 31",
+        "local-tx-datasource, xa-datasource",
+        "Oracle, MSSQL, DB2, PostgreSQL 11.x"
+      ],
+      [
+        "WebLogic",
+        "12c, 14c, 15c",
+        "Generic",
+        "Oracle, MSSQL, DB2"
+      ],
+      [
+        "Tomcat",
+        "9.0, 10.1",
+        "Non-pooled, pooled, XA",
+        "Oracle, MSSQL, DB2, PostgreSQL 11.x"
+      ],
+      [
+        "WebSphere Liberty",
+        "21.x; 22.1 to 22.4; 26.x",
+        "Pooled, XA",
+        "Oracle, MSSQL, DB2, PostgreSQL 11.x"
+      ],
+      [
+        "WebSphere Classic",
+        "8.5, 9.0",
+        "Pooled, XA",
+        "Oracle, MSSQL, DB2, PostgreSQL 11.x"
+      ]
+    ],
+    "cap_notes": [
+      "No code changes: the application keeps using its data source; only the data source configuration changes.",
+      "ASCP LDAP Driver for JBoss 8.0: provides the credentials that JBoss uses to connect to LDAP (Wildfly Elytron credential store); the LDAP connection itself is made by the LDAP jar.",
+      "Optional ASCP second-level cache (ascp_LocalCacheLifeSpan), on top of the Credential Provider cache.",
+      "Supported operating systems: Linux, Windows and AIX."
+    ],
+    "how_title": "Components and their role",
+    "how_lead": "What each piece does in the JDBC Driver Proxy model.",
+    "col_component": "Component",
+    "col_role": "Role",
+    "roles": [
+      [
+        "Data source",
+        "Configured in the application server with com.cyberark.jdbc.ASCPDriver, the jdbc:ascp: URL prefix and the ascp_ properties; no real password."
+      ],
+      [
+        "ASCP JDBC Driver Proxy",
+        "Sits between the application and the native driver; asks the Credential Provider for the credential and injects it into the native JDBC driver."
+      ],
+      [
+        "Credential Provider",
+        "Required on the same machine; authenticates the application, enforces access and keeps an encrypted local cache."
+      ],
+      [
+        "Application ID",
+        "Registered in PVWA or in the Privilege Cloud portal (Applications tab) with its authentication methods."
+      ],
+      [
+        "Vault / Privilege Cloud",
+        "Stores the database account in a Safe that the application and the Credential Provider can access."
+      ],
+      [
+        "CPM",
+        "Rotates the account password according to the platform policy."
+      ],
+      [
+        "Native JDBC driver",
+        "The vendor driver (ascp_VendorClass) that actually opens the database connection."
+      ]
+    ],
+    "when_title": "When to use",
+    "when": [
+      "Java applications on WebSphere, WebLogic, JBoss/Wildfly or Tomcat that read credentials from a data source.",
+      "You want to remove the password from data source files without changing application code.",
+      "You already run Credential Providers on the application hosts."
+    ],
+    "diff_title": "PAM Self-Hosted vs Privilege Cloud",
+    "diff": [
+      "Back end: your own Vault (PAM Self-Hosted) or Privilege Cloud; the Credential Provider connects to it on port 1858 by default.",
+      "Applications are defined in PVWA (Self-Hosted) or in the Privilege Cloud portal, both in the Applications tab.",
+      "The Credential Provider environment is created in the Vault / Privilege Cloud during installation by an administrative user.",
+      "Dual accounts: manual configuration in PAM Self-Hosted; Privilege Cloud supports dual accounts only through the Marketplace templates and scripts.",
+      "Capacity guidance of up to 6,000 Credential Providers per Vault is documented for PAM Self-Hosted."
+    ],
+    "limits_title": "Limitations and requirements",
+    "limits": [
+      "Requires a supported version of the Credential Provider installed on the same machine; ASCP is an add-on.",
+      "IPv4 only.",
+      "Requires JRE 1.8.x or higher.",
+      "Supported only on Linux, Windows and AIX.",
+      "Only the application server versions, data source types and databases in the support table (for example PostgreSQL 11.x); ASCP only supports the fields available in the relevant data source.",
+      "Application authentication for the JDBC driver: allowed machines, OS user, path and hash; client certificate methods are not available (they belong to the Central Credential Provider). The LDAP Driver supports allowed machines and OS user only.",
+      "JBoss/Wildfly: the application must be deployed as a folder so the Credential Provider can check its hash; JBoss/Wildfly does not support pool segregation by application scope (the docs describe a user and password context workaround).",
+      "WebLogic with an XA data source: the Invoke Begin/End Request flag must be disabled.",
+      "Tomcat: do not use the factory attribute with ASCPDriver; ascp_ parameters must be inside connectionProperties.",
+      "Query: no semicolon in property names or values and no spaces in property names; if more than one account matches, an error is returned unless one of them is already in the cache. Always include the Safe and an Object or Username.",
+      "Credential Mapper for WebLogic was deprecated at the end of 2023 (migrate to the JDBC Driver Proxy); the Credential Mapper for WebSphere Liberty is no longer supported.",
+      "Capacity: up to 10 applications per Credential Provider; keep cached accounts under 10,000 and never let a Credential Provider fetch more than 50,000 accounts.",
+      "A rotated password reaches new connections only after the next cache refresh; use dual accounts for critical applications (exactly two accounts, CPM only, not supported by the Secrets Rotation service)."
+    ],
+    "docs_title": "Official documentation",
+    "docs": [
+      "Application Server Credential Provider (ASCP)",
+      "ASCP system requirements",
+      "JDBC Driver Proxy for Tomcat",
+      "JDBC Driver Proxy for WebLogic",
+      "JDBC Driver Proxy for JBoss/Wildfly",
+      "JDBC Driver for WebSphere Classic",
+      "Application authentication methods",
+      "Credential Provider caching",
+      "Best performance and limitations",
+      "Configure dual accounts"
+    ]
+  },
+  "cp_ccp": {
+    "badge": "Credential Providers · CCP",
+    "title": "Central Credential Provider (CCP)",
+    "subtitle": "A web service that hands credentials stored in the Vault to applications over REST, with no agent on the application host. It runs on a Windows server with IIS and works with PAM Self-Hosted and Privilege Cloud.",
+    "flow_title": "How it works today, step by step",
+    "flow_lead": "Pick the PAM platform. The application side is the same in both: only where the Vault lives and where the CPM runs change.",
+    "platform_note_sh": "PAM Self-Hosted: the CCP, the Vault and the CPM run in your data center. The CCP can be installed on the PVWA server (if you harden the PVWA, install the CCP after hardening).",
+    "platform_note_saas": "Privilege Cloud: the Vault is in Privilege Cloud. The CCP runs on your Windows server and can share the hardened Privilege Cloud Connector machine with the CPM and PSM.",
+    "flow": {
+      "diagram_label_sh": "Central Credential Provider with PAM Self-Hosted",
+      "diagram_label_saas": "Central Credential Provider with Privilege Cloud",
+      "lane_dc": "Your data center",
+      "lane_customer": "Your network",
+      "lane_cloud": "Privilege Cloud",
+      "n_apps": "Applications",
+      "n_apps_sub": "any OS, script or service",
+      "n_lb": "Load balancer",
+      "n_lb_sub": "optional, several CCPs",
+      "n_ccp": "CCP server (IIS)",
+      "n_ccp_sub_sh": "AIMWebService + CP",
+      "n_ccp_sub_saas": "your server or Connector",
+      "n_vault_sh": "Digital Vault",
+      "n_vault_saas": "Privilege Cloud",
+      "n_vault_sub": "Safe + application",
+      "n_cpm_sub_sh": "rotation",
+      "n_cpm_sub_saas": "on the Connector",
+      "n_target": "Target system",
+      "n_target_sub": "database, server, API",
+      "r_agent": "agent",
+      "r_cred": "credential",
+      "r_mode": "mode",
+      "r_request": "request",
+      "r_appauth": "app auth",
+      "r_cache": "cache",
+      "r_safe": "Safe access",
+      "r_password": "password",
+      "r_session": "session",
+      "st_none": "none",
+      "st_received": "received",
+      "st_optional": "optional",
+      "st_ha": "balanced",
+      "st_verified": "verified",
+      "st_empty": "empty",
+      "st_cached": "cached",
+      "st_synced": "synced",
+      "st_allowed": "allowed",
+      "st_rotated": "v2 rotated",
+      "p_get": "GET Accounts",
+      "p_query": "AppID + query",
+      "p_password": "password",
+      "p_login": "login",
+      "p_newpass": "new password",
+      "lbl_vault_sh": "Vault port 1858",
+      "lbl_vault_saas": "Privilege Cloud port 1858",
+      "lbl_connect": "connects",
+      "lbl_rotate": "CPM rotates the target",
+      "s1_title": "1. A web service instead of an agent",
+      "s1_desc": "Applications on any platform ask the CCP for a credential at run time. Nothing is installed on the application host: the CCP web service (AIMWebService) runs on IIS together with the Credential Provider for Windows.",
+      "s2_title": "2. The application calls the REST API",
+      "s2_desc": "The application sends GET /AIMWebService/api/Accounts with its AppID and at least one more search parameter (for example Safe and Object), or a POST with the same values in a JSON body. A load balancer can spread requests across several CCPs.",
+      "s3_title": "3. The CCP authenticates the application",
+      "s3_desc": "The CCP checks the request against the application definition: allowed machines (IP, hostname, DNS or CIDR), Windows domain OS user through IIS, client certificate serial number or certificate attributes. Path and hash are not supported on the CCP.",
+      "s4_title": "4. The Credential Provider asks the Vault",
+      "s4_desc": "If the password is not in the secure cache, the Credential Provider on the CCP server authenticates to the Vault with its own Prov_ user and credential file, the Vault checks that the application may use that Safe, and returns the password.",
+      "s5_title": "5. The credential comes back as JSON",
+      "s5_desc": "The response carries Content (the password) plus UserName, Address, Database and PasswordChangeInProcess. Only properties defined on the account are returned. Every request is written to the audit log.",
+      "s6_title": "6. The application connects",
+      "s6_desc": "The application uses the credential to log in to the target system. The credential never lives in its code or configuration.",
+      "s7_title": "7. The secure cache answers next requests",
+      "s7_desc": "The cache (memory or persistent) avoids a Vault call for every request and keeps serving if the Vault is unreachable. It refreshes in the background every 25 minutes by default (CacheRefreshInterval).",
+      "s8_title": "8. The CPM rotates, the cache stays in sync",
+      "s8_desc": "When the CPM changes the password on the target and in the Vault, the Credential Provider is notified of the upcoming change and refreshes it, so applications get the new value. With FailRequestOnPasswordChange a call during a change can return an error.",
+      "s9_title": "9. High availability and audit",
+      "s9_desc": "Several load balanced CCPs per region keep requests local and highly available; the Vault address list in Vault.ini enables transparent failover to a DR Vault. Audit and monitoring logs record every access."
+    },
+    "caps_title": "Capabilities",
+    "caps_lead": "What the CCP offers, according to the documentation.",
+    "col_capability": "Capability",
+    "col_detail": "Detail",
+    "col_param": "Parameter",
+    "col_method": "Method",
+    "col_component": "Component",
+    "col_role": "Role",
+    "col_topic": "Topic",
+    "caps": [
+      [
+        "REST GetPassword (GET)",
+        "GET https://<CCP>/AIMWebService/api/Accounts?AppID=...&Safe=...&Object=... returns a single password as application/json."
+      ],
+      [
+        "REST GetPassword (POST)",
+        "POST https://<CCP>/AIMWebService/api/Accounts with the same parameters in a JSON body; the documented, more secure way."
+      ],
+      [
+        "Free query",
+        "Query with QueryFormat Exact or Regexp searches by account properties; when used, Safe, Folder, Object, UserName, Address, PolicyID and Database are ignored."
+      ],
+      [
+        "Secure cache",
+        "None, memory or persistent cache level; background refresh every 25 minutes by default; forced refresh with the AppPrvMgr utility."
+      ],
+      [
+        "Load balancing",
+        "Several CCPs behind a load balancer (SSL termination with X-Forwarded-For and TrustedProxies, or pass-through). All authentication methods work behind it."
+      ],
+      [
+        "Disaster recovery",
+        "Address=vault_1,vault_2 in Vault.ini gives transparent failover to the DR Vault (SwitchVaultAddressTimeOut, default 3 seconds)."
+      ],
+      [
+        "Multiple endpoints",
+        "Several REST endpoints with different security configurations and authentication methods on the same CCP."
+      ],
+      [
+        "Usage report",
+        "GET /AIMWebService/api/Usage returns the number of calling systems and the unique IP addresses served by that CCP."
+      ],
+      [
+        "Audit and monitoring",
+        "Audit log for every password request; the Application Password Provider service can be watched by enterprise monitoring tools."
+      ]
+    ],
+    "api_title": "REST request and response",
+    "api_lead": "Parameters of GetPassword (query string for GET, JSON body for POST) and the result.",
+    "api": [
+      [
+        "AppID",
+        "Required. The application ID defined in the PVWA or the Privilege Cloud portal."
+      ],
+      [
+        "Safe / Object",
+        "Where the password is stored and its name. The request needs AppID plus at least one other parameter."
+      ],
+      [
+        "Folder",
+        "Folder of the password. Folders are supported only in PAM Self-Hosted."
+      ],
+      [
+        "UserName / Address / Database",
+        "Search by these account properties."
+      ],
+      [
+        "Query + QueryFormat",
+        "Free query by account properties, Exact (default) or Regexp."
+      ],
+      [
+        "Reason",
+        "Reason for the retrieval, written to the Credential Provider audit log."
+      ],
+      [
+        "Connection Timeout",
+        "Seconds to wait for the Vault round trip; default 30."
+      ],
+      [
+        "FailRequestOnPasswordChange",
+        "Return an error if a password change is in progress; default False."
+      ],
+      [
+        "Result",
+        "Content, UserName, Address, Database, PasswordChangeInProcess (only properties defined on the account). Errors: 400, 403 (APPAP306E authentication failed), 404 (Safe not found), 500 (APPAP282E password being changed by the CPM)."
+      ]
+    ],
+    "auth_title": "Application authentication on the CCP",
+    "auth_lead": "Methods supported by the CCP (path and hash are supported only on the Credential Provider and ASCP).",
+    "auth": [
+      [
+        "Allowed machines",
+        "IP, hostname, DNS or IPv4/IPv6 CIDR of the calling machines. In cloud environments prefer hostname or a subnet, since IPs change."
+      ],
+      [
+        "OS user",
+        "Windows domain authentication on IIS (Negotiate, Kerberos). The CCP must be in the same domain as the applications or in a trusted domain. Linux clients use Kerberos with curl --negotiate."
+      ],
+      [
+        "Certificate serial number",
+        "The client certificate of the application, checked by serial number. Valid characters: a to f, A to F, 0 to 9 and #."
+      ],
+      [
+        "Certificate attribute",
+        "SubjectAlternativeName (DNS Name, IP Address, URI or RFC822), Subject or Issuer. Configurable through the REST API only."
+      ],
+      [
+        "AIMWebService itself",
+        "The web service is an application too (AIMWebService), authenticated by the path of its dll, OS user and the allowed machines of the CCP servers."
+      ]
+    ],
+    "roles_title": "Components and their role",
+    "roles_lead": "What each piece does in a CCP deployment.",
+    "roles": [
+      [
+        "Application",
+        "Calls the REST API over HTTPS. Runs on any platform; no Credential Provider installed on it."
+      ],
+      [
+        "Load balancer (optional)",
+        "Spreads requests over several CCPs; must preserve the source IP (transparent proxy or X-Forwarded-For) for allowed machines and auditing."
+      ],
+      [
+        "CCP web service (AIMWebService)",
+        "Web service on IIS that receives requests, authenticates the application and calls the local Credential Provider through the .NET SDK."
+      ],
+      [
+        "Credential Provider for Windows",
+        "Runs on the CCP server, keeps the secure cache and talks to the Vault with its Prov_<machine> user and credential file."
+      ],
+      [
+        "Vault / Privilege Cloud",
+        "Stores the password in a Safe, checks that the application may use it, and audits access. Configuration lives in the AppProviderConf Safe."
+      ],
+      [
+        "CPM",
+        "Changes passwords by policy and notifies the Credential Provider of upcoming changes so the cache is synchronized."
+      ],
+      [
+        "PVWA / Privilege Cloud portal",
+        "Where applications (AppID) and their authentication methods are defined."
+      ]
+    ],
+    "when_title": "When to use the CCP",
+    "when": [
+      "Applications on platforms where installing a Credential Provider is not possible or not wanted.",
+      "Scripts and services that can make an HTTPS call (PowerShell, curl, Python, Java, .NET).",
+      "Many applications sharing a central, load balanced service per region.",
+      "You want credentials fetched at run time and rotated by the CPM without changing the application."
+    ],
+    "diff_title": "PAM Self-Hosted vs Privilege Cloud",
+    "diff": [
+      [
+        "Where the Vault is",
+        "Self-Hosted: your own Digital Vault. Privilege Cloud: the Vault in the Privilege Cloud tenant."
+      ],
+      [
+        "Where to install the CCP",
+        "Self-Hosted: a Windows IIS server, optionally the PVWA server (after hardening). Privilege Cloud: a Windows IIS server, optionally the hardened Privilege Cloud Connector machine with the CPM and PSM."
+      ],
+      [
+        "Installation user",
+        "Self-Hosted and Privilege Cloud Standard: an admin or a user with the documented Vault permissions. Privilege Cloud Shared Services: the existing installeruser."
+      ],
+      [
+        "Folders",
+        "Folder searches are supported only in PAM Self-Hosted."
+      ],
+      [
+        "On the Connector machine",
+        "Privilege Cloud: if the CCP is installed on the Connector machine, the documentation strongly recommends IIS with Windows OS user authentication."
+      ]
+    ],
+    "limits_title": "Limitations and requirements",
+    "limits_source": "Source: Call the Web Service using REST",
+    "limits": [
+      "Windows only: the CCP runs on IIS 10 with IIS 6 compatibility, ASP.NET 4.x and ISAPI; Visual C++ 2019 Redistributable is installed with it.",
+      "The CCP does not configure IIS security: hardening IIS is the customer responsibility. Some OS versions need TLS 1.3 over TCP disabled in IIS Manager.",
+      "The request must contain the AppID and at least one other parameter; the characters + & % are not supported in URL values and account property names or values cannot contain a semicolon.",
+      "Each call returns a single password; too many matching objects returns an error (APPAP227E to APPAP229E).",
+      "Path and hash authentication are not supported on the CCP; certificate attribute authentication is configurable through the REST API only.",
+      "Windows domain OS user authentication requires the CCP in the same or a trusted domain; on a hardened server, Access this computer from the network must include the calling users.",
+      "Behind a load balancer, allowed machines and certificate authentication need X-Forwarded-For (one IP only) with TrustedProxies, or X-Client-Certificate (Base64), or pass-through; otherwise the IP checked is the load balancer.",
+      "Use the same AppID (AIMWebService) on all load balanced CCPs, and every CCP using it must answer all configured authentication methods.",
+      "Folders are supported only in PAM Self-Hosted.",
+      "With an external certificate the CCP server must reach the CRL; web service trace logging is for troubleshooting only and must be removed afterwards.",
+      "One-time password and exclusive accounts are not a fit for application use; keep accounts used by people separate from accounts used by applications."
+    ],
+    "docs_title": "Official documentation",
+    "doc_overview": "Central Credential Provider overview",
+    "doc_install": "Install the CCP",
+    "doc_rest_get": "Call the web service using REST (GET)",
+    "doc_rest_post": "Call the web service using REST (POST)",
+    "doc_authn": "Authentication methods on the CCP",
+    "doc_appauth": "Application authentication methods",
+    "doc_lb": "Load balance the CCP",
+    "doc_config": "CCP web service configuration",
+    "doc_cache": "Configure caching",
+    "doc_dr": "Disaster recovery",
+    "doc_monitor": "Monitor the CCP",
+    "doc_usage": "Collect CCP usage"
   }
 }
