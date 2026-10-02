@@ -1,7 +1,7 @@
 import type { LucideIcon } from 'lucide-react'
 
 /**
- * Menu icon: an Icons8 Flat Color PNG (self-hosted, 48px source, see icons8.json)
+ * Menu icon: a self-hosted colour SVG (SVG Logos / Flat Color Icons / Fluent color, see THIRD_PARTY_NOTICES.md)
  * on a small white rounded tile so dark logos stay legible in dark mode, or the
  * lucide fallback when the entry has no logo. Always decorative.
  */
