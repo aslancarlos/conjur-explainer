@@ -34,7 +34,7 @@ export default function VisitCounter({ className = '' }: { className?: string })
   const title = t('shell.visits_title', { since, exact })
 
   return (
-    <div className={`items-center gap-2 rounded-full border border-border bg-bg-muted/60 px-3 py-1 text-xs ${className}`}
+    <div className={`items-center gap-2 whitespace-nowrap rounded-full border border-border bg-bg-muted/60 px-3 py-1 text-xs ${className}`}
       title={title}>
       <Heart size={13} strokeWidth={2} className="shrink-0 fill-tone-danger text-tone-danger" aria-hidden="true" />
       <span className="text-text-muted">{t('shell.visits_label')}</span>

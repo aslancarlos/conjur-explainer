@@ -89,7 +89,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
           </button>
           <div className="pl-1"><Brand /></div>
           <span className="hidden xl:block h-7 w-px bg-border" aria-hidden="true" />
-          <span className="hidden xl:block text-sm font-semibold leading-tight text-text">{t('shell.site_name')}</span>
+          <span className="hidden xl:block whitespace-nowrap text-sm font-semibold leading-tight text-text">{t('shell.site_name')}</span>
           <VisitCounter className="hidden md:flex ml-1" />
           <LikeButton className="hidden md:inline-flex" />
 

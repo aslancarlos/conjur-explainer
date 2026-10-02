@@ -71,12 +71,12 @@ export default function EnvStatus() {
   return (
     <div ref={rootRef} className="relative">
       <button ref={btnRef} type="button" onClick={() => setOpen(o => !o)}
-        aria-expanded={open} aria-controls="env-panel" aria-label={`${t('env.title')}: ${label}`}
-        className="inline-flex h-11 items-center gap-2 rounded-lg border border-border bg-bg-card px-3 text-xs font-medium text-text-2
+        aria-expanded={open} aria-controls="env-panel" aria-label={`${t('env.title')}: ${label}`} title={label}
+        className="inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-lg border border-border bg-bg-card px-3 text-xs font-medium text-text-2
           hover:bg-bg-muted hover:text-text transition-colors">
         <span className={`h-2 w-2 shrink-0 rounded-full ${STATE[overall].dot} ${overall === 'checking' ? 'animate-pulse' : ''}`} aria-hidden="true" />
-        <span className="hidden md:inline">{label}</span>
-        <span className="md:hidden tabular-nums">{checking ? '…' : `${okCount}/${list.length}`}</span>
+        <span className="hidden 2xl:inline">{label}</span>
+        <span className="2xl:hidden tabular-nums">{checking ? '…' : `${okCount}/${list.length}`}</span>
       </button>
 
       <AnimatePresence>
