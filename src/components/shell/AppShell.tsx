@@ -105,7 +105,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
       {/* ── Sidebar (≥ lg) ── */}
       <aside className={`hidden lg:flex fixed top-14 bottom-0 left-0 z-40 flex-col border-r border-border bg-bg-card
         ${collapsed ? 'w-16' : 'w-[17rem]'}`}>
-        <nav aria-label={t('nav.primary')} className="flex-1 overflow-y-auto overscroll-contain px-2 py-4">
+        <nav aria-label={t('nav.primary')} className="nav-scroll flex-1 min-h-0 overflow-y-auto overscroll-contain px-2 pt-4 pb-10">
           <SideNav collapsed={collapsed} dense idPrefix="side" />
         </nav>
       </aside>
@@ -130,7 +130,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
                   <X size={20} aria-hidden="true" />
                 </button>
               </div>
-              <nav aria-label={t('nav.primary')} className="flex-1 overflow-y-auto overscroll-contain px-2 py-4">
+              <nav aria-label={t('nav.primary')} className="nav-scroll flex-1 min-h-0 overflow-y-auto overscroll-contain px-2 pt-4 pb-10">
                 <SideNav idPrefix="drawer" />
               </nav>
               <div className="border-t border-border p-3">

@@ -169,3 +169,12 @@
   background: linear-gradient(90deg, transparent 0%, rgba(74, 209, 240, 0.55) 22%, rgba(37, 137, 255, 0.55) 48%, rgba(38, 91, 255, 0.45) 72%, transparent 100%);
   opacity: 0.75;
 }
+
+/* Sidebar / drawer navigation: a soft fade on the bottom edge hints that the
+   list scrolls; the nav's bottom padding keeps the last item clear of it. */
+.nav-scroll {
+  scrollbar-gutter: stable;
+  scroll-padding-block: 16px 48px;   /* auto-reveal stops clear of the fade */
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+          mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent);
+}

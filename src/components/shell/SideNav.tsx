@@ -52,7 +52,16 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
     try { localStorage.setItem(GROUPS_KEY, JSON.stringify(open)) } catch { /* private mode */ }
   }, [open])
 
-  const toggle = (key: string) => setOpen(o => ({ ...o, [key]: !isOpen(key) }))
+  const toggle = (key: string) => {
+    const opening = !isOpen(key)
+    setOpen(o => ({ ...o, [key]: opening }))
+    // Bring the items that just appeared into view (a group near the bottom
+    // would otherwise open below the fold with no visible change).
+    if (opening) {
+      const id = key.startsWith('sec-') ? `${idPrefix}-${key}` : `${idPrefix}-grp-${key}`
+      requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }))
+    }
+  }
 
   const row = (item: NavItem, nested = false) => {
     const active = pathname === item.to
