@@ -19,6 +19,7 @@ const DualAccountsPage = lazy(() => import('./pages/DualAccountsPage'))
 const SaasArchitecturePage = lazy(() => import('./pages/concepts/SaasArchitecturePage'))
 const SelfHostedArchitecturePage = lazy(() => import('./pages/concepts/SelfHostedArchitecturePage'))
 const SwaArchitecturePage = lazy(() => import('./pages/concepts/SwaArchitecturePage'))
+const SecretZeroPage = lazy(() => import('./pages/concepts/SecretZeroPage'))
 const CpHubPage = lazy(() => import('./pages/cp/CpHubPage'))
 const CredentialProviderPage = lazy(() => import('./pages/cp/CredentialProviderPage'))
 const AscpPage = lazy(() => import('./pages/cp/AscpPage'))
@@ -52,6 +53,7 @@ const CloudFoundryPage = lazy(() => import('./pages/platforms/CloudFoundryPage')
 const PuppetPage = lazy(() => import('./pages/platforms/PuppetPage'))
 const MuleSoftPage = lazy(() => import('./pages/platforms/MuleSoftPage'))
 const ZosCpPage = lazy(() => import('./pages/cp/ZosCpPage'))
+const SolutionFinderPage = lazy(() => import('./pages/SolutionFinderPage'))
 const JwtPage = lazy(() => import('./pages/JwtPage'))
 const SecretsHubPage = lazy(() => import('./pages/SecretsHubPage'))
 const JenkinsPage = lazy(() => import('./pages/JenkinsPage'))
@@ -109,6 +111,7 @@ export default function App() {
           <Route path="/policy"         element={<PolicyPage />} />
           <Route path="/concepts/secrets"            element={<SecretsConcept />} />
           <Route path="/concepts/machine-identity"   element={<IdentityConcept />} />
+          <Route path="/concepts/secret-zero"        element={<SecretZeroPage />} />
           <Route path="/concepts/secret-vs-identity" element={<CompareConcept />} />
           <Route path="/concepts/kubernetes"         element={<KubernetesConcept />} />
           <Route path="/concepts/saas-architecture"  element={<SaasArchitecturePage />} />
@@ -147,6 +150,7 @@ export default function App() {
           <Route path="/platforms/puppet" element={<PuppetPage />} />
           <Route path="/platforms/mulesoft" element={<MuleSoftPage />} />
           <Route path="/cp/zos" element={<ZosCpPage />} />
+          <Route path="/finder" element={<SolutionFinderPage />} />
           <Route path="/concepts/glossary"           element={<GlossaryConcept />} />
         </Route>
       </Routes>

@@ -157,7 +157,11 @@
     "ai_mcp": "Servidor MCP",
     "ai_mcp_sub": "Ferramentas de IA que criam secrets e workloads",
     "ai_swa": "SPIFFE para agentes de IA",
-    "ai_swa_sub": "JWT-SVIDs no lugar de API keys"
+    "ai_swa_sub": "JWT-SVIDs no lugar de API keys",
+    "finder": "Qual solução usar",
+    "finder_sub": "Marque o que você tem e veja os produtos que atendem",
+    "c_secretzero": "Segredo Zero",
+    "c_secretzero_sub": "O problema da credencial inicial"
   },
   "hero": {
     "eyebrow": "Identidade de máquina · Secrets · IDIRA by Palo Alto Networks",
@@ -7695,34 +7699,6 @@
       "Até 10.000 contas sincronizadas por tenant e até 1.000 políticas de sincronização."
     ],
     "source_note": "Os valores resumem cada página vinculada, que cita a documentação oficial. Não documentado significa que a documentação não informa.",
-    "decide_title": "Como escolher",
-    "decide_lead": "Comece por onde o workload roda.",
-    "decide": [
-      {
-        "title": "Meu workload é um pod",
-        "desc": "Secrets Manager no Kubernetes: SDK, Secrets Provider, ESO ou CSI. Se o destino valida SPIFFE, use o Secure Workload Access."
-      },
-      {
-        "title": "É um pipeline",
-        "desc": "As integrações de CI/CD do Secrets Manager autenticam com o próprio JWT do job, então nada fica guardado na plataforma de CI."
-      },
-      {
-        "title": "Uma VM ou aplicação legada",
-        "desc": "Credential Providers para contas privilegiadas no PAM, o Central Credential Provider quando não dá para instalar agente, ou o Summon para variáveis de ambiente."
-      },
-      {
-        "title": "Um job de mainframe",
-        "desc": "O Credential Provider para z/OS atende jobs JCL pelo Central Credential Provider. Dual Accounts eliminam a janela da rotação."
-      },
-      {
-        "title": "Um agente de IA",
-        "desc": "Identidades SPIFFE substituem API keys para agentes; o servidor MCP permite que ferramentas de IA levem secrets fixos no código para o Secrets Manager."
-      },
-      {
-        "title": "As apps já usam um cofre de nuvem",
-        "desc": "O Secrets Hub mantém AWS, Azure, GCP e HashiCorp Vault sincronizados com o PAM, sem mudar código."
-      }
-    ],
     "col": {
       "sdk": {
         "name": "SDK (Spring Boot)",
@@ -8075,6 +8051,343 @@
         "limit": "Só KV versão 2; o conector precisa ficar na rede do Vault.",
         "best": "Times padronizados no HashiCorp Vault."
       }
+    },
+    "finder_cta_title": "Não sabe por onde começar?",
+    "finder_cta_desc": "Selecione o que o seu ambiente tem e veja quais produtos e páginas atendem.",
+    "finder_cta_button": "Abrir o \"Qual solução usar\""
+  },
+  "finder": {
+    "badge": "Qual solução usar",
+    "title": "O que o seu ambiente tem?",
+    "subtitle": "Selecione as plataformas, ferramentas e aplicações que você usa. Conforme você escolhe, o painel mostra quais produtos atendem e quais páginas explicam cada integração.",
+    "groups": {
+      "platforms": "Plataformas e runtimes",
+      "cicd": "CI/CD e automação",
+      "cloud": "Nuvem e cofres de secrets",
+      "apps": "Aplicações e legado",
+      "ai": "IA",
+      "other": "Outro"
+    },
+    "tiles": {
+      "k8s": {
+        "name": "Kubernetes / OpenShift"
+      },
+      "vm": {
+        "name": "Máquinas virtuais"
+      },
+      "cf": {
+        "name": "Cloud Foundry / Tanzu"
+      },
+      "mtls": {
+        "name": "mTLS entre serviços"
+      },
+      "iot": {
+        "name": "Dispositivos IoT"
+      },
+      "jenkins": {
+        "name": "Jenkins"
+      },
+      "gitlab": {
+        "name": "GitLab"
+      },
+      "azdo": {
+        "name": "Azure DevOps"
+      },
+      "gha": {
+        "name": "GitHub Actions"
+      },
+      "bitbucket": {
+        "name": "Bitbucket"
+      },
+      "circleci": {
+        "name": "CircleCI"
+      },
+      "octopus": {
+        "name": "Octopus Deploy"
+      },
+      "ansible": {
+        "name": "Ansible"
+      },
+      "terraform": {
+        "name": "Terraform"
+      },
+      "puppet": {
+        "name": "Puppet"
+      },
+      "aws": {
+        "name": "AWS"
+      },
+      "azure": {
+        "name": "Azure"
+      },
+      "gcp": {
+        "name": "Google Cloud"
+      },
+      "awssm": {
+        "name": "AWS Secrets Manager"
+      },
+      "akv": {
+        "name": "Azure Key Vault"
+      },
+      "gsm": {
+        "name": "GCP Secret Manager"
+      },
+      "hcv": {
+        "name": "HashiCorp Vault"
+      },
+      "java": {
+        "name": "Java / Spring Boot"
+      },
+      "dotnet": {
+        "name": "Aplicações .NET"
+      },
+      "python": {
+        "name": "Aplicações Python"
+      },
+      "mulesoft": {
+        "name": "MuleSoft"
+      },
+      "appservers": {
+        "name": "Servidores de aplicação",
+        "sub": "Tomcat, JBoss, WebSphere, WebLogic"
+      },
+      "windows": {
+        "name": "Apps Windows / legadas"
+      },
+      "mainframe": {
+        "name": "Mainframe z/OS"
+      },
+      "databases": {
+        "name": "Bancos de dados das apps"
+      },
+      "humans": {
+        "name": "Usuários humanos / admins"
+      },
+      "aiagent": {
+        "name": "Agentes de IA"
+      },
+      "mcpserver": {
+        "name": "Servidores MCP e ferramentas de IA"
+      },
+      "other": {
+        "name": "Outra coisa"
+      }
+    },
+    "panel_title": "Soluções recomendadas",
+    "selected_count_zero": "Nenhum selecionado",
+    "selected_count_one": "{{count}} selecionado",
+    "selected_count_other": "{{count}} selecionados",
+    "pages_count_one": "{{count}} página",
+    "pages_count_other": "{{count}} páginas",
+    "live": "{{products}} produtos e {{pages}} páginas recomendados.",
+    "live_empty": "Nada selecionado.",
+    "clear": "Limpar seleção",
+    "copy": "Copiar link",
+    "copied": "Link copiado",
+    "empty_title": "Comece selecionando o que você tem",
+    "empty_desc": "Escolha um ou mais itens. As recomendações aparecem aqui, agrupadas por produto, com a página que explica cada uma.",
+    "for": "Para",
+    "note_iot_title": "IoT: não há integração dedicada documentada.",
+    "note_iot": "As abordagens gerais abaixo (autenticação por certificado de cliente ou API key) são um ponto de partida; valide as restrições do dispositivo com o time.",
+    "other_title": "Não está na lista?",
+    "other_desc": "Descreva o seu ambiente e indicamos a integração certa.",
+    "other_cta": "Enviar um e-mail",
+    "other_subject": "qual solução atende o meu ambiente?",
+    "other_body": "O meu ambiente tem:",
+    "starting_point": "As recomendações são um ponto de partida, não um dimensionamento. Confira disponibilidade e limitações em cada página, ou",
+    "compare_link": "compare as opções lado a lado.",
+    "rec_label": {
+      "swaArch": "Arquitetura do SWA",
+      "shubPc": "Secrets Hub com Privilege Cloud",
+      "shubSh": "Secrets Hub com PAM Self-Hosted"
+    },
+    "reason": {
+      "k8sArch": "Pods provam quem são com a identidade do Kubernetes (JWT); comece aqui para ver as opções.",
+      "sdk": "A aplicação se autentica e busca os secrets ela mesma, com o SDK.",
+      "sidecar": "O sidecar do Secrets Provider entrega os secrets sem código de cofre na aplicação.",
+      "eso": "O External Secrets Operator sincroniza os secrets em Kubernetes Secrets.",
+      "csi": "O Secrets Store CSI Driver monta os secrets como volume.",
+      "spmodes": "Secrets Provider como init container, sidecar ou push-to-file.",
+      "reloader": "Reinicia os pods quando o secret muda.",
+      "secretless": "A aplicação conecta por um broker local e nunca vê a credencial do banco (Self-Hosted).",
+      "jenkins": "O plugin se autentica com um JWT de vida curta assinado pelo Jenkins.",
+      "gitlab": "Cada job se autentica com o ID token (JWT) do GitLab.",
+      "azdo": "A extensão se autentica com o token do Entra ID de uma service connection.",
+      "gha": "Os workflows usam o token OIDC do GitHub: nenhuma credencial guardada no GitHub.",
+      "bitbucket": "Cada step se autentica com o token OIDC do Bitbucket.",
+      "circleci": "O orb troca o token OIDC do CircleCI por secrets.",
+      "octopus": "Um step template busca os secrets com um token OIDC.",
+      "ansible": "Um lookup plugin resolve os secrets na hora da execução.",
+      "terraform": "O provider lê os secrets; as formas ephemeral os mantêm fora do state.",
+      "puppet": "Um lookup Deferred faz o agente buscar o secret com a própria identidade (Self-Hosted).",
+      "cf": "Service Broker e buildpack entregam os secrets às aplicações (Self-Hosted).",
+      "mulesoft": "O conector Mule busca os secrets nos fluxos.",
+      "python": "SDK Python, incluindo o cliente AWS IAM para Lambda.",
+      "awsIam": "Workloads na AWS se autenticam com a IAM role.",
+      "azureMi": "Workloads no Azure se autenticam com managed identity.",
+      "gcpId": "Workloads no Google Cloud se autenticam com o identity token do metadata.",
+      "dynamic": "Credenciais de nuvem sob demanda com TTL (AWS; GCP no SaaS).",
+      "apiKey": "Hosts sem identidade de plataforma se autenticam com API key.",
+      "cert": "mTLS com certificado de cliente prova o workload.",
+      "summon": "Injeta os secrets como variáveis de ambiente em um processo.",
+      "rotation": "Como as senhas são rotacionadas em cada edição.",
+      "mcp": "Ferramentas de IA criam secrets e workloads via MCP (SaaS, beta).",
+      "users": "Pessoas entram via Identity, OIDC ou LDAP.",
+      "swaArch": "SVIDs SPIFFE emitidos após atestação substituem secrets estáticos.",
+      "svid": "Veja X.509-SVIDs e JWT-SVIDs emitidos ao vivo.",
+      "swaS3": "Um SVID é trocado por credenciais do AWS STS: sem chaves estáticas.",
+      "swaAi": "JWT-SVIDs substituem API keys para agentes de IA (SaaS).",
+      "cpAgent": "Um agente no host entrega as senhas de um cache criptografado.",
+      "ascp": "Os data sources pegam credenciais em tempo de execução, sem mudar código.",
+      "ccp": "Web service REST central: sem agente no host da aplicação.",
+      "zos": "Jobs batch pegam senhas em tempo de execução em vez de JCL ou datasets.",
+      "dual": "Duas contas se alternam para a rotação não causar indisponibilidade.",
+      "shubPc": "Mantém os cofres de nuvem sincronizados com o Privilege Cloud, sem mudar a aplicação.",
+      "shubSh": "A mesma sincronização com o PAM Self-Hosted 11.5 ou superior como origem."
+    }
+  },
+  "c_secretzero": {
+    "title": "Segredo Zero",
+    "subtitle": "Para buscar secrets com segurança, o workload primeiro precisa provar quem é. Se essa prova for uma credencial guardada, você acabou de criar um novo secret para proteger: o Segredo Zero.",
+    "problem_badge": "Problema",
+    "problem_title": "O problema: Segredo Zero",
+    "problem_desc": "Um cofre só resolve a senha no código se a aplicação conseguir se autenticar nele. Quando essa primeira credencial (uma API key, um token, uma senha) é escrita num arquivo de configuração, numa variável de ambiente ou numa imagem de contêiner, ela vira o novo secret no código. Quem copiá-la ganha tudo o que ela pode ler.",
+    "problem_regress": "Proteger essa chave com outro cofre não resolve: o segundo cofre precisa da própria chave, e assim por diante. A cadeia só termina quando a primeira identidade vem de algo que o workload é, e não de algo que ele guarda.",
+    "problem_quote": "A documentação descreve a solução: autenticar workloads com evidências da plataforma, como tokens projetados de service account do Kubernetes ou metadados da instância na nuvem, em vez de credenciais estáticas pré-compartilhadas.",
+    "flow_title": "Como funciona, passo a passo",
+    "flow_intro": "O ato 1 mostra a chave de bootstrap e por que ela é um problema (em vermelho). O ato 2 mostra o mesmo pedido com uma identidade atestada pela plataforma: nada estático fica guardado.",
+    "why_title": "Por que isso importa",
+    "why": {
+      "leak_title": "Vaza como qualquer outro secret",
+      "leak_desc": "A chave acaba no histórico do git, nas camadas da imagem, nos logs de CI e nos backups. Quem a lê consegue se autenticar como a aplicação.",
+      "rotation_title": "A rotação é dolorosa",
+      "rotation_desc": "Trocar a chave exige editar configuração, recompilar ou reimplantar cada cópia. Por isso quase nunca acontece.",
+      "blast_title": "Raio de impacto grande",
+      "blast_desc": "Uma chave de bootstrap roubada abre todos os secrets que aquela identidade pode ler, de qualquer lugar onde a chave funcione."
+    },
+    "hides_title": "Onde o Segredo Zero se esconde",
+    "hides_lead": "Procure qualquer credencial que o workload precise antes de conseguir falar com o cofre.",
+    "hides": {
+      "env_title": "Variáveis de ambiente",
+      "env_desc": "API keys passadas em variáveis ficam visíveis para a árvore de processos e muitas vezes aparecem em logs.",
+      "config_title": "Arquivos de configuração",
+      "config_desc": "Properties, YAML ou .env commitados no repositório ou copiados para servidores.",
+      "image_title": "Imagens de contêiner",
+      "image_desc": "Chaves gravadas numa camada ficam lá para qualquer um que consiga baixar a imagem.",
+      "ci_title": "Variáveis de CI/CD",
+      "ci_desc": "Tokens de longa duração guardados na ferramenta de pipeline para os jobs alcançarem o cofre.",
+      "scripts_title": "Scripts",
+      "scripts_desc": "Scripts de deploy e automação com a chave escrita neles ou ao lado.",
+      "disk_title": "Discos de VM",
+      "disk_desc": "Arquivos de credencial esquecidos em servidores, imagens e snapshots."
+    },
+    "solve_title": "Como a IDIRA elimina o problema",
+    "solve_lead": "O workload prova quem é com evidências que a plataforma assina ou verifica. O Secrets Manager confere essa evidência e devolve um token de acesso de curta duração, então não existe um primeiro secret para guardar.",
+    "solve": {
+      "k8s_title": "Kubernetes",
+      "k8s_desc": "O pod apresenta o token da service account. O autenticador o valida com as chaves públicas do cluster.",
+      "cloud_title": "AWS, Azure e GCP",
+      "cloud_desc": "O workload usa a identidade da nuvem (IAM role, managed identity, service account). A documentação apresenta o Azure Authenticator como alternativa à API key, sem precisar guardar um Segredo Zero.",
+      "cicd_title": "Pipelines de CI/CD",
+      "cicd_desc": "Cada job recebe um token OIDC/JWT assinado pela plataforma de CI e o troca no autenticador JWT.",
+      "swa_title": "Secure Workload Access",
+      "swa_desc": "O SWA atesta o workload e emite SVIDs SPIFFE. Em VMs, a atestação X.509 por prova de posse elimina credenciais estáticas de bootstrap.",
+      "cp_title": "Credential Providers",
+      "cp_desc": "A aplicação é reconhecida pelos atributos (máquinas permitidas, usuário do SO, caminho, hash ou certificado) antes de qualquer senha ser liberada."
+    },
+    "learn_more": "Saiba mais",
+    "apikey_title": "E quando ainda se usa API key?",
+    "apikey_desc": "Aí ela é um Segredo Zero e deve ser tratada como tal. A API key é gerada pelo Secrets Manager quando o workload é criado. Use-a só onde nenhum autenticador atestado se encaixa, e reduza o risco:",
+    "apikey": {
+      "rotate": "Rotacione: um administrador com permissão sobre o workload pode redefinir a API key se ela for perdida ou comprometida.",
+      "restrict": "Limite onde ela funciona: na policy do Self-Hosted, restricted_to aceita os endereços IP ou faixas CIDR que podem se autenticar.",
+      "prefer": "Migre para um autenticador atestado (Kubernetes, nuvem, JWT, certificado ou SWA) assim que a plataforma permitir."
+    },
+    "apikey_link": "Autenticação por API key",
+    "table_title": "Com e sem Segredo Zero",
+    "col_aspect": "Aspecto",
+    "col_with": "Com Segredo Zero",
+    "col_without": "Sem Segredo Zero",
+    "rows": {
+      "r1_aspect": "Primeira credencial",
+      "r1_with": "Uma chave estática guardada junto da aplicação",
+      "r1_without": "Evidência que a plataforma emite ou verifica (JWT, IAM, SVID)",
+      "r2_aspect": "Se vazar",
+      "r2_with": "Funciona de qualquer lugar até alguém redefinir",
+      "r2_without": "Curta duração e presa à identidade do workload",
+      "r3_aspect": "Rotação",
+      "r3_with": "Manual: editar, recompilar, reimplantar",
+      "r3_without": "Nada a rotacionar do lado do workload",
+      "r4_aspect": "Onde fica",
+      "r4_with": "Variáveis de ambiente, configuração, imagens, variáveis de CI",
+      "r4_without": "Em lugar nenhum: a identidade vem da plataforma",
+      "r5_aspect": "Auditoria",
+      "r5_with": "Toda cópia parece a mesma aplicação",
+      "r5_without": "Cada pedido corresponde a um workload atestado"
+    },
+    "docs_title": "Documentação oficial",
+    "docs": {
+      "overview": "Visão geral do Secrets Manager SaaS",
+      "swa": "Visão geral do Secure Workload Access",
+      "azure_saas": "Azure Authenticator (SaaS)",
+      "azure_sh": "Azure Authenticator (Self-Hosted)",
+      "apikey": "Autenticação por API key",
+      "host": "Declaração host na policy (restricted_to)"
+    },
+    "flow": {
+      "diagram_label": "Diagrama animado: o problema do Segredo Zero e como a identidade atestada pela plataforma o elimina",
+      "lane_problem": "Ato 1: com Segredo Zero",
+      "lane_solution": "Ato 2: sem Segredo Zero",
+      "n_cfg": "Config, env ou imagem",
+      "n_cfg_sub": "onde a 1ª chave fica",
+      "n_app": "Aplicação",
+      "n_app_sub": "precisa da senha do banco",
+      "n_sm": "Secrets Manager",
+      "n_sm_sub": "autenticador + policy",
+      "n_leak": "Atacante",
+      "n_leak_sub": "copiou o config",
+      "n_plat": "Plataforma",
+      "n_plat_sub": "K8s, nuvem, CI ou SWA",
+      "n_keys": "Chaves públicas",
+      "n_keys_sub": "da plataforma (JWKS)",
+      "r_protect": "proteger",
+      "r_rotation": "rotação",
+      "r_boot": "1ª credencial",
+      "r_authn": "autenticação",
+      "r_access": "acesso ao vault",
+      "r_doc": "documento",
+      "st_gone": "nada guardado",
+      "st_loop": "exige outra chave",
+      "st_manual": "manual, arriscada",
+      "st_static": "chave fixa",
+      "st_attested": "atestada",
+      "st_delivered": "entregue",
+      "st_apikey": "API key aceita",
+      "st_verified": "assinatura válida",
+      "st_short": "curta duração",
+      "st_no": "não",
+      "st_yes": "sim",
+      "st_signed": "assinado",
+      "p_copy": "cópia",
+      "p_publish": "publica",
+      "s1_title": "A aplicação precisa de uma senha",
+      "s1_desc": "A senha do banco está no Secrets Manager. Para pedi-la, a aplicação primeiro precisa se autenticar.",
+      "s2_title": "Alguém guarda uma primeira chave",
+      "s2_desc": "A solução rápida: uma API key vai para um arquivo de configuração, uma variável de ambiente ou a imagem. Esse é o Segredo Zero.",
+      "s3_title": "Funciona",
+      "s3_desc": "A aplicação envia a API key, o Secrets Manager aceita, emite um token de acesso e devolve a senha. Tudo parece certo.",
+      "s4_title": "Mas a chave é um secret estático",
+      "s4_desc": "Protegê-la exige outra chave, que exige outra. Rotacioná-la significa editar e reimplantar cada cópia.",
+      "s5_title": "E ela vaza",
+      "s5_desc": "Quem copia o config, a imagem ou um log pega a chave e se autentica como a aplicação, de qualquer lugar.",
+      "s6_title": "Ato 2: a plataforma garante",
+      "s6_desc": "Tire a chave guardada. A plataforma que roda o workload emite um documento de identidade assinado: um JWT de service account, uma identidade de nuvem, um token OIDC do CI ou um SVID SPIFFE.",
+      "s7_title": "O Secrets Manager verifica",
+      "s7_desc": "A aplicação apresenta esse documento. O autenticador confere a assinatura com as chaves públicas publicadas pela plataforma e associa os claims a um workload.",
+      "s8_title": "Token curto, secret entregue",
+      "s8_desc": "O Secrets Manager devolve um token de acesso de curta duração e a senha. A primeira credencial da aplicação foi atestada, não guardada.",
+      "s9_title": "Nada para roubar em repouso",
+      "s9_desc": "Nenhuma chave em config, env ou imagem. Um arquivo copiado não dá nada ao atacante, e não há nada para rotacionar do lado do workload."
     }
   }
 }

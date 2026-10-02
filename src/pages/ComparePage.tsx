@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import type { LucideIcon } from 'lucide-react'
 import {
-  ArrowRight, Check, Minus, Container, Workflow, Server, Cpu, Bot, Cloud,
+  ArrowRight, Check, Compass, Minus, Container, Workflow, Server, Cpu, Bot, Cloud,
   FileBadge, KeyRound, Database, Leaf, Hexagon, ShoppingCart, ShipWheel, Columns3, RefreshCcw, EyeOff,
   Github, Boxes, Blocks, GitBranch, Infinity as InfinityIcon, GitPullRequest, CircleDot, Rocket,
   Code, CloudUpload, Cog, Terminal, Timer, FileKey2, HardDrive, Globe, RefreshCw, Vault, TriangleAlert, MoveHorizontal,
@@ -207,16 +207,6 @@ export default function ComparePage() {
   const productName = (pr: Product) => t(GROUP(pr.navKey)?.labelKey ?? '')
   const ProductIcon = (pr: Product) => GROUP(pr.navKey)?.Icon ?? Container
 
-  const decisions = t('cmp.decide', { returnObjects: true }) as Array<{ title: string; desc: string }>
-  const DECIDE: Array<{ Icon: LucideIcon; product: ProductKey; links: string[] }> = [
-    { Icon: Container, product: 'sm', links: ['/concepts/kubernetes', '/k8s/secrets-provider-modes', '/concepts/swa-architecture'] },
-    { Icon: Workflow, product: 'sm', links: ['/github-actions', '/cicd/gitlab', '/cicd/terraform'] },
-    { Icon: Server, product: 'cp', links: ['/cp', '/cp/ccp', '/sm/summon'] },
-    { Icon: Cpu, product: 'cp', links: ['/cp/zos', '/dualaccounts'] },
-    { Icon: Bot, product: 'swa', links: ['/ai/swa-agents', '/ai/mcp-server'] },
-    { Icon: Cloud, product: 'shub', links: ['/secretshub', '/secretshub?env=pamsh'] },
-  ]
-
   return (
     <section className="min-h-screen bg-bg-base px-6 py-16">
       <div className="mx-auto max-w-6xl space-y-14">
@@ -313,35 +303,20 @@ export default function ComparePage() {
           </div>
         </Section>
 
-        {/* 3. How to choose */}
-        <Section title={p('decide_title')} lead={p('decide_lead')}>
-          <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {DECIDE.map((d, i) => {
-              const pr = PRODUCTS.find(x => x.key === d.product)!
-              return (
-                <li key={i} className="flex flex-col gap-3 rounded-2xl border border-border bg-bg-card p-5">
-                  <div className="flex items-center gap-2">
-                    <d.Icon size={18} aria-hidden="true" className={pr.color} />
-                    <h3 className="text-base font-semibold text-text">{decisions[i]?.title}</h3>
-                  </div>
-                  <p className="text-sm leading-relaxed text-text-2">{decisions[i]?.desc}</p>
-                  <ul className="mt-auto flex flex-wrap gap-2">
-                    {d.links.map(to => {
-                      const nav = NAV_ITEM(to)
-                      return (
-                        <li key={to}>
-                          <Link to={to} className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-medium text-text-2 transition-colors hover:border-idira-blue hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">
-                            {nav ? t(nav.labelKey) : to}<ArrowRight size={12} aria-hidden="true" />
-                          </Link>
-                        </li>
-                      )
-                    })}
-                  </ul>
-                </li>
-              )
-            })}
-          </ul>
-        </Section>
+        {/* 3. Solution finder lives on its own page */}
+        <div className="flex flex-col gap-4 rounded-2xl border border-border bg-bg-card p-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex gap-3">
+            <Compass size={22} aria-hidden="true" className="mt-0.5 shrink-0 text-domain-idira" />
+            <div className="space-y-1">
+              <h2 className="text-base font-semibold text-text">{p('finder_cta_title')}</h2>
+              <p className="text-sm leading-relaxed text-text-2">{p('finder_cta_desc')}</p>
+            </div>
+          </div>
+          <Link to="/finder"
+            className="inline-flex min-h-11 shrink-0 items-center gap-2 self-start rounded-full bg-idira-blue px-5 text-sm font-semibold text-white transition-colors hover:bg-idira-blue-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base sm:self-center">
+            {p('finder_cta_button')}<ArrowRight size={16} aria-hidden="true" />
+          </Link>
+        </div>
       </div>
     </section>
   )

@@ -1,5 +1,5 @@
 import {
-  Home, BookOpen, ArrowLeftRight, Container, Fingerprint, FileBadge, RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
+  ShieldAlert, Home, Compass, BookOpen, ArrowLeftRight, Container, Fingerprint, FileBadge, RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
   Leaf, Hexagon, Github, ShoppingCart, Database,
   GitCompareArrows, Wrench, LayoutDashboard, CloudCog, Network, ShieldCheck, Layers, GraduationCap, Vault, KeySquare, BadgeCheck, Cloud, Users, AppWindow, LayoutGrid, HardDrive, Globe,
   Timer, FileKey2, RotateCw, ClipboardList, Terminal, Bot, Columns3, RefreshCcw, EyeOff, Blocks, GitBranch, Infinity as InfinityIcon, GitPullRequest, CircleDot, Rocket, Code, CloudUpload, Cog, Workflow, Cpu,
@@ -57,7 +57,10 @@ export interface NavGroup {
 export const NAV: NavGroup[] = [
   {
     key: 'home',
-    items: [{ to: '/', labelKey: 'nav.home', Icon: Home, color: 'text-domain-idira' }],
+    items: [
+      { to: '/', labelKey: 'nav.home', Icon: Home, color: 'text-domain-idira' },
+      { to: '/finder', labelKey: 'nav.finder', subKey: 'nav.finder_sub', Icon: Compass, color: 'text-domain-idira' },
+    ],
   },
   {
     // Learning trail (ConceptLayout follows this order for prev / next).
@@ -68,6 +71,7 @@ export const NAV: NavGroup[] = [
     items: [
       { to: '/concepts/secrets',            labelKey: 'nav.c_secret',   subKey: 'nav.c_secret_sub',   Icon: KeyRound,       color: 'text-text-2' },
       { to: '/concepts/machine-identity',   labelKey: 'nav.c_identity', subKey: 'nav.c_identity_sub', Icon: Fingerprint,    color: 'text-text-2' },
+      { to: '/concepts/secret-zero',        labelKey: 'nav.c_secretzero', subKey: 'nav.c_secretzero_sub', Icon: ShieldAlert,    color: 'text-tone-danger' },
       { to: '/concepts/secret-vs-identity', labelKey: 'nav.c_compare',  subKey: 'nav.c_compare_sub',  Icon: ArrowLeftRight, color: 'text-text-2' },
       { to: '/concepts/glossary',           labelKey: 'nav.c_glossary', subKey: 'nav.c_glossary_sub', Icon: BookOpen,       color: 'text-text-2' },
     ],

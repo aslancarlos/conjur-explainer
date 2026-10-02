@@ -157,7 +157,11 @@
     "ai_mcp": "Servidor MCP",
     "ai_mcp_sub": "Herramientas de IA que crean secrets y workloads",
     "ai_swa": "SPIFFE para agentes de IA",
-    "ai_swa_sub": "JWT-SVIDs en lugar de API keys"
+    "ai_swa_sub": "JWT-SVIDs en lugar de API keys",
+    "finder": "Qué solución usar",
+    "finder_sub": "Marque lo que tiene y vea los productos que encajan",
+    "c_secretzero": "Secreto cero",
+    "c_secretzero_sub": "El problema de la credencial inicial"
   },
   "hero": {
     "eyebrow": "Identidad de máquina · Secretos · IDIRA by Palo Alto Networks",
@@ -7695,34 +7699,6 @@
       "Hasta 10.000 cuentas sincronizadas por tenant y hasta 1.000 políticas de sincronización."
     ],
     "source_note": "Los valores resumen cada página enlazada, que cita la documentación oficial. No documentado significa que la documentación no lo indica.",
-    "decide_title": "Cómo elegir",
-    "decide_lead": "Empiece por dónde corre el workload.",
-    "decide": [
-      {
-        "title": "Mi workload es un pod",
-        "desc": "Secrets Manager en Kubernetes: SDK, Secrets Provider, ESO o CSI. Si el destino valida SPIFFE, use Secure Workload Access."
-      },
-      {
-        "title": "Es un pipeline",
-        "desc": "Las integraciones de CI/CD de Secrets Manager se autentican con el propio JWT del job, así que nada queda guardado en la plataforma de CI."
-      },
-      {
-        "title": "Una VM o aplicación heredada",
-        "desc": "Credential Providers para cuentas privilegiadas en PAM, el Central Credential Provider cuando no se puede instalar un agente, o Summon para variables de entorno."
-      },
-      {
-        "title": "Un job de mainframe",
-        "desc": "El Credential Provider para z/OS atiende jobs JCL a través del Central Credential Provider. Dual Accounts elimina la ventana de rotación."
-      },
-      {
-        "title": "Un agente de IA",
-        "desc": "Las identidades SPIFFE reemplazan las API keys de los agentes; el servidor MCP permite que herramientas de IA lleven los secretos fijos del código a Secrets Manager."
-      },
-      {
-        "title": "Las apps ya usan un almacén de nube",
-        "desc": "Secrets Hub mantiene AWS, Azure, GCP y HashiCorp Vault sincronizados con PAM, sin cambiar código."
-      }
-    ],
     "col": {
       "sdk": {
         "name": "SDK (Spring Boot)",
@@ -8075,6 +8051,343 @@
         "limit": "Solo KV versión 2; el conector debe estar en la red del Vault.",
         "best": "Equipos estandarizados en HashiCorp Vault."
       }
+    },
+    "finder_cta_title": "¿No sabe por dónde empezar?",
+    "finder_cta_desc": "Seleccione lo que tiene su entorno y vea qué productos y páginas encajan.",
+    "finder_cta_button": "Abrir \"Qué solución usar\""
+  },
+  "finder": {
+    "badge": "Qué solución usar",
+    "title": "¿Qué tiene su entorno?",
+    "subtitle": "Seleccione las plataformas, herramientas y aplicaciones que usa. A medida que elige, el panel muestra qué productos encajan y qué páginas explican cada integración.",
+    "groups": {
+      "platforms": "Plataformas y runtimes",
+      "cicd": "CI/CD y automatización",
+      "cloud": "Nube y almacenes de secretos",
+      "apps": "Aplicaciones y legado",
+      "ai": "IA",
+      "other": "Otro"
+    },
+    "tiles": {
+      "k8s": {
+        "name": "Kubernetes / OpenShift"
+      },
+      "vm": {
+        "name": "Máquinas virtuales"
+      },
+      "cf": {
+        "name": "Cloud Foundry / Tanzu"
+      },
+      "mtls": {
+        "name": "mTLS entre servicios"
+      },
+      "iot": {
+        "name": "Dispositivos IoT"
+      },
+      "jenkins": {
+        "name": "Jenkins"
+      },
+      "gitlab": {
+        "name": "GitLab"
+      },
+      "azdo": {
+        "name": "Azure DevOps"
+      },
+      "gha": {
+        "name": "GitHub Actions"
+      },
+      "bitbucket": {
+        "name": "Bitbucket"
+      },
+      "circleci": {
+        "name": "CircleCI"
+      },
+      "octopus": {
+        "name": "Octopus Deploy"
+      },
+      "ansible": {
+        "name": "Ansible"
+      },
+      "terraform": {
+        "name": "Terraform"
+      },
+      "puppet": {
+        "name": "Puppet"
+      },
+      "aws": {
+        "name": "AWS"
+      },
+      "azure": {
+        "name": "Azure"
+      },
+      "gcp": {
+        "name": "Google Cloud"
+      },
+      "awssm": {
+        "name": "AWS Secrets Manager"
+      },
+      "akv": {
+        "name": "Azure Key Vault"
+      },
+      "gsm": {
+        "name": "GCP Secret Manager"
+      },
+      "hcv": {
+        "name": "HashiCorp Vault"
+      },
+      "java": {
+        "name": "Java / Spring Boot"
+      },
+      "dotnet": {
+        "name": "Aplicaciones .NET"
+      },
+      "python": {
+        "name": "Aplicaciones Python"
+      },
+      "mulesoft": {
+        "name": "MuleSoft"
+      },
+      "appservers": {
+        "name": "Servidores de aplicaciones",
+        "sub": "Tomcat, JBoss, WebSphere, WebLogic"
+      },
+      "windows": {
+        "name": "Apps Windows / legadas"
+      },
+      "mainframe": {
+        "name": "Mainframe z/OS"
+      },
+      "databases": {
+        "name": "Bases de datos de las apps"
+      },
+      "humans": {
+        "name": "Usuarios humanos / admins"
+      },
+      "aiagent": {
+        "name": "Agentes de IA"
+      },
+      "mcpserver": {
+        "name": "Servidores MCP y herramientas de IA"
+      },
+      "other": {
+        "name": "Otra cosa"
+      }
+    },
+    "panel_title": "Soluciones recomendadas",
+    "selected_count_zero": "Ninguno seleccionado",
+    "selected_count_one": "{{count}} seleccionado",
+    "selected_count_other": "{{count}} seleccionados",
+    "pages_count_one": "{{count}} página",
+    "pages_count_other": "{{count}} páginas",
+    "live": "{{products}} productos y {{pages}} páginas recomendados.",
+    "live_empty": "Nada seleccionado.",
+    "clear": "Borrar selección",
+    "copy": "Copiar enlace",
+    "copied": "Enlace copiado",
+    "empty_title": "Empiece seleccionando lo que tiene",
+    "empty_desc": "Elija uno o más elementos. Las recomendaciones aparecen aquí, agrupadas por producto, con la página que explica cada una.",
+    "for": "Para",
+    "note_iot_title": "IoT: no hay una integración dedicada documentada.",
+    "note_iot": "Los enfoques generales de abajo (autenticación por certificado de cliente o API key) son un punto de partida; valide las restricciones del dispositivo con el equipo.",
+    "other_title": "¿No está en la lista?",
+    "other_desc": "Describa su entorno y le indicamos la integración adecuada.",
+    "other_cta": "Enviar un correo",
+    "other_subject": "¿qué solución encaja en mi entorno?",
+    "other_body": "Mi entorno tiene:",
+    "starting_point": "Las recomendaciones son un punto de partida, no un dimensionamiento. Revise disponibilidad y limitaciones en cada página, o",
+    "compare_link": "compare las opciones lado a lado.",
+    "rec_label": {
+      "swaArch": "Arquitectura de SWA",
+      "shubPc": "Secrets Hub con Privilege Cloud",
+      "shubSh": "Secrets Hub con PAM Self-Hosted"
+    },
+    "reason": {
+      "k8sArch": "Los pods prueban quiénes son con su identidad de Kubernetes (JWT); empiece aquí para ver las opciones.",
+      "sdk": "La aplicación se autentica y obtiene los secretos ella misma, con el SDK.",
+      "sidecar": "El sidecar del Secrets Provider entrega los secretos sin código de bóveda en la aplicación.",
+      "eso": "External Secrets Operator sincroniza los secretos en Kubernetes Secrets.",
+      "csi": "Secrets Store CSI Driver monta los secretos como volumen.",
+      "spmodes": "Secrets Provider como init container, sidecar o push-to-file.",
+      "reloader": "Reinicia los pods cuando cambia el secreto.",
+      "secretless": "La aplicación se conecta por un broker local y nunca ve la credencial de la base de datos (Self-Hosted).",
+      "jenkins": "El plugin se autentica con un JWT de vida corta firmado por Jenkins.",
+      "gitlab": "Cada job se autentica con su ID token (JWT) de GitLab.",
+      "azdo": "La extensión se autentica con el token de Entra ID de una service connection.",
+      "gha": "Los workflows usan el token OIDC de GitHub: ninguna credencial guardada en GitHub.",
+      "bitbucket": "Cada step se autentica con su token OIDC de Bitbucket.",
+      "circleci": "El orb cambia el token OIDC de CircleCI por secretos.",
+      "octopus": "Un step template obtiene los secretos con un token OIDC.",
+      "ansible": "Un lookup plugin resuelve los secretos en tiempo de ejecución.",
+      "terraform": "El provider lee los secretos; las formas ephemeral los mantienen fuera del state.",
+      "puppet": "Un lookup Deferred hace que el agente obtenga el secreto con su propia identidad (Self-Hosted).",
+      "cf": "Service Broker y buildpack entregan los secretos a las aplicaciones (Self-Hosted).",
+      "mulesoft": "El conector Mule obtiene los secretos en los flujos.",
+      "python": "SDK Python, incluido el cliente AWS IAM para Lambda.",
+      "awsIam": "Los workloads en AWS se autentican con su IAM role.",
+      "azureMi": "Los workloads en Azure se autentican con managed identity.",
+      "gcpId": "Los workloads en Google Cloud se autentican con el identity token del metadata.",
+      "dynamic": "Credenciales de nube bajo demanda con TTL (AWS; GCP en SaaS).",
+      "apiKey": "Los hosts sin identidad de plataforma se autentican con API key.",
+      "cert": "mTLS con certificado de cliente prueba el workload.",
+      "summon": "Inyecta los secretos como variables de entorno en un proceso.",
+      "rotation": "Cómo rotan las contraseñas en cada edición.",
+      "mcp": "Las herramientas de IA crean secretos y workloads vía MCP (SaaS, beta).",
+      "users": "Las personas inician sesión vía Identity, OIDC o LDAP.",
+      "swaArch": "Los SVID SPIFFE emitidos tras la atestación reemplazan secretos estáticos.",
+      "svid": "Vea X.509-SVID y JWT-SVID emitidos en vivo.",
+      "swaS3": "Un SVID se cambia por credenciales de AWS STS: sin claves estáticas.",
+      "swaAi": "Los JWT-SVID reemplazan API keys para agentes de IA (SaaS).",
+      "cpAgent": "Un agente en el host entrega las contraseñas desde una caché cifrada.",
+      "ascp": "Los data sources obtienen credenciales en tiempo de ejecución, sin cambiar código.",
+      "ccp": "Servicio web REST central: sin agente en el host de la aplicación.",
+      "zos": "Los jobs batch obtienen contraseñas en tiempo de ejecución en lugar de JCL o datasets.",
+      "dual": "Dos cuentas se alternan para que la rotación no cause indisponibilidad.",
+      "shubPc": "Mantiene los almacenes de nube sincronizados con Privilege Cloud, sin cambiar la aplicación.",
+      "shubSh": "La misma sincronización con PAM Self-Hosted 11.5 o superior como origen."
+    }
+  },
+  "c_secretzero": {
+    "title": "Secreto cero",
+    "subtitle": "Para obtener secretos de forma segura, el workload primero tiene que probar quién es. Si esa prueba es una credencial guardada, acaba de crear un nuevo secreto que proteger: el secreto cero.",
+    "problem_badge": "Problema",
+    "problem_title": "El problema: secreto cero",
+    "problem_desc": "Una bóveda solo resuelve las contraseñas en el código si la aplicación puede autenticarse en ella. Cuando esa primera credencial (una API key, un token, una contraseña) se escribe en un archivo de configuración, una variable de entorno o una imagen de contenedor, se convierte en el nuevo secreto en el código. Quien la copie obtiene todo lo que ella puede leer.",
+    "problem_regress": "Proteger esa clave con otra bóveda no ayuda: la segunda bóveda necesita su propia clave, y así sucesivamente. La cadena solo termina cuando la primera identidad viene de algo que el workload es, no de algo que guarda.",
+    "problem_quote": "La documentación describe la solución: autenticar workloads con evidencias de la plataforma, como tokens proyectados de service account de Kubernetes o metadatos de la instancia en la nube, en lugar de credenciales estáticas precompartidas.",
+    "flow_title": "Cómo funciona, paso a paso",
+    "flow_intro": "El acto 1 muestra la clave de bootstrap y por qué es un problema (en rojo). El acto 2 muestra la misma solicitud con una identidad atestiguada por la plataforma: no se guarda nada estático.",
+    "why_title": "Por qué importa",
+    "why": {
+      "leak_title": "Se filtra como cualquier secreto",
+      "leak_desc": "La clave termina en el historial de git, en las capas de la imagen, en los logs de CI y en los backups. Quien la lee puede autenticarse como la aplicación.",
+      "rotation_title": "Rotarla es doloroso",
+      "rotation_desc": "Cambiar la clave exige editar la configuración, recompilar o redesplegar cada copia. Por eso casi nunca ocurre.",
+      "blast_title": "Gran radio de impacto",
+      "blast_desc": "Una clave de bootstrap robada abre todos los secretos que esa identidad puede leer, desde cualquier lugar donde la clave funcione."
+    },
+    "hides_title": "Dónde se esconde el secreto cero",
+    "hides_lead": "Busque cualquier credencial que el workload necesite antes de poder hablar con la bóveda.",
+    "hides": {
+      "env_title": "Variables de entorno",
+      "env_desc": "Las API keys pasadas en variables son visibles para el árbol de procesos y a menudo aparecen en logs.",
+      "config_title": "Archivos de configuración",
+      "config_desc": "Properties, YAML o .env confirmados en el repositorio o copiados a servidores.",
+      "image_title": "Imágenes de contenedor",
+      "image_desc": "Las claves grabadas en una capa quedan ahí para cualquiera que pueda descargar la imagen.",
+      "ci_title": "Variables de CI/CD",
+      "ci_desc": "Tokens de larga duración guardados en la herramienta de pipeline para que los jobs lleguen a la bóveda.",
+      "scripts_title": "Scripts",
+      "scripts_desc": "Scripts de despliegue y automatización con la clave escrita en ellos o al lado.",
+      "disk_title": "Discos de VM",
+      "disk_desc": "Archivos de credenciales olvidados en servidores, imágenes y snapshots."
+    },
+    "solve_title": "Cómo lo elimina IDIRA",
+    "solve_lead": "El workload prueba quién es con evidencias que la plataforma firma o verifica. Secrets Manager comprueba esa evidencia y devuelve un token de acceso de corta duración, así que no hay un primer secreto que guardar.",
+    "solve": {
+      "k8s_title": "Kubernetes",
+      "k8s_desc": "El pod presenta el token de su service account. El autenticador lo valida con las claves públicas del clúster.",
+      "cloud_title": "AWS, Azure y GCP",
+      "cloud_desc": "El workload usa su identidad de nube (IAM role, managed identity, service account). La documentación presenta el Azure Authenticator como alternativa a la API key, sin necesidad de guardar un secreto cero.",
+      "cicd_title": "Pipelines de CI/CD",
+      "cicd_desc": "Cada job recibe un token OIDC/JWT firmado por la plataforma de CI y lo intercambia en el autenticador JWT.",
+      "swa_title": "Secure Workload Access",
+      "swa_desc": "SWA atestigua el workload y emite SVIDs SPIFFE. En VMs, la atestación X.509 por prueba de posesión elimina las credenciales estáticas de bootstrap.",
+      "cp_title": "Credential Providers",
+      "cp_desc": "La aplicación se reconoce por sus atributos (máquinas permitidas, usuario del SO, ruta, hash o certificado) antes de liberar cualquier contraseña."
+    },
+    "learn_more": "Más información",
+    "apikey_title": "¿Y cuando todavía se usa una API key?",
+    "apikey_desc": "Entonces es un secreto cero y debe tratarse como tal. Secrets Manager genera la API key cuando se crea el workload. Úsela solo donde ningún autenticador atestiguado encaje, y reduzca el riesgo:",
+    "apikey": {
+      "rotate": "Rótela: un administrador con permiso sobre el workload puede restablecer la API key si se pierde o se compromete.",
+      "restrict": "Limite dónde funciona: en la policy de Self-Hosted, restricted_to acepta las direcciones IP o rangos CIDR que pueden autenticarse.",
+      "prefer": "Migre a un autenticador atestiguado (Kubernetes, nube, JWT, certificado o SWA) en cuanto la plataforma lo permita."
+    },
+    "apikey_link": "Autenticación con API key",
+    "table_title": "Con y sin secreto cero",
+    "col_aspect": "Aspecto",
+    "col_with": "Con secreto cero",
+    "col_without": "Sin secreto cero",
+    "rows": {
+      "r1_aspect": "Primera credencial",
+      "r1_with": "Una clave estática guardada con la aplicación",
+      "r1_without": "Evidencia que la plataforma emite o verifica (JWT, IAM, SVID)",
+      "r2_aspect": "Si se filtra",
+      "r2_with": "Funciona desde cualquier lugar hasta que alguien la restablezca",
+      "r2_without": "Corta duración y ligada a la identidad del workload",
+      "r3_aspect": "Rotación",
+      "r3_with": "Manual: editar, recompilar, redesplegar",
+      "r3_without": "Nada que rotar del lado del workload",
+      "r4_aspect": "Dónde vive",
+      "r4_with": "Variables de entorno, configuración, imágenes, variables de CI",
+      "r4_without": "En ningún lugar: la identidad viene de la plataforma",
+      "r5_aspect": "Auditoría",
+      "r5_with": "Cada copia parece la misma aplicación",
+      "r5_without": "Cada solicitud corresponde a un workload atestiguado"
+    },
+    "docs_title": "Documentación oficial",
+    "docs": {
+      "overview": "Visión general de Secrets Manager SaaS",
+      "swa": "Visión general de Secure Workload Access",
+      "azure_saas": "Azure Authenticator (SaaS)",
+      "azure_sh": "Azure Authenticator (Self-Hosted)",
+      "apikey": "Autenticación con API key",
+      "host": "Declaración host en la policy (restricted_to)"
+    },
+    "flow": {
+      "diagram_label": "Diagrama animado: el problema del secreto cero y cómo la identidad atestiguada por la plataforma lo elimina",
+      "lane_problem": "Acto 1: con secreto cero",
+      "lane_solution": "Acto 2: sin secreto cero",
+      "n_cfg": "Config, env o imagen",
+      "n_cfg_sub": "donde vive la 1ª clave",
+      "n_app": "Aplicación",
+      "n_app_sub": "necesita la contraseña de la BD",
+      "n_sm": "Secrets Manager",
+      "n_sm_sub": "autenticador + policy",
+      "n_leak": "Atacante",
+      "n_leak_sub": "copió la config",
+      "n_plat": "Plataforma",
+      "n_plat_sub": "K8s, nube, CI o SWA",
+      "n_keys": "Claves públicas",
+      "n_keys_sub": "de la plataforma (JWKS)",
+      "r_protect": "protegerla",
+      "r_rotation": "rotación",
+      "r_boot": "1ª credencial",
+      "r_authn": "autenticación",
+      "r_access": "acceso al vault",
+      "r_doc": "documento",
+      "st_gone": "nada guardado",
+      "st_loop": "exige otra clave",
+      "st_manual": "manual, riesgosa",
+      "st_static": "clave fija",
+      "st_attested": "atestiguada",
+      "st_delivered": "entregada",
+      "st_apikey": "API key aceptada",
+      "st_verified": "firma válida",
+      "st_short": "corta duración",
+      "st_no": "no",
+      "st_yes": "sí",
+      "st_signed": "firmado",
+      "p_copy": "copia",
+      "p_publish": "publica",
+      "s1_title": "La aplicación necesita una contraseña",
+      "s1_desc": "La contraseña de la base de datos está en Secrets Manager. Para pedirla, la aplicación primero tiene que autenticarse.",
+      "s2_title": "Alguien guarda una primera clave",
+      "s2_desc": "La solución rápida: una API key va a un archivo de configuración, una variable de entorno o la imagen. Ese es el secreto cero.",
+      "s3_title": "Funciona",
+      "s3_desc": "La aplicación envía la API key, Secrets Manager la acepta, emite un token de acceso y devuelve la contraseña. Todo parece bien.",
+      "s4_title": "Pero la clave es un secreto estático",
+      "s4_desc": "Protegerla exige otra clave, que exige otra. Rotarla significa editar y redesplegar cada copia.",
+      "s5_title": "Y se filtra",
+      "s5_desc": "Quien copia la config, la imagen o un log obtiene la clave y se autentica como la aplicación, desde cualquier lugar.",
+      "s6_title": "Acto 2: la plataforma responde",
+      "s6_desc": "Quite la clave guardada. La plataforma que ejecuta el workload emite un documento de identidad firmado: un JWT de service account, una identidad de nube, un token OIDC del CI o un SVID SPIFFE.",
+      "s7_title": "Secrets Manager verifica",
+      "s7_desc": "La aplicación presenta ese documento. El autenticador comprueba la firma con las claves públicas publicadas por la plataforma y asocia los claims a un workload.",
+      "s8_title": "Token corto, secreto entregado",
+      "s8_desc": "Secrets Manager devuelve un token de acceso de corta duración y la contraseña. La primera credencial de la aplicación fue atestiguada, no guardada.",
+      "s9_title": "Nada que robar en reposo",
+      "s9_desc": "Ninguna clave en config, env o imagen. Un archivo copiado no le da nada al atacante, y no hay nada que rotar del lado del workload."
     }
   }
 }
