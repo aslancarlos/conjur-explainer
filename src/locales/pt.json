@@ -10,8 +10,8 @@
     "gha_sub": "OIDC / Zero credenciais armazenadas",
     "esoshop": "External Secrets Operator",
     "esoshop_sub": "Sincroniza secrets em Kubernetes Secrets",
-    "compare": "Comparar Padrões",
-    "compare_sub": "Comparação de 4 padrões",
+    "compare": "Comparar",
+    "compare_sub": "Produtos, casos de uso e tecnologias",
     "livetools": "Dashboards ao Vivo",
     "livetools_sub": "Grafana, K8s, monitores de app",
     "swa": "SWA → AWS S3",
@@ -711,124 +711,6 @@
       "s9_title": "Reinício sem downtime",
       "s9_desc": "Variáveis de ambiente só são lidas na inicialização, então o operador Python observa o Secret pela Watch API do Kubernetes. Quando ele muda, dispara um rolling restart com maxUnavailable 0, e o PodDisruptionBudget mantém 2 de 3 pods atendendo."
     }
-  },
-  "compare": {
-    "badge": "Comparação",
-    "title": "Quatro padrões: qual se encaixa no seu caso?",
-    "subtitle": "Todos usam identidade Kubernetes ou OIDC: sem credenciais estáticas, sem senhas no código.",
-    "col_feature": "Funcionalidade",
-    "col_spring": "Spring Boot",
-    "col_dotnet": ".NET",
-    "col_gha": "GitHub Actions",
-    "col_eso": "ESO Shop",
-    "rows": [
-      {
-        "feature": "Modelo de integração",
-        "spring": "REST direto no código",
-        "springIcon": "text",
-        "dotnet": "Sidecar, zero código",
-        "dotnetIcon": "text",
-        "gha": "OIDC, só no pipeline CI",
-        "ghaIcon": "text",
-        "eso": "Operador ESO, zero código",
-        "esoIcon": "text"
-      },
-      {
-        "feature": "Linguagem / runtime",
-        "spring": "Java (SDK / HTTP)",
-        "springIcon": "text",
-        "dotnet": "Qualquer linguagem",
-        "dotnetIcon": "check",
-        "gha": "Qualquer runner CI",
-        "ghaIcon": "check",
-        "eso": "Qualquer linguagem",
-        "esoIcon": "check"
-      },
-      {
-        "feature": "Entrega de credenciais",
-        "spring": "Objetos Java em memória",
-        "springIcon": "text",
-        "dotnet": "K8s Secret → env vars",
-        "dotnetIcon": "text",
-        "gha": "Env vars mascaradas no runner",
-        "ghaIcon": "text",
-        "eso": "K8s Secret → env vars",
-        "esoIcon": "text"
-      },
-      {
-        "feature": "Rotação automática",
-        "spring": "App gerencia cache 5 min",
-        "springIcon": "text",
-        "dotnet": "Provider sincroniza automaticamente",
-        "dotnetIcon": "check",
-        "gha": "Re-executar pipeline após rotação",
-        "ghaIcon": "text",
-        "eso": "ESO sincroniza 60s + restart automático",
-        "esoIcon": "check"
-      },
-      {
-        "feature": "Granularidade de auditoria",
-        "spring": "Por secret no log do Secrets Manager",
-        "springIcon": "check",
-        "dotnet": "Somente auth do provider",
-        "dotnetIcon": "text",
-        "gha": "Por workflow no Secrets Manager",
-        "ghaIcon": "check",
-        "eso": "Somente auth do provider",
-        "esoIcon": "text"
-      },
-      {
-        "feature": "Funciona sem K8s",
-        "spring": "Não: requer JWT do pod",
-        "springIcon": "minus",
-        "dotnet": "Não: requer JWT do pod",
-        "dotnetIcon": "minus",
-        "gha": "Sim: OIDC do GitHub",
-        "ghaIcon": "check",
-        "eso": "Não: nativo K8s",
-        "esoIcon": "minus"
-      },
-      {
-        "feature": "Rotação sem downtime",
-        "spring": "Cache TTL esconde gap",
-        "springIcon": "text",
-        "dotnet": "Sidecar re-injeta, pod continua",
-        "dotnetIcon": "check",
-        "gha": "N/A: pipeline stateless",
-        "ghaIcon": "text",
-        "eso": "Rolling restart (0 downtime)",
-        "esoIcon": "check"
-      },
-      {
-        "feature": "Esforço de migração",
-        "spring": "Integração com SDK obrigatória",
-        "springIcon": "minus",
-        "dotnet": "Drop-in: zero código",
-        "dotnetIcon": "check",
-        "gha": "Um step no workflow",
-        "ghaIcon": "check",
-        "eso": "Só o YAML ExternalSecret",
-        "esoIcon": "check"
-      }
-    ],
-    "best_for": [
-      {
-        "title": "Spring Boot: Melhor para",
-        "desc": "Serviços Java que precisam de controle fino, refresh dinâmico e visibilidade por secret no log do Secrets Manager."
-      },
-      {
-        "title": ".NET: Melhor para",
-        "desc": "Migrações lift-and-shift e serviços poliglotas onde zero mudanças de SDK são necessárias."
-      },
-      {
-        "title": "GitHub Actions: Melhor para",
-        "desc": "Pipelines CI/CD fora do Kubernetes: sem cluster necessário, identidade vem do OIDC do GitHub."
-      },
-      {
-        "title": "ESO Shop: Melhor para",
-        "desc": "Apps cloud-native no Kubernetes que precisam de rotação de secrets com rolling restarts automáticos e zero código na aplicação."
-      }
-    ]
   },
   "livetools": {
     "badge": "Ferramentas ao Vivo",
@@ -7711,5 +7593,488 @@
     "doc_manage": "Gerenciar o serviço",
     "doc_authn": "Métodos de autenticação de aplicação",
     "doc_capacity": "Capacidade e limitações com Privilege Cloud"
+  },
+  "cmp": {
+    "scroll_hint": "Role para o lado para ver as {{count}} colunas; a primeira coluna fica fixa.",
+    "badge": "Comparar",
+    "title": "Compare produtos, casos de uso e tecnologias",
+    "subtitle": "Comece pelos quatro produtos lado a lado e depois escolha um produto para comparar seus casos de uso e tecnologias nas mesmas dimensões: identidade, entrega, mudanças no código, rotação, disponibilidade e limites.",
+    "glance_title": "Produtos lado a lado",
+    "glance_lead": "O que cada produto resolve, quem consome e onde a credencial fica. Clique no nome de um produto para abrir a visão geral dele.",
+    "corner_product": "Dimensão",
+    "corner_dimension": "Dimensão",
+    "glance_rows": {
+      "problem": "Problema que resolve",
+      "consumer": "Quem consome",
+      "identity": "Modelo de identidade",
+      "where": "Onde a credencial fica",
+      "editions": "Edições",
+      "usecases": "Casos de uso típicos",
+      "choose": "Escolha quando"
+    },
+    "glance": {
+      "sm": {
+        "problem": "Secrets fixos no código, em imagens, arquivos de configuração e pipelines.",
+        "consumer": "Workloads: aplicações, pods, pipelines, scripts e ferramentas de IA para código.",
+        "identity": "O workload prova quem é com uma identidade nativa (JWT do Kubernetes, IAM da nuvem, token OIDC do CI, certificado) ou uma API key; a policy decide o que ele lê.",
+        "where": "No Secrets Manager, armazenado lá ou sincronizado dos Safes do PAM (data/vault).",
+        "editions": "SaaS e Self-Hosted.",
+        "usecases": "Kubernetes, CI/CD, plataformas, Summon, secrets dinâmicos, certificados (SaaS).",
+        "choose": "Aplicações e pipelines precisam de secrets em tempo de execução sem guardá-los."
+      },
+      "swa": {
+        "problem": "Workloads que compartilham secrets estáticos para provar quem são.",
+        "consumer": "Workloads em Kubernetes, VMs e nuvem, e agentes de IA.",
+        "identity": "SPIFFE IDs: X.509-SVID e JWT-SVID emitidos após a atestação pelo SWA Agent e renovados antes de expirar.",
+        "where": "Nenhuma credencial guardada: SVIDs de vida curta. Um JWT-SVID pode ser trocado por secrets no Secrets Manager ou por credenciais de nuvem.",
+        "editions": "Recurso do Secrets Manager SaaS, só na região US-EAST-1.",
+        "usecases": "mTLS entre serviços, federação com nuvem (AWS, Azure, Google Cloud), troca por secrets, agentes de IA.",
+        "choose": "O destino consegue validar tokens SPIFFE ou OIDC e você quer eliminar o secret zero."
+      },
+      "cp": {
+        "problem": "Senhas de contas privilegiadas fixas em aplicações, servidores de aplicação, scripts e jobs de mainframe.",
+        "consumer": "Aplicações nos seus servidores, servidores de aplicação (JDBC), scripts remotos e jobs z/OS.",
+        "identity": "Um ID de aplicação (AppID) mais características registradas: máquinas permitidas, usuário do SO, caminho, hash ou certificado de cliente.",
+        "where": "Nos Safes do Vault, rotacionada pelo CPM e mantida em cache local criptografado.",
+        "editions": "PAM Self-Hosted e Privilege Cloud.",
+        "usecases": "Credential Provider, ASCP, Central Credential Provider, z/OS, Dual Accounts.",
+        "choose": "Aplicações tradicionais que usam contas privilegiadas gerenciadas no PAM."
+      },
+      "shub": {
+        "problem": "Secrets espalhados em cofres de nuvem sem política central de rotação nem auditoria.",
+        "consumer": "Aplicações que leem AWS Secrets Manager, Azure Key Vault, GCP Secret Manager ou HashiCorp Vault de forma nativa.",
+        "identity": "As aplicações mantêm a identidade de nuvem. O Secrets Hub grava em cada cofre com um papel IAM, identidade federada, Workload Identity Federation ou um papel JWT/OIDC.",
+        "where": "A fonte da verdade é um Safe do PAM; os cofres de destino guardam cópias sincronizadas (sincronização em um sentido).",
+        "editions": "Serviço SaaS. Origem: Privilege Cloud ou PAM Self-Hosted 11.5 ou superior (por um conector).",
+        "usecases": "Sincronizar secrets do PAM para cofres de nuvem; descobrir e revisar os secrets que já estão nesses cofres.",
+        "choose": "Os desenvolvedores precisam manter as chamadas nativas do SDK de nuvem e a segurança mantém rotação e auditoria no PAM."
+      }
+    },
+    "detail_title": "Compare casos de uso e tecnologias",
+    "detail_lead": "Escolha um produto e depois uma categoria. Cada coluna leva à sua página; as linhas são as mesmas em todo lugar para facilitar a comparação.",
+    "product_label": "Produto",
+    "cat_label": "Categoria",
+    "cats": {
+      "k8s": "Kubernetes",
+      "cicd": "CI/CD",
+      "platforms": "Plataformas",
+      "tools": "Ferramentas e recursos",
+      "swa": "Identidades",
+      "cp": "Providers",
+      "sources": "Origens no PAM",
+      "targets": "Cofres de destino"
+    },
+    "cat_lead": {
+      "k8s": "Formas de levar secrets aos pods: da própria aplicação a operadores, drivers e brokers que não exigem código.",
+      "cicd": "Pipelines e ferramentas de infraestrutura. A maioria usa um JWT de vida curta da plataforma de CI em vez de uma chave guardada.",
+      "platforms": "SDKs de linguagem e plataformas fora do Kubernetes.",
+      "tools": "Ferramentas e recursos transversais do Secrets Manager.",
+      "swa": "O que um workload faz com sua identidade SPIFFE. Veja a página de arquitetura do SWA para os componentes.",
+      "cp": "Todos os providers usam o mesmo Vault, as mesmas definições de aplicação e as mesmas permissões de Safe. Mudam onde o provider roda e como a aplicação o chama.",
+      "sources": "De onde vêm os secrets. Os cofres de destino e o lado da aplicação são iguais nos dois casos.",
+      "targets": "Onde o Secrets Hub grava. As aplicações mantêm as chamadas nativas."
+    },
+    "rows": {
+      "identity": "Identidade e autenticação",
+      "delivery": "Como o secret chega ao workload",
+      "code": "Mudanças na aplicação",
+      "rotation": "Como recebe um valor rotacionado",
+      "limit": "Principal limitação",
+      "best": "Melhor para"
+    },
+    "avail_row": {
+      "sm": "Disponibilidade",
+      "swa": "Disponibilidade",
+      "cp": "Plataforma PAM",
+      "shub": "Funciona com a origem"
+    },
+    "shub_limits_title": "Limitações de integração que valem para todos os destinos",
+    "shub_limits": [
+      "Chaves e certificados não são suportados, só secrets. Dual accounts não são suportadas.",
+      "Sincronização em um sentido: mudanças manuais no destino não são detectadas e podem ser sobrescritas.",
+      "Até 10.000 contas sincronizadas por tenant e até 1.000 políticas de sincronização."
+    ],
+    "source_note": "Os valores resumem cada página vinculada, que cita a documentação oficial. Não documentado significa que a documentação não informa.",
+    "decide_title": "Como escolher",
+    "decide_lead": "Comece por onde o workload roda.",
+    "decide": [
+      {
+        "title": "Meu workload é um pod",
+        "desc": "Secrets Manager no Kubernetes: SDK, Secrets Provider, ESO ou CSI. Se o destino valida SPIFFE, use o Secure Workload Access."
+      },
+      {
+        "title": "É um pipeline",
+        "desc": "As integrações de CI/CD do Secrets Manager autenticam com o próprio JWT do job, então nada fica guardado na plataforma de CI."
+      },
+      {
+        "title": "Uma VM ou aplicação legada",
+        "desc": "Credential Providers para contas privilegiadas no PAM, o Central Credential Provider quando não dá para instalar agente, ou o Summon para variáveis de ambiente."
+      },
+      {
+        "title": "Um job de mainframe",
+        "desc": "O Credential Provider para z/OS atende jobs JCL pelo Central Credential Provider. Dual Accounts eliminam a janela da rotação."
+      },
+      {
+        "title": "Um agente de IA",
+        "desc": "Identidades SPIFFE substituem API keys para agentes; o servidor MCP permite que ferramentas de IA levem secrets fixos no código para o Secrets Manager."
+      },
+      {
+        "title": "As apps já usam um cofre de nuvem",
+        "desc": "O Secrets Hub mantém AWS, Azure, GCP e HashiCorp Vault sincronizados com o PAM, sem mudar código."
+      }
+    ],
+    "col": {
+      "sdk": {
+        "name": "SDK (Spring Boot)",
+        "identity": "JWT da ServiceAccount do pod enviado ao authn-jwt.",
+        "delivery": "A app chama a API REST e mantém os valores em memória (cache de 5 minutos na demo).",
+        "code": "Sim: chamadas de SDK ou REST na aplicação.",
+        "rotation": "Na próxima busca após o cache expirar; sem restart.",
+        "limit": "Exige mudar o código da aplicação.",
+        "best": "Serviços Java que querem controle e auditoria por secret."
+      },
+      "sidecar": {
+        "name": "Sidecar (.NET)",
+        "identity": "JWT da ServiceAccount do pod, apresentado pelo sidecar Secrets Provider.",
+        "delivery": "O sidecar grava um Kubernetes Secret; a app lê variáveis de ambiente (secretKeyRef).",
+        "code": "Nenhuma.",
+        "rotation": "O sidecar mantém o Secret atualizado; variáveis de ambiente exigem restart (Reloader).",
+        "limit": "Os valores também existem como objeto Kubernetes Secret.",
+        "best": "Apps poliglotas que não podem mudar código."
+      },
+      "eso": {
+        "name": "External Secrets Operator",
+        "identity": "JWT da ServiceAccount (audience conjur) usado pelo SecretStore.",
+        "delivery": "O ExternalSecret sincroniza para um Kubernetes Secret; os pods carregam com envFrom.",
+        "code": "Nenhuma: um manifesto ExternalSecret.",
+        "rotation": "Atualiza a cada minuto na demo; variáveis de ambiente exigem rolling restart.",
+        "limit": "O valor fica guardado como Kubernetes Secret.",
+        "best": "Times que já padronizaram o ESO."
+      },
+      "csi": {
+        "name": "CSI Driver",
+        "identity": "Token projetado da ServiceAccount (audience conjur) usado pelo provider.",
+        "delivery": "Arquivos em um volume tmpfs somente leitura; sem Kubernetes Secret.",
+        "code": "Ler arquivos do caminho montado.",
+        "rotation": "O reconciliador de rotação regrava o volume (a cada 2 minutos na demo); sem restart.",
+        "limit": "A app precisa ler arquivos, não variáveis de ambiente.",
+        "best": "Evitar objetos Kubernetes Secret."
+      },
+      "spmodes": {
+        "name": "Modos do Secrets Provider",
+        "identity": "authn-jwt, authn-iam, authn-azure, authn-gcp; o Self-Hosted acrescenta authn-k8s.",
+        "delivery": "Kubernetes Secrets ou Push-to-File; init container, sidecar, Job ou standalone.",
+        "code": "Nenhuma.",
+        "rotation": "Só o sidecar e o standalone atualizam depois do start.",
+        "limit": "Push-to-File só com init container e sidecar; o fetch all é limitado a 500 secrets.",
+        "best": "Escolher o modo certo para cada app."
+      },
+      "reloader": {
+        "name": "Reloader",
+        "identity": "Não fala com o Secrets Manager; observa os Kubernetes Secrets.",
+        "delivery": "Faz rollout dos Deployments e StatefulSets que referenciam um Secret alterado.",
+        "code": "Nenhuma.",
+        "rotation": "Rollout automático quando o Secret muda.",
+        "limit": "Exige o Helm chart do Secrets Provider em modo application ou standalone.",
+        "best": "Apps que leem variáveis de ambiente e precisam receber valores rotacionados."
+      },
+      "secretless": {
+        "name": "Secretless Broker",
+        "identity": "authn-k8s com um Follower no cluster.",
+        "delivery": "A app conecta a um broker local, que acrescenta a credencial à conexão.",
+        "code": "Apontar a conexão para localhost, sem credenciais.",
+        "rotation": "O broker usa os valores atuais; sem restart.",
+        "limit": "Só Self-Hosted; só protocolos suportados (PostgreSQL, MySQL, MSSQL, SSH, HTTP).",
+        "best": "Apps que nunca podem ver a senha."
+      },
+      "gha": {
+        "name": "GitHub Actions",
+        "identity": "JWT OIDC do GitHub vinculado a repositório e workflow.",
+        "delivery": "A action busca os valores como variáveis de ambiente mascaradas nos logs.",
+        "code": "Um step no workflow mais permissions id-token: write.",
+        "rotation": "Cada execução busca o valor atual.",
+        "limit": "Qualquer repositório ou workflow que não bata com as anotações do host é negado.",
+        "best": "Pipelines do GitHub sem credencial guardada."
+      },
+      "jenkins": {
+        "name": "Jenkins",
+        "identity": "JWT de 2 minutos assinado pelo Jenkins, validado pelo endpoint JWKS dele.",
+        "delivery": "O plugin injeta variáveis de ambiente dentro do withCredentials, mascaradas nos logs.",
+        "code": "withCredentials com IDs de credencial no Jenkinsfile.",
+        "rotation": "Cada build busca o valor atual.",
+        "limit": "O plugin v3.x exige Jenkins 2.455 ou superior.",
+        "best": "Pipelines Jenkins com credenciais Global, Folder ou Job."
+      },
+      "ansible": {
+        "name": "Ansible",
+        "identity": "JWT do seu IdP; API key, AWS IAM, Azure e GCP também são suportados.",
+        "delivery": "O lookup plugin resolve o valor durante o play, no control node.",
+        "code": "lookup() nos playbooks.",
+        "rotation": "Cada execução lê o valor atual.",
+        "limit": "As tasks precisam de no_log: true, ou os valores podem aparecer na saída.",
+        "best": "Playbooks que configuram managed nodes."
+      },
+      "terraform": {
+        "name": "Terraform",
+        "identity": "Autenticação do provider, por exemplo JWT ou API key (host_id quando exigido).",
+        "delivery": "Data sources ou recursos ephemeral lidos dentro do manifesto.",
+        "code": "Bloco do provider e data sources.",
+        "rotation": "Lido no plan e no apply.",
+        "limit": "Os valores vão para o state, exceto com ephemeral (1.10+) ou write-only (1.11+).",
+        "best": "Pipelines de infraestrutura e gestão do Secrets Manager como código."
+      },
+      "gitlab": {
+        "name": "GitLab CI/CD",
+        "identity": "ID token (JWT) do GitLab com aud igual ao do autenticador.",
+        "delivery": "Um binário imprime cada secret no STDOUT e o script captura.",
+        "code": "Uma chamada por CONJUR_SECRET_ID no script do job.",
+        "rotation": "Cada job busca o valor atual.",
+        "limit": "Imagens só para Alpine, Ubuntu e UBI-FIPS; uma chamada por secret.",
+        "best": "Pipelines do GitLab vinculados a projeto e branch."
+      },
+      "azdo": {
+        "name": "Azure DevOps",
+        "identity": "Token do Entra ID por uma service connection do Azure Resource Manager (JWT); API key também é suportada.",
+        "delivery": "Um lote de secrets do secrets.yml vira variáveis de ambiente.",
+        "code": "Adicionar a task e o secrets.yml.",
+        "rotation": "Cada execução busca o valor atual.",
+        "limit": "Só leitura: não cria, altera nem remove secrets.",
+        "best": "Azure Pipelines que já têm uma identidade Azure."
+      },
+      "bitbucket": {
+        "name": "Bitbucket Pipelines",
+        "identity": "JWT OIDC do Bitbucket por step; o workload é o UUID do repositório.",
+        "delivery": "Gravados em secrets.env e exportados pelo load_secrets.sh.",
+        "code": "Adicionar o pipe ao step.",
+        "rotation": "Cada execução busca o valor atual.",
+        "limit": "O arquivo é legível por todos os processos do step; só _ é aceito como caractere especial.",
+        "best": "Repositórios do Bitbucket Cloud."
+      },
+      "circleci": {
+        "name": "CircleCI",
+        "identity": "Token OIDC do CircleCI assinado para sua organização.",
+        "delivery": "O orb exporta os secrets listados como variáveis de ambiente.",
+        "code": "Adicionar o step do orb.",
+        "rotation": "Cada job busca o valor atual.",
+        "limit": "O audience precisa ser o ID da sua organização no CircleCI.",
+        "best": "Projetos CircleCI que devem parar de guardar secrets em contexts."
+      },
+      "octopus": {
+        "name": "Octopus Deploy",
+        "identity": "JWT de uma conta Generic OIDC (audience conjur).",
+        "delivery": "Cada secret vira uma output variable para os próximos steps.",
+        "code": "Adicionar o step template.",
+        "rotation": "Cada deploy busca o valor atual.",
+        "limit": "Um secret ausente ou inacessível faz o step inteiro falhar (guia SaaS).",
+        "best": "Deploys e runbooks por ambiente."
+      },
+      "python": {
+        "name": "Python e AWS Lambda",
+        "identity": "SDK: API key no SaaS; no Self-Hosted também LDAP e JWT. Cliente AWS IAM: o papel IAM da instância.",
+        "delivery": "O SDK devolve os valores ao código (get, get_many).",
+        "code": "Sim: chamadas de SDK.",
+        "rotation": "Na próxima leitura no código.",
+        "limit": "O token do cliente IAM não é renovado (5 a 8 minutos) e é só leitura.",
+        "best": "Python em EC2 sem secret zero, e automação."
+      },
+      "cf": {
+        "name": "Cloud Foundry / Tanzu",
+        "identity": "O Service Broker cria um host por app ou por space.",
+        "delivery": "Um buildpack (Summon) injeta variáveis de ambiente no start.",
+        "code": "Nenhuma.",
+        "rotation": "Só depois de restart ou restage.",
+        "limit": "Só Self-Hosted; uma instância de serviço por space.",
+        "best": "Apps do Tanzu Application Service e Cloud Foundry."
+      },
+      "puppet": {
+        "name": "Puppet",
+        "identity": "Uma API key de host em cada nó.",
+        "delivery": "O agente busca na aplicação do catálogo com funções Deferred.",
+        "code": "Usar a função do módulo nos manifestos.",
+        "rotation": "Buscado de novo a cada execução do agente (Deferred).",
+        "limit": "Só Self-Hosted; a API key do nó é um secret zero.",
+        "best": "Parques já gerenciados pelo Puppet."
+      },
+      "mulesoft": {
+        "name": "MuleSoft",
+        "identity": "Só API key de workload.",
+        "delivery": "A operação Retrieve secret dentro de um fluxo Mule.",
+        "code": "Adicionar a operação no Anypoint Studio.",
+        "rotation": "Não documentado.",
+        "limit": "Só leitura, e a API key é um secret zero.",
+        "best": "Integrações Mule que hoje guardam credenciais em arquivos de properties."
+      },
+      "summon": {
+        "name": "Summon",
+        "identity": "Usa uma identidade já configurada na máquina.",
+        "delivery": "Variáveis de ambiente ou arquivos temporários para um processo filho.",
+        "code": "Nenhuma: envolver o comando.",
+        "rotation": "Lido uma vez no start; um restart traz o valor novo.",
+        "limit": "Variáveis de ambiente ficam visíveis no host.",
+        "best": "Scripts legados, serviços systemd e Terraform via Summon."
+      },
+      "mcp": {
+        "name": "Servidor MCP",
+        "identity": "O desenvolvedor entra pelo OAuth2 do Idira Identity; o agente age como esse usuário.",
+        "delivery": "A ferramenta de IA cria secrets e workloads e gera o código que os busca.",
+        "code": "Chamadas de SDK geradas substituem os literais.",
+        "rotation": "Não se aplica: o código gerado busca em tempo de execução.",
+        "limit": "Beta, só desenvolvimento; não há fronteira entre o agente e o usuário.",
+        "best": "Tirar secrets fixos do código com uma ferramenta de IA."
+      },
+      "dynamic": {
+        "name": "Secrets dinâmicos",
+        "identity": "Qualquer autenticador; o workload precisa estar no grupo consumers do issuer.",
+        "delivery": "Cada leitura cria uma credencial nova da AWS ou do GCP.",
+        "code": "Ler como qualquer variável.",
+        "rotation": "Nada a rotacionar: expira após o TTL (15 minutos a 12 horas).",
+        "limit": "Só destinos de nuvem: AWS nas duas edições, GCP no SaaS.",
+        "best": "Acesso de curta duração à nuvem para jobs e workloads."
+      },
+      "certs": {
+        "name": "Certificados",
+        "identity": "O workload precisa estar no grupo executors do issuer.",
+        "delivery": "Issue (certificado e chave) ou sign (só a CSR) pelo Certificate Manager.",
+        "code": "Uma requisição pela API.",
+        "rotation": "Pedir um novo certificado (opção replace).",
+        "limit": "Só SaaS, com o Certificate Manager como back end.",
+        "best": "Certificados TLS e mTLS em autoatendimento."
+      },
+      "mtls": {
+        "name": "X.509-SVID (mTLS)",
+        "identity": "Atestação pelo SWA Agent (k8s_psat, x509pop ou identidade de instância AWS).",
+        "delivery": "A Workload API em um socket local devolve o X.509-SVID e o trust bundle.",
+        "code": "Um cliente ou helper compatível com SPIFFE.",
+        "rotation": "O agente renova o SVID antes de expirar; sem restart.",
+        "limit": "A porta TCP 8443 do SWA Server precisa ser alcançável por todo nó.",
+        "best": "mTLS entre serviços sem chaves compartilhadas."
+      },
+      "jwtsm": {
+        "name": "JWT-SVID para o Secrets Manager",
+        "identity": "Um JWT-SVID assinado com RSA enviado ao autenticador JWT do Secrets Manager.",
+        "delivery": "Trocado por um access token; o workload lê só os secrets que a policy concede.",
+        "code": "Buscar o SVID e chamar a API REST.",
+        "rotation": "Os SVIDs renovam sozinhos; os secrets são lidos na requisição.",
+        "limit": "Só assinaturas RSA; identidades novas não têm acesso a secrets até receberem permissão.",
+        "best": "Destinos que não entendem SPIFFE e ainda precisam de senha."
+      },
+      "aws": {
+        "name": "SVID para AWS (demo S3)",
+        "identity": "JWT-SVID com o audience sts.amazonaws.com.",
+        "delivery": "A nuvem devolve credenciais temporárias (federação OIDC).",
+        "code": "AssumeRoleWithWebIdentity pelo SDK da nuvem.",
+        "rotation": "As credenciais temporárias expiram; um novo SVID obtém outras.",
+        "limit": "A URL do issuer precisa ser HTTPS pública e sem autenticação.",
+        "best": "Acesso à nuvem sem chaves estáticas."
+      },
+      "ai": {
+        "name": "Agentes de IA",
+        "identity": "Atestação e depois um JWT-SVID por audience.",
+        "delivery": "Secrets do Secrets Manager, token da Claude API, Gemini Enterprise (fluxo sem agente).",
+        "code": "Configuração de federação no SDK; nenhuma API key no código.",
+        "rotation": "Os tokens são emitidos sob demanda e expiram em minutos.",
+        "limit": "Só US-EAST-1; a federação da Claude API aceita só JWT-SVIDs.",
+        "best": "Agentes de IA que não devem ter API key."
+      },
+      "cp": {
+        "name": "Credential Provider (CP)",
+        "identity": "AppID mais máquinas permitidas, usuário do SO, caminho e hash.",
+        "delivery": "Um SDK local (Java, .NET, C/C++, CLI) responde a partir de um cache criptografado.",
+        "code": "Sim: chamada de SDK.",
+        "rotation": "A atualização do cache em segundo plano traz as trocas do CPM.",
+        "limit": "Um agente em cada servidor; até 10 aplicações por CP recomendadas.",
+        "best": "Aplicações críticas para o negócio."
+      },
+      "ascp": {
+        "name": "Application Server CP (ASCP)",
+        "identity": "Máquinas permitidas, usuário do SO, caminho e hash (sem certificado de cliente).",
+        "delivery": "O proxy de driver JDBC obtém a credencial para o data source.",
+        "code": "Nenhuma: mudança de configuração do data source.",
+        "rotation": "Novas conexões usam o valor após a próxima atualização do cache.",
+        "limit": "Só servidores de aplicação e bancos suportados; JRE 1.8 ou superior.",
+        "best": "Data sources de WebSphere, WebLogic, JBoss e Tomcat."
+      },
+      "ccp": {
+        "name": "Central Credential Provider (CCP)",
+        "identity": "AppID mais máquinas permitidas, usuário Windows (IIS) ou certificado de cliente.",
+        "delivery": "Chamada REST: GET /AIMWebService/api/Accounts.",
+        "code": "Uma chamada HTTPS.",
+        "rotation": "Atualização do cache em segundo plano (25 minutos por padrão) e aviso de troca do CPM.",
+        "limit": "Só Windows IIS; uma senha por chamada.",
+        "best": "Aplicações onde não dá para instalar agente."
+      },
+      "zos": {
+        "name": "Credential Provider para z/OS",
+        "identity": "AppID mais máquinas permitidas e usuário do SO.",
+        "delivery": "O SDK para JCL grava a senha no CREDOUT, ou o SDK C/C++ a devolve.",
+        "code": "Um step JCL ou chamada de SDK.",
+        "rotation": "O CPM marca a senha e o provider a lê de novo; cache atualizado a cada 180 segundos.",
+        "limit": "Um provider por LPAR; z/OS 2.5, 3.1 ou 3.2.",
+        "best": "Jobs batch de mainframe."
+      },
+      "dual": {
+        "name": "Dual Accounts",
+        "identity": "Os consumidores consultam o VirtualUserName, não uma conta específica.",
+        "delivery": "Sempre devolve a conta Active, por um Credential Provider ou pelo Secrets Manager.",
+        "code": "Nenhuma: consulta pelo VirtualUserName.",
+        "rotation": "O CPM troca só a conta inativa, depois do GracePeriod.",
+        "limit": "Rotação só pelo CPM; o GracePeriod precisa cobrir a atualização de todo consumidor.",
+        "best": "Apps críticas e de alta carga que precisam de rotação sem indisponibilidade."
+      },
+      "src_pc": {
+        "name": "Privilege Cloud (SaaS)",
+        "identity": "O usuário SecretsHub é membro de cada Safe a sincronizar.",
+        "delivery": "Políticas de sincronização ligam Safes a cofres de destino.",
+        "code": "Nenhuma para as aplicações.",
+        "rotation": "Cada rotação do CPM é sincronizada para todos os destinos.",
+        "limit": "Usuário SecretsHub em até 1.000 Safes; até 1.000 contas por Safe.",
+        "best": "Clientes Privilege Cloud Standalone e Shared Services."
+      },
+      "src_pamsh": {
+        "name": "PAM Self-Hosted",
+        "identity": "O usuário SecretsHub (DAPService) no Vault; um conector alcança o PVWA.",
+        "delivery": "O conector lê as contas do PVWA por HTTPS; o Secrets Hub as grava.",
+        "code": "Nenhuma para as aplicações.",
+        "rotation": "O mesmo caminho a cada rotação do CPM.",
+        "limit": "PAM 11.5 ou superior, conector sempre obrigatório, um só load balancer na frente do PVWA.",
+        "best": "Clientes com Vault próprio."
+      },
+      "t_aws": {
+        "name": "AWS Secrets Manager",
+        "identity": "Um papel IAM que o Secrets Hub assume.",
+        "delivery": "As apps continuam chamando GetSecretValue.",
+        "code": "Nenhuma.",
+        "rotation": "Sincronizado após cada rotação do CPM.",
+        "limit": "Nomes de até 512 caracteres; secrets gerenciados pela AWS não podem ser alterados.",
+        "best": "Workloads na AWS."
+      },
+      "t_azure": {
+        "name": "Azure Key Vault",
+        "identity": "Um app registration com identidade federada (sem client secret).",
+        "delivery": "As apps continuam chamando getSecret.",
+        "code": "Nenhuma.",
+        "rotation": "Sincronizado após cada rotação do CPM.",
+        "limit": "Modelo Access policy não suportado (só RBAC); nomes de até 127 caracteres.",
+        "best": "Workloads no Azure."
+      },
+      "t_gcp": {
+        "name": "GCP Secret Manager",
+        "identity": "Workload Identity Federation com uma service account.",
+        "delivery": "As apps continuam chamando accessSecretVersion.",
+        "code": "Nenhuma.",
+        "rotation": "Sincronizado após cada rotação do CPM.",
+        "limit": "Labels cortados em 63 caracteres; a política de replicação não muda depois.",
+        "best": "Workloads no Google Cloud."
+      },
+      "t_hcv": {
+        "name": "HashiCorp Vault",
+        "identity": "Um papel de autenticação JWT/OIDC; conector sempre obrigatório.",
+        "delivery": "As apps continuam usando kv get.",
+        "code": "Nenhuma.",
+        "rotation": "Sincronizado após cada rotação do CPM, pelo conector.",
+        "limit": "Só KV versão 2; o conector precisa ficar na rede do Vault.",
+        "best": "Times padronizados no HashiCorp Vault."
+      }
+    }
   }
 }
