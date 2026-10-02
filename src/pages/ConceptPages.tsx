@@ -1,6 +1,7 @@
 import { lazy, Suspense, type ReactNode } from 'react'
 import Metaphors from '../components/concepts/Metaphors'
 import StaticSecretFlow from '../components/flow/specs/StaticSecretFlow'
+import MachineIdentityFlow from '../components/flow/specs/MachineIdentityFlow'
 import { useTranslation } from 'react-i18next'
 import ConceptLayout from '../components/concepts/ConceptLayout'
 import { ConceptCard, CompareTable, FitPanel, GlossaryList, PlatformsTable } from '../components/concepts/ConceptPieces'
@@ -31,6 +32,7 @@ export function IdentityConcept() {
   const { t } = useTranslation()
   return (
     <ConceptLayout title={t('fundamentals.identity.title')} subtitle={t('concepts.identity_sub')}>
+      <MachineIdentityFlow />
       <ConceptCard kind="identity" />
       <section>
         <h2 className="text-xl font-semibold text-text">{t('practice.platforms_title')}</h2>
