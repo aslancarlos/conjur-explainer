@@ -56,7 +56,6 @@ npx tsc --noEmit
 | `/dotnet` | `DotNetSection` |
 | `/github-actions` | `GitHubActionsSection` |
 | `/eso-shop` | `ESOShopSection` |
-| `/flow` | `IntegrationFlow` |
 | `/compare` | `ComparisonTable` |
 | `/tools` | `LiveToolsSection` |
 | `/dualaccounts` | `DualAccountsPage` |
@@ -96,7 +95,6 @@ If you forget `returnObjects: true`, i18next returns a comma-joined string inste
 | `k8s/monitoring/nginx-metrics-service.yaml` | ClusterIP Service exposing port 10254 on the nginx-internal controller pod. Required for Prometheus to reach the metrics endpoint. |
 | `k8s/monitoring/nginx-servicemonitor.yaml` | ServiceMonitor (namespace: `monitoring`, label `release: prometheus`) that tells the Prometheus operator to scrape `nginx-internal-metrics:10254/metrics` every 30 s. |
 | `k8s/monitoring/grafana-dashboard-access.yaml` | ConfigMap with `grafana_dashboard: "1"` label. The Grafana sidecar auto-loads it into `/tmp/dashboards/nginx-access.json`. Dashboard UID: `nginx-access-demo`. |
-| `src/components/IntegrationFlow.tsx` | Animated SVG graph showing the 9-step JWT auth + secret retrieval flow. Uses Framer Motion `pathLength` 0→1 edge drawing, cumulative visibility sets built at module level, keyboard ← → navigation. |
 | `src/components/GhaLiveRunner.tsx` | Live "Run workflow" button on `/github-actions`. POSTs to `/api/gha/run` then polls `/api/gha/runs/:id` every 3 s. Renders each job with a status icon (queued/running/success/failed/skipped/cancelled). Backed by the `gha-runner` Go service: see `gha-runner/`. |
 | `gha-runner/main.go` | Small Go HTTP proxy that holds the GitHub PAT server-side. Exposes `/api/gha/healthz`, `POST /api/gha/run` (dispatches `workflow_dispatch`, then polls GitHub to discover the new run ID), `GET /api/gha/runs/:id` (run + jobs/steps). In-memory rate limit: 1 trigger / IP / 10 min, global 20 runs / UTC day. Origin check pinned to `https://demo.minha.cloud`. |
 | `gha-runner/Dockerfile` | Distroless static binary, runs as `nonroot`. Build with `docker build --platform linux/amd64 -t aslancarlos/gha-runner:latest gha-runner/`. |

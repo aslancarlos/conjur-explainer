@@ -13,7 +13,6 @@ const SpringBootSection = lazy(() => import('./components/SpringBootSection'))
 const DotNetSection = lazy(() => import('./components/DotNetSection'))
 const GitHubActionsSection = lazy(() => import('./components/GitHubActionsSection'))
 const ESOShopSection = lazy(() => import('./components/ESOShopSection'))
-const IntegrationFlow = lazy(() => import('./components/IntegrationFlow'))
 const ComparisonTable = lazy(() => import('./components/ComparisonTable'))
 const LiveToolsSection = lazy(() => import('./components/LiveToolsSection'))
 const DualAccountsPage = lazy(() => import('./pages/DualAccountsPage'))
@@ -66,7 +65,6 @@ export default function App() {
           <Route path="/dotnet"         element={<DotNetSection />} />
           <Route path="/github-actions" element={<GitHubActionsSection />} />
           <Route path="/eso-shop"       element={<ESOShopSection />} />
-          <Route path="/flow"           element={<IntegrationFlow />} />
           <Route path="/compare"        element={<ComparisonTable />} />
           <Route path="/tools"          element={<LiveToolsSection />} />
           <Route path="/dualaccounts"   element={<DualAccountsPage />} />
