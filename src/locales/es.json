@@ -1598,7 +1598,8 @@
     "liked": "Te gusta",
     "like_title": "¿Te gustó el sitio? Déjanos tu me gusta",
     "liked_title": "¡Gracias por tu me gusta!",
-    "likes_count": "{{count}} me gusta"
+    "likes_count": "{{count}} me gusta",
+    "live_unavailable": "La demo en vivo no está disponible ahora. Inténtalo de nuevo en unos minutos."
   },
   "search": {
     "open": "Buscar",

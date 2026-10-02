@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import PageHeader from '../components/PageHeader'
 import { Container, HardDrive, ScrollText, ShieldCheck, Vault } from 'lucide-react'
 import FlowPlayer, { type FlowSpec } from '../components/flow/FlowPlayer'
 
@@ -113,14 +114,7 @@ export default function JwtPage() {
     <section id="jwt" className="py-24 px-6 bg-bg-muted/40">
       <div className="max-w-5xl mx-auto space-y-10">
 
-        {/* header */}
-        <div className="text-center space-y-3">
-          <span className="badge bg-gh/10 text-blue-400 border border-gh/30">
-            {t('jwt.badge')}
-          </span>
-          <h1 className="text-3xl sm:text-4xl font-bold">{t('jwt.title')}</h1>
-          <p className="text-text-muted max-w-2xl mx-auto text-sm">{t('jwt.subtitle')}</p>
-        </div>
+        <PageHeader badge={t('jwt.badge')} title={t('jwt.title')} subtitle={t('jwt.subtitle')} />
 
         <FlowPlayer spec={spec} />
 

@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import PageHeader from '../components/PageHeader'
 import AnsibleFlow from '../components/flow/specs/AnsibleFlow'
 
 export default function AnsiblePage() {
@@ -7,14 +8,7 @@ export default function AnsiblePage() {
   return (
     <section className="min-h-screen bg-bg-base px-4 py-16 flex flex-col items-center">
 
-      {/* Header */}
-      <div className="w-full max-w-4xl text-center mb-10">
-        <span className="badge mb-4">{t('ansible.badge')}</span>
-        <h1 className="text-3xl md:text-4xl font-bold text-text mb-4">{t('ansible.title')}</h1>
-        <p className="text-text-2 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-          {t('ansible.subtitle')}
-        </p>
-      </div>
+      <PageHeader className="max-w-5xl mb-10" badge={t('ansible.badge')} title={t('ansible.title')} subtitle={t('ansible.subtitle')} />
 
       {/* Animated diagram (FlowPlayer, DESIGN.md §10) */}
       <div className="w-full max-w-5xl">

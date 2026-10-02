@@ -99,7 +99,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
       const out = []
       if (it.heading && it.heading !== last) {
         out.push(
-          <li key={`h-${it.heading}-${it.to}`} role="presentation"
+          <li key={`h-${it.heading}-${it.to}`}
             className={`px-3 pb-1 text-[11px] font-medium uppercase tracking-[0.08em] text-text-muted ${nested ? 'pt-2' : 'pt-3'}`}>
             {t(it.heading)}
           </li>,

@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import PageHeader from '../components/PageHeader'
 import CsiFlow from '../components/flow/specs/CsiFlow'
 import { ExternalLink } from 'lucide-react'
 
@@ -21,23 +22,18 @@ export default function CsiDriverPage() {
   return (
     <section className="min-h-screen bg-bg-base px-4 py-16 flex flex-col items-center">
 
-      {/* Header */}
-      <div className="w-full max-w-4xl text-center mb-6">
-        <span className="badge mb-4">{t('csi.badge')}</span>
-        <h1 className="text-3xl md:text-4xl font-bold text-text mb-4">{t('csi.title')}</h1>
-        <p className="text-text-2 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-          {t('csi.subtitle')}
-        </p>
-      </div>
+      <PageHeader className="max-w-5xl mb-6" badge={t('csi.badge')} title={t('csi.title')} subtitle={t('csi.subtitle')} />
 
-      {/* Live demo button */}
+      {/* Live demo button (aligned with the header) */}
+      <div className="w-full max-w-5xl mb-10">
       <a
         href="/csidriver/"
-        className="inline-flex items-center gap-2 mb-10 px-6 py-3 rounded-full bg-csi text-white font-semibold hover:bg-csi/85 transition-colors shadow-lg"
+        className="inline-flex min-h-11 items-center gap-2 px-6 rounded-full bg-csi-solid text-white font-semibold hover:bg-csi-solid/90 transition-colors shadow-lg"
       >
         {t('csi.cta')}
         <ExternalLink size={16} />
       </a>
+      </div>
 
       {/* Animated diagram (FlowPlayer, DESIGN.md §10) */}
       <div className="w-full max-w-5xl">
@@ -98,7 +94,7 @@ export default function CsiDriverPage() {
       {/* Bottom CTA */}
       <a
         href="/csidriver/"
-        className="inline-flex items-center gap-2 mt-10 px-6 py-3 rounded-full bg-csi text-white font-semibold hover:bg-csi/85 transition-colors shadow-lg"
+        className="inline-flex min-h-11 items-center gap-2 mt-10 px-6 rounded-full bg-csi-solid text-white font-semibold hover:bg-csi-solid/90 transition-colors shadow-lg"
       >
         {t('csi.cta')}
         <ExternalLink size={16} />

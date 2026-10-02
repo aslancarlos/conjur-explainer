@@ -59,7 +59,7 @@ function RefPills({ refs, accent = 'red' }: { refs: Ref[]; accent?: 'red' | 'cya
           href={r.href}
           target="_blank"
           rel="noopener noreferrer"
-          className={`inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 font-mono text-[11px] font-medium transition-colors ${base}`}
+          className={`inline-flex min-h-11 items-center gap-1.5 rounded-lg border px-3 font-mono text-xs font-medium transition-colors ${base}`}
         >
           {r.label}
           <ExternalLink size={11} aria-hidden="true" />

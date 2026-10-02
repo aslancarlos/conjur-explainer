@@ -17,7 +17,7 @@
   --rgb-tone-accent:  0 72 184;
   --rgb-tone-live:    14 116 144;
   --rgb-tone-success: 4 120 87;
-  --rgb-tone-warning: 161 98 7;
+  --rgb-tone-warning: 138 80 4;
   --rgb-tone-danger:  185 28 28;
 
   /* Domain colours: who owns a component (never used for status) */
@@ -25,6 +25,17 @@
   --rgb-domain-cp:    96 72 214;
   --rgb-domain-k8s:   194 65 12;
   --rgb-domain-svc:   190 24 93;
+
+  /* Demo brand accents (text/icons/tints), AA on light surfaces */
+  --rgb-spring:  22 120 50;
+  --rgb-dotnet:  96 72 214;
+  --rgb-gh:      0 88 230;
+  --rgb-eso:     176 55 8;
+  --rgb-ansible: 185 28 28;
+  --rgb-csi:     37 90 210;
+  --rgb-conjur-red:  194 65 12;
+  --rgb-conjur-cyan: 14 116 144;
+  --rgb-conjur-gold: 138 80 4;
 
   color-scheme: light;
 }
@@ -48,6 +59,17 @@
   --rgb-domain-cp:    167 150 250;
   --rgb-domain-k8s:   255 138 92;
   --rgb-domain-svc:   244 114 182;
+
+  /* Demo brand accents, AA on dark surfaces */
+  --rgb-spring:  74 222 128;
+  --rgb-dotnet:  167 150 250;
+  --rgb-gh:      125 176 255;
+  --rgb-eso:     255 138 92;
+  --rgb-ansible: 255 122 122;
+  --rgb-csi:     125 165 255;
+  --rgb-conjur-red:  250 88 45;
+  --rgb-conjur-cyan: 0 212 255;
+  --rgb-conjur-gold: 255 184 0;
 
   color-scheme: dark;
 }

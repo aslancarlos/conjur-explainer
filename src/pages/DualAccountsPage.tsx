@@ -1006,7 +1006,7 @@ export default function DualAccountsPage() {
           <span>{t('dual.sources_label')}</span>
           {(['manage', 'configure', 'repr'] as const).map(k => (
             <a key={k} href={DOCS[k]} target="_blank" rel="noreferrer"
-              className="inline-flex items-center gap-1 text-tone-accent hover:underline underline-offset-4">
+              className="inline-flex min-h-11 items-center gap-1 text-tone-accent hover:underline underline-offset-4">
               {t(`dual.src_${k}`)}<ExternalLink size={12} aria-hidden="true" />
             </a>
           ))}

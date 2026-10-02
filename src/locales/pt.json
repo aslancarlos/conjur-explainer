@@ -1598,7 +1598,8 @@
     "liked": "Curtido",
     "like_title": "Gostou do site? Deixe sua curtida",
     "liked_title": "Obrigado pela curtida!",
-    "likes_count": "{{count}} curtidas"
+    "likes_count": "{{count}} curtidas",
+    "live_unavailable": "A demo ao vivo está indisponível no momento. Tente de novo em alguns minutos."
   },
   "search": {
     "open": "Buscar",

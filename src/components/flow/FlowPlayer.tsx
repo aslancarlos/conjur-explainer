@@ -299,10 +299,10 @@ export default function FlowPlayer({ spec, className = '' }: { spec: FlowSpec; c
         <div className="flex-1 min-w-[12rem]">
           <p className="text-xs font-mono text-text-muted mb-1 tabular-nums">{t('dual.step_of', { current: step + 1, total: TOTAL })}</p>
           <AnimatePresence mode="wait" initial={false}>
-            <motion.h3 key={`${step}-${i18n.language}`}
+            <motion.h2 key={`${step}-${i18n.language}`}
               initial={reduce ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
               exit={reduce ? undefined : { opacity: 0, y: -4 }} transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="text-base sm:text-lg font-semibold text-text leading-snug">{cur?.title}</motion.h3>
+              className="text-base sm:text-lg font-semibold text-text leading-snug">{cur?.title}</motion.h2>
           </AnimatePresence>
         </div>
         <div className="flex items-center gap-2">
@@ -328,7 +328,7 @@ export default function FlowPlayer({ spec, className = '' }: { spec: FlowSpec; c
           aria-label={t('dual.timeline_label', { current: step + 1, total: TOTAL })}
           aria-valuemin={1} aria-valuemax={TOTAL} aria-valuenow={step + 1} aria-valuetext={cur?.title}
           onPointerDown={onScrubDown} onPointerMove={onScrubMove} onPointerUp={onScrubUp} onPointerCancel={() => { scrubRef.current = null }}
-          className="flex gap-1 py-2.5 cursor-pointer touch-none select-none rounded-md">
+          className="flex min-h-11 items-center gap-1 cursor-pointer touch-none select-none rounded-md">
           {segments.map((d, i) => (
             <span key={i} style={{ flexGrow: d, flexBasis: 0 }} className="relative h-1.5 rounded-full overflow-hidden bg-line">
               <span ref={el => { fillRefs.current[i] = el }} style={{ transform: 'scaleX(0)' }}

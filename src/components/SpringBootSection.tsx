@@ -35,7 +35,8 @@ export default function SpringBootSection() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       setData(await res.json())
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'fetch failed')
+      console.warn('live endpoint unavailable:', e)
+      setError(t('shell.live_unavailable'))
     } finally {
       setLoading(false)
     }
@@ -65,11 +66,11 @@ export default function SpringBootSection() {
             <span className="badge bg-bg-card border-border text-text-muted">{t('springboot.label')}</span>
             <span className="badge bg-bg-card border-border text-text-muted">{t('springboot.example')}</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold flex items-center gap-3">
+          <h1 className="text-3xl sm:text-4xl font-bold flex items-center gap-3">
             <Leaf size={32} className="text-spring" />
             {t('springboot.title')}
             <span className="text-spring">{t('springboot.titleAccent')}</span>
-          </h2>
+          </h1>
           <p className="text-text-muted leading-relaxed max-w-2xl">{t('springboot.desc')}</p>
         </motion.div>
 
@@ -124,16 +125,16 @@ export default function SpringBootSection() {
                   onClick={fetchStatus}
                   disabled={loading}
                   aria-label="Refresh"
-                  className="p-1.5 rounded-lg text-text-muted hover:text-spring hover:bg-spring/10 transition-colors"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-text-muted hover:text-spring hover:bg-spring/10 transition-colors"
                 >
                   <RefreshCw size={14} aria-hidden="true" className={loading ? 'animate-spin' : ''} />
                 </button>
               </div>
 
-              <h4 className="font-semibold text-text">{t('springboot.live_title')}</h4>
+              <h3 className="font-semibold text-text">{t('springboot.live_title')}</h3>
 
               {error && (
-                <p className="text-xs text-conjur-red bg-conjur-red/10 rounded-lg px-3 py-2">{error}</p>
+                <p role="status" className="text-xs text-tone-warning bg-tone-warning/10 border border-tone-warning/30 rounded-lg px-3 py-2">{error}</p>
               )}
               {data && (
                 <div className="code-block space-y-1 text-xs">
@@ -178,7 +179,7 @@ export default function SpringBootSection() {
               href="/springboot/dashboard"
               target="_blank"
               rel="noopener"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-spring text-white text-sm font-semibold hover:bg-spring/80 transition-colors"
+              className="inline-flex min-h-11 items-center gap-2 px-5 rounded-full bg-spring-solid text-white text-sm font-semibold hover:bg-spring-solid/90 transition-colors"
             >
               {t('springboot.cta')} <ExternalLink size={14} />
             </motion.a>

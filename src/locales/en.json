@@ -1598,7 +1598,8 @@
     "liked": "Liked",
     "like_title": "Liked the site? Let us know",
     "liked_title": "Thanks for the like!",
-    "likes_count": "{{count}} likes"
+    "likes_count": "{{count}} likes",
+    "live_unavailable": "The live demo is unavailable right now. Try again in a few minutes."
   },
   "search": {
     "open": "Search",

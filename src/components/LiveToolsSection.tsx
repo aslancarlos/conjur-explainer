@@ -132,7 +132,7 @@ export default function LiveToolsSection() {
           <span className="badge bg-conjur-cyan/10 text-conjur-cyan border border-conjur-cyan/20">
             {t('livetools.badge')}
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold">{t('livetools.title')}</h2>
+          <h1 className="text-3xl sm:text-4xl font-bold">{t('livetools.title')}</h1>
           <p className="text-text-muted max-w-2xl mx-auto">{t('livetools.subtitle')}</p>
         </motion.div>
 
@@ -148,12 +148,12 @@ export default function LiveToolsSection() {
             </div>
             <div className="flex-1 space-y-3">
               <div className="flex flex-wrap items-center gap-3">
-                <h3 className="text-xl font-bold text-text">{t('livetools.k8s_title')}</h3>
+                <h2 className="text-xl font-bold text-text">{t('livetools.k8s_title')}</h2>
                 <span className="badge bg-conjur-cyan/10 text-conjur-cyan border border-conjur-cyan/20 text-xs">
                   {t('livetools.k8s_badge')}
                 </span>
-                <span className="flex items-center gap-1.5 text-xs text-green-400">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse-slow" />
+                <span className="flex items-center gap-1.5 text-xs text-tone-success">
+                  <span className="w-1.5 h-1.5 rounded-full bg-tone-success animate-pulse-slow" />
                   {t('livetools.live')}
                 </span>
               </div>
@@ -171,7 +171,7 @@ export default function LiveToolsSection() {
                   href="/dashboard/"
                   target="_blank"
                   rel="noopener"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-conjur-cyan text-bg-base text-sm font-semibold hover:bg-conjur-cyan/80 transition-colors"
+                  className="inline-flex min-h-11 items-center gap-2 px-5 rounded-full bg-conjur-cyan text-bg-base text-sm font-semibold hover:bg-conjur-cyan/80 transition-colors"
                 >
                   <Monitor size={14} /> {t('livetools.k8s_cta')}
                 </a>

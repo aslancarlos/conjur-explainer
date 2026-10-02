@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import PageHeader from '../components/PageHeader'
 import { GitBranch, KeyRound, Landmark, Server, Users } from 'lucide-react'
 import FlowPlayer, { type FlowSpec } from '../components/flow/FlowPlayer'
 
@@ -128,14 +129,7 @@ export default function PolicyPage() {
     <section id="policy" className="py-24 px-6 bg-bg-muted/40">
       <div className="max-w-5xl mx-auto space-y-10">
 
-        {/* header */}
-        <div className="text-center space-y-3">
-          <span className="badge bg-conjur-gold/10 text-conjur-gold border border-conjur-gold/30">
-            {t('policy.badge')}
-          </span>
-          <h1 className="text-3xl sm:text-4xl font-bold">{t('policy.title')}</h1>
-          <p className="text-text-muted max-w-2xl mx-auto text-sm">{t('policy.subtitle')}</p>
-        </div>
+        <PageHeader badge={t('policy.badge')} title={t('policy.title')} subtitle={t('policy.subtitle')} />
 
         <FlowPlayer spec={spec} />
 
@@ -144,7 +138,7 @@ export default function PolicyPage() {
           <pre className="code-block text-[13px] leading-6" aria-label="policy.yml">
             {YAML.map((ln, i) => (
               <div key={i} className="flex">
-                <span className="w-7 shrink-0 pr-3 text-right text-text-muted/60 select-none">{i + 1}</span>
+                <span className="w-7 shrink-0 pr-3 text-right text-text-muted select-none">{i + 1}</span>
                 <span className={TAG_CLS[ln.tag]} style={{ paddingLeft: `${ln.indent}ch` }}>{ln.text}</span>
               </div>
             ))}

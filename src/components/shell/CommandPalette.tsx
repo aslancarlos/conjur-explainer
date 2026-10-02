@@ -103,12 +103,12 @@ export default function CommandPalette() {
   return (
     <>
       <button ref={triggerRef} type="button" onClick={() => setOpen(true)} aria-haspopup="dialog"
-        aria-label={`${t('search.open')} (${kbd})`}
-        className="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-bg-card text-sm text-text-muted
-          hover:bg-bg-muted hover:text-text transition-colors w-9 justify-center md:w-64 md:justify-start md:px-3">
+        aria-keyshortcuts={isMac ? 'Meta+K' : 'Control+K'} title={`${t('search.open')} (${kbd})`}
+        className="inline-flex h-11 min-w-11 items-center justify-center gap-2 rounded-lg border border-border bg-bg-card text-sm text-text-muted
+          hover:bg-bg-muted hover:text-text transition-colors md:w-64 md:justify-start md:px-3">
         <Search size={16} aria-hidden="true" className="shrink-0" />
-        <span className="hidden md:inline flex-1 truncate text-left">{t('search.trigger')}</span>
-        <kbd className="hidden md:inline rounded border border-border bg-bg-muted px-1.5 font-mono text-[11px] text-text-muted">{kbd}</kbd>
+        <span className="sr-only md:not-sr-only md:flex-1 md:truncate md:text-left">{t('search.trigger')}</span>
+        <kbd aria-hidden="true" className="hidden md:inline rounded border border-border bg-bg-muted px-1.5 font-mono text-xs text-text-muted">{kbd}</kbd>
       </button>
 
       <AnimatePresence>

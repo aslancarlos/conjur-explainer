@@ -125,7 +125,7 @@ export function LimitsCallout({ env }: { env: ShubEnv }) {
                 ))}
               </ul>
               <a href={`${docsBase(env)}${path}`} target="_blank" rel="noopener noreferrer"
-                className="mt-3 inline-flex min-h-11 items-center gap-1.5 text-xs font-semibold text-idira-blue hover:underline">
+                className="mt-3 inline-flex min-h-11 items-center gap-1.5 text-xs font-semibold text-tone-accent hover:underline">
                 {s('source')}<ExternalLink size={12} aria-hidden="true" />
               </a>
             </div>
@@ -213,7 +213,7 @@ export function DocsLinks({ env }: { env: ShubEnv }) {
         {DOCS[env].map(d => (
           <li key={d.key}>
             <a href={`${docsBase(env)}${d.path}`} target="_blank" rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-idira-blue hover:underline">
+              className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-tone-accent hover:underline">
               {t(`secretshub.docs.${d.key}`)}<ExternalLink size={13} aria-hidden="true" />
             </a>
           </li>

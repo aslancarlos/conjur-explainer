@@ -26,7 +26,7 @@ function readCollapsed() {
  */
 function Brand() {
   return (
-    <Link to="/" aria-label="IDIRA by Palo Alto Networks: Home" className="flex items-center shrink-0 rounded-md">
+    <Link to="/" aria-label="IDIRA by Palo Alto Networks: Home" className="flex min-h-11 items-center shrink-0 rounded-md">
       <img src={logoLight} alt="" width={248} height={70} className="h-9 w-auto dark:hidden" />
       <img src={logoDark} alt="" width={251} height={71} className="hidden h-9 w-auto dark:block" />
     </Link>

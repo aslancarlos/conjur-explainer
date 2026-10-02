@@ -42,11 +42,11 @@ export default function GitHubActionsSection() {
             <span className="badge bg-bg-card border-border text-text-muted">{t('gha.label')}</span>
             <span className="badge bg-bg-card border-border text-text-muted">{t('gha.example')}</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold flex items-center gap-3">
+          <h1 className="text-3xl sm:text-4xl font-bold flex items-center gap-3">
             <Github size={32} className="text-gh" />
             {t('gha.title')}
             <span className="text-gh">{t('gha.titleAccent')}</span>
-          </h2>
+          </h1>
           <p className="text-text-muted leading-relaxed max-w-2xl">{t('gha.desc')}</p>
         </motion.div>
 
@@ -101,38 +101,6 @@ export default function GitHubActionsSection() {
           <div className="space-y-6">
 
             {/* Flow diagram */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="section-card border-gh/20 space-y-4"
-            >
-              <h4 className="font-semibold text-text text-sm flex items-center gap-2">
-                <GitBranch size={14} className="text-gh" />
-                {t('gha.flow_title')}
-              </h4>
-
-              <div className="space-y-2">
-                {[
-                  { label: 'GitHub Actions Runner', sub: 'workflow triggered', color: 'text-gh', dot: 'bg-gh' },
-                  { label: 'GitHub OIDC Provider', sub: 'issues signed JWT', color: 'text-conjur-cyan', dot: 'bg-conjur-cyan' },
-                  { label: 'PANW|IDIRA Conjur', sub: 'validates JWT claims (repo + workflow)', color: 'text-conjur-gold', dot: 'bg-conjur-gold' },
-                  { label: 'Privilege Cloud Vault', sub: 'returns secret values', color: 'text-conjur-gold', dot: 'bg-conjur-gold' },
-                  { label: 'Workflow Steps', sub: 'masked env vars injected', color: 'text-spring', dot: 'bg-spring' },
-                ].map((item, i) => (
-                  <div key={i} className="flex flex-col items-start">
-                    <div className="flex items-center gap-2.5">
-                      <div className={`w-2 h-2 rounded-full ${item.dot} flex-shrink-0`} />
-                      <span className={`text-xs font-semibold ${item.color}`}>{item.label}</span>
-                      <span className="text-xs text-text-muted">{item.sub}</span>
-                    </div>
-                    {i < 4 && (
-                      <div className="ml-[3px] w-px h-4 border-l border-dashed border-border" />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-
             {/* Workshop stages. Live runner */}
             <motion.div
               initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -166,7 +134,7 @@ export default function GitHubActionsSection() {
                 href="https://github.com/aslancarlos/workshop-action"
                 target="_blank"
                 rel="noopener"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gh text-white text-sm font-semibold hover:bg-gh/80 transition-colors"
+                className="inline-flex min-h-11 items-center gap-2 px-5 rounded-full bg-gh-solid text-white text-sm font-semibold hover:bg-gh-solid/90 transition-colors"
               >
                 <Github size={14} /> {t('gha.cta_repo')}
               </a>
@@ -174,7 +142,7 @@ export default function GitHubActionsSection() {
                 href="https://github.com/aslancarlos/workshop-action/blob/main/.github/workflows/main.yml"
                 target="_blank"
                 rel="noopener"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-gh/30 text-gh text-sm font-semibold hover:bg-gh/10 transition-colors"
+                className="inline-flex min-h-11 items-center gap-2 px-5 rounded-full border border-gh/30 text-gh text-sm font-semibold hover:bg-gh/10 transition-colors"
               >
                 <ShieldCheck size={14} /> {t('gha.cta_workflow')} <ExternalLink size={12} />
               </a>

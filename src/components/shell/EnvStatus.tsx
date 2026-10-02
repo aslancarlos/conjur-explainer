@@ -72,7 +72,7 @@ export default function EnvStatus() {
     <div ref={rootRef} className="relative">
       <button ref={btnRef} type="button" onClick={() => setOpen(o => !o)}
         aria-expanded={open} aria-controls="env-panel" aria-label={`${t('env.title')}: ${label}`}
-        className="inline-flex h-9 items-center gap-2 rounded-lg border border-border bg-bg-card px-2.5 text-xs font-medium text-text-2
+        className="inline-flex h-11 items-center gap-2 rounded-lg border border-border bg-bg-card px-3 text-xs font-medium text-text-2
           hover:bg-bg-muted hover:text-text transition-colors">
         <span className={`h-2 w-2 shrink-0 rounded-full ${STATE[overall].dot} ${overall === 'checking' ? 'animate-pulse' : ''}`} aria-hidden="true" />
         <span className="hidden md:inline">{label}</span>
@@ -91,7 +91,7 @@ export default function EnvStatus() {
                 <p className="text-xs text-text-muted">{t('env.subtitle')}</p>
               </div>
               <button type="button" onClick={run} disabled={busy} aria-label={t('env.refresh')} title={t('env.refresh')}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md text-text-2 hover:bg-bg-muted hover:text-text disabled:opacity-50 transition-colors">
+                className="inline-flex h-11 w-11 items-center justify-center rounded-md text-text-2 hover:bg-bg-muted hover:text-text disabled:opacity-50 transition-colors">
                 {busy ? <Loader2 size={16} className="animate-spin" aria-hidden="true" /> : <RefreshCw size={16} aria-hidden="true" />}
               </button>
             </div>
@@ -111,7 +111,7 @@ export default function EnvStatus() {
                     </div>
                     {s.open && (
                       <a href={s.open} target="_blank" rel="noreferrer" aria-label={t('env.open', { name: s.name })} title={t('env.open', { name: s.name })}
-                        className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-text-muted hover:bg-bg-muted hover:text-text transition-colors">
+                        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-text-muted hover:bg-bg-muted hover:text-text transition-colors">
                         <ExternalLink size={15} aria-hidden="true" />
                       </a>
                     )}

@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import PageHeader from '../components/PageHeader'
 import { useSearchParams } from 'react-router-dom'
 import ShubFlow, { type ShubEnv } from '../components/flow/specs/ShubFlow'
 import { ComponentsTable, DocsLinks, EnvToggle, LimitsCallout, TargetsSummary } from '../components/secretshub/ShubSections'
@@ -23,12 +24,7 @@ export default function SecretsHubPage() {
   return (
     <section className="min-h-screen bg-bg-base px-4 py-16 flex flex-col items-center">
 
-      {/* Header */}
-      <div className="w-full max-w-4xl text-center mb-8">
-        <span className="badge mb-4">{t('secretshub.badge')}</span>
-        <h1 className="text-3xl md:text-4xl font-bold text-text mb-4">{t('secretshub.title')}</h1>
-        <p className="text-text-muted text-sm md:text-base max-w-2xl mx-auto leading-relaxed">{t('secretshub.subtitle')}</p>
-      </div>
+      <PageHeader className="max-w-5xl mb-8" badge={t('secretshub.badge')} title={t('secretshub.title')} subtitle={t('secretshub.subtitle')} />
 
       {/* Scenario switch + animated diagram */}
       <div className="w-full max-w-5xl space-y-5">
