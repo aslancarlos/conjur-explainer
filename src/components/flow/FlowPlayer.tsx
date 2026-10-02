@@ -38,6 +38,7 @@ export interface FlowLayout {
   zones?: Array<Box & { d: Domain }>
   lanes?: Array<{ x: number; y: number; text: string }>
   edges: Record<string, string>            // edge id -> SVG path (start -> end)
+  labels?: Array<{ x: number; y: number; text: string; edge?: string }>  // persistent pills (ports, protocols)
 }
 
 export type FlowEffect =
@@ -363,6 +364,16 @@ export default function FlowPlayer({ spec, className = '' }: { spec: FlowSpec; c
             <path key={id} data-edge-hi={id} d={L.edges[id]} fill="none" strokeWidth={2.5} strokeLinecap="round"
               style={{ opacity: 0 }} className={KIND[spec.edgeKinds[id]].stroke} />
           ))}
+
+          {L.labels?.map((lb, i) => {
+            const w = Math.round(lb.text.length * 6.3 + 14)
+            return (
+              <g key={`lbl-${i}`} data-label="" aria-hidden="true">
+                <rect x={lb.x - w / 2} y={lb.y - 9} width={w} height={18} rx={9} strokeWidth={1} className="fill-surface stroke-line" />
+                <text x={lb.x} y={lb.y + 3.6} fontSize={10.5} textAnchor="middle" className="fill-text-2 font-mono">{lb.text}</text>
+              </g>
+            )
+          })}
 
           {spec.nodes.filter(n => L.boxes[n.id]).map(n => {
             const b = L.boxes[n.id]
