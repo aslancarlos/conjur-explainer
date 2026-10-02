@@ -284,7 +284,31 @@
       }
     ],
     "cta": "Abrir Dashboard →",
-    "example": "App de ejemplo: Spring Boot (Java)"
+    "example": "App de ejemplo: Spring Boot (Java)",
+    "flow": {
+      "diagram_label": "Caso de uso SDK: la aplicación se autentica en IDIRA Secrets Manager y obtiene sus propios secretos",
+      "n_app": "Aplicación",
+      "r_cache": "caché",
+      "st_expired": "expirado",
+      "st_renewed": "renovado",
+      "p_secrets": "3 secretos",
+      "s1_title": "1. La aplicación necesita la contraseña de la base",
+      "s1_desc": "En el patrón SDK la propia aplicación habla con IDIRA Secrets Manager. No hay contraseña en el código, en la imagen ni en un archivo de configuración: la app demuestra quién es y pide el secreto en tiempo de ejecución.",
+      "s2_title": "2. Kubernetes le da una identidad al pod",
+      "s2_desc": "Kubernetes proyecta en el pod un JWT de ServiceAccount de vida corta. La aplicación lo lee en /var/run/secrets/tokens/jwt. Ese token es la identidad de la app, no un secreto que deba proteger.",
+      "s3_title": "3. La aplicación se autentica",
+      "s3_desc": "La app envía el JWT por POST al autenticador authn-jwt (servicio eks-latam). Secrets Manager verifica firma, emisor y audiencia, y asocia el token a una identidad de workload definida en la policy.",
+      "s4_title": "4. Secrets Manager devuelve un access token",
+      "s4_desc": "Si el JWT es válido, la app recibe un access token de API de vida corta. Todas las solicitudes siguientes lo envían en el header Authorization.",
+      "s5_title": "5. La aplicación obtiene sus secretos",
+      "s5_desc": "Con el token, la app hace GET de tres variables: username, password y address en data/vault/. La policy libera solo lo concedido a esa identidad; los valores quedan en memoria con un TTL de 5 minutos.",
+      "s6_title": "6. La aplicación se conecta a MySQL",
+      "s6_desc": "La app arma la URL JDBC con los valores en caché y abre la conexión. La interfaz solo muestra valores enmascarados.",
+      "s7_title": "7. La caché atiende las próximas solicitudes",
+      "s7_desc": "Durante los 5 minutos siguientes cada solicitud lee la caché en memoria, protegida con double-checked locking, así Secrets Manager recibe una llamada por TTL y no una por solicitud.",
+      "s8_title": "8. El TTL expira: se autentica de nuevo",
+      "s8_desc": "Cuando la caché expira, la app lee el JWT actual (Kubernetes lo rota solo), se autentica de nuevo y obtiene valores nuevos. Una contraseña rotada en la bóveda llega a la app en el ciclo siguiente, sin redeploy."
+    }
   },
   "dotnet": {
     "badge": "Patrón 2",
@@ -337,7 +361,36 @@
       }
     ],
     "cta": "Abrir App .NET →",
-    "example": "App de ejemplo: .NET 8"
+    "example": "App de ejemplo: .NET 8",
+    "flow": {
+      "diagram_label": "Caso de uso Sidecar: el sidecar IDIRA Secrets Provider obtiene los secretos y la aplicación solo lee variables de entorno",
+      "n_app": "Aplicación",
+      "n_app_sub": "sin código de bóveda",
+      "n_sidecar_sub": "contenedor sidecar",
+      "st_written": "escrito",
+      "st_synced": "sincronizado",
+      "p_secrets": "3 secretos",
+      "lane_pod": "Pod",
+      "s1_title": "1. Dos contenedores, un pod",
+      "s1_desc": "El pod ejecuta la aplicación y, a su lado, IDIRA Secrets Provider for Kubernetes como sidecar. La aplicación no tiene SDK ni código de bóveda: toda la integración vive en el sidecar.",
+      "s2_title": "2. El sidecar obtiene la identidad del pod",
+      "s2_desc": "El sidecar lee el JWT de la ServiceAccount del pod, emitido por Kubernetes. Ese token es la identidad de workload que va a presentar.",
+      "s3_title": "3. El sidecar se autentica",
+      "s3_desc": "El sidecar envía el JWT al autenticador authn-jwt. Secrets Manager lo valida con las claves del clúster y devuelve un access token de vida corta.",
+      "s4_title": "4. El sidecar obtiene los secretos",
+      "s4_desc": "Con el token, el sidecar recupera db_user, db_password y db_host. La policy libera solo las variables concedidas a esa identidad de workload.",
+      "s5_title": "5. El sidecar escribe un Kubernetes Secret",
+      "s5_desc": "En el modo Kubernetes Secrets el sidecar actualiza el Secret db-dotnet a través de la API de Kubernetes. Solo esa ServiceAccount tiene RBAC para modificarlo.",
+      "s6_title": "6. La aplicación lee variables de entorno",
+      "s6_desc": "El Deployment asigna las claves del Secret a DB_USER, DB_PASSWORD y DB_HOST con secretKeyRef. La aplicación llama a Environment.GetEnvironmentVariable, como cualquier app twelve-factor.",
+      "s7_title": "7. La aplicación se conecta a MySQL",
+      "s7_desc": "Con los valores inyectados la aplicación abre la sesión en la base. Nunca vio una URL de bóveda, un token ni una llamada de API.",
+      "s8_title": "8. El sidecar mantiene el Secret al día",
+      "s8_desc": "El sidecar sigue obteniendo y actualizando el Kubernetes Secret, así una contraseña rotada en la bóveda llega al clúster sin que nadie edite YAML. Las variables de entorno se leen cuando el contenedor arranca, así que pods nuevos o un rollout toman el valor rotado."
+    },
+    "banner_zero": "Cero código de bóveda",
+    "banner_app": "en la aplicación.",
+    "banner_sidecar": "El sidecar hace el trabajo."
   },
   "gha": {
     "badge": "Patrón 3",
@@ -450,7 +503,34 @@
       "err_global_cap": "Cuota diaria de este demo alcanzada. Intenta mañana o abre el repositorio en GitHub.",
       "err_generic": "No se pudo iniciar la ejecución: {{msg}}"
     },
-    "example": "Ejemplo: workflow de GitHub Actions"
+    "example": "Ejemplo: workflow de GitHub Actions",
+    "flow": {
+      "diagram_label": "Cómo GitHub Actions obtiene secretos con OIDC",
+      "n_runner": "Runner self-hosted",
+      "r_other": "otro repo",
+      "st_denied": "denegado",
+      "st_match": "coincide",
+      "st_running": "ejecutando",
+      "st_success": "éxito",
+      "st_masked": "enmascarado",
+      "p_request": "pide token",
+      "s1_title": "Un pipeline sin credenciales guardadas",
+      "s1_desc": "El job de GitHub Actions demuestra quién es con un token que GitHub emite al momento. IDIRA Secrets Manager confía en ese token solo para un repositorio y un workflow, y devuelve únicamente los secretos que ese job puede usar.",
+      "s2_title": "El job arranca",
+      "s2_desc": "El workflow declara permissions id-token: write, que permite al job pedir un token de identidad a GitHub. Corre en un runner self-hosted con la action de Secrets Manager aslancarlos/workshop-action.",
+      "s3_title": "GitHub emite un JWT OIDC",
+      "s3_desc": "La action pide un token al proveedor OIDC de GitHub. El JWT está firmado por GitHub, dura pocos minutos y lleva claims como repository y workflow.",
+      "s4_title": "Autenticación con el JWT",
+      "s4_desc": "La action envía el JWT a authn-jwt/github. No hay API key, contraseña ni PAT en el repositorio ni en GitHub Secrets.",
+      "s5_title": "Secrets Manager verifica la firma",
+      "s5_desc": "Secrets Manager obtiene las claves públicas de GitHub (JWKS) y verifica firma, emisor, audience y vencimiento. Un token falso o vencido se detiene aquí.",
+      "s6_title": "La policy verifica repositorio y workflow",
+      "s6_desc": "La identidad del host tiene annotations de repository y workflow. Solo aslancarlos/workshop-action ejecutando workshop-action coincide; cualquier otro repositorio o workflow se deniega. Si coincide, la action recibe un access token de vida corta.",
+      "s7_title": "Solo vuelven los secretos permitidos",
+      "s7_desc": "Con el access token la action obtiene DB_USER, DB_PASS y DB_HOST. Se convierten en variables de entorno enmascaradas en cada línea de log.",
+      "s8_title": "El job los usa y desaparecen",
+      "s8_desc": "El job se conecta a MySQL con las credenciales obtenidas. Al terminar la ejecución los valores desaparecen: nada quedó guardado en el runner, el repositorio ni el pipeline."
+    }
   },
   "esoshop": {
     "badge": "Patrón 4",
@@ -528,7 +608,37 @@
         "desc": "Parchea la anotación eso-operator/restartedAt del deployment. Kubernetes rota los pods uno a uno con maxUnavailable: 0."
       }
     ],
-    "example": "App de ejemplo: ESO Shop (Node.js)"
+    "example": "App de ejemplo: ESO Shop (Node.js)",
+    "flow": {
+      "diagram_label": "Cómo el External Secrets Operator entrega los secretos",
+      "n_eso": "Controlador ESO",
+      "n_op": "Operador Python",
+      "n_app": "Pods de la app",
+      "n_app_sub": "ESO Shop · envFrom · 3 réplicas",
+      "n_db_sub": "base de la tienda",
+      "st_loaded": "cargado",
+      "st_rolling": "reiniciando",
+      "st_change": "cambio",
+      "st_restarted": "reiniciado",
+      "s1_title": "Cuatro piezas, cero código de bóveda en la app",
+      "s1_desc": "El External Secrets Operator (ESO) corre en el clúster y copia secretos de IDIRA Secrets Manager a un Kubernetes Secret común. La app solo lee variables de entorno, y un pequeño operador Python la reinicia cuando cambia una credencial.",
+      "s2_title": "Declara qué sincronizar",
+      "s2_desc": "Un recurso ExternalSecret lista los secretos a copiar (DB_USER, DB_PASS y DB_HOST de data/vault/dev-demo-aslan/dbuser_dual) y la frecuencia: cada minuto. El controlador de ESO lo toma a través del ClusterSecretStore conjur-store.",
+      "s3_title": "ESO usa una identidad de workload",
+      "s3_desc": "El store se autentica con la ServiceAccount springboot-app. Kubernetes emite para ella un JWT de vida corta con audience conjur, así que no se guarda ninguna API key.",
+      "s4_title": "Autenticación en Secrets Manager",
+      "s4_desc": "ESO envía el JWT a authn-jwt/eks-latam. Secrets Manager verifica firma, emisor y audience contra el clúster y devuelve un access token de vida corta.",
+      "s5_title": "La policy decide, la bóveda entrega",
+      "s5_desc": "Con el token, ESO pide las tres variables. La policy confirma que esta identidad puede leerlas y la bóveda devuelve los valores actuales.",
+      "s6_title": "Un Kubernetes Secret común",
+      "s6_desc": "ESO escribe los valores en el Secret eso-shop-db-creds y lo mantiene sincronizado. De aquí en adelante es Kubernetes estándar: nada en el clúster necesita conocer la bóveda.",
+      "s7_title": "La app solo lee variables de entorno",
+      "s7_desc": "Los pods de ESO Shop cargan el Secret con envFrom y se conectan a MySQL. El código Node.js no tiene SDK, ni sidecar, ni secretos en la imagen.",
+      "s8_title": "La rotación llega sola",
+      "s8_desc": "Cuando la contraseña rota en la bóveda, el siguiente refresh (en menos de un minuto) trae el nuevo valor y ESO actualiza el Secret. Sin pipeline y sin pasos manuales.",
+      "s9_title": "Reinicio sin downtime",
+      "s9_desc": "Las variables de entorno solo se leen al arrancar, así que el operador Python observa el Secret con la Watch API de Kubernetes. Ante un cambio dispara un rolling restart con maxUnavailable 0, y el PodDisruptionBudget mantiene 2 de 3 pods atendiendo."
+    }
   },
   "compare": {
     "badge": "Comparación",

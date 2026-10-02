@@ -2,6 +2,7 @@ import { motion, useInView } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ExternalLink, RefreshCw, ShoppingCart, BarChart2 } from 'lucide-react'
+import EsoFlow from './flow/specs/EsoFlow'
 
 interface HealthResponse {
   status: string
@@ -60,9 +61,10 @@ export default function ESOShopSection() {
           transition={{ duration: 0.5 }}
           className="space-y-3"
         >
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <span className="badge bg-eso/10 text-eso border border-eso/20">{t('esoshop.badge')}</span>
             <span className="badge bg-bg-card border-border text-text-muted">{t('esoshop.label')}</span>
+            <span className="badge bg-bg-card border-border text-text-muted">{t('esoshop.example')}</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold flex items-center gap-3">
             <ShoppingCart size={32} className="text-eso" />
@@ -71,6 +73,9 @@ export default function ESOShopSection() {
           </h2>
           <p className="text-text-muted leading-relaxed max-w-2xl">{t('esoshop.desc')}</p>
         </motion.div>
+
+        {/* How it works (FlowPlayer, DESIGN.md §10) */}
+        <EsoFlow />
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Steps */}

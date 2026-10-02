@@ -2,6 +2,7 @@ import { motion, useInView } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ExternalLink, RefreshCw, Leaf } from 'lucide-react'
+import SdkFlow from './flow/specs/SdkFlow'
 
 interface CheckItResponse {
   status: string
@@ -59,9 +60,10 @@ export default function SpringBootSection() {
           transition={{ duration: 0.5 }}
           className="space-y-3"
         >
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="badge bg-spring/10 text-spring border border-spring/20">{t('springboot.badge')}</span>
             <span className="badge bg-bg-card border-border text-text-muted">{t('springboot.label')}</span>
+            <span className="badge bg-bg-card border-border text-text-muted">{t('springboot.example')}</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold flex items-center gap-3">
             <Leaf size={32} className="text-spring" />
@@ -70,6 +72,9 @@ export default function SpringBootSection() {
           </h2>
           <p className="text-text-muted leading-relaxed max-w-2xl">{t('springboot.desc')}</p>
         </motion.div>
+
+        {/* How it works (FlowPlayer, DESIGN.md §10) */}
+        <SdkFlow />
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Steps */}

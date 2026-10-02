@@ -3,6 +3,7 @@ import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ExternalLink, GitBranch, Github, ShieldCheck } from 'lucide-react'
 import GhaLiveRunner from './GhaLiveRunner'
+import GhaFlow from './flow/specs/GhaFlow'
 
 const colorMap: Record<string, string> = {
   cyan:   'text-conjur-cyan border-conjur-cyan/30 bg-conjur-cyan/5',
@@ -36,9 +37,10 @@ export default function GitHubActionsSection() {
           transition={{ duration: 0.5 }}
           className="space-y-3"
         >
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <span className="badge bg-gh/10 text-gh border border-gh/20">{t('gha.badge')}</span>
             <span className="badge bg-bg-card border-border text-text-muted">{t('gha.label')}</span>
+            <span className="badge bg-bg-card border-border text-text-muted">{t('gha.example')}</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold flex items-center gap-3">
             <Github size={32} className="text-gh" />
@@ -47,6 +49,9 @@ export default function GitHubActionsSection() {
           </h2>
           <p className="text-text-muted leading-relaxed max-w-2xl">{t('gha.desc')}</p>
         </motion.div>
+
+        {/* How it works (FlowPlayer, DESIGN.md §10) */}
+        <GhaFlow />
 
         {/* Zero-credential highlight */}
         <motion.div

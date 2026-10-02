@@ -2,6 +2,7 @@ import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ExternalLink, Puzzle } from 'lucide-react'
+import SidecarFlow from './flow/specs/SidecarFlow'
 
 const colorMap: Record<string, string> = {
   purple: 'text-dotnet border-dotnet/30 bg-dotnet/5',
@@ -31,9 +32,10 @@ export default function DotNetSection() {
           transition={{ duration: 0.5 }}
           className="space-y-3"
         >
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="badge bg-dotnet/10 text-dotnet border border-dotnet/20">{t('dotnet.badge')}</span>
             <span className="badge bg-bg-card border-border text-text-muted">{t('dotnet.label')}</span>
+            <span className="badge bg-bg-card border-border text-text-muted">{t('dotnet.example')}</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold flex items-center gap-3">
             <Puzzle size={32} className="text-dotnet" />
@@ -43,6 +45,9 @@ export default function DotNetSection() {
           <p className="text-text-muted leading-relaxed max-w-2xl">{t('dotnet.desc')}</p>
         </motion.div>
 
+        {/* How it works (FlowPlayer, DESIGN.md §10) */}
+        <SidecarFlow />
+
         {/* Zero-code highlight */}
         <motion.div
           initial={{ opacity: 0, scale: 0.97 }} animate={inView ? { opacity: 1, scale: 1 } : {}}
@@ -50,9 +55,9 @@ export default function DotNetSection() {
           className="section-card border-dotnet/20 bg-gradient-to-r from-dotnet/5 to-bg-card"
         >
           <p className="text-center text-2xl font-bold">
-            <span className="text-dotnet">Zero Conjur code</span>{' '}
-            <span className="text-text-muted font-normal text-lg">in the .NET application.</span>{' '}
-            <span className="text-text">The sidecar does the work.</span>
+            <span className="text-dotnet">{t('dotnet.banner_zero')}</span>{' '}
+            <span className="text-text-muted font-normal text-lg">{t('dotnet.banner_app')}</span>{' '}
+            <span className="text-text">{t('dotnet.banner_sidecar')}</span>
           </p>
         </motion.div>
 
