@@ -107,7 +107,12 @@
     "cp_ascp": "Application Server CP (ASCP)",
     "cp_ascp_sub": "Data sources JDBC en servidores de aplicaciones",
     "cp_ccp": "Central Credential Provider (CCP)",
-    "cp_ccp_sub": "Web service REST central, sin agente"
+    "cp_ccp_sub": "Web service REST central, sin agente",
+    "group_shub": "Secrets Hub",
+    "shub_saas": "Privilege Cloud (SaaS)",
+    "shub_saas_sub": "Secrets Hub con Privilege Cloud como origen",
+    "shub_pamsh": "PAM Self-Hosted",
+    "shub_pamsh_sub": "Secrets Hub con su propio Vault PAM como origen"
   },
   "hero": {
     "eyebrow": "Identidad de máquina · Secretos · IDIRA by Palo Alto Networks",
@@ -154,7 +159,8 @@
     "svid": "Un workload atestado recibe en el momento su identidad SPIFFE de Secure Workload Access: un X.509-SVID para mTLS y un JWT-SVID para la audience elegida, lado a lado, con cuándo usar cada uno.",
     "group_swa": "Identidades SPIFFE para workloads: la arquitectura, un SVID en vivo y acceso a la nube sin claves guardadas.",
     "group_sm": "Arquitecturas, autenticación, policy y casos de uso: cómo los workloads obtienen sus secretos.",
-    "group_cp": "Las aplicaciones obtienen credenciales gestionadas por PAM en tiempo de ejecución: agente, servidor de aplicaciones o web service central."
+    "group_cp": "Las aplicaciones obtienen credenciales gestionadas por PAM en tiempo de ejecución: agente, servidor de aplicaciones o web service central.",
+    "group_shub": "Sincroniza secretos gestionados por PAM con los almacenes de la nube (AWS, Azure, GCP, HashiCorp Vault)."
   },
   "caps": {
     "kicker": "Lo que comparten",
