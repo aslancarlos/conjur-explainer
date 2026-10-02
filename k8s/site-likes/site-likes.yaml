@@ -56,6 +56,8 @@ spec:
         - name: dockerhub-pull
       securityContext:
         runAsNonRoot: true
+        runAsUser: 65532        # distroless 'nonroot' (the image declares it by name)
+        runAsGroup: 65532
         seccompProfile:
           type: RuntimeDefault
       containers:
