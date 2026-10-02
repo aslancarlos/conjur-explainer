@@ -4,142 +4,45 @@ import { useTranslation } from 'react-i18next'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
 import {
-  ArrowLeft, ArrowRight, Check, Compass, Copy, Download, Flag, Info, ListChecks, Mail, Pencil, Printer, RotateCcw, TriangleAlert,
-  ShipWheel, Monitor, CloudUpload, RadioTower, Network,
-  Server, GitBranch, Infinity as InfinityIcon, Github, GitPullRequest, CircleDot, Rocket, Boxes, Blocks, Cog,
-  Cloud, Vault, KeyRound,
-  Leaf, Hexagon, Code, Workflow, Layers, AppWindow, Cpu, Database, Users,
-  Bot, Plug, CircleHelp,
+  ArrowLeft, ArrowRight, Check, Compass, Copy, Download, Flag, Info, ListChecks, Mail, Pencil, Printer, RotateCcw, TriangleAlert, Sparkles, Lock,
+  ShipWheel, Monitor, CloudUpload, RadioTower, Server, GitBranch, Infinity as InfinityIcon, Github, GitPullRequest, CircleDot, Rocket, Boxes, Blocks, Cog,
+  Cloud, Vault, KeyRound, Leaf, Hexagon, Code, Workflow, Layers, AppWindow, Cpu, Database, Bot, Plug, CircleHelp, Building2, Zap, Container,
+  Fingerprint, Timer, RefreshCw, ClipboardList, ScanLine,
 } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import { NAV } from '../lib/nav'
+import { APPS_ENVS, DETAIL_GROUPS, DETAILS, ENVS, GOALS, PRODUCTS, RECS, evaluate, goalEnabled, effectiveDetails } from './finderModel'
+import type { GoalId, Prod } from './finderModel'
 
 /**
- * /finder: a three-step wizard (where workloads run, CI/CD tools, everything
- * else) ending in a result: main product, complements, per-item coverage and
- * an ordered reading path. Product colours and icons come from the sidebar
- * groups (lib/nav.ts). Answers and step live in the URL (?have=a,b&step=2|result)
- * so a result can be shared. Every recommendation points to a page whose copy
- * is the source of the one-line reason.
+ * /finder: a three-step wizard driven by finderModel.ts. Step 1 picks where the
+ * environment is; step 2 shows only the services of those environments; step 3
+ * picks goals (disabled when the selection does not support them). The result
+ * lists only the products whose recommendations match: main product,
+ * complements, per-item coverage, a reading path, prerequisites and a print /
+ * text report. State lives in the URL (?have=ids&step=1|2|3|result); goals are
+ * stored as g_<id> and "Not sure" as g_unsure.
  */
-type Prod = 'sm' | 'swa' | 'cp' | 'shub'
-
-const PRODUCTS: Array<{ key: Prod; navKey: string }> = [
-  { key: 'sm', navKey: 'secretsmanager' },
-  { key: 'swa', navKey: 'swa' },
-  { key: 'cp', navKey: 'cp' },
-  { key: 'shub', navKey: 'secretshub' },
-]
-
-/** Recommendation targets: one page each, reason in finder.reason.<id>. */
-const RECS: Record<string, { to: string; product: Prod }> = {
-  k8sArch: { to: '/concepts/kubernetes', product: 'sm' },
-  sdk: { to: '/spring-boot', product: 'sm' },
-  sidecar: { to: '/dotnet', product: 'sm' },
-  eso: { to: '/eso-shop', product: 'sm' },
-  csi: { to: '/csi', product: 'sm' },
-  spmodes: { to: '/k8s/secrets-provider-modes', product: 'sm' },
-  reloader: { to: '/k8s/reloader', product: 'sm' },
-  secretless: { to: '/k8s/secretless', product: 'sm' },
-  jenkins: { to: '/jenkins', product: 'sm' },
-  gitlab: { to: '/cicd/gitlab', product: 'sm' },
-  azdo: { to: '/cicd/azure-devops', product: 'sm' },
-  gha: { to: '/github-actions', product: 'sm' },
-  bitbucket: { to: '/cicd/bitbucket', product: 'sm' },
-  circleci: { to: '/cicd/circleci', product: 'sm' },
-  octopus: { to: '/cicd/octopus', product: 'sm' },
-  ansible: { to: '/ansible', product: 'sm' },
-  terraform: { to: '/cicd/terraform', product: 'sm' },
-  puppet: { to: '/platforms/puppet', product: 'sm' },
-  cf: { to: '/platforms/cloud-foundry', product: 'sm' },
-  mulesoft: { to: '/platforms/mulesoft', product: 'sm' },
-  python: { to: '/platforms/python-aws', product: 'sm' },
-  awsIam: { to: '/authn/aws-iam', product: 'sm' },
-  azureMi: { to: '/authn/azure', product: 'sm' },
-  gcpId: { to: '/authn/gcp', product: 'sm' },
-  dynamic: { to: '/sm/dynamic-secrets', product: 'sm' },
-  apiKey: { to: '/authn/api-key', product: 'sm' },
-  cert: { to: '/authn/certificate', product: 'sm' },
-  summon: { to: '/sm/summon', product: 'sm' },
-  rotation: { to: '/sm/rotation', product: 'sm' },
-  mcp: { to: '/ai/mcp-server', product: 'sm' },
-  users: { to: '/authn/users', product: 'sm' },
-  swaArch: { to: '/concepts/swa-architecture', product: 'swa' },
-  svid: { to: '/svid', product: 'swa' },
-  swaS3: { to: '/swa-s3', product: 'swa' },
-  swaAi: { to: '/ai/swa-agents', product: 'swa' },
-  cpAgent: { to: '/cp/credential-provider', product: 'cp' },
-  ascp: { to: '/cp/ascp', product: 'cp' },
-  ccp: { to: '/cp/ccp', product: 'cp' },
-  zos: { to: '/cp/zos', product: 'cp' },
-  dual: { to: '/dualaccounts', product: 'cp' },
-  shubPc: { to: '/secretshub', product: 'shub' },
-  shubSh: { to: '/secretshub?env=pamsh', product: 'shub' },
+const ICON: Record<string, LucideIcon> = {
+  aws: Cloud, azure: Cloud, gcp: Cloud, k8s: ShipWheel, onprem: Building2, mainframe: Cpu, cicd: Workflow, ai: Bot, pam: Vault, other: CircleHelp,
+  aws_ec2: Monitor, aws_lambda: Zap, aws_eks: ShipWheel, aws_ecs: Container, aws_sm: KeyRound,
+  az_vm: Monitor, az_aks: ShipWheel, az_app: Zap, azdo: InfinityIcon, az_kv: KeyRound,
+  gcp_ce: Monitor, gcp_gke: ShipWheel, gcp_run: Zap, gcp_sm: KeyRound,
+  k8s_openshift: ShipWheel, k8s_other: ShipWheel,
+  op_linux: Server, op_windows: AppWindow, op_appservers: Layers, op_legacy: AppWindow, op_cf: CloudUpload, op_db: Database, op_hcv: Vault, op_iot: RadioTower,
+  mf_zos: Cpu,
+  ci_jenkins: Server, ci_gitlab: GitBranch, ci_gha: Github, ci_bitbucket: GitPullRequest, ci_circleci: CircleDot, ci_octopus: Rocket, ci_ansible: Boxes, ci_terraform: Blocks, ci_puppet: Cog,
+  ai_agents: Bot, ai_mcp: Plug, pam_pc: Cloud, pam_sh: Vault,
+  app_java: Leaf, app_dotnet: Hexagon, app_python: Code, app_mulesoft: Workflow,
+  g_hardcoded: ScanLine, g_vault_gov: KeyRound, g_legacy_pam: Layers, g_workload_id: Fingerprint, g_ai: Bot, g_dynamic: Timer, g_rotation: RefreshCw, g_audit: ClipboardList, g_unsure: Sparkles,
 }
+/** Tiles with a short sub line under the name. */
+const WITH_SUB = new Set([...ENVS, 'op_appservers', 'ai_agents', 'k8s_other'])
 /** Labels that need more context than the sidebar label gives. */
 const LABEL_OVERRIDE = new Set(['swaArch', 'shubPc', 'shubSh'])
+const ALL_IDS = new Set<string>([...ENVS, ...DETAILS, ...GOALS.map(g => `g_${g.id}`), 'g_unsure'])
 
-interface Tile { id: string; Icon: LucideIcon; recs: string[]; sub?: boolean; note?: 'iot' | 'stores' | 'other' }
 type StepKey = 's1' | 's2' | 's3'
-/** Three questions; step 3 is split into small labelled groups. */
-const STEPS: Array<{ key: StepKey; groups: Array<{ key?: string; tiles: Tile[] }> }> = [
-  { key: 's1', groups: [{ tiles: [
-    { id: 'k8s', Icon: ShipWheel, recs: ['k8sArch', 'sdk', 'sidecar', 'eso', 'csi', 'spmodes', 'reloader', 'swaArch'] },
-    { id: 'vm', Icon: Monitor, recs: ['apiKey', 'cert', 'summon', 'cpAgent'] },
-    { id: 'cf', Icon: CloudUpload, recs: ['cf'] },
-    { id: 'aws', Icon: Cloud, recs: ['awsIam', 'dynamic', 'swaS3', 'shubPc', 'shubSh'] },
-    { id: 'azure', Icon: Cloud, recs: ['azureMi', 'shubPc', 'shubSh'] },
-    { id: 'gcp', Icon: Cloud, recs: ['gcpId', 'dynamic', 'shubPc', 'shubSh'] },
-    { id: 'mainframe', Icon: Cpu, recs: ['zos'] },
-    { id: 'appservers', Icon: Layers, recs: ['ascp'], sub: true },
-    { id: 'windows', Icon: AppWindow, recs: ['cpAgent', 'ccp'] },
-    { id: 'iot', Icon: RadioTower, recs: ['cert', 'apiKey'], note: 'iot' },
-  ] }] },
-  { key: 's2', groups: [{ tiles: [
-    { id: 'jenkins', Icon: Server, recs: ['jenkins'] },
-    { id: 'gitlab', Icon: GitBranch, recs: ['gitlab'] },
-    { id: 'gha', Icon: Github, recs: ['gha'] },
-    { id: 'azdo', Icon: InfinityIcon, recs: ['azdo'] },
-    { id: 'bitbucket', Icon: GitPullRequest, recs: ['bitbucket'] },
-    { id: 'circleci', Icon: CircleDot, recs: ['circleci'] },
-    { id: 'octopus', Icon: Rocket, recs: ['octopus'] },
-    { id: 'ansible', Icon: Boxes, recs: ['ansible'] },
-    { id: 'terraform', Icon: Blocks, recs: ['terraform'] },
-    { id: 'puppet', Icon: Cog, recs: ['puppet'] },
-  ] }] },
-  { key: 's3', groups: [
-    { key: 'apps', tiles: [
-      { id: 'java', Icon: Leaf, recs: ['sdk'] },
-      { id: 'dotnet', Icon: Hexagon, recs: ['sidecar'] },
-      { id: 'python', Icon: Code, recs: ['python'] },
-      { id: 'mulesoft', Icon: Workflow, recs: ['mulesoft'] },
-    ] },
-    { key: 'stores', tiles: [
-      { id: 'awssm', Icon: KeyRound, recs: ['shubPc', 'shubSh'], note: 'stores' },
-      { id: 'akv', Icon: KeyRound, recs: ['shubPc', 'shubSh'], note: 'stores' },
-      { id: 'gsm', Icon: KeyRound, recs: ['shubPc', 'shubSh'], note: 'stores' },
-      { id: 'hcv', Icon: Vault, recs: ['shubPc', 'shubSh'], note: 'stores' },
-    ] },
-    { key: 'access', tiles: [
-      { id: 'databases', Icon: Database, recs: ['secretless', 'dynamic', 'dual', 'rotation'] },
-      { id: 'humans', Icon: Users, recs: ['users'] },
-      { id: 'mtls', Icon: Network, recs: ['swaArch', 'svid', 'cert'] },
-    ] },
-    { key: 'ai', tiles: [
-      { id: 'aiagent', Icon: Bot, recs: ['swaAi', 'mcp'] },
-      { id: 'mcpserver', Icon: Plug, recs: ['mcp'] },
-      { id: 'other', Icon: CircleHelp, recs: [], note: 'other' },
-    ] },
-  ] },
-]
-const STEP_TILES = (k: StepKey) => STEPS.find(s => s.key === k)!.groups.flatMap(g => g.tiles)
-const ALL_TILES = STEPS.flatMap(s => s.groups.flatMap(g => g.tiles))
-const TILE = Object.fromEntries(ALL_TILES.map(t => [t.id, t]))
-const ORDER = ALL_TILES.map(x => x.id)
-/** Reading path: overviews first, then one block per item, capabilities last. */
-const OVERVIEW = ['k8sArch', 'swaArch']
-const CAPABILITY = ['spmodes', 'reloader', 'dynamic', 'rotation', 'summon', 'dual']
-
 type View = StepKey | 'result'
 const VIEWS: View[] = ['s1', 's2', 's3', 'result']
 
@@ -148,10 +51,6 @@ const SITE = 'https://demo.minha.cloud'
 const NAV_ITEMS = NAV.flatMap(g => g.items)
 const GROUP = (navKey: string) => NAV.find(g => g.key === navKey)
 const PROD_OF = (p: Prod) => GROUP(PRODUCTS.find(x => x.key === p)!.navKey)
-
-/** Products that cover a tile (unique, in product order). */
-const productsFor = (id: string): Prod[] =>
-  PRODUCTS.map(p => p.key).filter(p => TILE[id].recs.some(r => RECS[r].product === p))
 
 const btnBase = 'inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue focus-visible:ring-offset-2 focus-visible:ring-offset-bg-card disabled:cursor-not-allowed disabled:opacity-50'
 const btnPrimary = `${btnBase} bg-idira-blue text-white hover:bg-idira-blue-2 active:bg-idira-blue-deep`
@@ -169,8 +68,9 @@ export default function SolutionFinderPage() {
   const [copied, setCopied] = useState(false)
   const [copiedPrereq, setCopiedPrereq] = useState(false)
   const [showPrereq, setShowPrereq] = useState(false)
+  const [showOff, setShowOff] = useState(false)
 
-  const readHave = (ps: URLSearchParams) => (ps.get('have') ?? '').split(',').filter(id => TILE[id])
+  const readHave = (ps: URLSearchParams) => (ps.get('have') ?? '').split(',').filter(id => ALL_IDS.has(id))
   const readView = (ps: URLSearchParams): View => {
     const v = ps.get('step')
     return v === '1' ? 's1' : v === '2' ? 's2' : v === '3' ? 's3' : v === 'result' ? 'result' : 's1'
@@ -183,7 +83,7 @@ export default function SolutionFinderPage() {
   const headingRef = useRef<HTMLHeadingElement>(null)
   const pendingFocus = useRef(false)
 
-  const sorted = ORDER.filter(id => selected.includes(id))
+  const sorted = [...ALL_IDS].filter(id => selected.includes(id))
   useEffect(() => {
     const next = new URLSearchParams(params)
     if (sorted.length) next.set('have', sorted.join(',')); else next.delete('have')
@@ -208,25 +108,39 @@ export default function SolutionFinderPage() {
   const copyLink = async () => { try { await navigator.clipboard.writeText(window.location.href); setCopied(true) } catch { /* clipboard blocked */ } }
 
   const go = (v: View) => { pendingFocus.current = true; setView(v); setFurthest(n => Math.max(n, VIEWS.indexOf(v))) }
-  const toggle = (id: string) => setSelected(ids => (ids.includes(id) ? ids.filter(x => x !== id) : [...ids, id]))
-  const tileName = (id: string) => f(`tiles.${id}.name`)
+  // "Not sure" and explicit goals are mutually exclusive.
+  const toggle = (id: string) => setSelected(ids => {
+    if (ids.includes(id)) return ids.filter(x => x !== id)
+    if (id === 'g_unsure') return [...ids.filter(x => !x.startsWith('g_')), id]
+    if (id.startsWith('g_')) return [...ids.filter(x => x !== 'g_unsure'), id]
+    return [...ids, id]
+  })
+  const tileName = (id: string) => (id.startsWith('g_') ? f(`goals.${id.slice(2)}.name`) : f(`tiles.${id}.name`))
 
-  // Coverage: which products cover how many of the selected items.
-  const itemsByProd = (ids: string[]) => PRODUCTS
-    .map((p, order) => ({ ...p, order, items: ids.filter(id => productsFor(id).includes(p.key)) }))
-    .filter(p => p.items.length)
-    .sort((a, b) => b.items.length - a.items.length || a.order - b.order)
-  const ranked = itemsByProd(sorted)
-  const notes = new Set(sorted.map(id => TILE[id].note).filter(Boolean))
-
-  // recId -> items that asked for it; reading path order.
-  const byRec = new Map<string, string[]>()
-  sorted.forEach(id => TILE[id].recs.forEach(r => byRec.set(r, [...(byRec.get(r) ?? []), id])))
-  const path: string[] = []
-  const push = (r: string) => { if (byRec.has(r) && !path.includes(r)) path.push(r) }
-  OVERVIEW.forEach(push)
-  sorted.forEach(id => TILE[id].recs.filter(r => !CAPABILITY.includes(r)).forEach(push))
-  CAPABILITY.forEach(push)
+  // ---------- model ----------
+  const sel = {
+    envs: sorted.filter(id => (ENVS as string[]).includes(id)),
+    details: sorted.filter(id => DETAILS.includes(id)),
+    goals: sorted.filter(id => id.startsWith('g_') && id !== 'g_unsure').map(id => id.slice(2)),
+    unsure: sorted.includes('g_unsure'),
+  }
+  const ev = evaluate(sel)
+  const visibleDetails = effectiveDetails(sel)
+  const items = ev.items
+  const ranked = ev.products
+  const path = ev.recs
+  const notes = new Set<string>(ev.notes)
+  const byRecGet = (r: string) => ev.byRec[r] ?? []
+  const coverageOf = (id: string) => ev.coverage[id] ?? []
+  /** Step-2 group a selected detail is shown in ('apps' for applications). */
+  const groupOf = (d: string) => DETAIL_GROUPS.find(g => g.details.includes(d) && (g.env === 'apps' ? APPS_ENVS.some(e => sel.envs.includes(e)) : sel.envs.includes(g.env)))?.env
+  /** Environment summary lines for the report: "AWS: EC2, Lambda", then applications. */
+  const envLines = () => [
+    ...sel.envs.map(e => ({ name: tileName(e), list: ev.details.filter(d => groupOf(d) === e).map(tileName) })),
+    ...(ev.details.some(d => groupOf(d) === 'apps') ? [{ name: f('groups.apps'), list: ev.details.filter(d => groupOf(d) === 'apps').map(tileName) }] : []),
+  ]
+  const goalNames = ev.goals.map(g => f(`goals.${g}.name`))
+  const stepCount = (v: View) => v === 's1' ? sel.envs.length : v === 's2' ? visibleDetails.length : v === 's3' ? (sel.unsure ? 1 : sel.goals.length) : 0
 
   const recLabel = (id: string) => {
     if (LABEL_OVERRIDE.has(id)) return f(`rec_label.${id}`)
@@ -234,7 +148,7 @@ export default function SolutionFinderPage() {
     return nav ? t(nav.labelKey) : RECS[id].to
   }
   const prodName = (p: Prod) => t(PROD_OF(p)?.labelKey ?? '')
-  const mailHref = `mailto:${CONTACT}?subject=${encodeURIComponent(`${t('shell.site_name')}: ${f('other_subject')}`)}&body=${encodeURIComponent(`${f('other_body')} ${sorted.filter(id => id !== 'other').map(tileName).join(', ')}\n${window.location.href}\n\n`)}`
+  const mailHref = `mailto:${CONTACT}?subject=${encodeURIComponent(`${t('shell.site_name')}: ${f('other_subject')}`)}&body=${encodeURIComponent(`${f('other_body')} ${[...sel.envs.filter(id => id !== 'other'), ...items].map(tileName).join(', ')}\n${window.location.href}\n\n`)}`
 
   // ---------- prerequisites and client report ----------
   const prereqOf = (r: string): string[] =>
@@ -243,6 +157,7 @@ export default function SolutionFinderPage() {
   const fullUrl = (r: string) => `${SITE}${RECS[r].to}`
   const today = new Date().toLocaleDateString(i18n.language, { year: 'numeric', month: 'long', day: 'numeric' })
   const noteLines = (): string[] => [
+    ...ev.needsPam.map(p => `${f('needs_pam_title')} ${f(`needs_pam.${p}`)}`),
     ...(notes.has('iot') ? [`${f('note_iot_title')} ${f('note_iot')}`] : []),
     ...(notes.has('stores') ? [`${t('cmp.shub_limits_title')}: ${(t('cmp.shub_limits', { returnObjects: true }) as string[]).join(' ')}`] : []),
     ...(notes.has('other') ? [`${f('other_title')} ${f('other_desc')} ${CONTACT}`] : []),
@@ -250,15 +165,16 @@ export default function SolutionFinderPage() {
   const buildText = () => {
     const L: string[] = []
     L.push(`${t('shell.site_name')} | ${f('report_title')}`, `${f('report_date')}: ${today}`, f('report_prepared'), '')
-    L.push(f('report_env').toUpperCase(), ...sorted.map(id => `- ${tileName(id)}`), '')
+    L.push(f('report_env').toUpperCase(), ...envLines().map(l => `- ${l.name}${l.list.length ? `: ${l.list.join(', ')}` : ''}`), '')
+    L.push(f('goals_line').toUpperCase(), `- ${goalNames.join(', ') || '-'}${ev.inferred ? ` (${f('goals_suggested')})` : ''}`, '')
     if (ranked.length) {
       L.push(f('report_solution').toUpperCase())
-      L.push(`${f('report_main')}: ${prodName(ranked[0].key)} (${f('covers', { covered: ranked[0].items.length, total: sorted.length })})`)
-      ranked.slice(1).forEach(p => L.push(`${f('report_complement')}: ${prodName(p.key)} (${f('covers_short', { covered: p.items.length, total: sorted.length })})`))
+      L.push(`${f('report_main')}: ${prodName(ranked[0].key)} (${f('covers', { covered: ranked[0].items.length, total: items.length })})`)
+      ranked.slice(1).forEach(p => L.push(`${f('report_complement')}: ${prodName(p.key)} (${f('covers_short', { covered: p.items.length, total: items.length })})`))
       L.push('')
     }
-    L.push(f('coverage_title').toUpperCase(), ...sorted.map(id => {
-      const ps = productsFor(id)
+    L.push(f('coverage_title').toUpperCase(), ...items.map(id => {
+      const ps = coverageOf(id)
       return `- ${tileName(id)}: ${ps.length ? ps.map(prodName).join(', ') : id === 'other' ? f('coverage_other') : f('coverage_none')}`
     }), '')
     if (path.length) {
@@ -301,7 +217,7 @@ export default function SolutionFinderPage() {
     </span>
   )
   const ItemChip = (id: string) => {
-    const T = TILE[id]
+    const T = { Icon: ICON[id] ?? CircleHelp }
     return (
       <span key={id} className="inline-flex min-h-7 items-center gap-1.5 rounded-full bg-bg-muted px-2.5 text-xs text-text-2">
         <T.Icon size={13} aria-hidden="true" className="shrink-0 text-text-muted" />{tileName(id)}
@@ -326,7 +242,7 @@ export default function SolutionFinderPage() {
           const current = v === view
           const done = i < idx || (i <= furthest && !current && v !== 'result')
           const reachable = i <= furthest || (v === 'result' && furthest >= 2)
-          const count = v === 'result' ? 0 : STEP_TILES(v).filter(x => selected.includes(x.id)).length
+          const count = stepCount(v)
           return (
             <li key={v} className="flex min-w-0 flex-1 items-center gap-2">
               <button type="button" onClick={() => reachable && go(v)} disabled={!reachable}
@@ -351,55 +267,129 @@ export default function SolutionFinderPage() {
     </nav>
   )
 
-  const TileButton = (tile: Tile) => {
-    const on = selected.includes(tile.id)
+  const TileButton = (id: string, opts: { disabledHint?: string; help?: string } = {}) => {
+    const on = selected.includes(id)
+    const disabled = !!opts.disabledHint
+    const Icon = ICON[id] ?? CircleHelp
+    const sub = opts.disabledHint ?? opts.help ?? (WITH_SUB.has(id) ? f(`tiles.${id}.sub`) : undefined)
     return (
-      <button key={tile.id} type="button" aria-pressed={on} onClick={() => toggle(tile.id)}
+      <button key={id} type="button" aria-pressed={on} aria-disabled={disabled || undefined} onClick={() => !disabled && toggle(id)}
         className={`relative flex min-h-[60px] items-center gap-3 rounded-xl border py-2.5 pl-3.5 pr-9 text-left transition-colors duration-200
           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue focus-visible:ring-offset-2 focus-visible:ring-offset-bg-card
-          ${on ? 'border-idira-blue bg-idira-blue/10' : 'border-border bg-bg-base hover:border-idira-blue/60 hover:bg-bg-muted'}`}>
-        <tile.Icon size={20} aria-hidden="true" className={`shrink-0 ${on ? 'text-domain-idira' : 'text-text-2'}`} />
+          ${disabled ? 'cursor-not-allowed border-dashed border-border bg-bg-card' : on ? 'border-idira-blue bg-idira-blue/10' : 'border-border bg-bg-base hover:border-idira-blue/60 hover:bg-bg-muted'}`}>
+        {disabled
+          ? <Lock size={18} aria-hidden="true" className="shrink-0 text-text-muted" />
+          : <Icon size={20} aria-hidden="true" className={`shrink-0 ${on ? 'text-domain-idira' : 'text-text-2'}`} />}
         <span className="min-w-0 flex-1">
-          <span className="block text-sm font-semibold leading-tight text-text">{tileName(tile.id)}</span>
-          {tile.sub && <span title={f(`tiles.${tile.id}.sub`)} className="mt-0.5 block truncate text-[11px] leading-snug text-text-muted">{f(`tiles.${tile.id}.sub`)}</span>}
+          <span className={`block text-sm font-semibold leading-tight ${disabled ? 'text-text-muted' : 'text-text'}`}>{tileName(id)}</span>
+          {sub && <span title={sub} className={`mt-0.5 block text-xs leading-snug ${opts.help || disabled ? '' : 'truncate'} text-text-muted`}>{sub}</span>}
         </span>
-        <span aria-hidden="true" className={`absolute right-3 top-1/2 inline-flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full border transition-colors
-          ${on ? 'border-idira-blue bg-idira-blue text-white' : 'border-border bg-bg-card text-transparent'}`}>
-          <Check size={12} strokeWidth={3} />
-        </span>
+        {!disabled && (
+          <span aria-hidden="true" className={`absolute right-3 top-1/2 inline-flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full border transition-colors
+            ${on ? 'border-idira-blue bg-idira-blue text-white' : 'border-border bg-bg-card text-transparent'}`}>
+            <Check size={12} strokeWidth={3} />
+          </span>
+        )}
       </button>
     )
   }
 
+  const StepHead = (k: StepKey) => (
+    <div className="space-y-1.5">
+      <p className="font-mono text-xs uppercase tracking-wider text-text-muted">{f('step_of', { current: idx + 1, total: 3 })}</p>
+      <h2 ref={headingRef} tabIndex={-1} className="text-2xl font-bold tracking-[-0.01em] text-text focus:outline-none">{f(`${k}_title`)}</h2>
+      <p className="max-w-[65ch] text-sm leading-relaxed text-text-2">{f(`${k}_help`)}</p>
+    </div>
+  )
+  const grid = 'grid grid-cols-[repeat(auto-fill,minmax(190px,1fr))] gap-2.5'
+  const StepFoot = (k: StepKey) => {
+    const n = stepCount(k)
+    return <p className="text-xs text-text-muted tabular-nums" aria-live="polite">{n ? f('selected_in_step', { count: n }) : f('none_in_step')}</p>
+  }
+
   const StepView = (k: StepKey) => {
-    const step = STEPS.find(s => s.key === k)!
-    const n = STEP_TILES(k).filter(x => selected.includes(x.id)).length
+    if (k === 's1') {
+      return (
+        <div className="space-y-5">
+          {StepHead(k)}
+          <fieldset>
+            <legend className="sr-only">{f('s1_title')}</legend>
+            <div className={grid}>{ENVS.map(id => TileButton(id))}</div>
+          </fieldset>
+          {StepFoot(k)}
+        </div>
+      )
+    }
+    if (k === 's2') {
+      const groups = DETAIL_GROUPS.filter(g => g.env === 'apps' ? APPS_ENVS.some(e => sel.envs.includes(e)) : sel.envs.includes(g.env))
+      return (
+        <div className="space-y-6">
+          {StepHead(k)}
+          {groups.length === 0 ? (
+            <div className="flex flex-col items-start gap-3 rounded-xl border border-dashed border-border bg-bg-base p-5">
+              <p className="text-sm font-semibold text-text">{f('s2_empty_title')}</p>
+              <p className="text-sm leading-relaxed text-text-2">{f('s2_empty_desc')}</p>
+              <button type="button" onClick={() => go('s1')} className={btnSecondary}><ArrowLeft size={16} aria-hidden="true" />{f('s2_empty_cta')}</button>
+            </div>
+          ) : groups.map(g => {
+            const GIcon = g.env === 'apps' ? Code : ICON[g.env]
+            return (
+              <fieldset key={g.env} className="space-y-2.5">
+                <legend className="mb-2.5 inline-flex items-center gap-2 text-sm font-semibold text-text">
+                  <GIcon size={16} aria-hidden="true" className="text-text-2" />{g.env === 'apps' ? f('groups.apps') : tileName(g.env)}
+                  {g.env === 'apps' && <span className="text-xs font-normal text-text-muted">{f('groups.apps_hint')}</span>}
+                </legend>
+                <div className={grid}>{g.details.map(id => TileButton(id))}</div>
+              </fieldset>
+            )
+          })}
+          {groups.length > 0 && StepFoot(k)}
+        </div>
+      )
+    }
+    // s3: goals, disabled when the selection does not support them
+    const enabled = (g: GoalId) => goalEnabled(g, visibleDetails)
+    const goalsOn = GOALS.filter(g => enabled(g.id))
+    const goalsOff = GOALS.filter(g => !enabled(g.id))
     return (
       <div className="space-y-5">
-        <div className="space-y-1.5">
-          <p className="font-mono text-xs uppercase tracking-wider text-text-muted">{f('step_of', { current: idx + 1, total: 3 })}</p>
-          <h2 ref={headingRef} tabIndex={-1} className="text-2xl font-bold tracking-[-0.01em] text-text focus:outline-none">{f(`${k}_title`)}</h2>
-          <p className="max-w-[65ch] text-sm leading-relaxed text-text-2">{f(`${k}_help`)}</p>
-        </div>
-        {step.groups.map((g, gi) => (
-          <fieldset key={g.key ?? gi} className="space-y-2.5">
-            <legend className={g.key ? 'mb-2.5 text-xs font-semibold uppercase tracking-wider text-text-muted' : 'sr-only'}>
-              {g.key ? f(`groups.${g.key}`) : f(`${k}_title`)}
-            </legend>
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-2.5">
-              {g.tiles.map(tile => TileButton(tile))}
+        {StepHead(k)}
+        <fieldset className="space-y-2.5">
+          <legend className="sr-only">{f('s3_title')}</legend>
+          <div className="grid gap-2.5 sm:grid-cols-2">
+            {TileButton('g_unsure', { help: f('goals.unsure.help') })}
+            {goalsOn.map(g => TileButton(`g_${g.id}`, { help: f(`goals.${g.id}.help`) }))}
+          </div>
+          {goalsOff.length > 0 && (
+            <div className="pt-2">
+              <button type="button" aria-expanded={showOff} aria-controls="finder-goals-off" onClick={() => setShowOff(v => !v)} className={btnGhost}>
+                <Lock size={14} aria-hidden="true" />{f('goals_off_title', { count: goalsOff.length })}
+                <ArrowRight size={14} aria-hidden="true" className={`transition-transform ${showOff ? 'rotate-90' : ''}`} />
+              </button>
+              <ul id="finder-goals-off" className={`${showOff ? 'block' : 'hidden'} mt-1 divide-y divide-border overflow-hidden rounded-xl border border-dashed border-border`}>
+                {goalsOff.map(g => (
+                  <li key={g.id} className="flex flex-wrap items-baseline gap-x-2 px-4 py-2.5 text-sm">
+                    <span className="font-medium text-text-2">{f(`goals.${g.id}.name`)}</span>
+                    <span className="text-xs text-text-muted">{f(`goals.${g.id}.needs`)}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </fieldset>
-        ))}
-        <p className="text-xs text-text-muted tabular-nums" aria-live="polite">
-          {n ? f('selected_in_step', { count: n }) : f('none_in_step')}
-        </p>
+          )}
+        </fieldset>
+        {StepFoot(k)}
       </div>
     )
   }
 
   const Notes = () => (
     <>
+      {ev.needsPam.map(p => (
+        <div key={p} role="note" className="flex gap-2.5 rounded-xl border border-tone-warning/40 bg-tone-warning/10 p-4">
+          <TriangleAlert size={16} aria-hidden="true" className="mt-0.5 shrink-0 text-tone-warning" />
+          <p className="text-sm leading-relaxed text-text-2"><span className="font-semibold text-text">{f('needs_pam_title')}</span> {f(`needs_pam.${p}`)}</p>
+        </div>
+      ))}
       {notes.has('iot') && (
         <div role="note" className="flex gap-2.5 rounded-xl border border-tone-warning/40 bg-tone-warning/10 p-4">
           <TriangleAlert size={16} aria-hidden="true" className="mt-0.5 shrink-0 text-tone-warning" />
@@ -434,8 +424,8 @@ export default function SolutionFinderPage() {
   )
 
   const ResultView = () => {
-    const covered = sorted.filter(id => id === 'other' || productsFor(id).length)
-    if (!sorted.length) {
+    const covered = items.filter(id => coverageOf(id).length)
+    if (!items.length && !notes.has('other')) {
       return (
         <div className="flex flex-col items-center gap-3 py-10 text-center">
           <h2 ref={headingRef} tabIndex={-1} className="text-xl font-bold text-text focus:outline-none">{f('empty_result_title')}</h2>
@@ -456,7 +446,8 @@ export default function SolutionFinderPage() {
           <div className="space-y-1.5">
             <p className="font-mono text-xs uppercase tracking-wider text-text-muted">{f('result_label')}</p>
             <h2 ref={headingRef} tabIndex={-1} className="text-2xl font-bold tracking-[-0.01em] text-text focus:outline-none">{f('result_title')}</h2>
-            <p className="text-sm text-text-2">{f('result_based', { count: sorted.length })}</p>
+            <p className="text-sm text-text-2">{f('result_based', { count: items.length })}</p>
+            {goalNames.length > 0 && <p className="text-sm text-text-2"><span className="font-medium text-text">{f('goals_line')}:</span> {goalNames.join(', ')}{ev.inferred && <span className="text-text-muted"> ({f('goals_suggested')})</span>}</p>}
           </div>
         </div>
         <div className="flex flex-wrap gap-2" role="toolbar" aria-label={f('result_title')}>
@@ -487,15 +478,15 @@ export default function SolutionFinderPage() {
               <div className="min-w-0 flex-1 space-y-2">
                 <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">{f('main_eyebrow')}</p>
                 <h3 id="finder-main" className="text-xl font-bold text-text">{prodName(main.key)}</h3>
-                <p className="text-sm font-medium text-text tabular-nums">{f('covers', { covered: main.items.length, total: sorted.length })}</p>
+                <p className="text-sm font-medium text-text tabular-nums">{f('covers', { covered: main.items.length, total: items.length })}</p>
                 <p className="max-w-[70ch] text-sm leading-relaxed text-text-2">{f(`why.${main.key}`)}</p>
                 <div className="flex flex-wrap gap-1.5 pt-1">{main.items.map(id => ItemChip(id))}</div>
               </div>
               <div className="w-full sm:w-40" aria-hidden="true">
                 <div className="h-2 overflow-hidden rounded-full bg-bg-muted">
-                  <div className={`h-full rounded-full bg-current ${mg?.color ?? 'text-domain-idira'}`} style={{ width: `${Math.round(main.items.length / sorted.length * 100)}%` }} />
+                  <div className={`h-full rounded-full bg-current ${mg?.color ?? 'text-domain-idira'}`} style={{ width: `${Math.round(main.items.length / items.length * 100)}%` }} />
                 </div>
-                <p className="mt-1.5 text-right font-mono text-xs text-text-muted tabular-nums">{Math.round(main.items.length / sorted.length * 100)}%</p>
+                <p className="mt-1.5 text-right font-mono text-xs text-text-muted tabular-nums">{Math.round(main.items.length / items.length * 100)}%</p>
               </div>
             </div>
           </section>
@@ -513,7 +504,7 @@ export default function SolutionFinderPage() {
                       <p className="inline-flex items-center gap-2 text-base font-semibold text-text">
                         <Icon size={18} aria-hidden="true" className={g?.color ?? 'text-domain-idira'} />{prodName(p.key)}
                       </p>
-                      <span className="whitespace-nowrap font-mono text-xs text-text-muted tabular-nums">{f('covers_short', { covered: p.items.length, total: sorted.length })}</span>
+                      <span className="whitespace-nowrap font-mono text-xs text-text-muted tabular-nums">{f('covers_short', { covered: p.items.length, total: items.length })}</span>
                     </div>
                     <p className="text-sm leading-relaxed text-text-2">{f(`why.${p.key}`)}</p>
                     <div className="flex flex-wrap gap-1.5">{p.items.map(id => ItemChip(id))}</div>
@@ -527,8 +518,8 @@ export default function SolutionFinderPage() {
         <section aria-labelledby="finder-coverage" className="space-y-3">
           <h3 id="finder-coverage" className="text-sm font-semibold uppercase tracking-wider text-text-muted">{f('coverage_title')}</h3>
           <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-bg-base">
-            {sorted.map(id => {
-              const ps = productsFor(id); const T = TILE[id]
+            {items.map(id => {
+              const ps = coverageOf(id); const T = { Icon: ICON[id] ?? CircleHelp, note: id === 'op_iot' ? 'iot' : undefined }
               return (
                 <li key={id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3">
                   <span className="inline-flex items-center gap-2.5 text-sm font-medium text-text">
@@ -542,7 +533,7 @@ export default function SolutionFinderPage() {
               )
             })}
           </ul>
-          {covered.length < sorted.length && <p className="text-xs text-text-muted">{f('coverage_gap')}</p>}
+          {covered.length < items.length && <p className="text-xs text-text-muted">{f('coverage_gap')}</p>}
         </section>
 
         {Notes()}
@@ -568,7 +559,7 @@ export default function SolutionFinderPage() {
                         <span className="inline-flex items-center gap-1 text-xs text-text-muted">{ProdDot(RECS[r].product)}{RECS[r].product === 'swa' ? 'SWA' : t(g?.labelKey ?? '')}</span>
                       </span>
                       <span className="mt-1 block text-sm leading-relaxed text-text-2">{f(`reason.${r}`)}</span>
-                      <span className="mt-1 block text-xs text-text-muted">{f('for')}: {(byRec.get(r) ?? []).map(tileName).join(', ')}</span>
+                      <span className="mt-1 block text-xs text-text-muted">{f('for')}: {byRecGet(r).map(tileName).join(', ')}</span>
                     </span>
                     <ArrowRight size={16} aria-hidden="true" className="mt-1 shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5 group-hover:text-text" />
                   </>
@@ -648,7 +639,7 @@ export default function SolutionFinderPage() {
   // Print-only client report (window.print / Save as PDF). Plain black on white
   // in both themes; the interactive wizard is hidden in print.
   const PrintReport = () => {
-    if (view !== 'result' || !sorted.length) return null
+    if (view !== 'result' || (!items.length && !notes.has('other'))) return null
     const h = 'mt-6 mb-2 border-b border-black/30 pb-1 text-[13px] font-bold uppercase tracking-wider text-black'
     const box = <span aria-hidden="true" className="mt-[3px] inline-block h-3 w-3 shrink-0 border border-black" />
     return (
@@ -665,20 +656,22 @@ export default function SolutionFinderPage() {
         </div>
 
         <h2 className={h}>{f('report_env')}</h2>
-        <p>{sorted.map(tileName).join(' · ')}</p>
+        <ul className="space-y-0.5">{envLines().map(l => <li key={l.name}><span className="font-semibold">{l.name}</span>{l.list.length ? `: ${l.list.join(', ')}` : ''}</li>)}</ul>
+        <h2 className={h}>{f('goals_line')}</h2>
+        <p>{goalNames.join(', ') || '-'}{ev.inferred ? ` (${f('goals_suggested')})` : ''}</p>
 
         {ranked.length > 0 && (
           <>
             <h2 className={h}>{f('report_solution')}</h2>
             <div className="break-inside-avoid border border-black/40 p-3">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-black/70">{f('report_main')}</p>
-              <p className="text-[15px] font-bold">{prodName(ranked[0].key)} <span className="text-[12px] font-normal">({f('covers', { covered: ranked[0].items.length, total: sorted.length })})</span></p>
+              <p className="text-[15px] font-bold">{prodName(ranked[0].key)} <span className="text-[12px] font-normal">({f('covers', { covered: ranked[0].items.length, total: items.length })})</span></p>
               <p>{f(`why.${ranked[0].key}`)}</p>
               <p className="mt-1 text-black/80">{ranked[0].items.map(tileName).join(', ')}</p>
             </div>
             {ranked.slice(1).map(p => (
               <div key={p.key} className="mt-2 break-inside-avoid border border-black/25 p-3">
-                <p className="font-bold">{f('report_complement')}: {prodName(p.key)} <span className="font-normal">({f('covers_short', { covered: p.items.length, total: sorted.length })})</span></p>
+                <p className="font-bold">{f('report_complement')}: {prodName(p.key)} <span className="font-normal">({f('covers_short', { covered: p.items.length, total: items.length })})</span></p>
                 <p>{f(`why.${p.key}`)}</p>
                 <p className="mt-1 text-black/80">{p.items.map(tileName).join(', ')}</p>
               </div>
@@ -689,12 +682,12 @@ export default function SolutionFinderPage() {
         <h2 className={h}>{f('coverage_title')}</h2>
         <table className="w-full border-collapse">
           <tbody>
-            {sorted.map(id => {
-              const ps = productsFor(id)
+            {items.map(id => {
+              const ps = coverageOf(id)
               return (
                 <tr key={id} className="break-inside-avoid border-b border-black/20">
                   <td className="py-1 pr-3 font-semibold">{tileName(id)}</td>
-                  <td className="py-1">{ps.length ? ps.map(prodName).join(', ') : id === 'other' ? f('coverage_other') : f('coverage_none')}{TILE[id].note === 'iot' ? ` (${f('no_dedicated')})` : ''}</td>
+                  <td className="py-1">{ps.length ? ps.map(prodName).join(', ') : id === 'other' ? f('coverage_other') : f('coverage_none')}{id === 'op_iot' ? ` (${f('no_dedicated')})` : ''}</td>
                 </tr>
               )
             })}
@@ -750,7 +743,7 @@ export default function SolutionFinderPage() {
   // ---------- footer ----------
   const soFar = ranked
   const isStep = view !== 'result'
-  const stepHasSel = isStep && STEP_TILES(view).some(x => selected.includes(x.id))
+  const stepHasSel = isStep && stepCount(view) > 0
   const nextView = VIEWS[idx + 1]
 
   return (

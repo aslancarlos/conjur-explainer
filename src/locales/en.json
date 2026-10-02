@@ -8059,23 +8059,21 @@
   "finder": {
     "badge": "Solution finder",
     "title": "Find the right solution",
-    "subtitle": "Answer three quick questions about your environment. Every answer is optional; the result shows which products fit and what to read first.",
+    "subtitle": "Answer three quick questions. Each step adapts to the previous one, and the result shows only the products that fit.",
     "stepper_label": "Progress",
-    "s1_label": "Where it runs",
-    "s1_title": "Where do your workloads run?",
-    "s1_help": "Select every platform that applies. Workloads are the apps, services and jobs that need secrets.",
-    "s2_label": "CI/CD tools",
-    "s2_title": "Which CI/CD and automation tools do you use?",
-    "s2_help": "Pipelines and automation tools usually hold the most credentials. Select the ones you run today.",
-    "s3_label": "Everything else",
-    "s3_title": "What else is in the environment?",
-    "s3_help": "Languages, secret stores already in use, data and people, and AI. Pick what applies.",
+    "s1_label": "Environment",
+    "s1_title": "Where is your environment?",
+    "s1_help": "Pick every place you run things. The next step only shows what applies to your picks.",
+    "s2_label": "Details",
+    "s2_title": "Tell us more",
+    "s2_help": "Only the services of the environments you picked are listed. Select what you use today.",
+    "s3_label": "Goals",
+    "s3_title": "What do you want to solve?",
+    "s3_help": "Pick one or more goals, or let us suggest. Goals that do not fit your selection are listed below with what would enable them.",
     "result_label": "Result",
     "groups": {
       "apps": "Applications",
-      "stores": "Secret stores already in use",
-      "access": "Data, people and services",
-      "ai": "AI and other"
+      "apps_hint": "languages and integration platforms"
     },
     "step_of": "Step {{current}} of {{total}}",
     "optional": "Optional",
@@ -8129,108 +8127,174 @@
     "starting_point": "Recommendations are a starting point, not a sizing. Check each page for availability and limitations, or",
     "compare_link": "compare the options side by side.",
     "tiles": {
+      "aws": {
+        "name": "AWS",
+        "sub": "EC2, Lambda, EKS, ECS, Secrets Manager"
+      },
+      "azure": {
+        "name": "Azure",
+        "sub": "VMs, AKS, App Service, DevOps, Key Vault"
+      },
+      "gcp": {
+        "name": "Google Cloud",
+        "sub": "Compute Engine, GKE, Cloud Run, Secret Manager"
+      },
       "k8s": {
-        "name": "Kubernetes / OpenShift"
+        "name": "Kubernetes",
+        "sub": "OpenShift or any other distribution"
       },
-      "vm": {
-        "name": "Virtual machines"
+      "onprem": {
+        "name": "On-premises data center",
+        "sub": "Servers, app servers, databases, Vault"
       },
-      "cf": {
-        "name": "Cloud Foundry / Tanzu"
+      "mainframe": {
+        "name": "Mainframe",
+        "sub": "z/OS batch and JCL"
       },
-      "mtls": {
-        "name": "Service-to-service mTLS"
+      "cicd": {
+        "name": "CI/CD and automation",
+        "sub": "Jenkins, GitLab, GitHub, Ansible, Terraform"
       },
-      "iot": {
-        "name": "IoT devices"
+      "ai": {
+        "name": "AI agents and assistants",
+        "sub": "Agents, coding assistants, MCP"
       },
-      "jenkins": {
-        "name": "Jenkins"
+      "pam": {
+        "name": "PAM already in place",
+        "sub": "Privilege Cloud or PAM Self-Hosted"
       },
-      "gitlab": {
-        "name": "GitLab"
+      "other": {
+        "name": "Something else",
+        "sub": "Tell us about it"
+      },
+      "aws_ec2": {
+        "name": "EC2"
+      },
+      "aws_lambda": {
+        "name": "Lambda"
+      },
+      "aws_eks": {
+        "name": "EKS"
+      },
+      "aws_ecs": {
+        "name": "ECS / Fargate"
+      },
+      "aws_sm": {
+        "name": "AWS Secrets Manager"
+      },
+      "az_vm": {
+        "name": "Virtual Machines"
+      },
+      "az_aks": {
+        "name": "AKS"
+      },
+      "az_app": {
+        "name": "App Service / Functions"
       },
       "azdo": {
         "name": "Azure DevOps"
       },
-      "gha": {
-        "name": "GitHub Actions"
-      },
-      "bitbucket": {
-        "name": "Bitbucket"
-      },
-      "circleci": {
-        "name": "CircleCI"
-      },
-      "octopus": {
-        "name": "Octopus Deploy"
-      },
-      "ansible": {
-        "name": "Ansible"
-      },
-      "terraform": {
-        "name": "Terraform"
-      },
-      "puppet": {
-        "name": "Puppet"
-      },
-      "aws": {
-        "name": "AWS"
-      },
-      "azure": {
-        "name": "Azure"
-      },
-      "gcp": {
-        "name": "Google Cloud"
-      },
-      "awssm": {
-        "name": "AWS Secrets Manager"
-      },
-      "akv": {
+      "az_kv": {
         "name": "Azure Key Vault"
       },
-      "gsm": {
+      "gcp_ce": {
+        "name": "Compute Engine"
+      },
+      "gcp_gke": {
+        "name": "GKE"
+      },
+      "gcp_run": {
+        "name": "Cloud Run / Functions"
+      },
+      "gcp_sm": {
         "name": "GCP Secret Manager"
       },
-      "hcv": {
-        "name": "HashiCorp Vault"
+      "k8s_openshift": {
+        "name": "OpenShift"
       },
-      "java": {
-        "name": "Java / Spring Boot"
+      "k8s_other": {
+        "name": "Other distributions",
+        "sub": "Self-managed clusters"
       },
-      "dotnet": {
-        "name": ".NET apps"
+      "op_linux": {
+        "name": "Linux servers / VMs"
       },
-      "python": {
-        "name": "Python apps"
+      "op_windows": {
+        "name": "Windows servers"
       },
-      "mulesoft": {
-        "name": "MuleSoft"
-      },
-      "appservers": {
+      "op_appservers": {
         "name": "App servers",
         "sub": "Tomcat, JBoss, WebSphere, WebLogic"
       },
-      "windows": {
-        "name": "Windows / legacy apps"
+      "op_legacy": {
+        "name": "Legacy / packaged apps"
       },
-      "mainframe": {
-        "name": "Mainframe z/OS"
+      "op_cf": {
+        "name": "Cloud Foundry / Tanzu"
       },
-      "databases": {
-        "name": "Databases used by apps"
+      "op_db": {
+        "name": "Databases"
       },
-      "humans": {
-        "name": "Human / admin users"
+      "op_hcv": {
+        "name": "HashiCorp Vault"
       },
-      "aiagent": {
-        "name": "AI agents"
+      "op_iot": {
+        "name": "IoT devices"
       },
-      "mcpserver": {
-        "name": "MCP servers and AI coding tools"
+      "mf_zos": {
+        "name": "z/OS batch and JCL programs"
       },
-      "other": {
-        "name": "Something else"
+      "ci_jenkins": {
+        "name": "Jenkins"
+      },
+      "ci_gitlab": {
+        "name": "GitLab"
+      },
+      "ci_gha": {
+        "name": "GitHub Actions"
+      },
+      "ci_bitbucket": {
+        "name": "Bitbucket"
+      },
+      "ci_circleci": {
+        "name": "CircleCI"
+      },
+      "ci_octopus": {
+        "name": "Octopus Deploy"
+      },
+      "ci_ansible": {
+        "name": "Ansible"
+      },
+      "ci_terraform": {
+        "name": "Terraform"
+      },
+      "ci_puppet": {
+        "name": "Puppet"
+      },
+      "ai_agents": {
+        "name": "AI agents",
+        "sub": "Custom, Claude, Gemini"
+      },
+      "ai_mcp": {
+        "name": "AI coding assistants / MCP"
+      },
+      "pam_pc": {
+        "name": "Privilege Cloud"
+      },
+      "pam_sh": {
+        "name": "PAM Self-Hosted"
+      },
+      "app_java": {
+        "name": "Java / Spring"
+      },
+      "app_dotnet": {
+        "name": ".NET"
+      },
+      "app_python": {
+        "name": "Python"
+      },
+      "app_mulesoft": {
+        "name": "MuleSoft"
       }
     },
     "reason": {
@@ -8264,7 +8328,6 @@
       "summon": "Injects secrets as environment variables into a process.",
       "rotation": "How passwords rotate in each edition.",
       "mcp": "AI coding tools create secrets and workloads through MCP (SaaS, beta).",
-      "users": "People sign in through Identity, OIDC or LDAP.",
       "swaArch": "SPIFFE SVIDs issued after attestation replace static secrets.",
       "svid": "See live X.509-SVIDs and JWT-SVIDs.",
       "swaS3": "An SVID is exchanged for AWS STS credentials: no static keys.",
@@ -8275,7 +8338,8 @@
       "zos": "Batch jobs get passwords at runtime instead of JCL or datasets.",
       "dual": "Two accounts alternate so rotation causes no downtime.",
       "shubPc": "Keeps cloud secret stores in sync with Privilege Cloud, no app change.",
-      "shubSh": "Same sync with PAM Self-Hosted 11.5 or later as the source."
+      "shubSh": "Same sync with PAM Self-Hosted 11.5 or later as the source.",
+      "audit": "Every authentication and secret fetch leaves an audit event you can send to your SIEM."
     },
     "rec_label": {
       "swaArch": "SWA architecture",
@@ -8478,11 +8542,6 @@
           "A dedicated user for the AI tool: the agent reaches every secret that user can reach.",
           "The generated .env with the workload API key kept out of version control."
         ],
-        "users": [
-          "Self-Hosted OIDC: separate authenticators for the UI and the CLI, with the server and clients reaching the IdP on port 443.",
-          "A CLI that can open a browser for OIDC (it does not work headless).",
-          "LDAP: each user declared in policy unless just-in-time provisioning is enabled (CLI 9.3 or later)."
-        ],
         "swaArch": [
           "RSA signing on the trust domain when secrets are exchanged (the JWT authenticator accepts RSA only).",
           "k8s_psat needs network access from the SWA Server to the Kubernetes API server; otherwise use k8s_jwt.",
@@ -8531,7 +8590,64 @@
       }
     },
     "path_start": "Start here",
-    "path_more": "Go deeper ({{count}} more)"
+    "path_more": "Go deeper ({{count}} more)",
+    "s2_empty_title": "Pick an environment first",
+    "s2_empty_desc": "This step lists the services of each environment you pick in step 1.",
+    "s2_empty_cta": "Back to step 1",
+    "goals_off_title": "Not available for this selection ({{count}})",
+    "goals_line": "Goals",
+    "goals_suggested": "suggested from your selection",
+    "needs_pam_title": "Needs PAM.",
+    "goals": {
+      "unsure": {
+        "name": "Not sure, suggest for me",
+        "help": "We pick goals from what you selected."
+      },
+      "hardcoded": {
+        "name": "Remove hardcoded secrets",
+        "help": "Apps, scripts and pipelines fetch secrets at run time instead of storing them.",
+        "needs": "Add a workload, server, pipeline or app in step 2."
+      },
+      "vault_gov": {
+        "name": "Govern cloud vaults from PAM",
+        "help": "Keep AWS Secrets Manager, Azure Key Vault, GCP Secret Manager or HashiCorp Vault, with rotation and audit from PAM.",
+        "needs": "Add a cloud secret store or HashiCorp Vault in step 2."
+      },
+      "legacy_pam": {
+        "name": "Legacy apps get credentials from PAM",
+        "help": "Servers, app servers, legacy apps and mainframe jobs fetch privileged accounts from PAM.",
+        "needs": "Add servers, app servers, legacy apps or mainframe in step 2."
+      },
+      "workload_id": {
+        "name": "Workload identity without secrets",
+        "help": "SPIFFE identities for mTLS, cloud federation and secret exchange.",
+        "needs": "Add Kubernetes or virtual machines in step 2."
+      },
+      "ai": {
+        "name": "Secure AI agents",
+        "help": "Agents and AI tools work without long-lived keys in code or config.",
+        "needs": "Add AI agents or assistants in step 1."
+      },
+      "dynamic": {
+        "name": "Short-lived cloud credentials",
+        "help": "Just-in-time AWS or Google Cloud credentials that expire on their own.",
+        "needs": "Add an AWS or Google Cloud service in step 2."
+      },
+      "rotation": {
+        "name": "Rotation without downtime",
+        "help": "Rotate passwords without breaking the apps that use them.",
+        "needs": "Add servers, databases, legacy apps or a cloud store in step 2."
+      },
+      "audit": {
+        "name": "Audit and compliance",
+        "help": "Know which workload accessed which secret, and when.",
+        "needs": "Select something in step 2 first."
+      }
+    },
+    "needs_pam": {
+      "cp": "Credential Providers need PAM Self-Hosted (Digital Vault 14.0 or later) or Privilege Cloud. Add the PAM you have in step 1 to tailor the result.",
+      "shub": "Secrets Hub needs Privilege Cloud, or PAM Self-Hosted 11.5 or later through a connector, as the source. Add the PAM you have in step 1 to tailor the result."
+    }
   },
   "c_secretzero": {
     "title": "Secret zero",
