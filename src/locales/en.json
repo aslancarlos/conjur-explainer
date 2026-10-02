@@ -68,13 +68,13 @@
     "c_saas_sub": "Secrets Manager SaaS with Edge",
     "c_sh": "Self-Hosted architecture",
     "c_sh_sub": "Leader, Standbys and Followers",
-    "c_swa": "Secure Workload Access architecture",
-    "c_swa_sub": "SPIFFE identities with SWA",
+    "c_swa": "SWA architecture",
+    "c_swa_sub": "Server, agents, SVIDs and federation",
     "sec_arch": "Architectures",
     "c_k8s_short": "Kubernetes",
     "c_saas_short": "Secrets Manager SaaS",
     "c_sh_short": "Secrets Manager Self-Hosted",
-    "c_swa_short": "Secure Workload Access"
+    "group_swa": "Secure Workload Access"
   },
   "hero": {
     "eyebrow": "Machine identity · Secrets · IDIRA by Palo Alto Networks",
@@ -144,7 +144,8 @@
     "prod_swa": "SPIFFE-based workload identity (X.509/JWT-SVID) federated to clouds: no static keys.",
     "prod_secretshub": "Syncs PAM-managed secrets into cloud-native secret stores.",
     "prod_pam": "Vaulting and CPM rotation; Dual Accounts keep consumers online during rotation.",
-    "svid": "An attested workload receives its SPIFFE identity live from Secure Workload Access: an X.509-SVID for mTLS and a JWT-SVID for a chosen audience, side by side, with when to use each."
+    "svid": "An attested workload receives its SPIFFE identity live from Secure Workload Access: an X.509-SVID for mTLS and a JWT-SVID for a chosen audience, side by side, with when to use each.",
+    "group_swa": "SPIFFE identities for workloads: the architecture, a live SVID and cloud access with no stored keys."
   },
   "caps": {
     "kicker": "What they share",

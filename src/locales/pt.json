@@ -68,13 +68,13 @@
     "c_saas_sub": "Secrets Manager SaaS com Edge",
     "c_sh": "Arquitetura Self-Hosted",
     "c_sh_sub": "Leader, Standbys e Followers",
-    "c_swa": "Arquitetura do Secure Workload Access",
-    "c_swa_sub": "Identidades SPIFFE com o SWA",
+    "c_swa": "Arquitetura do SWA",
+    "c_swa_sub": "Server, agents, SVIDs e federação",
     "sec_arch": "Arquiteturas",
     "c_k8s_short": "Kubernetes",
     "c_saas_short": "Secrets Manager SaaS",
     "c_sh_short": "Secrets Manager Self-Hosted",
-    "c_swa_short": "Secure Workload Access"
+    "group_swa": "Secure Workload Access"
   },
   "hero": {
     "eyebrow": "Identidade de máquina · Secrets · IDIRA by Palo Alto Networks",
@@ -144,7 +144,8 @@
     "prod_swa": "Identidade de workload baseada em SPIFFE (X.509/JWT-SVID) federada às nuvens: sem chaves estáticas.",
     "prod_secretshub": "Sincroniza segredos gerenciados pelo PAM com os cofres nativos das nuvens.",
     "prod_pam": "Cofre e rotação pelo CPM; Dual Accounts mantêm os consumidores no ar durante a rotação.",
-    "svid": "Um workload atestado recebe na hora sua identidade SPIFFE do Secure Workload Access: um X.509-SVID para mTLS e um JWT-SVID para a audience escolhida, lado a lado, com quando usar cada um."
+    "svid": "Um workload atestado recebe na hora sua identidade SPIFFE do Secure Workload Access: um X.509-SVID para mTLS e um JWT-SVID para a audience escolhida, lado a lado, com quando usar cada um.",
+    "group_swa": "Identidades SPIFFE para workloads: a arquitetura, um SVID ao vivo e acesso à nuvem sem chaves guardadas."
   },
   "caps": {
     "kicker": "O que compartilham",

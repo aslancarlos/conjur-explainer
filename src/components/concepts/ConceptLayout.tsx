@@ -15,7 +15,10 @@ export default function ConceptLayout({ title, subtitle, children }: {
 }) {
   const { t } = useTranslation()
   const { pathname } = useLocation()
-  const items = NAV.find(g => g.key === 'concepts')?.items ?? []
+  // The trail follows the menu group that holds this page (Concepts, or e.g. Secure Workload Access),
+  // skipping sibling services outside the SPA (href).
+  const group = NAV.find(g => g.items.some(it => it.to === pathname)) ?? NAV.find(g => g.key === 'concepts')
+  const items = (group?.items ?? []).filter(it => !it.href)
   const i = items.findIndex(it => it.to === pathname)
   const prev = i > 0 ? items[i - 1] : undefined
   const next = i >= 0 && i < items.length - 1 ? items[i + 1] : undefined
@@ -31,7 +34,7 @@ export default function ConceptLayout({ title, subtitle, children }: {
         <div className="relative max-w-6xl mx-auto px-6 lg:px-10 pt-14 pb-14 md:pt-20 md:pb-16">
           <p className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-[#4ad1f0]">
             {Icon && <Icon size={14} aria-hidden="true" />}
-            {t('nav.group_concepts')}{i >= 0 && <span className="text-slate-500">· {i + 1}/{items.length}</span>}
+            {t(group?.labelKey ?? 'nav.group_concepts')}{i >= 0 && items.length > 1 && <span className="text-slate-500">· {i + 1}/{items.length}</span>}
           </p>
           <h1 className="mt-4 font-semibold tracking-[-0.03em] leading-[1.05] text-[clamp(32px,4.6vw,56px)] max-w-[20ch]">{title}</h1>
           <p className="mt-5 text-base md:text-lg leading-relaxed text-slate-300/90 max-w-[62ch]">{subtitle}</p>

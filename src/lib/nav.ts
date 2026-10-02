@@ -65,7 +65,6 @@ export const NAV: NavGroup[] = [
       { to: '/concepts/kubernetes',         labelKey: 'nav.c_k8s',      subKey: 'nav.c_k8s_sub',      Icon: Container,      color: 'text-domain-idira', section: 'arch', shortKey: 'nav.c_k8s_short' },
       { to: '/concepts/saas-architecture',  labelKey: 'nav.c_saas',     subKey: 'nav.c_saas_sub',     Icon: CloudCog,       color: 'text-domain-idira', section: 'arch', shortKey: 'nav.c_saas_short' },
       { to: '/concepts/self-hosted-architecture', labelKey: 'nav.c_sh', subKey: 'nav.c_sh_sub',       Icon: Network,        color: 'text-domain-idira', section: 'arch', shortKey: 'nav.c_sh_short' },
-      { to: '/concepts/swa-architecture',   labelKey: 'nav.c_swa',      subKey: 'nav.c_swa_sub',      Icon: ShieldCheck,    color: 'text-domain-idira', section: 'arch', shortKey: 'nav.c_swa_short' },
       { to: '/concepts/glossary',           labelKey: 'nav.c_glossary', subKey: 'nav.c_glossary_sub', Icon: BookOpen,       color: 'text-domain-idira' },
     ],
   },
@@ -78,6 +77,14 @@ export const NAV: NavGroup[] = [
         demo: { name: 'authn-jwt', secret: 'identity handshake', descKey: 'demos.jwt' } },
       { to: '/policy', product: 'secretsmanager', labelKey: 'nav.policy', subKey: 'nav.policy_sub', Icon: ScrollText, color: 'text-domain-idira',
         demo: { name: 'Policy as Code', secret: 'YAML + git', descKey: 'demos.policy' } },
+    ],
+  },
+  {
+    key: 'swa',
+    labelKey: 'nav.group_swa',
+    descKey: 'demos.group_swa',
+    items: [
+      { to: '/concepts/swa-architecture', product: 'swa', labelKey: 'nav.c_swa', subKey: 'nav.c_swa_sub', Icon: ShieldCheck, color: 'text-domain-idira' },
       { to: '/svid', product: 'swa', href: '/svid', labelKey: 'nav.svid', subKey: 'nav.svid_sub', Icon: FileBadge, color: 'text-domain-idira',
         demo: { name: 'SVID', secret: 'X.509-SVID + JWT-SVID', descKey: 'demos.svid' } },
       { to: '/swa-s3', product: 'swa', href: '/swa-s3', labelKey: 'nav.swa', subKey: 'nav.swa_sub', Icon: Database, color: 'text-eso',
