@@ -19,6 +19,14 @@ const DualAccountsPage = lazy(() => import('./pages/DualAccountsPage'))
 const SaasArchitecturePage = lazy(() => import('./pages/concepts/SaasArchitecturePage'))
 const SelfHostedArchitecturePage = lazy(() => import('./pages/concepts/SelfHostedArchitecturePage'))
 const SwaArchitecturePage = lazy(() => import('./pages/concepts/SwaArchitecturePage'))
+const AuthnHubPage = lazy(() => import('./pages/authn/AuthnHubPage'))
+const ApiKeyAuthnPage = lazy(() => import('./pages/authn/ApiKeyAuthnPage'))
+const CertAuthnPage = lazy(() => import('./pages/authn/CertAuthnPage'))
+const AwsIamAuthnPage = lazy(() => import('./pages/authn/AwsIamAuthnPage'))
+const AzureAuthnPage = lazy(() => import('./pages/authn/AzureAuthnPage'))
+const GcpAuthnPage = lazy(() => import('./pages/authn/GcpAuthnPage'))
+const K8sAuthnPage = lazy(() => import('./pages/authn/K8sAuthnPage'))
+const UsersAuthnPage = lazy(() => import('./pages/authn/UsersAuthnPage'))
 const JwtPage = lazy(() => import('./pages/JwtPage'))
 const SecretsHubPage = lazy(() => import('./pages/SecretsHubPage'))
 const JenkinsPage = lazy(() => import('./pages/JenkinsPage'))
@@ -81,6 +89,14 @@ export default function App() {
           <Route path="/concepts/saas-architecture"  element={<SaasArchitecturePage />} />
           <Route path="/concepts/self-hosted-architecture" element={<SelfHostedArchitecturePage />} />
           <Route path="/concepts/swa-architecture"   element={<SwaArchitecturePage />} />
+          <Route path="/authn" element={<AuthnHubPage />} />
+          <Route path="/authn/api-key" element={<ApiKeyAuthnPage />} />
+          <Route path="/authn/certificate" element={<CertAuthnPage />} />
+          <Route path="/authn/aws-iam" element={<AwsIamAuthnPage />} />
+          <Route path="/authn/azure" element={<AzureAuthnPage />} />
+          <Route path="/authn/gcp" element={<GcpAuthnPage />} />
+          <Route path="/authn/kubernetes" element={<K8sAuthnPage />} />
+          <Route path="/authn/users" element={<UsersAuthnPage />} />
           <Route path="/concepts/glossary"           element={<GlossaryConcept />} />
         </Route>
       </Routes>

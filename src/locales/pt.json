@@ -77,7 +77,28 @@
     "h_cicd": "CI/CD",
     "c_saas_short": "SaaS",
     "c_sh_short": "Self-Hosted",
-    "c_k8s_short": "Visão geral"
+    "c_k8s_short": "Visão geral",
+    "sec_authn": "Autenticação",
+    "h_workloads": "Workloads",
+    "h_people": "Pessoas",
+    "h_policy": "Policy",
+    "a_hub": "Visão geral e comparação",
+    "a_hub_sub": "Todos os métodos de autenticação lado a lado",
+    "a_apikey": "API key",
+    "a_apikey_sub": "Autenticador padrão (secret zero)",
+    "a_cert": "Certificado",
+    "a_cert_sub": "mTLS com certificado de cliente (authn-cert)",
+    "a_aws": "AWS IAM",
+    "a_aws_sub": "A role IAM prova o workload (authn-iam)",
+    "a_azure": "Azure",
+    "a_azure_sub": "Identidade gerenciada (authn-azure)",
+    "a_gcp": "Google Cloud",
+    "a_gcp_sub": "Token de identidade do metadata (authn-gcp)",
+    "a_k8s": "Kubernetes (authn-k8s)",
+    "a_k8s_sub": "Autenticador mTLS nativo, Self-Hosted",
+    "a_users": "Usuários humanos",
+    "a_users_sub": "Identity, OIDC e LDAP",
+    "a_jwt": "JWT"
   },
   "hero": {
     "eyebrow": "Identidade de máquina · Secrets · IDIRA by Palo Alto Networks",
@@ -2344,6 +2365,1038 @@
   "authnhub": {
     "available": "disponível",
     "not_available": "não disponível",
-    "availability": "Disponibilidade"
+    "availability": "Disponibilidade",
+    "badge": "Métodos de autenticação",
+    "title": "Como workloads e pessoas provam quem são",
+    "subtitle": "O IDIRA Secrets Manager nunca entrega um secret por confiança. Todo pedido começa num autenticador: quem chama prova a identidade, recebe um token de acesso de curta duração e a policy decide o que essa identidade pode ler.",
+    "what_title": "O que um autenticador faz",
+    "what_lead": "Todos os métodos terminam igual. O que muda é a prova apresentada no primeiro passo.",
+    "step_proof_title": "Prova de identidade",
+    "step_proof_desc": "Quem chama envia a prova ao endpoint de autenticação: uma API key, um JWT assinado, um token de identidade da nuvem, uma requisição assinada da AWS ou um certificado de cliente X.509.",
+    "step_token_title": "Token de acesso de curta duração",
+    "step_token_desc": "Se a prova é válida, o Secrets Manager devolve um token de acesso assinado com RSA 2048. No SaaS ele dura 8 minutos para um workload e 60 minutos para um usuário; depois é preciso autenticar de novo.",
+    "step_policy_title": "A policy decide",
+    "step_policy_desc": "Todo pedido seguinte leva o token. O acesso a cada secret só existe com um permit na policy, então uma identidade válida sem permissão não recebe nada.",
+    "compare_title": "Compare os métodos",
+    "compare_lead": "Uma linha por método. Abra um método para ver o fluxo passo a passo e todas as limitações documentadas.",
+    "col_method": "Método",
+    "col_who": "Quem usa",
+    "col_proof": "O que prova a identidade",
+    "col_stored": "Credencial guardada por quem chama",
+    "col_saas": "SaaS",
+    "col_sh": "Self-Hosted",
+    "col_limit": "Principal limitação",
+    "avail_yes": "Sim",
+    "avail_no": "Não",
+    "avail_partial": "Parcial",
+    "partial_note": "Parcial: no SaaS, o certificado de cliente funciona só contra um Secrets Manager Edge. No Self-Hosted, identidades SPIFFE são aceitas pelo autenticador de certificado no modo SPIFFE (X.509-SVID).",
+    "methods": {
+      "apikey": {
+        "name": "API key",
+        "id": "authn",
+        "who": "Workloads; no Self-Hosted também usuários",
+        "proof": "Uma API key aleatória de 51 a 56 caracteres gerada pelo Secrets Manager",
+        "stored": "Sim: a API key (arquivo ou variáveis de ambiente)",
+        "limit": "É um secret zero: quem tiver uma cópia autentica até a chave ser rotacionada"
+      },
+      "jwt": {
+        "name": "JWT",
+        "id": "authn-jwt",
+        "who": "Workloads (Kubernetes, CI/CD, qualquer provedor de JWT)",
+        "proof": "Um JWT assinado por um provedor confiável, conferido contra o JWKS e os claims",
+        "stored": "Não",
+        "limit": "No Self-Hosted, claims com barra (/) não são suportados"
+      },
+      "iam": {
+        "name": "AWS IAM",
+        "id": "authn-iam",
+        "who": "Recursos AWS que suportam IAM roles",
+        "proof": "Uma requisição STS GetCallerIdentity assinada com a sessão da IAM role",
+        "stored": "Não",
+        "limit": "No SaaS é documentado como autenticador de nuvem legado: workloads novos devem usar o SWA"
+      },
+      "azure": {
+        "name": "Azure",
+        "id": "authn-azure",
+        "who": "VMs, App Services, Functions e Container Instances do Azure",
+        "proof": "Um token emitido pelo Azure para a identidade do recurso",
+        "stored": "Não",
+        "limit": "Só os serviços Azure documentados são suportados"
+      },
+      "gcp": {
+        "name": "Google Cloud",
+        "id": "authn-gcp",
+        "who": "Compute Engine e Cloud Functions",
+        "proof": "Um token de identidade assinado pelo Google, obtido no metadata server",
+        "stored": "Não",
+        "limit": "Só pode existir um autenticador GCP (conjur/authn-gcp)"
+      },
+      "cert": {
+        "name": "Certificado de cliente",
+        "id": "authn-cert",
+        "who": "Workloads como VMs e dispositivos IoT",
+        "proof": "Um certificado de cliente X.509 apresentado via TLS mútuo",
+        "stored": "Sim: a chave privada do certificado",
+        "limit": "No SaaS funciona só com um Secrets Manager Edge"
+      },
+      "k8s": {
+        "name": "Kubernetes (certificado)",
+        "id": "authn-k8s",
+        "who": "Workloads e Followers no Kubernetes",
+        "proof": "Um fluxo de TLS mútuo baseado em certificado para recursos Kubernetes",
+        "stored": "Não",
+        "limit": "Só no Self-Hosted; no SaaS o Kubernetes usa o autenticador JWT"
+      },
+      "spiffe": {
+        "name": "SPIFFE / SWA",
+        "id": "SVID",
+        "who": "Workloads com um SPIFFE ID",
+        "proof": "Um X.509-SVID ou JWT-SVID de curta duração emitido pelo Secure Workload Access",
+        "stored": "Não",
+        "limit": "Exige o servidor e os agentes do SWA; JWT-SVIDs são validados por um autenticador JWT"
+      },
+      "users": {
+        "name": "Pessoas",
+        "id": "Identity · LDAP · OIDC",
+        "who": "Administradores e desenvolvedores",
+        "proof": "SaaS: login pelo Identity (SSO e MFA). Self-Hosted: senha ou API key, LDAP ou OIDC",
+        "stored": "Depende do método",
+        "limit": "LDAP é um autenticador do Self-Hosted; no SaaS os usuários são geridos no Identity"
+      }
+    },
+    "choose_title": "Como escolher",
+    "choose_lead": "Prefira um método em que a plataforma já prova a identidade, para que nada secreto precise ficar guardado com o workload.",
+    "choose": [
+      {
+        "q": "Roda no Kubernetes, GitHub, GitLab ou Jenkins?",
+        "a": "Use o autenticador JWT",
+        "to": "/jwt"
+      },
+      {
+        "q": "Um workload novo na AWS, Azure ou Google Cloud?",
+        "a": "Use o Secure Workload Access (SPIFFE)",
+        "to": "/concepts/swa-architecture"
+      },
+      {
+        "q": "Um recurso existente na AWS, Azure ou GCP?",
+        "a": "Use o autenticador de nuvem do provedor",
+        "to": "/authn/aws-iam"
+      },
+      {
+        "q": "Uma VM ou dispositivo IoT que já tem certificados?",
+        "a": "Use a autenticação por certificado de cliente",
+        "to": "/authn/certificate"
+      },
+      {
+        "q": "Nada acima serve (servidor legado, script)?",
+        "a": "Use uma API key e rotacione",
+        "to": "/authn/api-key"
+      },
+      {
+        "q": "Uma pessoa usando a interface ou a CLI?",
+        "a": "Veja como os usuários autenticam",
+        "to": "/authn/users"
+      }
+    ],
+    "limits_title": "Regras que valem para todo autenticador",
+    "limits": [
+      "Service IDs de autenticador não podem ser aninhados: conjur/authn-azure/sysadmins é válido, conjur/authn-azure/sysadmins/new não é.",
+      "Tokens de acesso duram pouco (8 minutos para workloads, no SaaS e no Self-Hosted); quem chama precisa autenticar de novo quando o token expira.",
+      "Uma identidade válida não basta: o workload também precisa da permissão authenticate no autenticador e de permits em cada secret.",
+      "Self-Hosted: todo autenticador, exceto o padrão, precisa estar na lista de permitidos (conjur.yml ou CONJUR_AUTHENTICATORS); com CONJUR_AUTHENTICATORS definido, só os listados funcionam.",
+      "Self-Hosted: valores definidos com evoke variable set não sobrevivem a upgrades e se perdem quando um Standby é promovido a Leader; use o conjur.yml ou variáveis de ambiente.",
+      "SaaS: criar, alterar e excluir autenticadores exige fazer parte do grupo Authn_Admins (ou Conjur_Cloud_Admins).",
+      "SaaS: os autenticadores AWS IAM, Azure e GCP são documentados como caminhos legados; para workloads de nuvem novos a documentação recomenda o Secure Workload Access."
+    ],
+    "limits_source": "Fonte: configuração de autenticadores",
+    "docs_title": "Documentação oficial",
+    "doc_saas_overview": "Autenticação de workloads (SaaS)",
+    "doc_saas_authn": "Autenticadores do Secrets Manager (SaaS)",
+    "doc_saas_lp": "Autenticar workloads (SaaS)",
+    "doc_sh_types": "Configurar autenticação (Self-Hosted)",
+    "doc_sh_support": "Autenticadores suportados (Self-Hosted)"
+  },
+  "authn_apikey": {
+    "badge": "Autenticação · API key",
+    "title": "Autenticação por API key (authn)",
+    "subtitle": "O autenticador padrão: o workload prova quem é com uma API key aleatória gerada pelo Secrets Manager. É simples e funciona em qualquer lugar, mas a chave é um secret guardado, então precisa ser protegida e rotacionada.",
+    "roles_title": "Componentes e sua função",
+    "roles_lead": "Quem guarda o quê numa autenticação por API key.",
+    "col_component": "Componente",
+    "col_role": "Função",
+    "roles": [
+      [
+        "Host (workload)",
+        "A identidade na policy. O login é host/ mais o caminho completo na policy, codificado nos pedidos (host%2Fdata%2Fapp)."
+      ],
+      [
+        "API key",
+        "Texto aleatório de 51 a 56 caracteres gerado pelo Secrets Manager quando o host é criado; equivale à senha do host."
+      ],
+      [
+        "Onde a credencial fica",
+        "Um arquivo como /etc/conjur.identity, ou as variáveis de ambiente CONJUR_AUTHN_LOGIN e CONJUR_AUTHN_API_KEY."
+      ],
+      [
+        "Endpoint authn",
+        "POST /authn/{account}/{login}/authenticate (SaaS: /api/authn/conjur/{login}/authenticate). O corpo é a API key."
+      ],
+      [
+        "Token de acesso",
+        "JWT assinado com RSA 2048, 8 minutos para um workload. Vai em Authorization: Token token=\"...\" em todo pedido."
+      ],
+      [
+        "Policy",
+        "Os permits decidem quais secrets o host pode ler; sem eles o token não dá acesso a nada."
+      ]
+    ],
+    "when_title": "Quando usar",
+    "when": [
+      "Servidores legados, VMs ou scripts que não conseguem usar um autenticador baseado em identidade.",
+      "Testes rápidos e provas de conceito.",
+      "Workloads atrás de um Secrets Manager Edge, que suporta autenticação local por API key.",
+      "Workloads de curta duração somente via Host Factory ou uma integração que gerencie a identidade."
+    ],
+    "limits_title": "Limitações e requisitos",
+    "limits": [
+      "A API key é um secret zero: precisa ficar guardada com o workload (arquivo ou variáveis de ambiente) e protegida como qualquer senha.",
+      "Quem obtiver uma cópia da chave consegue autenticar como aquele host até a chave ser rotacionada.",
+      "A chave é sempre um valor aleatório gerado pelo Secrets Manager; não dá para definir um valor escolhido.",
+      "A rotação é manual (interface, CLI ou API): a chave nova precisa ser trocada em todo lugar que usava a antiga, e a interface mostra a chave nova só uma vez.",
+      "Usuários com a permissão adequada no host conseguem ler a API key atual: limite quem tem essa permissão.",
+      "O token de acesso expira em 8 minutos (workload); o cliente precisa autenticar de novo para continuar.",
+      "O login precisa ir codificado no caminho do pedido (barras viram %2F).",
+      "Para workloads de nuvem novos, a documentação do SaaS recomenda o Secure Workload Access em vez de credenciais guardadas."
+    ],
+    "limits_source": "Fonte: API key (documentação do SaaS)",
+    "diff_title": "Diferenças entre SaaS e Self-Hosted",
+    "col_topic": "Tema",
+    "col_detail": "Detalhe",
+    "diff": [
+      [
+        "Endpoint",
+        "SaaS: https://<subdomain>.secretsmgr.cyberark.cloud/api/authn/conjur/{login}/authenticate (ou o host do Edge). Self-Hosted: https://<servidor>/authn/{account}/{login}/authenticate."
+      ],
+      [
+        "Usuários",
+        "SaaS: pessoas entram pelo Identity. Self-Hosted: usuários também recebem uma API key e podem definir uma senha (guardada com bcrypt) depois do primeiro login."
+      ],
+      [
+        "Configuração",
+        "Ambos: o authn não exige configuração. Self-Hosted: se CONJUR_AUTHENTICATORS estiver definido, o authn precisa estar na lista."
+      ],
+      [
+        "Duração do token",
+        "Ambos: 8 minutos para um workload. O SaaS documenta 60 minutos para a identidade de um usuário."
+      ]
+    ],
+    "docs_title": "Documentação oficial",
+    "doc_saas": "API key (SaaS)",
+    "doc_saas_api": "Autenticar com API key (API do SaaS)",
+    "doc_saas_tokens": "Autenticação de workloads e tokens de acesso (SaaS)",
+    "doc_sh": "Autenticador padrão (Self-Hosted)",
+    "flow": {
+      "diagram_label": "Autenticação por API key no IDIRA Secrets Manager, passo a passo",
+      "n_admin": "Admin / policy",
+      "n_admin_sub": "cria o host",
+      "v_length": "51 a 56 chars",
+      "n_store": "Onde a chave fica",
+      "st_stored": "guardada",
+      "st_rotated": "rotacionada",
+      "n_wl": "Workload",
+      "st_read": "lida",
+      "st_expired": "expirado",
+      "n_sm_sub": "authn (padrão)",
+      "st_allowed": "permitido",
+      "n_leak": "Quem tem uma cópia",
+      "n_leak_sub": "arquivo, variável ou log",
+      "st_no": "não",
+      "st_yes": "sim",
+      "st_rejected": "recusado",
+      "p_copy": "cópia da chave",
+      "p_newkey": "nova API key",
+      "s1_title": "1. O autenticador padrão",
+      "s1_desc": "A autenticação por API key (authn) já vem pronta e não exige configuração. O workload é um host na policy; o login é host/ seguido do caminho completo na policy, por exemplo host/data/app.",
+      "s2_title": "2. O Secrets Manager gera a chave",
+      "s2_desc": "Quando o host é criado (policy load ou interface), o Secrets Manager gera uma API key aleatória de 51 a 56 caracteres e a devolve na saída. Ninguém escolhe o valor.",
+      "s3_title": "3. A chave fica guardada com o workload",
+      "s3_desc": "Workloads de longa duração a guardam num arquivo como /etc/conjur.identity; containers e jobs de CI recebem CONJUR_AUTHN_LOGIN e CONJUR_AUTHN_API_KEY como variáveis de ambiente. Essa chave guardada é o secret zero.",
+      "s4_title": "4. O workload lê as credenciais",
+      "s4_desc": "Na inicialização a aplicação, o SDK ou a CLI leem o login e a API key do arquivo ou do ambiente.",
+      "s5_title": "5. Pedido de autenticação",
+      "s5_desc": "O workload envia POST /authn/{account}/{login}/authenticate com a API key no corpo e o login codificado na URL (host%2Fdata%2Fapp). No SaaS o caminho é /api/authn/conjur/... no seu tenant ou Edge.",
+      "s6_title": "6. Um token de acesso de curta duração",
+      "s6_desc": "Se a chave confere, o Secrets Manager devolve um token de acesso: um JWT assinado com RSA 2048, válido por 8 minutos para um workload. Com Accept-Encoding: base64 ele já vem pronto para o cabeçalho.",
+      "s7_title": "7. A policy decide e o secret volta",
+      "s7_desc": "O workload chama a API de secrets com Authorization: Token token=\"...\". O Secrets Manager só devolve o secret se a policy der read e execute a este host.",
+      "s8_title": "8. O token expira em 8 minutos",
+      "s8_desc": "Quando expira, os pedidos são recusados e o workload autentica de novo com a mesma API key. Os SDKs e a CLI fazem isso sozinhos.",
+      "s9_title": "9. O risco: uma cópia da chave funciona",
+      "s9_desc": "Quem obtiver o arquivo, a variável de ambiente ou um log com a chave consegue autenticar como este host. Usuários com a permissão certa também podem ler a chave atual.",
+      "s10_title": "10. Rotacionar a chave",
+      "s10_desc": "Um admin rotaciona a chave pela interface, CLI ou API. A interface mostra a chave nova só uma vez; ela precisa ser trocada em todo lugar que usava a antiga, e a partir daí as cópias antigas são recusadas."
+    }
+  },
+  "authn_cert": {
+    "badge": "Autenticação · Certificado de cliente",
+    "title": "Autenticação por certificado de cliente (authn-cert)",
+    "subtitle": "O workload prova quem é com um certificado de cliente X.509 via TLS mútuo, conferido contra o bundle da sua CA, uma lista de revogação opcional e as anotações do workload. Nada reutilizável trafega na rede.",
+    "support_note": "No SaaS, a autenticação por certificado só funciona contra um Secrets Manager Edge.",
+    "roles_title": "Componentes e sua função",
+    "roles_lead": "O que cada parte faz numa autenticação por certificado.",
+    "col_component": "Componente",
+    "col_role": "Função",
+    "roles": [
+      [
+        "Autoridade certificadora",
+        "Emite o certificado de cliente. A raiz (e as intermediárias) é a âncora de confiança configurada no autenticador."
+      ],
+      [
+        "Autenticador de certificado",
+        "Policy em conjur/authn-cert/<nome> com a variável ca-cert (bundle PEM) e, opcionalmente, crl ou crl-url; precisa estar habilitado."
+      ],
+      [
+        "Grupos apps e operators",
+        "Membros de apps podem autenticar com o autenticador; membros de operators podem alterá-lo."
+      ],
+      [
+        "Workload (host)",
+        "Guarda o certificado de cliente e a chave privada, tem ao menos uma anotação de certificado e pertence ao grupo apps."
+      ],
+      [
+        "Secrets Manager ou Edge",
+        "Encerra o handshake mTLS, valida cadeia, CRL/CDP e anotações, e emite o token de acesso. No SaaS é o Edge."
+      ],
+      [
+        "Policy",
+        "Os grupos de consumidores de cada secret decidem o que o workload autenticado pode buscar."
+      ]
+    ],
+    "annot_title": "Anotações que precisam conferir",
+    "annot_lead": "Defina ao menos uma. Cada campo do certificado listado precisa bater com o certificado de cliente.",
+    "col_annotation": "Anotação",
+    "col_validates": "O que valida",
+    "annotations": [
+      [
+        "san-uri",
+        "Lista de URIs separados por vírgula, por exemplo spiffe://acme.dev/workloads/vm-01"
+      ],
+      [
+        "san-dns",
+        "Lista de nomes DNS separados por vírgula"
+      ],
+      [
+        "san-ip",
+        "Lista de endereços IP separados por vírgula"
+      ],
+      [
+        "cn",
+        "O common name do certificado"
+      ]
+    ],
+    "when_title": "Quando usar",
+    "when": [
+      "VMs e dispositivos IoT que já recebem certificados de uma CA corporativa.",
+      "Ambientes em que o certificado do workload é a identidade natural e não há JWT nem identidade de nuvem.",
+      "Workloads atendidos por um Secrets Manager Edge próximo (SaaS).",
+      "Workloads Self-Hosted com X.509-SVIDs, usando o host mode SPIFFE."
+    ],
+    "limits_title": "Limitações e requisitos",
+    "limits": [
+      "SaaS: a autenticação por certificado de cliente só está disponível para autenticar workloads num Secrets Manager Edge, não direto no tenant SaaS.",
+      "O bundle da CA precisa ser PEM e conter exatamente uma CA raiz (intermediárias são permitidas); a cadeia do certificado de cliente precisa chegar a essa raiz.",
+      "O workload precisa de ao menos uma anotação (san-uri, san-dns, san-ip ou cn), e ao menos uma anotação precisa ser validada para o pedido funcionar.",
+      "Não dá para definir crl e crl-url ao mesmo tempo; URLs de CRL precisam usar http ou https (qualquer outro esquema, inclusive LDAP, faz a busca da CRL e a autenticação falharem).",
+      "Se o certificado de cliente tiver o campo cRLDistributionPoints, ele sempre é validado contra esse CDP.",
+      "O workload guarda a chave privada do certificado: proteja-a e planeje a renovação do certificado com a sua CA.",
+      "Criar o autenticador e dar permissões a workloads nele exige o grupo Authn_Admins (SaaS) ou privilégio de create na policy conjur/authn-cert.",
+      "O autenticador precisa estar habilitado antes que os workloads possam usá-lo.",
+      "Interface do SaaS: o branch data/ do workload precisa existir antes; criá-lo exige a CLI."
+    ],
+    "limits_source": "Fonte: configurar autenticação por certificado de cliente (SaaS)",
+    "diff_title": "Diferenças entre SaaS e Self-Hosted",
+    "col_topic": "Tema",
+    "col_detail": "Detalhe",
+    "diff": [
+      [
+        "Onde autenticar",
+        "SaaS: só num Secrets Manager Edge, em https://<edge>/api/authn-cert/{name}/conjur/{host}/authenticate. Self-Hosted: no próprio Secrets Manager, em https://<servidor>/authn-cert/{name}/{account}[/{host}]/authenticate."
+      ],
+      [
+        "Mapeamento do host",
+        "O Self-Hosted tem o host-mode: request (padrão, host no caminho, anotações obrigatórias) ou spiffe (host derivado do SPIFFE ID do X.509-SVID, com trust-domain e identity-path)."
+      ],
+      [
+        "Restrições no autenticador",
+        "O Self-Hosted também pode restringir o próprio autenticador com as variáveis san-uri, san-dns, san-ip e cn (com as regras de curinga documentadas)."
+      ],
+      [
+        "Configuração",
+        "SaaS: interface ou policy, depois conjur authenticator enable. Self-Hosted: policy, e o autenticador precisa estar na lista de permitidos como todo autenticador não padrão."
+      ]
+    ],
+    "docs_title": "Documentação oficial",
+    "doc_saas": "Configurar autenticação por certificado (SaaS)",
+    "doc_saas_api": "Autenticar com certificado de cliente (API do SaaS)",
+    "doc_saas_steps": "Guia passo a passo (SaaS)",
+    "doc_sh": "Autenticador de certificado (Self-Hosted)",
+    "doc_sh_api": "Autenticar com certificado de cliente (API do Self-Hosted)",
+    "flow": {
+      "diagram_label": "Autenticação por certificado de cliente no IDIRA Secrets Manager, passo a passo",
+      "n_ca": "Autoridade certificadora",
+      "n_ca_sub": "raiz + intermediárias",
+      "r_issues": "emite",
+      "n_conf": "Autenticador",
+      "v_optional": "opcional",
+      "r_enabled": "habilitado",
+      "n_wl": "Workload (VM / IoT)",
+      "n_sm": "Secrets Manager / Edge",
+      "st_not_revoked": "não revogado",
+      "st_match": "conferem",
+      "n_crl": "Origem da CRL",
+      "r_protocol": "protocolo",
+      "p_cert": "cert + chave",
+      "s1_title": "1. Identidade a partir de um certificado",
+      "s1_desc": "Com o authn-cert o workload prova quem é com um certificado de cliente X.509 via TLS mútuo (TLS 1.3 por padrão, ou 1.2). Nenhuma senha é enviada; o workload guarda a chave privada do certificado.",
+      "s2_title": "2. O admin cria o autenticador",
+      "s2_desc": "Em conjur/authn-cert, uma policy define o autenticador (por exemplo acme-vm) com a variável ca-cert: um bundle PEM com exatamente uma CA raiz e as intermediárias. Uma CRL (crl) ou URL de CRL (crl-url) é opcional; depois o autenticador é habilitado.",
+      "s3_title": "3. O workload é definido com anotações",
+      "s3_desc": "O workload (host) entra no grupo apps do autenticador e recebe ao menos uma anotação (san-uri, san-dns, san-ip ou cn). Esses campos do certificado precisam conferir para o pedido funcionar.",
+      "s4_title": "4. A CA emite o certificado de cliente",
+      "s4_desc": "Sua autoridade certificadora emite o certificado e a chave. A cadeia de confiança precisa chegar à CA raiz do bundle do autenticador.",
+      "s5_title": "5. Handshake mTLS e pedido de autenticação",
+      "s5_desc": "O workload envia POST /authn-cert/{name}/{account}/{host}/authenticate com o certificado e a chave. O handshake TLS acontece antes do pedido HTTP. No SaaS o destino é um Secrets Manager Edge (/api/authn-cert/...).",
+      "s6_title": "6. Verificação de revogação",
+      "s6_desc": "Se houver CRL definida, o certificado é conferido contra ela. Se o certificado tiver o campo cRLDistributionPoints, ele sempre é conferido contra esse CDP também. URLs de CRL precisam usar http ou https.",
+      "s7_title": "7. As anotações precisam conferir",
+      "s7_desc": "Os campos do certificado são comparados com as anotações do workload. Uma anotação restrita ao autenticador (authn-cert/acme-vm/san-uri) tem precedência sobre uma global (authn-cert/san-uri).",
+      "s8_title": "8. O token de acesso volta",
+      "s8_desc": "Se tudo confere, o workload recebe um token de acesso (8 minutos para um workload), igual aos outros autenticadores.",
+      "s9_title": "9. Buscar secrets sob a policy",
+      "s9_desc": "Com o token o workload busca seus secrets. Ele precisa estar no grupo de consumidores de cada secret; a policy decide.",
+      "s10_title": "10. SaaS ou Self-Hosted",
+      "s10_desc": "SaaS: a autenticação por certificado só funciona contra um Secrets Manager Edge. Self-Hosted: o workload autentica direto, e um modo SPIFFE pode derivar o host de um X.509-SVID."
+    }
+  },
+  "authn_aws": {
+    "flow_title": "Como funciona hoje, passo a passo",
+    "how_title": "Componentes e sua função",
+    "col_component": "Componente",
+    "col_role": "Função",
+    "when_title": "Quando usar",
+    "diff_title": "Diferenças entre SaaS e Self-Hosted",
+    "limits_title": "Limitações e requisitos",
+    "docs_title": "Documentação oficial",
+    "badge": "Autenticação · AWS IAM",
+    "title": "Autenticador AWS IAM",
+    "subtitle": "Um workload na AWS prova quem é com a role IAM com que já roda. Ele assina uma requisição GetCallerIdentity do AWS STS e o IDIRA Secrets Manager pergunta ao STS quem assinou. Nenhuma API key ou senha fica guardada no workload.",
+    "flow_lead": "O workload nunca envia as chaves da AWS: envia uma requisição assinada que só o STS consegue validar, e o Secrets Manager compara a resposta com o workload ID.",
+    "how_lead": "O que cada peça faz e como a identidade do workload é escrita.",
+    "roles": [
+      [
+        "Workload na AWS",
+        "Qualquer recurso da AWS que suporte roles IAM (EC2, ECS, Lambda). Roda com uma role IAM e assina a requisição ao STS com as credenciais de sessão dessa role (SigV4)."
+      ],
+      [
+        "Credenciais da role IAM",
+        "Credenciais de sessão temporárias da role, vindas do serviço de metadados da instância (169.254.169.254) ou do ambiente do Lambda."
+      ],
+      [
+        "authn-iam/{service-id}",
+        "O autenticador AWS IAM no Secrets Manager. O SaaS já traz o authn-iam/default; é possível criar outros em conjur/authn-iam."
+      ],
+      [
+        "Workload ID (host)",
+        "Precisa bater com o ID da conta AWS e o nome da role: AccountID/RoleName, por exemplo 111111111111/IAMConjurRole (dentro do seu branch, como data/myspace)."
+      ],
+      [
+        "Grupo apps",
+        "Hosts que pertencem a conjur/authn-iam/{service-id}/apps podem autenticar com esse autenticador."
+      ],
+      [
+        "AWS STS",
+        "O Secrets Manager reenvia a requisição GetCallerIdentity assinada; o STS devolve o Arn e a conta de quem chamou, que precisam bater com o host."
+      ],
+      [
+        "Access token",
+        "Token de curta duração do Secrets Manager (8 minutos) usado para ler os secrets que a policy permite."
+      ]
+    ],
+    "when": [
+      "Workloads em EC2, ECS, Lambda ou qualquer serviço da AWS que rode com role IAM.",
+      "Você quer tirar a API key (o secret zero) dos workloads na AWS.",
+      "Uma identidade por role IAM é a granularidade certa para suas aplicações."
+    ],
+    "diff": [
+      "SaaS: habilite o autenticador authn-iam/default já existente (UI, APIv2 ou CLI) ou crie um em conjur/authn-iam. Self-Hosted: defina a policy conjur/authn-iam/{service-id} e coloque authn-iam/{service-id} na allowlist.",
+      "Endpoint. SaaS: POST /api/authn-iam/{service-id}/conjur/{host-id}/authenticate. Self-Hosted: POST /authn-iam/{service-id}/{account}/{host-id}/authenticate.",
+      "O Self-Hosted documenta a variável optional-signed-headers para aceitar headers assinados extras; por padrão só host e x-amz-* são aceitos.",
+      "Validade da requisição assinada: a documentação Self-Hosted fala em cinco minutos; a do SaaS descreve as credenciais de sessão assinadas como válidas, em geral, por 15 minutos."
+    ],
+    "limits": [
+      "O workload ID precisa ser exatamente AccountID/RoleName do recurso AWS; um Arn diferente retorna 401.",
+      "O workload precisa ser membro do grupo apps do autenticador; para incluí-lo é preciso permissão update no autenticador (Authn_Admins ou Conjur_Cloud_Admins no SaaS).",
+      "Documentação do SaaS: adicione à role IAM a permissão de STS indicada (sts:* no Arn da role).",
+      "A região usada na assinatura precisa bater com o endpoint do STS enviado ao Secrets Manager; com o endpoint global sts.amazonaws.com a requisição deve ser assinada com us-east-1.",
+      "Endpoints do STS na China (.cn) não são suportados (documentação Self-Hosted).",
+      "Requisições assinadas expiram: uma requisição assinada por chave desconhecida ou fora da janela de validade é recusada com 401.",
+      "Só os headers assinados obrigatórios (host e x-amz-*) são aceitos, a menos que optional-signed-headers seja configurada (Self-Hosted).",
+      "Seu código precisa montar a requisição GetCallerIdentity assinada com SigV4 (há exemplos em Python, Ruby e Bash e um cliente Python).",
+      "O access token dura 8 minutos; depois disso o workload precisa autenticar de novo."
+    ],
+    "docs": [
+      "Visão geral do autenticador AWS IAM (SaaS)",
+      "Configurar o autenticador AWS IAM (SaaS)",
+      "Configurar recursos AWS e uso (SaaS)",
+      "AWS IAM Authenticator (Self-Hosted)",
+      "Autenticação e access tokens (SaaS)"
+    ],
+    "flow": {
+      "st_pending": "pendente",
+      "st_idle": "aguardando",
+      "st_check": "verificando",
+      "st_received": "recebido",
+      "st_memory": "em memória",
+      "st_apps": "grupo apps",
+      "st_match": "confere",
+      "st_allowed": "permitido",
+      "st_connected": "conectado",
+      "n_db": "Serviço de destino",
+      "n_db_sub": "banco ou API",
+      "r_token": "access token",
+      "r_secret": "secret",
+      "r_perm": "permissão",
+      "r_session": "sessão",
+      "p_token": "access token",
+      "p_get": "GET secret",
+      "p_secret": "senha do banco",
+      "p_login": "login",
+      "diagram_label": "Autenticação AWS IAM no IDIRA Secrets Manager",
+      "n_creds": "Credenciais da role",
+      "n_creds_sub": "IMDS · env do Lambda",
+      "n_wl": "Workload na AWS",
+      "r_creds": "credenciais",
+      "r_request": "requisição",
+      "r_identity": "identidade STS",
+      "r_caller": "chamador",
+      "st_role": "role IAM",
+      "st_arn": "Arn devolvido",
+      "p_creds": "creds de sessão",
+      "p_signed": "headers assinados",
+      "p_arn": "Arn + conta",
+      "s1_title": "1. O workload roda com uma role IAM",
+      "s1_desc": "O recurso AWS (EC2, ECS, Lambda) foi iniciado com uma role IAM. No Secrets Manager ele é representado por um workload ID com o nome dessa role: AccountID/RoleName.",
+      "s2_title": "2. Ele obtém as credenciais de sessão da role",
+      "s2_desc": "A AWS entrega ao workload credenciais temporárias da role, pelo serviço de metadados da instância ou pelo ambiente do Lambda. Elas nunca saem do workload.",
+      "s3_title": "3. Ele assina uma requisição GetCallerIdentity",
+      "s3_desc": "O workload monta uma requisição GetCallerIdentity do STS e assina com SigV4. Só os headers assinados (Host, X-Amz-Date, X-Amz-Security-Token, Authorization) serão enviados.",
+      "s4_title": "4. Ele chama o endpoint authn-iam",
+      "s4_desc": "Os headers assinados vão no corpo de POST /authn-iam/{service-id}/conjur/{host-id}/authenticate. Primeiro o Secrets Manager confere se o host pertence ao grupo apps do autenticador.",
+      "s5_title": "5. O Secrets Manager pergunta ao STS quem assinou",
+      "s5_desc": "O Secrets Manager reenvia a requisição assinada ao AWS STS. O STS responde com o Arn e a conta de quem chamou, e o Secrets Manager confere se batem com o AccountID/RoleName do host.",
+      "s6_title": "6. Ele devolve um access token de curta duração",
+      "s6_desc": "Se as roles batem, o Secrets Manager devolve um access token válido por 8 minutos.",
+      "s7_title": "7. O workload lê seus secrets",
+      "s7_desc": "Com o token, o workload pede os secrets que a policy permite (por exemplo, pelo grupo consumers de um Safe) e os mantém em memória.",
+      "s8_title": "8. Ele conecta ao serviço",
+      "s8_desc": "O workload usa a credencial para acessar o banco ou a API. Nada ficou guardado no código, na imagem ou na configuração."
+    }
+  },
+  "authn_azure": {
+    "flow_title": "Como funciona hoje, passo a passo",
+    "how_title": "Componentes e sua função",
+    "col_component": "Componente",
+    "col_role": "Função",
+    "when_title": "Quando usar",
+    "diff_title": "Diferenças entre SaaS e Self-Hosted",
+    "limits_title": "Limitações e requisitos",
+    "docs_title": "Documentação oficial",
+    "badge": "Autenticação · Azure",
+    "title": "Autenticador Azure",
+    "subtitle": "Um workload no Azure prova quem é com um token do Azure AD obtido no Instance Metadata Service. O IDIRA Secrets Manager confere o emissor do token e compara assinatura, grupo de recursos e, opcionalmente, a identidade gerenciada com o workload ID. Sem secret zero para guardar.",
+    "flow_lead": "O workload pede ao Azure um token assinado e entrega ao Secrets Manager, que decide com base nos atributos do Azure escritos como anotações do host.",
+    "how_lead": "O que cada peça faz e quais anotações identificam o recurso Azure.",
+    "roles": [
+      [
+        "Workload no Azure",
+        "Um workload em Azure Virtual Machines, App Services, Functions ou Container Instances."
+      ],
+      [
+        "Azure IMDS",
+        "O Instance Metadata Service (169.254.169.254) devolve um token do Azure AD (JWT) assinado para o recurso, opcionalmente para uma identidade gerenciada específica."
+      ],
+      [
+        "authn-azure/{service-id}",
+        "O autenticador Azure, sempre em conjur/authn-azure. A variável provider-uri guarda o provedor Azure: https://sts.windows.net/{tenant_id}/."
+      ],
+      [
+        "Workload ID (host)",
+        "Precisa ter as anotações authn-azure/subscription-id e authn-azure/resource-group; opcionalmente authn-azure/user-assigned-identity ou authn-azure/system-assigned-identity (uma delas)."
+      ],
+      [
+        "Grupo apps",
+        "Hosts do grupo apps do autenticador podem autenticar com ele."
+      ],
+      [
+        "Access token",
+        "Token de curta duração do Secrets Manager (8 minutos) usado para ler os secrets que a policy permite."
+      ]
+    ],
+    "when": [
+      "Workloads em VMs, App Services, Functions ou Container Instances do Azure.",
+      "Você quer uma identidade para um grupo de recursos inteiro, ou uma por recurso usando identidades gerenciadas.",
+      "Você quer substituir a autenticação por API key no Azure (sem secret zero)."
+    ],
+    "diff": [
+      "Endpoint. SaaS: POST /api/authn-azure/{service-id}/conjur/{host-id}/authenticate. Self-Hosted: POST /authn-azure/{service-id}/{account}/{host-id}/authenticate.",
+      "SaaS: crie o autenticador na UI ou por policy em conjur/authn-azure (Authn_Admins ou Conjur_Cloud_Admins), configure provider-uri e habilite. Self-Hosted: carregue a policy, configure provider-uri e coloque authn-azure/{service-id} na allowlist.",
+      "O modelo de identificação (assinatura, grupo de recursos, identidade gerenciada opcional) é o mesmo nos dois."
+    ],
+    "limits": [
+      "Serviços Azure suportados: apenas Virtual Machines, App Services, Functions e Container Instances.",
+      "Todo host precisa das anotações de ID da assinatura e de grupo de recursos (diferenciam maiúsculas e minúsculas, segundo a documentação Self-Hosted).",
+      "A identidade gerenciada é opcional, mas use a system-assigned ou a user-assigned, nunca as duas.",
+      "A identidade system-assigned só existe depois que o recurso é criado, então a policy do host precisa ser carregada em tempo de execução pelo seu pipeline; identidades user-assigned podem ser declaradas antes.",
+      "A variável provider-uri (https://sts.windows.net/{tenant_id}/) precisa estar configurada e o autenticador habilitado antes que os workloads possam autenticar.",
+      "Peça o token ao IMDS com api-version 2018-02-01 ou superior; com identidade system-assigned, ela precisa estar habilitada no Azure antes.",
+      "O host ID na URL precisa ser o nome completo do host com URL encoding (por exemplo host%2Fdata%2Fazure-apps%2FazureVM).",
+      "Dar ao host permissão de autenticar exige permissão update no autenticador (SaaS: Authn_Admins ou Conjur_Cloud_Admins).",
+      "O access token dura 8 minutos; depois disso o workload precisa autenticar de novo."
+    ],
+    "docs": [
+      "Visão geral do autenticador Azure (SaaS)",
+      "Configurar o autenticador Azure (SaaS)",
+      "Configurar recursos Azure (SaaS)",
+      "API de autenticação com o autenticador Azure (SaaS)",
+      "Azure Authenticator (Self-Hosted)"
+    ],
+    "flow": {
+      "st_pending": "pendente",
+      "st_idle": "aguardando",
+      "st_check": "verificando",
+      "st_received": "recebido",
+      "st_memory": "em memória",
+      "st_apps": "grupo apps",
+      "st_match": "confere",
+      "st_allowed": "permitido",
+      "st_connected": "conectado",
+      "n_db": "Serviço de destino",
+      "n_db_sub": "banco ou API",
+      "r_token": "access token",
+      "r_secret": "secret",
+      "r_perm": "permissão",
+      "r_session": "sessão",
+      "p_token": "access token",
+      "p_get": "GET secret",
+      "p_secret": "senha do banco",
+      "p_login": "login",
+      "diagram_label": "Autenticação Azure no IDIRA Secrets Manager",
+      "n_imds_sub": "token do Azure AD",
+      "n_wl": "Workload no Azure",
+      "n_wl_sub": "VM · App Service · Functions · ACI",
+      "r_aad": "token Azure AD",
+      "r_issuer": "emissor",
+      "r_annot": "anotações",
+      "r_provider": "emissor",
+      "st_valid": "válido",
+      "p_ask": "GET oauth2/token",
+      "p_jwt": "JWT do Azure AD",
+      "p_issuer": "confere emissor",
+      "s1_title": "1. O workload roda no Azure",
+      "s1_desc": "O recurso Azure é representado no Secrets Manager por um workload ID com anotações da assinatura e do grupo de recursos e, opcionalmente, uma identidade gerenciada.",
+      "s2_title": "2. Ele pede um token do Azure AD ao IMDS",
+      "s2_desc": "O workload chama o Instance Metadata Service em 169.254.169.254 (/metadata/identity/oauth2/token, api-version 2018-02-01 ou superior) e recebe um JWT assinado.",
+      "s3_title": "3. Ele envia o token ao authn-azure",
+      "s3_desc": "POST /authn-azure/{service-id}/conjur/{host-id}/authenticate com jwt=... no corpo e o host ID com URL encoding. O Secrets Manager confere se o host pertence ao grupo apps do autenticador.",
+      "s4_title": "4. O Secrets Manager confere o token",
+      "s4_desc": "O token precisa ser válido e emitido pelo provedor configurado no autenticador (provider-uri, https://sts.windows.net/{tenant_id}/).",
+      "s5_title": "5. Ele compara os atributos do Azure",
+      "s5_desc": "A assinatura, o grupo de recursos e, se anotada, a identidade user-assigned ou system-assigned do token precisam bater com as anotações do host.",
+      "s6_title": "6. Ele devolve um access token de curta duração",
+      "s6_desc": "Se tudo bate, o Secrets Manager devolve um access token válido por 8 minutos.",
+      "s7_title": "7. O workload lê seus secrets",
+      "s7_desc": "Com o token, o workload pede os secrets que a policy permite e os mantém em memória.",
+      "s8_title": "8. Ele conecta ao serviço",
+      "s8_desc": "O workload usa a credencial para acessar o banco ou a API, sem secret zero guardado em lugar nenhum."
+    }
+  },
+  "authn_gcp": {
+    "flow_title": "Como funciona hoje, passo a passo",
+    "how_title": "Componentes e sua função",
+    "col_component": "Componente",
+    "col_role": "Função",
+    "when_title": "Quando usar",
+    "diff_title": "Diferenças entre SaaS e Self-Hosted",
+    "limits_title": "Limitações e requisitos",
+    "docs_title": "Documentação oficial",
+    "badge": "Autenticação · Google Cloud",
+    "title": "Autenticador GCP",
+    "subtitle": "Um workload no Google Cloud prova quem é com um identity token assinado pelo Google, obtido no servidor de metadados. A audience do token é o workload ID no Secrets Manager, e o IDIRA Secrets Manager compara os claims do token com as anotações do workload.",
+    "flow_lead": "O workload nunca guarda uma chave: o Google emite um identity token para a service account, limitado pela audience a um único host do Secrets Manager.",
+    "how_lead": "O que cada peça faz e como os claims se ligam às anotações.",
+    "roles": [
+      [
+        "Workload no GCP",
+        "Um workload no Google Compute Engine ou no Google Cloud Functions, rodando com uma service account."
+      ],
+      [
+        "Servidor de metadados do Google",
+        "Devolve um identity token (JWT) assinado pelo Google para a service account, com a audience pedida. No GCE ele precisa ser pedido no formato full."
+      ],
+      [
+        "authn-gcp",
+        "O autenticador GCP, sempre no branch de policy conjur/authn-gcp. Só pode existir um."
+      ],
+      [
+        "Workload ID (host)",
+        "Com as anotações authn-gcp/instance-name (GCE), authn-gcp/project-id (GCE), authn-gcp/service-account-id (claim sub) e/ou authn-gcp/service-account-email (claim email). Todas precisam bater (E)."
+      ],
+      [
+        "Audience",
+        "O claim aud do token é o host ID completo no Secrets Manager, por exemplo conjur/conjur/host/data/myspace/gcp-apps/test-app. O Secrets Manager descobre o host por ele."
+      ],
+      [
+        "Access token",
+        "Token de curta duração do Secrets Manager (8 minutos) usado para ler os secrets que a policy permite."
+      ]
+    ],
+    "when": [
+      "Workloads no Google Compute Engine ou no Google Cloud Functions.",
+      "Você quer identidade baseada na service account do GCP (e, no GCE, na instância e no projeto) sem secret guardado.",
+      "Seu código consegue pedir um identity token com audience personalizada."
+    ],
+    "diff": [
+      "Endpoint. SaaS: POST /api/authn-gcp/conjur/authenticate. Self-Hosted: POST /authn-gcp/{account}/authenticate. Nenhum dos dois leva o host ID na URL.",
+      "SaaS: habilite o autenticador GCP já existente (UI, APIv2 ou CLI); só crie um se ele não existir. Self-Hosted: carregue a policy conjur/authn-gcp e coloque authn-gcp na allowlist.",
+      "Formato da audience. Exemplo no SaaS: conjur/conjur/host/data/myspace/... . Exemplo no Self-Hosted: conjur/{account}/host/... ."
+    ],
+    "limits": [
+      "Serviços Google Cloud suportados: apenas Compute Engine e Cloud Functions.",
+      "Só pode haver um autenticador GCP configurado.",
+      "A audience do identity token precisa ser o host ID completo no Secrets Manager; um token para outra audience é recusado.",
+      "No GCE o token precisa ser pedido no formato full (format=full), para trazer os claims da instância e do projeto.",
+      "Use pelo menos uma anotação; authn-gcp/instance-name precisa vir junto com outra, e instance-name e project-id só funcionam no GCE.",
+      "As anotações são combinadas com E: cada valor anotado precisa bater com seu claim.",
+      "Não coloque o host ID na URL de autenticação: o host vem do token, e incluí-lo causa erro 401.",
+      "O Google recomenda uma service account gerenciada pelo usuário no Compute Engine, em vez da service account padrão.",
+      "O access token dura 8 minutos; depois disso o workload precisa autenticar de novo."
+    ],
+    "docs": [
+      "Autenticar recursos GCP (SaaS)",
+      "Configurar o autenticador GCP (SaaS)",
+      "Configurar recursos GCP (SaaS)",
+      "API de autenticação com o autenticador GCP (SaaS)",
+      "GCP Authenticator (Self-Hosted)"
+    ],
+    "flow": {
+      "st_pending": "pendente",
+      "st_idle": "aguardando",
+      "st_check": "verificando",
+      "st_received": "recebido",
+      "st_memory": "em memória",
+      "st_apps": "grupo apps",
+      "st_match": "confere",
+      "st_allowed": "permitido",
+      "st_connected": "conectado",
+      "n_db": "Serviço de destino",
+      "n_db_sub": "banco ou API",
+      "r_token": "access token",
+      "r_secret": "secret",
+      "r_perm": "permissão",
+      "r_session": "sessão",
+      "p_token": "access token",
+      "p_get": "GET secret",
+      "p_secret": "senha do banco",
+      "p_login": "login",
+      "diagram_label": "Autenticação GCP no IDIRA Secrets Manager",
+      "n_meta": "Servidor de metadados",
+      "n_meta_sub": "Metadata-Flavor: Google",
+      "n_wl": "Workload no GCP",
+      "n_wl_sub": "Compute Engine · Cloud Functions",
+      "r_idt": "identity token",
+      "r_aud": "audience",
+      "r_annot": "anotações",
+      "st_full": "JWT full",
+      "st_host": "host achado",
+      "p_ask": "audience = host ID",
+      "p_jwt": "JWT do Google",
+      "s1_title": "1. O workload roda no Google Cloud",
+      "s1_desc": "A instância GCE ou a Cloud Function roda com uma service account. No Secrets Manager ela é um workload ID com anotações authn-gcp/*.",
+      "s2_title": "2. Ele pede um identity token ao servidor de metadados",
+      "s2_desc": "O workload pede um identity token com a audience igual ao seu host ID completo (e format=full no GCE). O servidor de metadados devolve um JWT assinado pelo Google com claims sobre o serviço e sua identidade.",
+      "s3_title": "3. Ele envia o token ao authn-gcp",
+      "s3_desc": "POST /authn-gcp/conjur/authenticate com jwt=... no corpo. A URL não leva host ID.",
+      "s4_title": "4. O Secrets Manager acha o host pela audience",
+      "s4_desc": "O Secrets Manager valida o token do Google e lê o claim aud para saber qual workload ID está pedindo.",
+      "s5_title": "5. Ele compara claims com anotações",
+      "s5_desc": "instance-name, project-id, service-account-id (sub) e service-account-email (email) precisam bater com os claims (E), e o host precisa estar no grupo apps do autenticador.",
+      "s6_title": "6. Ele devolve um access token de curta duração",
+      "s6_desc": "Se tudo bate, o Secrets Manager devolve um access token válido por 8 minutos.",
+      "s7_title": "7. O workload lê seus secrets",
+      "s7_desc": "Com o token, o workload pede os secrets que a policy permite e os mantém em memória.",
+      "s8_title": "8. Ele conecta ao serviço",
+      "s8_desc": "O workload usa a credencial para acessar o banco ou a API, sem chave guardada na instância ou na função."
+    }
+  },
+  "authn_k8s": {
+    "badge": "Autenticação · Kubernetes",
+    "title": "Autenticador Kubernetes (authn-k8s)",
+    "subtitle": "A forma nativa, baseada em certificado, de um pod provar quem é para o IDIRA Secrets Manager Self-Hosted: o cliente autenticador pede um certificado, um Follower dentro do cluster valida o pod na API do Kubernetes e injeta o certificado, e o pod autentica por TLS mútuo.",
+    "flow": {
+      "diagram_label": "Autenticação Kubernetes baseada em certificado com authn-k8s",
+      "lane_outside": "Fora do cluster",
+      "lane_cluster": "Cluster Kubernetes",
+      "n_leader": "Leader e Standbys",
+      "n_leader_sub": "fora do Kubernetes",
+      "n_fol": "Follower no cluster",
+      "n_api": "API do Kubernetes",
+      "n_api_sub": "valida o pod e injeta o cert",
+      "n_client": "Cliente autenticador",
+      "n_client_sub": "sidecar ou init container",
+      "n_pod": "Pod da aplicação",
+      "n_pod_sub": "app + cliente autenticador",
+      "n_db": "Serviço de destino",
+      "n_db_sub": "banco ou API",
+      "r_hostid": "identidade do host",
+      "r_podchk": "checagem do pod",
+      "r_inject": "entrega do cert",
+      "r_cert": "cert. cliente",
+      "r_token": "token de acesso",
+      "r_session": "sessão",
+      "st_pending": "pendente",
+      "st_idle": "aguardando",
+      "st_check": "verificando",
+      "st_allowed": "permitido",
+      "st_verified": "verificado",
+      "st_delivered": "entregue",
+      "st_sent": "enviado",
+      "st_established": "estabelecido",
+      "st_injected": "injetado",
+      "st_renewed": "renovado",
+      "st_memory": "em memória",
+      "st_fetched": "obtido",
+      "st_connected": "conectado",
+      "p_verify": "validar pod",
+      "p_cert": "cert. cliente",
+      "p_token": "token de acesso",
+      "p_newcert": "novo cert",
+      "l_replication": "replicação",
+      "l_shared": "volume",
+      "l_connect": "conecta",
+      "s1_title": "1. Duas peças em cada pod",
+      "s1_desc": "O Kubernetes Authenticator Client roda no mesmo pod da aplicação, como sidecar ou init container. Ele conversa com o autenticador Kubernetes de um Follower do Secrets Manager que roda dentro do cluster.",
+      "s2_title": "2. Configuração única pelos admins",
+      "s2_desc": "O admin do Secrets Manager carrega a policy authn-k8s/<service-id>, cria uma CA cuja chave e certificado ficam em variáveis do Secrets Manager e libera o autenticador na allowlist. O admin do Kubernetes prepara o cluster: namespace, service account, cluster role e a Golden ConfigMap.",
+      "s3_title": "3. O cliente envia um CSR",
+      "s3_desc": "O cliente envia um Certificate Signing Request. Os metadados trazem a identidade de host que o pod quer usar e informações sobre o pod que faz o pedido.",
+      "s4_title": "4. O Secrets Manager confere o pod no Kubernetes",
+      "s4_desc": "O Follower pergunta à API do Kubernetes se o pod é legítimo e se pode autenticar com a identidade pedida (namespace, Deployment, StatefulSet etc.).",
+      "s5_title": "5. O certificado é injetado no pod",
+      "s5_desc": "Se a checagem passa, o certificado de cliente é injetado no pod da aplicação pela API do Kubernetes. A entrega é fora da resposta HTTP, então só o pod que corresponde ao CSR recebe o certificado.",
+      "s6_title": "6. TLS mútuo e um token de curta duração",
+      "s6_desc": "Com o certificado, o cliente abre uma conexão de TLS mútuo e pede um token de acesso de curta duração. O token é gravado num volume compartilhado com o container da aplicação.",
+      "s7_title": "7. A app busca o secret",
+      "s7_desc": "A aplicação usa o token com um dos métodos de leitura (API, Summon, Secrets Provider ou Secretless) e conecta ao serviço de destino.",
+      "s8_title": "8. Certificados se renovam sozinhos",
+      "s8_desc": "O certificado expira e é renovado automaticamente de forma periódica, o que limita por quanto tempo um certificado comprometido poderia ser usado.",
+      "s9_title": "9. Comparado ao authn-jwt",
+      "s9_desc": "O authn-k8s chama a API do Kubernetes várias vezes por autenticação; o authn-jwt precisa de uma chamada ao JWKS ou de nenhuma. A edição SaaS documenta apenas a integração Kubernetes baseada em JWT."
+    },
+    "how_title": "Como funciona",
+    "how_lead": "Cada componente e o seu papel na autenticação por certificado.",
+    "col_component": "Componente",
+    "col_role": "Função",
+    "role_client_a": "Kubernetes Authenticator Client",
+    "role_client_b": "Roda no pod da aplicação (sidecar ou init container), envia o CSR, abre o TLS mútuo e grava o token de acesso no volume compartilhado.",
+    "role_follower_a": "Follower no Kubernetes",
+    "role_follower_b": "Réplica somente leitura do Leader, em namespace próprio; hospeda o autenticador Kubernetes e atende autenticação e leitura de secrets.",
+    "role_api_a": "API server do Kubernetes",
+    "role_api_b": "O Secrets Manager chama a API para validar o pod e injetar o certificado de cliente. Ele guarda a URL, o certificado da CA do cluster e um token de service account.",
+    "role_ca_a": "CA do autenticador",
+    "role_ca_b": "Chave privada e certificado raiz gerados pelo admin e guardados nas variáveis conjur/authn-k8s/<service-id>/ca/key e ca/cert; assinam os certificados de cliente.",
+    "role_host_a": "Identidade de host",
+    "role_host_b": "Um host na policy com anotações dos atributos do Kubernetes que podem usá-lo (veja a tabela abaixo).",
+    "role_volume_a": "Volume compartilhado",
+    "role_volume_b": "Volume em memória no pod onde o cliente grava o token de acesso para a aplicação.",
+    "ids_title": "Qual recurso do Kubernetes é a identidade",
+    "ids_lead": "O host é associado por anotações. Escolha o escopo mais restrito que combine com a forma como seus workloads compartilham secrets.",
+    "col_annotation": "Anotação",
+    "col_scope": "Escopo",
+    "id_namespace_a": "namespace",
+    "id_namespace_b": "Tudo no namespace compartilha as mesmas permissões.",
+    "id_labels_a": "namespace-label-selector",
+    "id_labels_b": "Namespaces que casam com um label selector (por exemplo, um projeto do Rancher).",
+    "id_deployment_a": "deployment",
+    "id_deployment_b": "O nome de um Deployment dentro de um namespace.",
+    "id_deploymentconfig_a": "deployment-config",
+    "id_deploymentconfig_b": "O nome de um DeploymentConfig do OpenShift dentro de um projeto.",
+    "id_statefulset_a": "stateful-set",
+    "id_statefulset_b": "O nome de um StatefulSet dentro de um namespace.",
+    "id_serviceaccount_a": "service-account",
+    "id_serviceaccount_b": "Uma service account dentro de um namespace. Recomendada só como transição para Deployment ou StatefulSet.",
+    "id_pod_a": "authentication-container-name",
+    "id_pod_b": "Indica o container que autentica; identidade por Pod é só para testes e provas de conceito.",
+    "cmp_title": "authn-k8s ou authn-jwt?",
+    "cmp_lead": "Os dois autenticam workloads Kubernetes. O site detalha o authn-jwt na página de Autenticação JWT.",
+    "cmp_col_aspect": "Aspecto",
+    "cmp_editions": "Edições",
+    "cmp_editions_k8s": "Self-Hosted. A documentação do SaaS descreve a integração Kubernetes com o autenticador JWT.",
+    "cmp_editions_jwt": "SaaS e Self-Hosted.",
+    "cmp_identity": "Granularidade da identidade",
+    "cmp_identity_k8s": "Namespace, label selector, Deployment, DeploymentConfig, StatefulSet, service account ou Pod.",
+    "cmp_identity_jwt": "Claims do token da service account, principalmente namespace e service account.",
+    "cmp_performance": "Desempenho",
+    "cmp_performance_k8s": "Várias chamadas à API do Kubernetes a cada autenticação.",
+    "cmp_performance_jwt": "Uma chamada ao endpoint JWKS, ou nenhuma conforme a configuração; normalmente mais rápido.",
+    "cmp_setup": "Configuração em escala",
+    "cmp_setup_k8s": "Exige cluster role, um token de service account guardado no Secrets Manager e uma CA por service ID.",
+    "cmp_setup_jwt": "Mais simples em ambientes grandes e exige menos privilégios especiais.",
+    "cmp_maintenance": "Manutenção",
+    "cmp_maintenance_k8s": "Certificados e a CA precisam ser gerenciados, rotacionados e guardados com segurança.",
+    "cmp_maintenance_jwt": "Os tokens de service account são assinados; as chaves de assinatura precisam de gestão.",
+    "cmp_network": "Conectividade",
+    "cmp_network_k8s": "O Secrets Manager precisa alcançar o API server do Kubernetes.",
+    "cmp_network_jwt": "O Secrets Manager lê o endpoint JWKS ou usa chaves públicas configuradas.",
+    "when_title": "Quando usar",
+    "when": [
+      "Você usa o IDIRA Secrets Manager Self-Hosted com Followers dentro do cluster.",
+      "Você precisa de identidades mais finas que namespace e service account, como um Deployment ou StatefulSet.",
+      "Você quer TLS mútuo entre o workload e o Secrets Manager."
+    ],
+    "limits_title": "Limitações e requisitos",
+    "limits": [
+      "Só no Self-Hosted: a integração Kubernetes do SaaS usa o autenticador JWT (authn-jwt).",
+      "O cliente Kubernetes do Secrets Manager precisa alcançar o API server do Kubernetes. Com proxy no caminho, defina https_proxy e http_proxy em cada nó.",
+      "A configuração exige um admin do Secrets Manager e um admin do cluster Kubernetes, além do Secrets Manager CLI v9 ou superior.",
+      "O Secrets Manager guarda um token de service account, a URL da API e o certificado da CA do cluster nas variáveis conjur/authn-k8s/<service-id>/kubernetes, e a cluster role concede permissões de RBAC a essa service account.",
+      "O Kubernetes v1.24 ou superior não cria secrets de service account automaticamente: use o Helm chart de preparação do cluster v0.2.1 ou superior, ou crie o secret manualmente.",
+      "Cada service ID precisa de uma CA própria (variáveis ca/key e ca/cert) e precisa estar na allowlist dos nós, por exemplo authn-k8s/dev-cluster.",
+      "O cliente autenticador precisa rodar no mesmo pod da aplicação, como sidecar ou init container.",
+      "Identidade por Pod é só para testes, e identidade por service account é recomendada apenas como transição.",
+      "Cada autenticação faz várias chamadas à API do Kubernetes, então o desempenho costuma ser menor que o do authn-jwt."
+    ],
+    "limits_source": "Autenticação Kubernetes baseada em certificado (documentação)",
+    "docs_title": "Documentação oficial",
+    "doc_k8s": "Autenticação Kubernetes baseada em certificado",
+    "doc_compare": "Certificado vs JWT",
+    "doc_identity": "Identidade de aplicações no Kubernetes",
+    "doc_apps": "Configurar aplicações (certificado)",
+    "doc_arch": "Arquitetura Secrets Manager e Kubernetes",
+    "doc_support": "Autenticadores suportados (Self-Hosted)",
+    "doc_saas_k8s": "Secure Kubernetes (SaaS)"
+  },
+  "authn_users": {
+    "badge": "Autenticação · Pessoas",
+    "title": "Como as pessoas entram",
+    "subtitle": "Administradores e desenvolvedores autenticam no IDIRA Secrets Manager de forma diferente dos workloads. No SaaS todo usuário vem do Identity; no Self-Hosted você pode usar OIDC, LDAP ou o usuário nativo com senha ou API key.",
+    "people_note": "Esta página trata de pessoas (UI, CLI e chamadas de API administrativas). Workloads como apps, pods e pipelines devem usar um autenticador de workload: JWT, Kubernetes, AWS, Azure, GCP, certificado ou API key.",
+    "flow": {
+      "diagram_label": "Como usuários humanos autenticam no Secrets Manager SaaS e Self-Hosted",
+      "n_user": "Admin ou desenvolvedor",
+      "n_user1_sub": "navegador ou CLI",
+      "n_user2_sub": "UI · CLI · API",
+      "n_idp": "Provedor OIDC",
+      "n_ldap_sub": "diretório corporativo",
+      "n_smsh_sub": "Leader, Standby ou Follower",
+      "r_token": "token de acesso",
+      "r_sync": "usuários e papéis",
+      "st_pending": "pendente",
+      "st_idle": "aguardando",
+      "st_ok": "aprovado",
+      "st_synced": "sincronizados",
+      "st_oidc": "token 1 h (máx. 5 h)",
+      "st_bind": "bind válido",
+      "st_apikey": "API key · token 8 min",
+      "p_signin": "usuário + MFA",
+      "p_roles": "papéis",
+      "p_browser": "login no navegador",
+      "p_ldappw": "senha LDAP",
+      "l_rolesync": "sinc. de papéis",
+      "l_code": "troca do code",
+      "s1_title": "1. Pessoas, não workloads",
+      "s1_desc": "Usuários entram na UI e no CLI e chamam APIs administrativas. O jeito depende da edição: SaaS em cima, Self-Hosted embaixo.",
+      "s2_title": "2. SaaS: login pelo Identity",
+      "s2_desc": "Todo usuário do Secrets Manager SaaS é um usuário da Identity Security Platform (ISPSS). O login do CLI ou a UI pede usuário e senha e, se configurado, um desafio de MFA. Usuários federados vão para o IdP externo no navegador.",
+      "s3_title": "3. SaaS: ID token para o Secrets Manager",
+      "s3_desc": "O ID token do Identity é enviado ao endpoint authn-oidc/cyberark/conjur/authenticate, que devolve um token de acesso do Secrets Manager. O token de usuário dura 60 minutos; o de workload, 8.",
+      "s4_title": "4. SaaS: usuários e papéis vêm do Identity",
+      "s4_desc": "Usuários, grupos e papéis com um papel do Secrets Manager no Identity (por exemplo Conjur_Cloud_Admins ou Conjur_Cloud_Users) são sincronizados para o Secrets Manager. As mudanças aparecem no próximo ciclo de sincronização.",
+      "s5_title": "5. Self-Hosted: OIDC para UI e CLI",
+      "s5_desc": "O autenticador authn-oidc redireciona o usuário para o IdP da organização com o fluxo authorization code com PKCE. A UI ou o CLI entrega o code ao Secrets Manager, que conclui a troca com o IdP e devolve um token de acesso (1 hora por padrão, no máximo 5 horas).",
+      "s6_title": "6. Self-Hosted: bind LDAP",
+      "s6_desc": "Com o authn-ldap o usuário entra com as credenciais corporativas e o Secrets Manager faz um bind LDAP no diretório. O diretório autentica; a policy do Secrets Manager continua decidindo o que o usuário pode acessar.",
+      "s7_title": "7. Self-Hosted: usuário e API key",
+      "s7_desc": "O autenticador padrão (authn) faz login com usuário e senha ou API key em /authn/{account}/login e devolve uma API key; o CLI guarda a chave e a troca por tokens de acesso de 8 minutos.",
+      "s8_title": "8. Resumindo",
+      "s8_desc": "O SaaS centraliza as pessoas no Identity, com SSO e MFA. O Self-Hosted deixa escolher OIDC, LDAP ou credenciais nativas. Nos dois, as permissões da policy decidem o que cada usuário pode fazer."
+    },
+    "how_title": "Métodos lado a lado",
+    "how_lead": "Qual método existe em cada edição, como funciona e quanto dura o token resultante.",
+    "col_method": "Método",
+    "col_edition": "Edição",
+    "col_how": "Como funciona",
+    "col_token": "Token de acesso",
+    "m_saas": "Identity (ISPSS)",
+    "m_saas_edition": "SaaS",
+    "m_saas_how": "Login na UI ou no CLI com usuário, senha e MFA, ou IdP externo no navegador; o ID token do Identity vai para authn-oidc/cyberark/conjur.",
+    "m_saas_token": "60 minutos para usuários.",
+    "m_oidc": "OIDC (authn-oidc)",
+    "m_oidc_edition": "Self-Hosted",
+    "m_oidc_how": "Fluxo authorization code com PKCE no seu IdP, para a UI e o CLI.",
+    "m_oidc_token": "1 hora por padrão, configurável até 5 horas (token-ttl).",
+    "m_ldap": "LDAP (authn-ldap)",
+    "m_ldap_edition": "Self-Hosted",
+    "m_ldap_how": "Bind LDAP com credenciais corporativas; o provisionamento just-in-time opcional cria usuários a partir de grupos LDAP.",
+    "m_ldap_token": "Token bearer assinado ou API key, como no autenticador padrão.",
+    "m_apikey": "Usuário e API key (authn)",
+    "m_apikey_edition": "Self-Hosted",
+    "m_apikey_how": "Login com senha ou API key em /authn/{account}/login; o CLI guarda a API key.",
+    "m_apikey_token": "8 minutos por padrão.",
+    "roles_title": "Componentes e sua função",
+    "col_component": "Componente",
+    "col_role": "Função",
+    "role_identity_a": "Identity (ISPSS)",
+    "role_identity_b": "Provedor de identidade do SaaS: usuários, SSO, MFA e papéis que dão acesso ao Secrets Manager.",
+    "role_idp_a": "Provedor OIDC",
+    "role_idp_b": "Seu IdP para login na UI e no CLI do Self-Hosted. Testado com Idira Identity, Okta e Keycloak.",
+    "role_ldap_a": "LDAP / Active Directory",
+    "role_ldap_b": "Diretório corporativo que autentica usuários com um bind; a autorização continua no Secrets Manager.",
+    "role_cli_a": "Secrets Manager CLI",
+    "role_cli_b": "Executa o login e guarda credenciais: no SaaS, no cofre de credenciais do sistema; no Self-Hosted, no .netrc (ou num netrc_path).",
+    "role_policy_a": "Policy",
+    "role_policy_b": "Os usuários precisam existir na policy (ou ser sincronizados ou provisionados) e só recebem o que os permit concedem.",
+    "limits_saas_title": "SaaS: limitações e requisitos",
+    "limits_saas": [
+      "Todo usuário precisa de um usuário no Identity com um papel do Secrets Manager; as mudanças chegam ao Secrets Manager no próximo ciclo de sincronização.",
+      "Grupos aninhados são sincronizados até 10 níveis; usuários mais profundos entram como membros do décimo nível.",
+      "Não é possível adicionar várias entidades do Identity com o mesmo nome aos papéis nativos Conjur_Cloud_Admins e Conjur_Cloud_Users.",
+      "Renomear um usuário, grupo ou papel no Identity exige reatribuir as permissões dele no Secrets Manager.",
+      "Uma senha passada com conjur login -p fica no histórico do shell; limpe o histórico ao fim da sessão.",
+      "O CLI guarda o usuário e o token de acesso no cofre de credenciais do sistema, ou no arquivo conjur_credentials se não houver cofre."
+    ],
+    "limits_sh_title": "Self-Hosted: limitações e requisitos",
+    "limits_sh": [
+      "O OIDC serve só para login na UI e no CLI: o endpoint POST authn-oidc para workloads não é mais suportado; workloads usam o authn-jwt.",
+      "A UI e o CLI precisam de autenticadores OIDC separados.",
+      "O OIDC foi testado apenas com Idira Identity, Okta e Keycloak.",
+      "O CLI precisa conseguir abrir um navegador: o OIDC não funciona dentro de Docker ou em outros ambientes sem interface.",
+      "O servidor do Secrets Manager e o cliente do usuário precisam alcançar o IdP na porta 443.",
+      "Só usuários definidos na policy root autenticam com OIDC, e usuários adicionados ou removidos no IdP precisam ser adicionados ou removidos no Secrets Manager.",
+      "Não compartilhe um mesmo issuer OIDC entre tenants; mantenha os relógios do Secrets Manager e do IdP sincronizados.",
+      "Com a autenticação LDAP ativa num nó, todo usuário da UI nesse nó precisa usar credenciais LDAP; senhas e API keys nativas deixam de funcionar na UI.",
+      "Cada usuário LDAP precisa de um usuário declarado na policy, a menos que o provisionamento just-in-time esteja ativo (CLI 9.3 ou superior).",
+      "Mudanças no LDAP não são refletidas automaticamente; contas desativadas no diretório precisam de um passo extra para perder o acesso.",
+      "O CLI guarda credenciais no .netrc por padrão; aponte o netrc_path para /dev/shm numa configuração mais segura."
+    ],
+    "limits_source": "Documentação de origem",
+    "docs_title": "Documentação oficial",
+    "doc_saas_access": "Acessar o Secrets Manager (SaaS)",
+    "doc_saas_login": "Login do CLI (SaaS)",
+    "doc_saas_api": "API de autenticação de usuário (SaaS)",
+    "doc_saas_tokens": "Tokens de acesso (SaaS)",
+    "doc_saas_scope": "Suporte e escopo (SaaS)",
+    "doc_sh_authn": "Autenticação (Self-Hosted)",
+    "doc_sh_oidc": "OIDC para UI e CLI (Self-Hosted)",
+    "doc_sh_ldap": "Autenticação LDAP (Self-Hosted)"
   }
 }

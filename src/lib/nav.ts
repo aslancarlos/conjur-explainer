@@ -1,7 +1,7 @@
 import {
   Home, BookOpen, ArrowLeftRight, Container, Fingerprint, FileBadge, RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
   Leaf, Hexagon, Github, ShoppingCart, Database,
-  GitCompareArrows, Wrench, LayoutDashboard, CloudCog, Network, ShieldCheck, Layers, GraduationCap, Vault,
+  GitCompareArrows, Wrench, LayoutDashboard, CloudCog, Network, ShieldCheck, Layers, GraduationCap, Vault, KeySquare, BadgeCheck, Cloud, Users,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -37,9 +37,10 @@ export interface NavItem {
   shortKey?: string     // shorter label used under a heading / inside a submenu (sidebar only)
 }
 
-export type SectionKey = 'usecases'
+export type SectionKey = 'authn' | 'usecases'
 /** Sidebar submenus inside a group (the flat list still drives trails, search and catalogue). */
 export const SECTIONS: Record<SectionKey, { labelKey: string; Icon: LucideIcon }> = {
+  authn:    { labelKey: 'nav.sec_authn', Icon: Fingerprint },
   usecases: { labelKey: 'nav.sec_usecases', Icon: Layers },
 }
 
@@ -76,9 +77,17 @@ export const NAV: NavGroup[] = [
     items: [
       { to: '/concepts/saas-architecture',  product: 'secretsmanager', labelKey: 'nav.c_saas', subKey: 'nav.c_saas_sub', Icon: CloudCog, color: 'text-domain-idira', heading: 'nav.h_arch', shortKey: 'nav.c_saas_short' },
       { to: '/concepts/self-hosted-architecture', product: 'secretsmanager', labelKey: 'nav.c_sh', subKey: 'nav.c_sh_sub', Icon: Network, color: 'text-domain-idira', heading: 'nav.h_arch', shortKey: 'nav.c_sh_short' },
-      { to: '/jwt', product: 'secretsmanager', labelKey: 'nav.jwt', subKey: 'nav.jwt_sub', Icon: KeyRound, color: 'text-domain-idira', heading: 'nav.h_authz',
+      { to: '/authn', product: 'secretsmanager', labelKey: 'nav.a_hub', subKey: 'nav.a_hub_sub', Icon: Fingerprint, color: 'text-domain-idira', section: 'authn' },
+      { to: '/jwt', product: 'secretsmanager', labelKey: 'nav.jwt', subKey: 'nav.jwt_sub', Icon: KeyRound, color: 'text-domain-idira', section: 'authn', heading: 'nav.h_workloads', shortKey: 'nav.a_jwt',
         demo: { name: 'authn-jwt', secret: 'identity handshake', descKey: 'demos.jwt' } },
-      { to: '/policy', product: 'secretsmanager', labelKey: 'nav.policy', subKey: 'nav.policy_sub', Icon: ScrollText, color: 'text-domain-idira', heading: 'nav.h_authz',
+      { to: '/authn/api-key', product: 'secretsmanager', labelKey: 'nav.a_apikey', subKey: 'nav.a_apikey_sub', Icon: KeySquare, color: 'text-domain-idira', section: 'authn', heading: 'nav.h_workloads' },
+      { to: '/authn/certificate', product: 'secretsmanager', labelKey: 'nav.a_cert', subKey: 'nav.a_cert_sub', Icon: BadgeCheck, color: 'text-domain-idira', section: 'authn', heading: 'nav.h_workloads' },
+      { to: '/authn/aws-iam', product: 'secretsmanager', labelKey: 'nav.a_aws', subKey: 'nav.a_aws_sub', Icon: Cloud, color: 'text-domain-svc', section: 'authn', heading: 'nav.h_workloads' },
+      { to: '/authn/azure', product: 'secretsmanager', labelKey: 'nav.a_azure', subKey: 'nav.a_azure_sub', Icon: Cloud, color: 'text-domain-svc', section: 'authn', heading: 'nav.h_workloads' },
+      { to: '/authn/gcp', product: 'secretsmanager', labelKey: 'nav.a_gcp', subKey: 'nav.a_gcp_sub', Icon: Cloud, color: 'text-domain-svc', section: 'authn', heading: 'nav.h_workloads' },
+      { to: '/authn/kubernetes', product: 'secretsmanager', labelKey: 'nav.a_k8s', subKey: 'nav.a_k8s_sub', Icon: ShipWheel, color: 'text-domain-k8s', section: 'authn', heading: 'nav.h_workloads' },
+      { to: '/authn/users', product: 'secretsmanager', labelKey: 'nav.a_users', subKey: 'nav.a_users_sub', Icon: Users, color: 'text-domain-cp', section: 'authn', heading: 'nav.h_people' },
+      { to: '/policy', product: 'secretsmanager', labelKey: 'nav.policy', subKey: 'nav.policy_sub', Icon: ScrollText, color: 'text-domain-idira', heading: 'nav.h_policy',
         demo: { name: 'Policy as Code', secret: 'YAML + git', descKey: 'demos.policy' } },
       { to: '/concepts/kubernetes', product: 'secretsmanager', labelKey: 'nav.c_k8s', subKey: 'nav.c_k8s_sub', Icon: Container, color: 'text-domain-idira', section: 'usecases', heading: 'nav.h_k8s', shortKey: 'nav.c_k8s_short' },
       { to: '/spring-boot', product: 'secretsmanager', labelKey: 'nav.springboot', subKey: 'nav.springboot_sub', Icon: Leaf, color: 'text-spring', section: 'usecases', heading: 'nav.h_k8s',
