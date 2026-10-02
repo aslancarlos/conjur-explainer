@@ -1,7 +1,7 @@
 import {
   Home, BookOpen, ArrowLeftRight, Container, Fingerprint, FileBadge, RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
   Leaf, Hexagon, Github, ShoppingCart, Database,
-  Workflow, GitCompareArrows, Wrench, LayoutDashboard, CloudCog, Network, ShieldCheck,
+  Workflow, GitCompareArrows, Wrench, LayoutDashboard, CloudCog, Network, ShieldCheck, Layers,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -32,6 +32,14 @@ export interface NavItem {
   Icon: LucideIcon
   color?: string
   demo?: { name: string; secret: string; descKey: string }
+  section?: SectionKey  // consecutive items with the same section render as a sidebar submenu
+  shortKey?: string     // shorter label used inside that submenu
+}
+
+export type SectionKey = 'arch'
+/** Sidebar submenus inside a group (the flat list still drives trails, search and catalogue). */
+export const SECTIONS: Record<SectionKey, { labelKey: string; Icon: LucideIcon }> = {
+  arch: { labelKey: 'nav.sec_arch', Icon: Layers },
 }
 
 export interface NavGroup {
@@ -54,10 +62,10 @@ export const NAV: NavGroup[] = [
       { to: '/concepts/secrets',            labelKey: 'nav.c_secret',   subKey: 'nav.c_secret_sub',   Icon: KeyRound,       color: 'text-domain-idira' },
       { to: '/concepts/machine-identity',   labelKey: 'nav.c_identity', subKey: 'nav.c_identity_sub', Icon: Fingerprint,    color: 'text-domain-idira' },
       { to: '/concepts/secret-vs-identity', labelKey: 'nav.c_compare',  subKey: 'nav.c_compare_sub',  Icon: ArrowLeftRight, color: 'text-domain-idira' },
-      { to: '/concepts/kubernetes',         labelKey: 'nav.c_k8s',      subKey: 'nav.c_k8s_sub',      Icon: Container,      color: 'text-domain-idira' },
-      { to: '/concepts/saas-architecture',  labelKey: 'nav.c_saas',     subKey: 'nav.c_saas_sub',     Icon: CloudCog,       color: 'text-domain-idira' },
-      { to: '/concepts/self-hosted-architecture', labelKey: 'nav.c_sh', subKey: 'nav.c_sh_sub',       Icon: Network,        color: 'text-domain-idira' },
-      { to: '/concepts/swa-architecture',   labelKey: 'nav.c_swa',      subKey: 'nav.c_swa_sub',      Icon: ShieldCheck,    color: 'text-domain-idira' },
+      { to: '/concepts/kubernetes',         labelKey: 'nav.c_k8s',      subKey: 'nav.c_k8s_sub',      Icon: Container,      color: 'text-domain-idira', section: 'arch', shortKey: 'nav.c_k8s_short' },
+      { to: '/concepts/saas-architecture',  labelKey: 'nav.c_saas',     subKey: 'nav.c_saas_sub',     Icon: CloudCog,       color: 'text-domain-idira', section: 'arch', shortKey: 'nav.c_saas_short' },
+      { to: '/concepts/self-hosted-architecture', labelKey: 'nav.c_sh', subKey: 'nav.c_sh_sub',       Icon: Network,        color: 'text-domain-idira', section: 'arch', shortKey: 'nav.c_sh_short' },
+      { to: '/concepts/swa-architecture',   labelKey: 'nav.c_swa',      subKey: 'nav.c_swa_sub',      Icon: ShieldCheck,    color: 'text-domain-idira', section: 'arch', shortKey: 'nav.c_swa_short' },
       { to: '/concepts/glossary',           labelKey: 'nav.c_glossary', subKey: 'nav.c_glossary_sub', Icon: BookOpen,       color: 'text-domain-idira' },
     ],
   },

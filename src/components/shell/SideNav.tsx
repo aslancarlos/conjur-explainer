@@ -2,9 +2,20 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ChevronRight } from 'lucide-react'
-import { navBy, type NavItem } from '../../lib/nav'
+import { navBy, SECTIONS, type NavItem } from '../../lib/nav'
 
 const GROUPS_KEY = 'idira-nav-groups'
+
+/** Split a group's flat items into runs: plain items, or a run sharing one `section` (submenu). */
+function segments(items: NavItem[]) {
+  const out: Array<{ section?: NavItem['section']; items: NavItem[] }> = []
+  for (const it of items) {
+    const last = out[out.length - 1]
+    if (last && it.section && last.section === it.section) last.items.push(it)
+    else out.push({ section: it.section, items: [it] })
+  }
+  return out
+}
 
 function readOpen(): Record<string, boolean> {
   try { return JSON.parse(localStorage.getItem(GROUPS_KEY) || '{}') } catch { return {} }
@@ -39,9 +50,9 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
 
   const toggle = (key: string) => setOpen(o => ({ ...o, [key]: !isOpen(key) }))
 
-  const row = (item: NavItem) => {
+  const row = (item: NavItem, nested = false) => {
     const active = pathname === item.to
-    const label = t(item.labelKey)
+    const label = t(nested && item.shortKey ? item.shortKey : item.labelKey)
     const cls =
       'group relative flex items-center gap-3 rounded-lg transition-colors duration-150 ' +
       (collapsed ? 'h-10 w-10 justify-center mx-auto ' : dense ? 'min-h-9 px-3 py-1.5 ' : 'min-h-11 px-3 py-2 ') +
@@ -98,7 +109,30 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
               ))}
             <ul id={listId} hidden={!expanded} className={`space-y-0.5 ${label && !collapsed ? 'mt-0.5' : ''}`}
               aria-label={label}>
-              {group.items.map(row)}
+              {segments(group.items).map(seg => {
+                if (!seg.section || collapsed) return seg.items.map(i => row(i))
+                const sec = SECTIONS[seg.section]
+                const key = `sec-${seg.section}`
+                const subActive = seg.items.some(i => i.to === pathname)
+                const subOpen = subActive || open[key] !== false
+                const subId = `${idPrefix}-${key}`
+                return (
+                  <li key={key}>
+                    <button type="button" onClick={() => toggle(key)} aria-expanded={subOpen} aria-controls={subId}
+                      className={`group flex w-full items-center gap-3 rounded-lg px-3 text-left transition-colors duration-150
+                        hover:bg-bg-muted/70 hover:text-text ${dense ? 'min-h-9 py-1.5' : 'min-h-11 py-2'}
+                        ${subActive ? 'text-text' : 'text-text-2'}`}>
+                      <sec.Icon size={18} strokeWidth={1.9} aria-hidden="true" className="shrink-0 text-domain-idira" />
+                      <span className="flex-1 text-sm leading-tight">{t(sec.labelKey)}</span>
+                      <ChevronRight size={14} strokeWidth={2.2} aria-hidden="true"
+                        className={`shrink-0 text-text-muted transition-transform duration-150 ${subOpen ? 'rotate-90' : ''}`} />
+                    </button>
+                    <ul id={subId} hidden={!subOpen} className="mt-0.5 ml-[21px] space-y-0.5 border-l border-border pl-2">
+                      {seg.items.map(i => row(i, true))}
+                    </ul>
+                  </li>
+                )
+              })}
             </ul>
           </div>
         )

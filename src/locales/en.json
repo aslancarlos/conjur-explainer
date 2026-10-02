@@ -69,7 +69,12 @@
     "c_sh": "Self-Hosted architecture",
     "c_sh_sub": "Leader, Standbys and Followers",
     "c_swa": "Secure Workload Access architecture",
-    "c_swa_sub": "SPIFFE identities with SWA"
+    "c_swa_sub": "SPIFFE identities with SWA",
+    "sec_arch": "Architectures",
+    "c_k8s_short": "Kubernetes",
+    "c_saas_short": "Secrets Manager SaaS",
+    "c_sh_short": "Secrets Manager Self-Hosted",
+    "c_swa_short": "Secure Workload Access"
   },
   "hero": {
     "eyebrow": "Machine identity · Secrets · IDIRA by Palo Alto Networks",
