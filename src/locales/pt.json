@@ -958,41 +958,278 @@
   },
   "secretshub": {
     "badge": "Secrets Hub",
-    "title": "Como Funciona o IDIRA Secrets Hub",
-    "subtitle": "O Secrets Hub conecta o IDIRA Privilege Cloud com os armazenamentos nativos de segredos (AWS Secrets Manager, Azure Key Vault e GCP Secret Manager) para que os desenvolvedores continuem usando APIs nativas enquanto as equipes de segurança mantêm controle centralizado e rotação automática.",
-    "step_of": "Passo {{current}} de {{total}}",
-    "keyboard_hint": "← → setas · Espaço para play/pause",
-    "s1_title": "Secrets Hub: Visão Geral dos Quatro Atores",
-    "s1_desc": "Quatro atores colaboram: o Privilege Cloud (PAM) é a fonte da verdade onde as equipes de segurança armazenam, rotacionam e auditam cada segredo. O Secrets Hub é o motor de sincronização SaaS que lê do PAM e escreve nos cloud stores. Os Target Stores (AWS SM, Azure KV, GCP SM) são onde desenvolvedores e workloads consomem segredos nativamente. Workloads leem usando seus SDKs nativos existentes sem nenhuma mudança de código.",
-    "s2_title": "PAM Safe + Rotação Automática via CPM",
-    "s2_desc": "As equipes de segurança armazenam cada segredo em um PAM Safe dentro do Privilege Cloud: senhas de banco, API keys, tokens de app, certificados. O Central Policy Manager (CPM) rotaciona automaticamente as credenciais em um cronograma definido pela política de senha. Cada rotação é registrada, auditada e pode ser encaminhada ao SIEM. Esta é a fonte única da verdade: um lugar, todas as políticas, trilha de auditoria completa.",
-    "s3_title": "Estabelecer Confiança com Cada Target Store",
-    "s3_desc": "Um administrador cria uma relação de confiança entre o Secrets Hub e cada cloud secret store, sem credenciais estáticas armazenadas em lugar nenhum. Para o AWS Secrets Manager: um IAM Role é criado via template CloudFormation. O Secrets Hub assume esse role para escrever segredos. Para o Azure Key Vault: um App Registration com a função Key Vault Secrets Officer. Para o GCP Secret Manager: uma Service Account com permissão secretmanager.secretVersionManager.",
-    "s4_title": "Conceder Acesso ao Secrets Hub nos PAM Safes",
-    "s4_desc": "O administrador concede ao usuário do serviço Secrets Hub a membresia nos PAM Safes específicos cujos segredos devem ser sincronizados. O Secrets Hub apenas lê do PAM: nunca escreve de volta. A membresia no Safe segue o princípio do menor privilégio: apenas os safes explicitamente configurados para sincronização são acessíveis.",
-    "s5_title": "Criar uma Sync Policy",
-    "s5_desc": "Uma Sync Policy é a regra que vincula um PAM Safe (origem) a um ou mais target cloud secret stores. Você define: qual Safe sincronizar (o tipo de filtro é PAM_SAFE), quais target stores receber os segredos, e quais propriedades incluir (somente senha ou todas as propriedades). Uma política pode enviar para múltiplos targets simultaneamente. Políticas ficam ativas imediatamente e podem ser gerenciadas via UI, API ou provider Terraform.",
-    "s6_title": "Sincronização Inicial: Segredos do PAM nos Cloud Stores",
-    "s6_desc": "O Secrets Hub lê os segredos do PAM Safe configurado e os escreve em cada target store definido na sync policy. Cada segredo sincronizado aparece no AWS SM, Azure KV e GCP SM marcado com 'Sourced by IDIRA'. A partir desse momento, desenvolvedores e workloads podem ler segredos do seu armazenamento nativo usando seus SDKs existentes, nada muda no código da aplicação.",
-    "s7_title": "CPM Rotaciona → Secrets Hub Re-Sincroniza Automaticamente",
-    "s7_desc": "Quando o CPM rotaciona uma credencial no PAM (agendada ou sob demanda), o Secrets Hub detecta a mudança no próximo ciclo de sincronização. Lê o novo valor do segredo do PAM e envia a versão atualizada para todos os target stores. AWS SM, Azure KV e GCP SM recebem a credencial nova. Workloads que leem dos stores nativos automaticamente obtêm o valor rotacionado: sem reinicialização, sem redeploy.",
-    "s8_title": "Desenvolvedores Leem dos Stores Nativos: Zero Mudanças",
-    "s8_desc": "Desenvolvedores e workloads usam as APIs nativas do cloud store exatamente como antes. Uma função Lambda chamando secretsmanager.get_secret_value(), um pod K8s lendo do Azure Key Vault via driver CSI, um serviço Cloud Run usando a API GCP Secret Manager: todos funcionam identicamente. Sem SDK do IDIRA, sem agente, sem proxy. Equipes de segurança ganham gestão centralizada e rotação; desenvolvedores ganham experiência nativa.",
-    "key1_title": "Zero Fricção para Desenvolvedores",
-    "key1_desc": "Desenvolvedores continuam usando as APIs nativas do AWS SM, Azure KV ou GCP SM: os mesmos SDKs, o mesmo código, os mesmos padrões de IAM. O Secrets Hub é invisível para eles. A adoção não exige mudanças na aplicação, novas dependências ou retreinamento.",
-    "key2_title": "Fonte Única da Verdade",
-    "key2_desc": "Todos os segredos se originam e são rotacionados pelo IDIRA Privilege Cloud. O CPM aplica cronogramas de rotação, complexidade de senha e reconciliação. Cada acesso e rotação é registrado. Uma trilha de auditoria cobre segredos consumidos nos três provedores cloud simultaneamente.",
-    "key3_title": "Sincronização Multi-Cloud em Uma Política",
-    "key3_desc": "Uma única sync policy pode enviar os segredos de um PAM Safe para o AWS SM, Azure KV e GCP SM simultaneamente. Quando o CPM rotaciona a credencial, os três cloud stores são atualizados no mesmo ciclo de sincronização. Sem scripts customizados por cloud, sem drift, sem segredos obsoletos em nenhum ambiente.",
-    "arch_title": "Arquitetura em Resumo",
-    "arch1_title": "Source Secret Store",
-    "arch1_desc": "IDIRA Privilege Cloud (PAM) ou PAM Self-Hosted. Segredos ficam em Safes. CPM gerencia rotação. Secrets Hub lê com membresia de menor privilégio.",
-    "arch2_title": "Serviço Secrets Hub",
-    "arch2_desc": "Componente SaaS da IDIRA Identity Security Platform. Executa o loop de sincronização scan-diff-push-verify. Nenhum segredo é armazenado no próprio Secrets Hub.",
-    "arch3_title": "Target Secret Stores",
-    "arch3_desc": "AWS Secrets Manager, Azure Key Vault, GCP Secret Manager ou HashiCorp Vault. A confiança é estabelecida via IAM nativo da cloud (sem credenciais armazenadas). Segredos sincronizados são marcados com 'Sourced by IDIRA'.",
-    "arch4_title": "Policy Engine de Sincronização",
-    "arch4_desc": "Políticas vinculam um PAM Safe (filtro: PAM_SAFE) a um ou mais targets. Configurável via UI, API REST ou provider Terraform. Suporte a deployments AWS multi-região e cross-account."
+    "title": "Como o IDIRA Secrets Hub funciona",
+    "subtitle": "O Secrets Hub é um serviço SaaS que mantém os secrets da sua solução PAM (Privilege Cloud ou PAM Self-Hosted) sincronizados com os cofres que os desenvolvedores já usam: AWS Secrets Manager, Azure Key Vault, GCP Secret Manager e HashiCorp Vault. Os desenvolvedores mantêm as APIs nativas; a segurança mantém rotação e auditoria no PAM.",
+    "key1_title": "Desenvolvedores mantêm as APIs nativas",
+    "key1_desc": "As aplicações continuam lendo do AWS Secrets Manager, Azure Key Vault, GCP Secret Manager ou HashiCorp Vault com as mesmas chamadas de SDK. O Secrets Hub só grava o valor e as tags no cofre de destino.",
+    "key2_title": "O PAM continua sendo a fonte da verdade",
+    "key2_desc": "Os secrets ficam nos Safes do PAM e o CPM os rotaciona pela política de senha. O Secrets Hub sincroniza o novo valor com os destinos continuamente, então uma trilha de auditoria e uma política de rotação cobrem todas as nuvens.",
+    "key3_title": "Visibilidade da dispersão de secrets",
+    "key3_desc": "O Secrets Hub varre os cofres de destino e mostra todos os secrets numa visão única, com insights como secrets sem uso ou sem rotação recente, para a segurança decidir o que trazer para o PAM.",
+    "env": {
+      "label": "Escolha a origem PAM",
+      "saas": "Privilege Cloud (SaaS)",
+      "pamsh": "PAM Self-Hosted",
+      "hint_saas": "Os secrets vêm do Privilege Cloud, na plataforma de segurança de identidade da IDIRA.",
+      "hint_pamsh": "Os secrets vêm do seu próprio Vault do PAM Self-Hosted, acessado por um conector no seu data center."
+    },
+    "n": {
+      "pc_sub": "Safes · usuário SecretsHub",
+      "vault": "Vault do PAM",
+      "vault_sub": "PAM Self-Hosted · Safes",
+      "pvwa_sub": "acesso web, ou seu LB",
+      "cpm_sub": "rotaciona pela política",
+      "hub_sub": "SaaS · ISPSS",
+      "con": "Pool de conectores",
+      "con_sub": "agente Connector Management",
+      "aws_sub": "IAM role",
+      "az_sub": "app registration · RBAC",
+      "gcp_sub": "Workload Identity Federation",
+      "hcv_sub": "Community ou Enterprise",
+      "wl": "Workloads",
+      "wl_sub": "SDK nativo",
+      "lane_cloud": "Nuvem IDIRA (ISPSS)",
+      "lane_targets": "Cofres de nuvem",
+      "lane_net": "Sua rede",
+      "lane_dc": "Seu data center",
+      "lane_apps": "Apps"
+    },
+    "r": {
+      "member": "membro",
+      "trust": "confiança",
+      "secret": "secret",
+      "engine": "engine",
+      "status": "status",
+      "ports": "entrada",
+      "cloud": "nuvem",
+      "policy": "policy",
+      "scan": "scan",
+      "sync": "sync",
+      "lb": "LB"
+    },
+    "st": {
+      "pending": "pendente",
+      "valid": "válida",
+      "online": "online",
+      "none": "nenhuma",
+      "one_lb": "apenas um",
+      "active": "ativa",
+      "scanning": "varrendo",
+      "found": "descobertos",
+      "idle": "aguardando",
+      "syncing": "sincronizando",
+      "done": "sincronizado"
+    },
+    "p": {
+      "member": "membro do Safe",
+      "scan": "scan"
+    },
+    "saas": {
+      "diagram_label": "Secrets Hub com o Privilege Cloud como origem",
+      "s1_title": "1. As peças",
+      "s1_desc": "O Privilege Cloud guarda os secrets e o CPM os rotaciona. O Secrets Hub, um serviço SaaS na plataforma IDIRA, sincroniza com quatro tipos de destino: AWS Secrets Manager, Azure Key Vault, GCP Secret Manager e HashiCorp Vault. Os workloads leem do cofre que já usam.",
+      "s2_title": "2. O CPM rotaciona o secret no Safe",
+      "s2_desc": "Cada conta num Safe é um secret. O CPM (ou SRS) a rotaciona conforme a política de senha, então o PAM sempre tem o valor atual.",
+      "s3_title": "3. O usuário SecretsHub entra no Safe",
+      "s3_desc": "Para sincronizar um Safe, o usuário SecretsHub precisa ser membro com List e Retrieve accounts, Add account, Update account properties, View Safe members e Access Safe without confirmation. Mudanças de permissão podem levar até 10 minutos para chegar ao Secrets Hub.",
+      "s4_title": "4. Confiança com cada cofre de nuvem, sem chaves guardadas",
+      "s4_desc": "AWS: uma IAM role que o Secrets Hub assume (criada pelo Connect cloud environments ou manualmente). Azure: um app registration com identidade federada. GCP: Workload Identity Federation com uma service account e um token de vida curta.",
+      "s5_title": "5. Um conector alcança o HashiCorp Vault",
+      "s5_desc": "O HashiCorp Vault sempre precisa de um conector, assim como cofres privados de AWS, Azure e GCP. O conector abre uma conexão MQTT de saída e de longa duração com o Secrets Hub, sem abrir porta de entrada. O Vault confia no Secrets Hub por uma role JWT/OIDC.",
+      "s6_title": "6. O Secrets Hub varre os cofres",
+      "s6_desc": "O Secrets Hub descobre os secrets que já existem em cada cofre de destino e os mostra numa visão única, com insights como secrets sem uso ou sem rotação recente.",
+      "s7_title": "7. Uma sync policy envia o Safe aos destinos",
+      "s7_desc": "Uma sync policy diz qual Safe vai para qual cofre de destino. O Secrets Hub grava cada conta como um secret com a tag Sourced by CyberArk; no HashiCorp Vault a gravação passa pelo conector.",
+      "s8_title": "8. A rotação chega a todos os destinos",
+      "s8_desc": "Quando o CPM rotaciona a conta, o Secrets Hub sincroniza o novo valor com todos os destinos. A sincronização é de mão única: edições manuais no destino não são detectadas e podem ser sobrescritas, então restrinja a escrita lá.",
+      "s9_title": "9. Os workloads leem de forma nativa",
+      "s9_desc": "As aplicações mantêm as chamadas nativas: GetSecretValue na AWS, getSecret no Azure, accessSecretVersion no GCP e kv get no HashiCorp Vault. Recebem o valor rotacionado sem mudar código."
+    },
+    "pamsh": {
+      "diagram_label": "Secrets Hub com o PAM Self-Hosted como origem",
+      "s1_title": "1. As peças",
+      "s1_desc": "O Vault do seu PAM Self-Hosted guarda os secrets e o CPM os rotaciona. O Secrets Hub roda como SaaS, então um pool de conectores no seu data center o liga ao PVWA. Os mesmos quatro tipos de destino recebem os secrets.",
+      "s2_title": "2. O CPM rotaciona o secret no Safe",
+      "s2_desc": "Cada conta num Safe é um secret. O CPM do PAM Self-Hosted a rotaciona conforme a política de senha.",
+      "s3_title": "3. Um pool de conectores liga o data center à nuvem",
+      "s3_desc": "Instale o conector (agente Connector Management no Windows) e informe no Secrets Hub a URL do PVWA, ou do seu load balancer. O tráfego para a nuvem usa TLS com certificado cliente x509 (mTLS) e passa pelo seu proxy, se houver.",
+      "s4_title": "4. O usuário de serviço SecretsHub",
+      "s4_desc": "Crie o usuário SecretsHub (tipo DAPService) no Vault; o Secrets Hub rotaciona a senha dele. Adicione-o como membro de cada Safe a sincronizar. O host do conector precisa confiar no certificado do PVWA.",
+      "s5_title": "5. Confiança com cada cofre de nuvem, sem chaves guardadas",
+      "s5_desc": "AWS: uma IAM role que o Secrets Hub assume. Azure: um app registration com identidade federada. GCP: Workload Identity Federation com uma service account e um token de vida curta.",
+      "s6_title": "6. HashiCorp Vault pelo conector",
+      "s6_desc": "O HashiCorp Vault sempre precisa de um conector, na mesma rede do Vault. Use um pool separado do que alcança o PAM. O Vault confia no Secrets Hub por uma role JWT/OIDC.",
+      "s7_title": "7. Sync: pelo conector até o PVWA e daí aos destinos",
+      "s7_desc": "Uma sync policy diz qual Safe vai para qual destino. A cada pedido o conector abre uma conexão HTTPS ad hoc com o PVWA (tráfego local, não passa pelo proxy), lê a conta e o Secrets Hub a grava em cada destino.",
+      "s8_title": "8. A rotação chega a todos os destinos",
+      "s8_desc": "Quando o CPM rotaciona a conta, o novo valor faz o mesmo caminho. A sincronização é de mão única: edições manuais no destino não são detectadas e podem ser sobrescritas.",
+      "s9_title": "9. Os workloads leem de forma nativa",
+      "s9_desc": "As aplicações mantêm as chamadas nativas: GetSecretValue na AWS, getSecret no Azure, accessSecretVersion no GCP e kv get no HashiCorp Vault."
+    },
+    "targets": {
+      "title": "Cofres de destino suportados",
+      "sub": "Os mesmos quatro destinos funcionam com as duas origens PAM.",
+      "trust": "Confiança",
+      "connector": "Conector",
+      "aws_trust": "IAM role (Connect cloud environments ou manual)",
+      "aws_con": "Só quando a conta usa acesso privado",
+      "az_trust": "App registration, identidade federada",
+      "az_con": "Só quando o acesso por rede pública está desativado",
+      "gcp_trust": "Workload Identity Federation + service account",
+      "gcp_con": "Só quando o projeto usa acesso privado",
+      "hcv_trust": "Role JWT/OIDC no Vault",
+      "hcv_con": "Sempre"
+    },
+    "limits": {
+      "title": "Limitações e requisitos da integração",
+      "sub": "Leia antes de planejar a implantação. Elas mudam conforme a origem PAM escolhida acima.",
+      "source": "Fonte",
+      "general": {
+        "title": "Gerais",
+        "items": [
+          "Chaves e certificados não são suportados, só secrets. Dual accounts não são suportadas.",
+          "Até 10.000 contas sincronizadas por tenant e até 1.000 sync policies.",
+          "Visibilidade: até 150.000 secrets no total e 5.000 por cofre; até 15.000 cofres de destino.",
+          "Sync de mão única: mudanças manuais no destino não são detectadas e podem ser sobrescritas. Restrinja a escrita nos secrets sincronizados (por exemplo, uma deny policy na AWS).",
+          "Renomear uma conta no PAM cria um novo secret no destino; o antigo não é renomeado nem apagado. Apagar a conta no PAM remove o secret do destino.",
+          "Até 5 conectores por tenant. Host do conector: Windows Server 2016 a 2025, 8 núcleos, 8 GB de RAM, 500 MB de disco.",
+          "O Secrets Hub é suportado só em inglês, por limites de caracteres nos cofres."
+        ]
+      },
+      "aws": {
+        "title": "AWS Secrets Manager",
+        "items": [
+          "Nomes de secret de até 512 caracteres.",
+          "O Secrets Hub não altera o valor de secrets gerenciados pela AWS.",
+          "Cofres criados pelo Connect cloud environments só são geridos lá. Remover a organização apaga seus cofres, policies e secrets sincronizados."
+        ]
+      },
+      "az": {
+        "title": "Azure Key Vault",
+        "items": [
+          "Nomes de secret de até 127 caracteres.",
+          "Key Vaults com o modelo de permissão Access policy não são suportados: mude para RBAC.",
+          "Até 2.000 Key Vaults por assinatura. Key Vaults em assinaturas diferentes atrás de um conector precisam de peering de rede.",
+          "Incluir um tenant do Microsoft Entra usa só identidade federada; autenticação por client secret não é suportada."
+        ]
+      },
+      "gcp": {
+        "title": "GCP Secret Manager",
+        "items": [
+          "Nomes de secret de até 255 caracteres.",
+          "Labels têm até 63 caracteres: nomes longos de Safe ou conta são truncados nas labels que o Secrets Hub adiciona.",
+          "A política de replicação é definida na criação do secret e não pode ser mudada depois."
+        ]
+      },
+      "hcv": {
+        "title": "HashiCorp Vault",
+        "items": [
+          "Um conector é obrigatório para toda conexão com o HashiCorp Vault, na mesma rede do Vault.",
+          "Só o secrets engine Key/Value (KV) versão 2 é suportado. Vault Community e Enterprise, versão 1.2x.",
+          "Nomes de secret de até 512 caracteres. O Secrets Hub só gerencia secrets com a tag Sourced by CyberArk.",
+          "O acesso é concedido por uma role de autenticação JWT/OIDC e uma policy do Vault no mount path (plano Terraform ou script bash)."
+        ]
+      },
+      "saas": {
+        "title": "Origem: Privilege Cloud",
+        "items": [
+          "Funciona com o Privilege Cloud Standalone e o Privilege Cloud Shared Services.",
+          "O usuário SecretsHub pode ser membro de até 1.000 Safes; Safes com até 1.000 contas podem ser sincronizados.",
+          "A tabela de conectores indica que o Privilege Cloud Vault sempre exige conector; use um conector separado do usado pelos cofres de nuvem."
+        ]
+      },
+      "pamsh": {
+        "title": "Origem: PAM Self-Hosted",
+        "items": [
+          "PAM Self-Hosted versão 11.5 ou posterior.",
+          "Um conector é sempre obrigatório para alcançar o PAM Self-Hosted; use um pool de conectores para alta disponibilidade.",
+          "Só um load balancer na frente do PVWA é suportado.",
+          "Usuário SecretsHub: membro de até 1.000 Safes na versão 12.1 ou posterior, ou 150 na 12.0 ou anterior; até 500 contas por Safe.",
+          "O host do conector precisa confiar no certificado TLS do PVWA. O tráfego do conector ao PVWA não passa pelo proxy; do conector à nuvem passa."
+        ]
+      }
+    },
+    "comp": {
+      "title": "Componentes e sua função",
+      "sub": "Cada caixa do diagrama acima, para a origem PAM escolhida.",
+      "col_component": "Componente",
+      "col_role": "Função",
+      "col_where": "Onde roda e como se conecta",
+      "pc": {
+        "name": "Privilege Cloud",
+        "role": "Fonte da verdade: os Safes guardam as contas que viram secrets. O usuário SecretsHub é membro do Safe.",
+        "where": "Nuvem IDIRA (ISPSS), Standalone ou Shared Services."
+      },
+      "cpm_saas": {
+        "name": "CPM / SRS",
+        "role": "Rotaciona as contas conforme a política de senha.",
+        "where": "Componente do Privilege Cloud."
+      },
+      "vault": {
+        "name": "Vault do PAM Self-Hosted",
+        "role": "Fonte da verdade: os Safes guardam as contas. O usuário de serviço SecretsHub (tipo DAPService) é membro do Safe; o Secrets Hub rotaciona a senha dele.",
+        "where": "Seu data center. Versão 11.5 ou posterior."
+      },
+      "pvwa": {
+        "name": "PVWA",
+        "role": "O endpoint de acesso web do PAM que o Secrets Hub chama para ler as contas.",
+        "where": "Seu data center, via HTTPS. No máximo um load balancer na frente do PVWA."
+      },
+      "cpm_pamsh": {
+        "name": "CPM",
+        "role": "Rotaciona as contas conforme a política de senha.",
+        "where": "Componente do PAM Self-Hosted no seu data center."
+      },
+      "hub": {
+        "name": "Secrets Hub",
+        "role": "Varre os cofres de destino, guarda as sync policies e grava os secrets nos destinos.",
+        "where": "SaaS na plataforma IDIRA (ISPSS). Chama cofres públicos direto ou por um conector; os IPs estáticos de saída por região podem ser liberados no lugar de um conector."
+      },
+      "con_saas": {
+        "name": "Pool de conectores",
+        "role": "Dá ao Secrets Hub um caminho até cofres que ele não alcança pela internet: sempre para o HashiCorp Vault, e para cofres privados de AWS, Azure e GCP.",
+        "where": "Sua rede, num host Windows com o agente Connector Management. Conexão MQTT de saída e de longa duração com o Secrets Hub; sem portas de entrada."
+      },
+      "con_pamsh": {
+        "name": "Pool de conectores",
+        "role": "Liga o Secrets Hub ao PVWA (sempre obrigatório) e ao HashiCorp Vault ou cofres privados. Use pools separados para o PAM e para os cofres de nuvem.",
+        "where": "Seu data center, host Windows com o agente Connector Management. TLS de saída com certificado cliente x509 (mTLS) para a nuvem, pelo proxy se houver; HTTPS ad hoc ao PVWA, sem passar pelo proxy."
+      },
+      "aws": {
+        "name": "AWS Secrets Manager",
+        "role": "Cofre de destino. O Secrets Hub assume uma IAM role para varrer e gravar.",
+        "where": "Suas contas e regiões AWS (um cofre por conta e região)."
+      },
+      "az": {
+        "name": "Azure Key Vault",
+        "role": "Cofre de destino. O Secrets Hub usa um app registration com identidade federada e RBAC.",
+        "where": "Suas assinaturas Azure (um cofre por Key Vault)."
+      },
+      "gcp": {
+        "name": "GCP Secret Manager",
+        "role": "Cofre de destino. O Secrets Hub usa Workload Identity Federation e um token de vida curta de service account.",
+        "where": "Seus projetos GCP (um cofre por projeto)."
+      },
+      "hcv": {
+        "name": "HashiCorp Vault",
+        "role": "Cofre de destino (engine KV versão 2). O Vault confia no Secrets Hub por uma role JWT/OIDC.",
+        "where": "Sua rede, sempre por um conector na mesma rede."
+      },
+      "wl": {
+        "name": "Workloads",
+        "role": "Leem os secrets com o SDK nativo de cada cofre; sem mudar código.",
+        "where": "Onde já rodam (nuvem, Kubernetes, VMs)."
+      }
+    },
+    "docs": {
+      "title": "Documentação oficial",
+      "arch": "Arquitetura do Secrets Hub",
+      "support": "Suporte e escopo (limites)",
+      "sync": "Sincronizar secrets com destinos",
+      "hcv": "Cofres HashiCorp Vault",
+      "connect": "Conectar o Secrets Hub ao PAM Self-Hosted",
+      "connector": "Requisitos do conector"
+    }
   },
   "jenkins": {
     "badge": "Integração Jenkins",
