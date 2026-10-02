@@ -1473,10 +1473,8 @@
     "kind_control": "Policy / controle"
   },
   "sharch": {
-    "title": "Arquitetura do Secrets Manager Self-Hosted",
+    "title": "Arquitetura do Secrets Manager Self‑Hosted",
     "subtitle": "Como se monta um IDIRA Secrets Manager Self-Hosted em alta disponibilidade: um Leader que escreve, Standbys prontos para assumir e Followers que atendem as leituras perto das aplicações.",
-    "intro1": "O IDIRA Secrets Manager Self-Hosted roda nos seus próprios data centers e nuvens. Uma implantação em alta disponibilidade usa a arquitetura Leader, Standby e Follower: um Leader ativo, pelo menos dois Standbys e um ou mais Followers (o recomendado é pelo menos dois).",
-    "intro2": "Toda escrita (policies e secrets) vai para o Leader. Os Standbys replicam o banco do Leader com replicação em streaming do PostgreSQL, para que um deles seja promovido se o Leader falhar. Os Followers são réplicas somente leitura perto dos workloads: cuidam de autenticação, checagem de permissão e busca de secrets em escala.",
     "diagram_label": "Arquitetura do IDIRA Secrets Manager Self-Hosted: Leader, Standbys, DR Standby, Followers, load balancers, Vault Synchronizer, KMS ou HSM e SIEM",
     "lane_primary": "Região primária · AZ a / AZ b",
     "lane_primary_short": "Região primária",
@@ -1612,7 +1610,15 @@
     "doc_arch": "Referência de arquitetura e implantação",
     "doc_cluster": "Diretrizes do cluster",
     "doc_k8s": "Kubernetes Follower",
-    "doc_vsync": "Sobre o Vault Synchronizer"
+    "doc_vsync": "Sobre o Vault Synchronizer",
+    "roles": {
+      "leader_title": "Um Leader escreve",
+      "leader_desc": "Toda escrita (policies e secrets) vai para o único Leader ativo. É o único nó que aceita alterações.",
+      "standby_title": "Standbys assumem",
+      "standby_desc": "Pelo menos dois Standbys replicam o Leader via replicação em streaming do PostgreSQL; um deles é promovido se o Leader falhar.",
+      "follower_title": "Followers atendem leituras",
+      "follower_desc": "Réplicas somente leitura perto dos workloads cuidam de autenticação, checagem de permissão e busca de secrets em escala."
+    }
   },
   "saasarch": {
     "title": "Arquitetura do Secrets Manager SaaS",

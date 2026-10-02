@@ -1473,10 +1473,8 @@
     "kind_control": "Policy / control"
   },
   "sharch": {
-    "title": "Secrets Manager Self-Hosted architecture",
+    "title": "Secrets Manager Self‑Hosted architecture",
     "subtitle": "How a high availability IDIRA Secrets Manager Self-Hosted deployment is built: one Leader that writes, Standbys ready to take over, and Followers that serve reads close to the applications.",
-    "intro1": "IDIRA Secrets Manager Self-Hosted runs in your own data centers and clouds. A high availability deployment uses a Leader, Standby, Follower architecture: one active Leader, at least two Standbys and one or more Followers (at least two are recommended).",
-    "intro2": "All writes (policies and secrets) go to the Leader. Standbys replicate the Leader database with PostgreSQL streaming replication so one can be promoted if the Leader fails. Followers are read-only replicas placed close to the workloads: they handle authentication, permission checks and secret fetches at scale.",
     "diagram_label": "IDIRA Secrets Manager Self-Hosted architecture: Leader, Standbys, DR Standby, Followers, load balancers, Vault Synchronizer, KMS or HSM and SIEM",
     "lane_primary": "Primary region · AZ a / AZ b",
     "lane_primary_short": "Primary region",
@@ -1612,7 +1610,15 @@
     "doc_arch": "Architecture and deployment reference",
     "doc_cluster": "Cluster guidelines",
     "doc_k8s": "Kubernetes Follower",
-    "doc_vsync": "About Vault Synchronizer"
+    "doc_vsync": "About Vault Synchronizer",
+    "roles": {
+      "leader_title": "One Leader writes",
+      "leader_desc": "All writes (policies and secrets) go to the single active Leader. It is the only node that accepts changes.",
+      "standby_title": "Standbys take over",
+      "standby_desc": "At least two Standbys replicate the Leader with PostgreSQL streaming replication; one is promoted if the Leader fails.",
+      "follower_title": "Followers serve reads",
+      "follower_desc": "Read-only replicas close to the workloads handle authentication, permission checks and secret fetches at scale."
+    }
   },
   "saasarch": {
     "title": "Secrets Manager SaaS architecture",

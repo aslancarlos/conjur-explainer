@@ -1473,10 +1473,8 @@
     "kind_control": "Policy / control"
   },
   "sharch": {
-    "title": "Arquitectura de Secrets Manager Self-Hosted",
+    "title": "Arquitectura de Secrets Manager Self‑Hosted",
     "subtitle": "Cómo se construye un IDIRA Secrets Manager Self-Hosted en alta disponibilidad: un Leader que escribe, Standbys listos para asumir y Followers que atienden las lecturas cerca de las aplicaciones.",
-    "intro1": "IDIRA Secrets Manager Self-Hosted se ejecuta en sus propios centros de datos y nubes. Una implementación en alta disponibilidad usa la arquitectura Leader, Standby y Follower: un Leader activo, al menos dos Standbys y uno o más Followers (se recomiendan al menos dos).",
-    "intro2": "Toda escritura (policies y secretos) va al Leader. Los Standbys replican la base de datos del Leader con replicación en streaming de PostgreSQL, para que uno pueda ser promovido si el Leader falla. Los Followers son réplicas de solo lectura cerca de los workloads: gestionan autenticación, verificación de permisos y obtención de secretos a escala.",
     "diagram_label": "Arquitectura de IDIRA Secrets Manager Self-Hosted: Leader, Standbys, DR Standby, Followers, balanceadores de carga, Vault Synchronizer, KMS o HSM y SIEM",
     "lane_primary": "Región primaria · AZ a / AZ b",
     "lane_primary_short": "Región primaria",
@@ -1612,7 +1610,15 @@
     "doc_arch": "Referencia de arquitectura e implementación",
     "doc_cluster": "Directrices del clúster",
     "doc_k8s": "Kubernetes Follower",
-    "doc_vsync": "Acerca de Vault Synchronizer"
+    "doc_vsync": "Acerca de Vault Synchronizer",
+    "roles": {
+      "leader_title": "Un Leader escribe",
+      "leader_desc": "Toda escritura (policies y secretos) va al único Leader activo. Es el único nodo que acepta cambios.",
+      "standby_title": "Los Standbys toman el relevo",
+      "standby_desc": "Al menos dos Standbys replican el Leader con replicación en streaming de PostgreSQL; uno se promueve si el Leader falla.",
+      "follower_title": "Los Followers atienden lecturas",
+      "follower_desc": "Réplicas de solo lectura cerca de los workloads gestionan autenticación, verificación de permisos y obtención de secretos a escala."
+    }
   },
   "saasarch": {
     "title": "Arquitectura de Secrets Manager SaaS",
