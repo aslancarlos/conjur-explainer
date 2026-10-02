@@ -158,6 +158,9 @@ const btnPrimary = `${btnBase} bg-idira-blue text-white hover:bg-idira-blue-2 ac
 const btnSecondary = `${btnBase} border border-border bg-bg-card text-text hover:border-idira-blue`
 const btnGhost = 'inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-sm font-medium text-text-2 underline-offset-4 transition-colors hover:text-text hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue'
 
+/** Reading path: the first START pages get full cards, the rest a compact list. */
+const START = 5
+
 export default function SolutionFinderPage() {
   const { t, i18n } = useTranslation()
   const f = (k: string, o?: Record<string, unknown>) => t(`finder.${k}`, o) as string
@@ -550,8 +553,9 @@ export default function SolutionFinderPage() {
               <h3 id="finder-path" className="text-sm font-semibold uppercase tracking-wider text-text-muted">{f('path_title')}</h3>
               <p className="text-sm text-text-2">{f('path_lead')}</p>
             </div>
+            <p className="pt-1 text-xs font-semibold text-text">{f('path_start')}</p>
             <ol className="space-y-2">
-              {path.map((r, i) => {
+              {path.slice(0, START).map((r, i) => {
                 const nav = NAV_ITEMS.find(x => x.to === RECS[r].to)
                 const g = PROD_OF(RECS[r].product)
                 const cls = 'group flex gap-4 rounded-xl border border-border bg-bg-base p-4 transition-colors hover:border-idira-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue'
@@ -572,6 +576,27 @@ export default function SolutionFinderPage() {
                 return <li key={r}>{nav?.href ? <a href={nav.href} className={cls}>{inner}</a> : <Link to={RECS[r].to} className={cls}>{inner}</Link>}</li>
               })}
             </ol>
+            {path.length > START && (
+              <>
+                <p className="pt-3 text-xs font-semibold text-text">{f('path_more', { count: path.length - START })}</p>
+                <ol start={START + 1} className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-bg-base">
+                  {path.slice(START).map((r, i) => {
+                    const nav = NAV_ITEMS.find(x => x.to === RECS[r].to)
+                    const g = PROD_OF(RECS[r].product)
+                    const cls = 'group flex min-h-11 items-center gap-3 px-4 py-2.5 transition-colors hover:bg-bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-idira-blue'
+                    const inner = (
+                      <>
+                        <span className="w-6 shrink-0 font-mono text-xs text-text-muted tabular-nums">{START + i + 1}</span>
+                        <span className="min-w-0 flex-1 truncate text-sm font-medium text-text group-hover:underline underline-offset-4" title={f(`reason.${r}`)}>{recLabel(r)}</span>
+                        <span className="hidden shrink-0 items-center gap-1 text-xs text-text-muted sm:inline-flex">{ProdDot(RECS[r].product)}{RECS[r].product === 'swa' ? 'SWA' : t(g?.labelKey ?? '')}</span>
+                        <ArrowRight size={14} aria-hidden="true" className="shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5 group-hover:text-text" />
+                      </>
+                    )
+                    return <li key={r}>{nav?.href ? <a href={nav.href} className={cls}>{inner}</a> : <Link to={RECS[r].to} className={cls}>{inner}</Link>}</li>
+                  })}
+                </ol>
+              </>
+            )}
           </section>
         )}
 
@@ -729,7 +754,7 @@ export default function SolutionFinderPage() {
   const nextView = VIEWS[idx + 1]
 
   return (
-    <section className="min-h-screen bg-bg-base px-6 py-12 print:min-h-0 print:bg-white print:p-0">
+    <section className="min-h-screen bg-bg-base px-6 py-8 print:min-h-0 print:bg-white print:p-0">
       {/* Print: hide the app shell and keep only the client report. */}
       <style>{`@media print {
         @page { margin: 14mm; }
@@ -754,7 +779,7 @@ export default function SolutionFinderPage() {
             </AnimatePresence>
           </div>
 
-          <div className="sticky bottom-0 z-10 flex flex-wrap items-center gap-3 rounded-b-2xl border-t border-border bg-bg-card/95 px-6 py-3.5 backdrop-blur sm:px-8">
+          <div className={`${isStep ? 'sticky bottom-0 z-10 bg-bg-card/95 backdrop-blur' : 'bg-bg-card'} flex flex-wrap items-center gap-3 rounded-b-2xl border-t border-border px-6 py-3.5 sm:px-8`}>
             {isStep ? (
               <>
                 <p className="mr-auto flex min-w-0 flex-wrap items-center gap-1.5 text-xs text-text-muted" aria-live="polite">

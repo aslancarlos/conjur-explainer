@@ -8529,7 +8529,9 @@
           "Escrita nos secrets sincronizados restrita no destino (a sincronização é em um sentido)."
         ]
       }
-    }
+    },
+    "path_start": "Comece por aqui",
+    "path_more": "Para se aprofundar (mais {{count}})"
   },
   "c_secretzero": {
     "title": "Segredo Zero",

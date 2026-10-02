@@ -8529,7 +8529,9 @@
           "Write access to synced secrets restricted in the target (sync is one-way)."
         ]
       }
-    }
+    },
+    "path_start": "Start here",
+    "path_more": "Go deeper ({{count}} more)"
   },
   "c_secretzero": {
     "title": "Secret zero",
