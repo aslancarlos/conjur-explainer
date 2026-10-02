@@ -1155,12 +1155,11 @@
     "key3_desc": "La política es YAML puro versionado en git. Cargarla es la única mutación: modo replace sobrescribe un branch, modo patch agrega y elimina elementos específicos, modo update agrega sin eliminar. Los pull requests revisan cada cambio de identidad y acceso: auditable, reversible, versionado."
   },
   "footer": {
-    "desc": "Un laboratorio en vivo de identidad de máquina: demos de Palo Alto Networks | IDIRA en Kubernetes, CI/CD y nube, donde cada workload obtiene sus secretos, o accede a su servicio, con su propia identidad.",
-    "apps": "Apps en Vivo",
-    "resources": "Recursos",
-    "copyright": "© 2026 Aslan Ramos · SME - Machine Identity Security, Palo Alto Networks | IDIRA",
-    "built_with": "Construido con",
-    "idira_link": "IDIRA en Palo Alto Networks"
+    "made_by": "Desarrollado y mantenido por",
+    "role": "DC2 | SME Machine/AI Identity Security, Palo Alto Networks",
+    "contact": "Contactar o informar un error",
+    "mail_subject": "contacto / error",
+    "mail_page": "Página"
   },
   "fundamentals": {
     "examples_label": "Ejemplos",
@@ -1369,7 +1368,7 @@
     "home_subtitle": "Cinco páginas cortas, en orden: qué es un secreto, qué es una identidad de máquina, cómo encajan, cómo funciona en Kubernetes y el vocabulario."
   },
   "shell": {
-    "site_name": "Machine Identity HUB Knowledge",
+    "site_name": "Machine Identity Academy",
     "visits_label": "Accesos",
     "visits_title": "{{exact}} accesos a demo.minha.cloud desde {{since}}, medidos en el balanceador de carga de AWS y actualizados cada hora. Cuenta visitas, no personas únicas."
   },

@@ -1,87 +1,30 @@
+import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ExternalLink, Shield } from 'lucide-react'
+import { Mail } from 'lucide-react'
 
+const CONTACT = 'asramos@paloaltonetworks.com'
+
+/** Simple footer: who builds and maintains the site, and one way to reach him. */
 export default function Footer() {
   const { t } = useTranslation()
+  const { pathname } = useLocation()
+  const subject = `${t('shell.site_name')}: ${t('footer.mail_subject')}`
+  const body = `${t('footer.mail_page')}: https://demo.minha.cloud${pathname}\n\n`
+  const href = `mailto:${CONTACT}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
 
   return (
-    <footer className="py-12 px-6 border-t border-border bg-bg-card/50">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid sm:grid-cols-3 gap-8 mb-8">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Shield size={18} className="text-tone-accent" aria-hidden="true" />
-              <span className="font-bold text-text text-sm">{t('shell.site_name')}</span>
-            </div>
-            <p className="text-xs text-text-muted leading-relaxed">{t('footer.desc')}</p>
-          </div>
-
-          <div className="space-y-3">
-            <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">{t('footer.apps')}</p>
-            <ul className="space-y-2">
-              <li>
-                <a href="/dashboard/" target="_blank" rel="noopener"
-                  className="text-xs text-text-muted hover:text-tone-accent transition-colors flex items-center gap-1.5">
-                  <ExternalLink size={10} /> Kubernetes Dashboard
-                </a>
-              </li>
-              <li>
-                <a href="/springboot/dashboard" target="_blank" rel="noopener"
-                  className="text-xs text-text-muted hover:text-spring transition-colors flex items-center gap-1.5">
-                  <ExternalLink size={10} /> Spring Boot Dashboard
-                </a>
-              </li>
-              <li>
-                <a href="/dotnet/usuarios" target="_blank" rel="noopener"
-                  className="text-xs text-text-muted hover:text-dotnet transition-colors flex items-center gap-1.5">
-                  <ExternalLink size={10} /> .NET Usuarios
-                </a>
-              </li>
-              <li>
-                <a href="/k8s-eso/" target="_blank" rel="noopener"
-                  className="text-xs text-text-muted hover:text-eso transition-colors flex items-center gap-1.5">
-                  <ExternalLink size={10} /> ESO Shop
-                </a>
-              </li>
-              <li>
-                <a href="/k8s-eso/dashboard" target="_blank" rel="noopener"
-                  className="text-xs text-text-muted hover:text-eso transition-colors flex items-center gap-1.5">
-                  <ExternalLink size={10} /> ESO Shop Dashboard
-                </a>
-              </li>
-              <li>
-                <a href="/grafana" target="_blank" rel="noopener"
-                  className="text-xs text-text-muted hover:text-tone-accent transition-colors flex items-center gap-1.5">
-                  <ExternalLink size={10} /> Grafana
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div className="space-y-3">
-            <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">{t('footer.resources')}</p>
-            <ul className="space-y-2">
-              <li>
-                <a href="https://www.paloaltonetworks.com/idira" target="_blank" rel="noopener"
-                  className="text-xs text-text-muted hover:text-tone-accent transition-colors flex items-center gap-1.5">
-                  <ExternalLink size={10} aria-hidden="true" /> {t('footer.idira_link')}
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="pt-6 border-t border-border/50 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-text-muted">{t('footer.copyright')}</p>
-          <p className="text-xs text-text-muted">
-            {t('footer.built_with')}{' '}
-            <span className="text-spring">Spring Boot</span>{' '}
-            <span className="text-text-muted">&amp;</span>{' '}
-            <span className="text-dotnet">.NET</span>{' '}
-            <span className="text-text-muted">+</span>{' '}
-            <span className="text-tone-accent">Palo Alto Networks | IDIRA</span>
-          </p>
-        </div>
+    <footer className="border-t border-border bg-bg-card/50 px-6 py-6">
+      <div className="max-w-6xl mx-auto flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
+        <p className="text-sm text-text-muted leading-relaxed">
+          © {new Date().getFullYear()} {t('shell.site_name')} · {t('footer.made_by')}{' '}
+          <span className="font-medium text-text">Aslan Carlos Ramos</span>
+          <span className="block text-xs">{t('footer.role')}</span>
+        </p>
+        <a href={href}
+          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-bg-card px-5 text-sm font-medium text-text transition-colors duration-200 hover:border-idira-blue hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">
+          <Mail size={16} aria-hidden="true" className="text-tone-accent" />
+          {t('footer.contact')}
+        </a>
       </div>
     </footer>
   )

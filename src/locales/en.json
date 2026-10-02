@@ -1155,12 +1155,11 @@
     "key3_desc": "Policy is plain YAML committed to git. Loading is the only mutation: replace mode overwrites a branch, patch mode adds and removes specific items, update mode adds without deleting. Pull requests review every change to identity and access: auditable, reversible, version-controlled."
   },
   "footer": {
-    "desc": "A live machine identity lab: Palo Alto Networks | IDIRA demos on Kubernetes, CI/CD and cloud, where every workload gets its secrets, or reaches its service, with its own identity.",
-    "apps": "Live Apps",
-    "resources": "Resources",
-    "copyright": "© 2026 Aslan Ramos · SME - Machine Identity Security, Palo Alto Networks | IDIRA",
-    "built_with": "Built with",
-    "idira_link": "IDIRA at Palo Alto Networks"
+    "made_by": "Developed and maintained by",
+    "role": "DC2 | SME Machine/AI Identity Security, Palo Alto Networks",
+    "contact": "Contact or report an error",
+    "mail_subject": "contact / error report",
+    "mail_page": "Page"
   },
   "fundamentals": {
     "examples_label": "Examples",
@@ -1369,7 +1368,7 @@
     "home_subtitle": "Five short pages, in order: what a secret is, what a machine identity is, how they fit, how it works on Kubernetes, and the vocabulary."
   },
   "shell": {
-    "site_name": "Machine Identity HUB Knowledge",
+    "site_name": "Machine Identity Academy",
     "visits_label": "Accesses",
     "visits_title": "{{exact}} accesses to demo.minha.cloud since {{since}}, measured at the AWS load balancer and updated hourly. Counts visits, not unique people."
   },
