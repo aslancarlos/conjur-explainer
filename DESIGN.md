@@ -81,6 +81,8 @@ Rules:
 
 ---
 
+**Demo brand accents** (`spring`, `dotnet`, `gh`, `eso`, `ansible`, `csi`, and the legacy `conjur-red/cyan/gold`) are theme-aware tokens (`--rgb-*` in `index.css`): deeper on light, brighter on dark, AA (4.5:1) on both. Use them for text, icons and `/10` tints. A filled button with white text uses the fixed `*-solid` fill (`bg-spring-solid text-white`), never `bg-spring text-white`. No raw hex or Tailwind palette colours (`text-green-400`, `text-slate-500`) in components; status is `tone-*`.
+
 ## 4. Typography
 
 - **Onest** (300-900) for UI and display; **IBM Plex Mono** (400-600) for identifiers, paths, code, step counters. Loaded once in `index.html` with `display=swap`.
@@ -177,6 +179,12 @@ Hero band recipe (copy from `DualAccountsPage.tsx` / `Hero.tsx`):
 ```
 
 ---
+
+**Demo / feature page header:** `src/components/PageHeader.tsx` (left aligned: badge, one `h1`, 16px lead at 70ch). Concepts pages use `ConceptLayout`'s hero band. Every page has exactly one `h1` and no skipped heading levels (the FlowPlayer step title is an `h2`).
+
+**Navigation:** every sidebar group and submenu uses the same disclosure header (icon, label, down chevron, count when collapsed, items under a guide line); groups start collapsed and the one holding the current page opens. Sub-headings inside a group (`heading` on nav items) are small, non-interactive labels.
+
+**Audience:** desktop only (no phone use). Keep layouts responsive, but QA targets desktop widths (1366 to 1440) and short screens (about 700px tall). Click targets stay 44px.
 
 ## 8. Components
 
@@ -285,6 +293,8 @@ All interactive targets ≥ 44×44 px with ≥ 8 px spacing. Icon-only buttons n
 ---
 
 ## Changelog
+
+- 2026-10-02: professional review pass. Theme-aware brand accents and `*-solid` fills (AA both themes), one `h1` per page, PageHeader for demo pages, 44px targets, unified menu headers (collapsed by default), friendly live-demo errors, CLS fix on lazy routes.
 
 | Date | Change |
 |---|---|
