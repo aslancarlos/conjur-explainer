@@ -64,7 +64,11 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
         {active && (
           <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r bg-idira-blue" aria-hidden="true" />
         )}
-        <item.Icon size={18} strokeWidth={1.9} aria-hidden="true" className={`shrink-0 ${item.color ?? 'text-text-2'}`} />
+        {item.logo
+          ? <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-white ring-1 ring-border" aria-hidden="true">
+              <img src={item.logo} alt="" width={16} height={16} loading="lazy" decoding="async" className="h-4 w-4 object-contain" />
+            </span>
+          : <item.Icon size={18} strokeWidth={1.9} aria-hidden="true" className={`shrink-0 ${item.color ?? 'text-text-2'}`} />}
         <span className={collapsed ? 'sr-only' : 'text-sm leading-tight'}>{label}</span>
       </>
     )
