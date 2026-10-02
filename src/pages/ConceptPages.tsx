@@ -1,4 +1,5 @@
 import { lazy, Suspense, type ReactNode } from 'react'
+import Metaphors from '../components/concepts/Metaphors'
 import { useTranslation } from 'react-i18next'
 import ConceptLayout from '../components/concepts/ConceptLayout'
 import { ConceptCard, CompareTable, FitPanel, GlossaryList, PlatformsTable } from '../components/concepts/ConceptPieces'
@@ -42,6 +43,7 @@ export function CompareConcept() {
   const { t } = useTranslation()
   return (
     <ConceptLayout title={t('practice.title')} subtitle={t('practice.subtitle')}>
+      <Metaphors />
       <CompareTable />
       <FitPanel />
       <Bleed><Capabilities /></Bleed>

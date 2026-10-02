@@ -1287,6 +1287,17 @@
         "name": "SPIFFE",
         "evidence": "SVID (X.509 ou JWT) emitido pelo servidor SPIFFE"
       }
+    },
+    "metaphor": {
+      "label": "Secret x identidade, no dia a dia",
+      "secret_title": "Um secret é uma chave que abre uma porta",
+      "secret_desc": "Quem tem a chave entra. A porta não sabe quem você é, só que a chave serve. Se alguém copiar, a cópia também abre, até trocarem a fechadura (rotação).",
+      "identity_title": "Uma identidade é um passaporte atestado por alguém",
+      "identity_desc": "Ele prova quem você é, e só vale porque um emissor confiável atestou: Kubernetes, GitHub, AWS ou um servidor SPIFFE. Expira rápido, e a fronteira (o IDIRA) confere o emissor antes de deixar passar.",
+      "passport": "Passaporte",
+      "stamp": "Atestado",
+      "issuer": "Emissor confiável",
+      "issuer_sub": "Kubernetes · GitHub · AWS"
     }
   },
   "glossary": {

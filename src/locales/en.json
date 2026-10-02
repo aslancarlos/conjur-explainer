@@ -1287,6 +1287,17 @@
         "name": "SPIFFE",
         "evidence": "SVID (X.509 or JWT) issued by the SPIFFE server"
       }
+    },
+    "metaphor": {
+      "label": "Secret vs identity, in everyday terms",
+      "secret_title": "A secret is a key that opens a door",
+      "secret_desc": "Whoever holds the key gets in. The door does not know who you are, only that the key fits. If someone copies it, the copy opens the door too, until the lock is changed (rotation).",
+      "identity_title": "An identity is a passport someone attested",
+      "identity_desc": "It proves who you are, and it only counts because a trusted issuer attested it: Kubernetes, GitHub, AWS or a SPIFFE server. It expires quickly, and the border (IDIRA) checks the issuer before letting you through.",
+      "passport": "Passport",
+      "stamp": "Attested",
+      "issuer": "Trusted issuer",
+      "issuer_sub": "Kubernetes · GitHub · AWS"
     }
   },
   "glossary": {
