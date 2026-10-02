@@ -1,6 +1,6 @@
 /**
- * Deterministic layout shared by the Excalidraw export and the SVG preview.
- * Three columns: customer zones | external platforms and clouds | IDIRA SaaS.
+ * Deterministic layout shared by the draw.io export and the SVG preview.
+ * Three columns: customer zones | IDIRA SaaS | external platforms and clouds.
  * Zones stack inside a column; nodes sit on a grid inside each zone, so
  * nothing overlaps whatever the selection.
  */
@@ -15,10 +15,12 @@ const PAD_TOP = 52       // room for the zone title
 const ZONE_GAP = 56
 const COL_GAP = 190      // room for arrows and their labels between columns
 
+// IDIRA SaaS sits in the middle: most flows go customer -> IDIRA or IDIRA ->
+// cloud/CI provider, so both stay between adjacent columns.
 const COLUMNS: ZoneId[][] = [
   ['customer-k8s', 'customer-dc', 'customer-mainframe', 'customer-ai'],
-  ['cicd-saas', 'cloud-aws', 'cloud-azure', 'cloud-gcp', 'ai-saas'],
   ['idira-saas'],
+  ['cicd-saas', 'cloud-aws', 'cloud-azure', 'cloud-gcp', 'ai-saas'],
 ]
 
 export interface Box { x: number; y: number; w: number; h: number }
