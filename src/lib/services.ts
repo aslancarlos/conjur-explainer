@@ -16,7 +16,7 @@ export const SERVICES: LiveService[] = [
   { key: 'spring',    name: 'Spring Boot',          check: '/springboot/checkit',  kind: 'json', open: '/springboot/dashboard' },
   { key: 'eso',       name: 'ESO Shop',             check: '/k8s-eso/health',      kind: 'json', open: '/eso-shop/' },
   { key: 'dotnet',    name: '.NET',                 check: '/dotnet/usuarios',     kind: 'http', open: '/dotnet/usuarios' },
-  { key: 'svid',      name: 'SVID (SWA)',           check: '/svid',                kind: 'http', open: '/svid' },
+  { key: 'svid',      name: 'SVID Explorer',        check: '/svid',                kind: 'http', open: '/svid' },
   { key: 'swa',       name: 'SWA → AWS S3',         check: '/swa-s3/',             kind: 'http', open: '/swa-s3/' },
   { key: 'k8s',       name: 'Kubernetes Dashboard', check: '/dashboard/',          kind: 'http', open: '/dashboard/' },
   { key: 'grafana',   name: 'Grafana',              check: '/grafana/api/health',  kind: 'http', open: '/grafana/' },
