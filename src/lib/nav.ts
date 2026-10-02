@@ -100,7 +100,7 @@ export const NAV: NavGroup[] = [
     items: [
       { to: '/concepts/swa-architecture', product: 'swa', labelKey: 'nav.c_swa', subKey: 'nav.c_swa_sub', Icon: ShieldCheck, color: 'text-domain-idira' },
       { to: '/svid', product: 'swa', href: '/svid', labelKey: 'nav.svid', subKey: 'nav.svid_sub', Icon: FileBadge, color: 'text-domain-idira',
-        demo: { name: 'SVID', secret: 'X.509-SVID + JWT-SVID', descKey: 'demos.svid' } },
+        demo: { name: 'SVID Explorer', secret: 'X.509-SVID + JWT-SVID', descKey: 'demos.svid' } },
       { to: '/swa-s3', product: 'swa', href: '/swa-s3', labelKey: 'nav.swa', subKey: 'nav.swa_sub', Icon: Database, color: 'text-eso',
         demo: { name: 'SWA → AWS S3', secret: 'SPIFFE/SVID → STS', descKey: 'demos.swa' } },
     ],
