@@ -116,7 +116,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
                   aria-expanded={expanded} aria-controls={listId}
                   className={`flex w-full items-center gap-2.5 rounded-lg px-3 text-left transition-colors duration-150
                     hover:bg-bg-muted/70 ${dense ? 'min-h-9' : 'min-h-11'} ${hasActive && !expanded ? 'bg-bg-muted/60' : ''}`}>
-                  {group.Icon && <group.Icon size={16} strokeWidth={2} aria-hidden="true" className="shrink-0 text-domain-idira" />}
+                  {group.Icon && <group.Icon size={16} strokeWidth={2} aria-hidden="true" className={`shrink-0 ${group.color ?? 'text-domain-idira'}`} />}
                   <span className={`flex-1 text-sm font-semibold leading-tight ${hasActive ? 'text-text' : 'text-text-2'}`}>{label}</span>
                   {!expanded && (
                     <span className="rounded-full bg-bg-muted px-1.5 font-mono text-[11px] text-text-muted tabular-nums">
@@ -145,7 +145,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
                       className={`flex w-full items-center gap-2.5 rounded-lg px-3 text-left transition-colors duration-150
                         hover:bg-bg-muted/70
                         ${dense ? 'min-h-9' : 'min-h-11'} ${subActive && !subOpen ? 'bg-bg-muted/60' : ''}`}>
-                      <sec.Icon size={16} strokeWidth={2} aria-hidden="true" className="shrink-0 text-domain-idira" />
+                      <sec.Icon size={16} strokeWidth={2} aria-hidden="true" className={`shrink-0 ${group.color ?? 'text-domain-idira'}`} />
                       <span className={`flex-1 text-sm font-semibold leading-tight ${subActive ? 'text-text' : 'text-text-2'}`}>{t(sec.labelKey)}</span>
                       {!subOpen && (
                         <span className="rounded-full bg-bg-muted px-1.5 font-mono text-[11px] text-text-muted tabular-nums">{seg.items.length}</span>
