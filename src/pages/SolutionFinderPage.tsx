@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
@@ -7,9 +7,14 @@ import {
   ArrowLeft, ArrowRight, Check, Compass, Copy, Download, Flag, Info, ListChecks, Mail, Pencil, Printer, RotateCcw, TriangleAlert, Sparkles, Lock,
   ShipWheel, Monitor, CloudUpload, RadioTower, Server, GitBranch, Infinity as InfinityIcon, Github, GitPullRequest, CircleDot, Rocket, Boxes, Blocks, Cog,
   Cloud, Vault, KeyRound, Leaf, Hexagon, Code, Workflow, Layers, AppWindow, Cpu, Database, Bot, Plug, CircleHelp, Building2, Zap, Container,
-  Fingerprint, Timer, RefreshCw, ClipboardList, ScanLine,
+  Fingerprint, Timer, RefreshCw, ClipboardList, ScanLine, Network, ExternalLink, ChevronDown, FileSpreadsheet, FileText,
 } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
+import ArchitecturePreview, { type ArchitecturePreviewLabels } from '../components/finder/ArchitecturePreview'
+import NetworkTable, { FirewallRules, FlowsTable, type NetworkTableLabels } from '../components/finder/NetworkTable'
+import { ZONES, inputFromEvaluation, resolve, usesSecretsManager, type Edition } from '../lib/finder/netCatalog'
+import { buildDrawio, drawioOpenUrl } from '../lib/finder/drawio'
+import { toCsv, toMarkdown, type ExportLabels } from '../lib/finder/exports'
 import { NAV } from '../lib/nav'
 import { APPS_ENVS, DETAIL_GROUPS, DETAILS, ENVS, GOALS, LOGO, PRODUCTS, RECS, evaluate, goalEnabled, effectiveDetails } from './finderModel'
 import type { GoalId, Prod } from './finderModel'
@@ -59,6 +64,14 @@ const btnGhost = 'inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 te
 
 /** Reading path: the first START pages get full cards, the rest a compact list. */
 const START = 5
+
+/** Light theme variables, so the diagram in the print report prints light in either theme. */
+const LIGHT_VARS = {
+  '--rgb-bg': '255 255 255', '--rgb-bg-alt': '245 247 251', '--rgb-surface': '255 255 255', '--rgb-line': '203 213 225',
+  '--rgb-text': '11 15 25', '--rgb-text-2': '42 51 68', '--rgb-text-muted': '91 100 120',
+  '--rgb-tone-live': '14 116 144', '--rgb-tone-danger': '185 28 28',
+  '--rgb-domain-idira': '0 88 230', '--rgb-domain-cp': '96 72 214', '--rgb-domain-svc': '190 24 93',
+} as React.CSSProperties
 
 
 /** Technology logo on a light rounded slot (keeps dark logos legible in the dark theme). */
@@ -212,6 +225,64 @@ export default function SolutionFinderPage() {
     a.href = url; a.download = `solution-prerequisites-${new Date().toISOString().slice(0, 10)}.txt`
     document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url)
   }
+
+  // ---------- architecture and network (draw.io, CSV, Markdown) ----------
+  const a = (k: string, o?: Record<string, unknown>) => t(`finder_arch.${k}`, o) as string
+  const [edition, setEdition] = useState<Edition>('saas')
+  const [showNet, setShowNet] = useState(false)
+  const smUsed = usesSecretsManager(ev.recs)
+  const isoDate = new Date().toISOString().slice(0, 10)
+  const zoneLabels = Object.fromEntries(ZONES.map(z => [z.id, a(z.labelKey)]))
+  const dirLabels = { outbound: a('dir_outbound'), inbound: a('dir_inbound'), internal: a('dir_internal'), external: a('dir_external') }
+  const exportLabels: Partial<ExportLabels> = {
+    title: a('export_title'), generatedBy: a('export_generated_by'), selected: a('export_selected'), goals: a('export_goals'),
+    edition: a('edition_label'), editionValue: smUsed ? a(edition === 'saas' ? 'edition_saas' : 'edition_sh') : '',
+    legend: a('export_legend'), outbound: a('export_outbound'), inbound: a('export_inbound'), internal: a('export_internal'), external: a('export_external'),
+    badgeDocumented: a('badge_documented'), badgeInferred: a('badge_inferred'), tableNote: a('table_note'), inferredNote: a('inferred_note'), products: a('products'),
+    zones: zoneLabels, number: a('col_number'), source: a('col_source'), destination: a('col_destination'), endpoint: a('col_endpoint'), port: a('col_port'),
+    protocol: a('col_protocol'), direction: a('col_direction'), purpose: a('col_purpose'), confidence: a('col_confidence'), documented: a('documented'),
+    inferred: a('inferred'), doc: a('col_doc'), environment: a('md_environment'), components: a('md_components'), flows: a('flows_title'),
+    rules: a('rules_title'), notes: a('md_notes'), documentation: a('md_documentation'), from: a('from'),
+    directions: { outbound: a('short_outbound'), inbound: a('short_inbound'), internal: a('short_internal'), external: a('short_external') },
+  }
+  const previewLabels: ArchitecturePreviewLabels = {
+    title: a('preview_title'), desc: a('preview_desc'), legend: a('legend'), outbound: a('dir_outbound'), inbound: a('dir_inbound'),
+    internal: a('dir_internal'), external: a('dir_external'), badgeDocumented: a('badge_documented'), badgeInferred: a('badge_inferred'), zones: zoneLabels,
+    fullSize: a('preview_full'), fitWidth: a('preview_fit'),
+  }
+  const tableLabels: NetworkTableLabels = {
+    flowsTitle: a('flows_title'), rulesTitle: a('rules_title'), number: a('col_number'), direction: a('col_direction'), source: a('col_source'),
+    destination: a('col_destination'), endpoint: a('col_endpoint'), port: a('col_port'), protocol: a('col_protocol'), purpose: a('col_purpose'),
+    doc: a('col_doc'), from: a('from'), documented: a('documented'), inferred: a('inferred'), directions: dirLabels, empty: a('empty'), zones: zoneLabels,
+    shortDirections: { outbound: a('short_outbound'), inbound: a('short_inbound'), internal: a('short_internal'), external: a('short_external') },
+  }
+  const selKey = sorted.join(',')
+  // routing runs a small optimisation: only on the result step, once per selection / edition / language
+  const net = useMemo(() => {
+    if (view !== 'result' || !ev.recs.length) return null
+    const r = resolve(inputFromEvaluation(ev, smUsed ? edition : 'saas'))
+    if (!r.nodes.length) return null
+    const names = ev.details.map(tileName)
+    const xml = buildDrawio(r, { title: a('export_title'), date: isoDate, labels: exportLabels, selectedNames: names, goalNames })
+    return { r, xml, names }
+  }, [view, selKey, edition, i18n.language]) // eslint-disable-line react-hooks/exhaustive-deps
+  const [drawioUrl, setDrawioUrl] = useState<string | null>(null)
+  useEffect(() => {
+    let alive = true
+    setDrawioUrl(null)
+    if (net) drawioOpenUrl(net.xml).then(u => { if (alive) setDrawioUrl(u) }).catch(() => {})
+    return () => { alive = false }
+  }, [net])
+  const save = (name: string, text: string, type: string) => {
+    const url = URL.createObjectURL(new Blob([text], { type }))
+    const el = document.createElement('a')
+    el.href = url; el.download = name
+    document.body.appendChild(el); el.click(); el.remove(); URL.revokeObjectURL(url)
+  }
+  const downloadDrawio = () => net && save(`architecture-${isoDate}.drawio`, net.xml, 'application/vnd.jgraph.mxfile;charset=utf-8')
+  const downloadCsv = () => net && save(`network-flows-${isoDate}.csv`, toCsv(net.r, { labels: exportLabels }), 'text/csv;charset=utf-8')
+  const downloadMd = () => net && save(`prerequisites-${isoDate}.md`,
+    toMarkdown(net.r, { title: a('export_title'), date: isoDate, labels: exportLabels, selectedNames: net.names, goalNames }), 'text/markdown;charset=utf-8')
 
   const idx = VIEWS.indexOf(view)
   const motionProps = reduce
@@ -604,6 +675,61 @@ export default function SolutionFinderPage() {
           </section>
         )}
 
+        {net && (
+          <section aria-labelledby="finder-arch" className="space-y-4">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div className="max-w-2xl space-y-1">
+                <h3 id="finder-arch" className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-text-muted">
+                  <Network size={15} aria-hidden="true" />{a('section_title')}
+                </h3>
+                <p className="text-sm leading-relaxed text-text-2">{a('section_lead')}</p>
+              </div>
+              {smUsed && (
+                <div className="space-y-1">
+                  <div role="radiogroup" aria-label={a('edition_label')} className="inline-flex rounded-full border border-border bg-bg-base p-1">
+                    {(['saas', 'selfhosted'] as Edition[]).map(ed => (
+                      <button key={ed} type="button" role="radio" aria-checked={edition === ed} onClick={() => setEdition(ed)}
+                        className={`min-h-9 rounded-full px-4 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue
+                          ${edition === ed ? 'bg-idira-blue text-white' : 'text-text-2 hover:text-text'}`}>
+                        {a(ed === 'saas' ? 'edition_saas' : 'edition_sh')}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-text-muted">{a('edition_hint')}</p>
+                </div>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2" role="toolbar" aria-label={a('section_title')}>
+              <button type="button" onClick={downloadDrawio} className={btnPrimary}>
+                <Download size={16} aria-hidden="true" />{a('download_drawio')}
+              </button>
+              {drawioUrl
+                ? <a href={drawioUrl} target="_blank" rel="noopener noreferrer" className={btnSecondary}>
+                    <ExternalLink size={16} aria-hidden="true" />{a('open_drawio')}
+                  </a>
+                : <button type="button" disabled className={btnSecondary}><ExternalLink size={16} aria-hidden="true" />{a('opening')}</button>}
+              <button type="button" onClick={downloadCsv} className={btnSecondary}>
+                <FileSpreadsheet size={16} aria-hidden="true" />{a('download_csv')}
+              </button>
+              <button type="button" onClick={downloadMd} className={btnSecondary}>
+                <FileText size={16} aria-hidden="true" />{a('download_md')}
+              </button>
+            </div>
+            <p className="text-xs leading-relaxed text-text-muted">{a('open_drawio_hint')}</p>
+            <ArchitecturePreview resolved={net.r} labels={previewLabels} />
+            <p className="flex gap-2 text-xs leading-relaxed text-text-2">
+              <Info size={14} aria-hidden="true" className="mt-0.5 shrink-0" /><span>{a('table_note')} {a('inferred_note')}</span>
+            </p>
+            <button type="button" aria-expanded={showNet} aria-controls="finder-net" onClick={() => setShowNet(v => !v)} className={btnSecondary}>
+              <ChevronDown size={16} aria-hidden="true" className={`transition-transform duration-200 ${showNet ? 'rotate-180' : ''}`} />
+              {showNet ? a('table_hide') : a('table_show', { count: net.r.flows.length })}
+            </button>
+            <div id="finder-net" className={showNet ? 'block' : 'hidden'}>
+              <NetworkTable resolved={net.r} labels={tableLabels} />
+            </div>
+          </section>
+        )}
+
         {path.length > 0 && (
           <section aria-labelledby="finder-prereq" className="space-y-3">
             <div className="flex flex-wrap items-end justify-between gap-3">
@@ -719,6 +845,20 @@ export default function SolutionFinderPage() {
                 </li>
               ))}
             </ol>
+
+            {net && (
+              <>
+                <h2 className={h}>{a('report_arch')}</h2>
+                <div style={LIGHT_VARS} className="break-inside-avoid">
+                  <ArchitecturePreview resolved={net.r} labels={previewLabels} fit className="!rounded-none !border-black/30 !bg-white !p-2" />
+                </div>
+                <p className="mt-2 text-black/80">{a('table_note')} {a('inferred_note')}</p>
+                <p className="mt-3 font-bold">{a('flows_title')}</p>
+                <FlowsTable resolved={net.r} labels={tableLabels} print />
+                <p className="mt-3 font-bold">{a('rules_title')}</p>
+                <FirewallRules resolved={net.r} labels={tableLabels} print />
+              </>
+            )}
 
             <h2 className={h}>{f('prereq_title')}</h2>
             <p className="mb-2 text-black/80">{f('prereq_lead')}</p>

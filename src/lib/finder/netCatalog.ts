@@ -26,12 +26,12 @@ export type NodeKind = 'workload' | 'agent' | 'idira-service' | 'platform' | 'st
 export type Direction = 'outbound' | 'inbound' | 'internal' | 'external'
 
 export type ZoneId =
-  | 'customer-k8s' | 'customer-dc' | 'customer-mainframe' | 'customer-ai'
+  | 'customer-k8s' | 'customer-dc' | 'customer-mainframe' | 'customer-ai' | 'customer-idira' | 'customer-pam'
   | 'cicd-saas' | 'cloud-aws' | 'cloud-azure' | 'cloud-gcp' | 'ai-saas'
   | 'idira-saas'
 
 /** Customer-owned zones: traffic leaving them is "outbound", entering them "inbound". */
-export const CUSTOMER_ZONES: ZoneId[] = ['customer-k8s', 'customer-dc', 'customer-mainframe', 'customer-ai']
+export const CUSTOMER_ZONES: ZoneId[] = ['customer-k8s', 'customer-dc', 'customer-mainframe', 'customer-ai', 'customer-idira', 'customer-pam']
 
 export interface Zone { id: ZoneId; label: string; labelKey: string; customer: boolean }
 
@@ -40,6 +40,8 @@ export const ZONES: Zone[] = [
   { id: 'customer-dc', label: 'Customer: data center / VMs', labelKey: 'zone_dc', customer: true },
   { id: 'customer-mainframe', label: 'Customer: mainframe', labelKey: 'zone_mainframe', customer: true },
   { id: 'customer-ai', label: 'Customer: AI agents and developer tools', labelKey: 'zone_ai', customer: true },
+  { id: 'customer-idira', label: 'Customer: IDIRA components', labelKey: 'zone_idira_customer', customer: true },
+  { id: 'customer-pam', label: 'Customer: PAM Self-Hosted', labelKey: 'zone_pam', customer: true },
   { id: 'cicd-saas', label: 'CI/CD platforms (SaaS)', labelKey: 'zone_cicd', customer: false },
   { id: 'cloud-aws', label: 'AWS', labelKey: 'zone_aws', customer: false },
   { id: 'cloud-azure', label: 'Microsoft Azure', labelKey: 'zone_azure', customer: false },
@@ -176,14 +178,14 @@ export const NODES: NetNode[] = [
   { id: 'iot', zone: 'customer-dc', kind: 'workload', product: 'customer', label: 'IoT devices', labelKey: 'n_iot', details: 'no dedicated integration' },
   { id: 'hcv', zone: 'customer-dc', kind: 'store', product: 'customer', label: 'HashiCorp Vault', labelKey: 'n_hcv', details: 'Secrets Hub target, 1.2x' },
   { id: 'admins', zone: 'customer-dc', kind: 'workload', product: 'customer', label: 'Admins and users', labelKey: 'n_admins', details: 'browser, CLI' },
-  { id: 'sm-lb', zone: 'customer-dc', kind: 'network', product: 'sm', label: 'Leader load balancer', labelKey: 'n_sm_lb', details: 'TLS 443, health 444' },
-  { id: 'sm-leader', zone: 'customer-dc', kind: 'idira-service', product: 'sm', label: 'Leader + Standbys', labelKey: 'n_sm_leader', details: 'Self-Hosted cluster' },
-  { id: 'sm-follower', zone: 'customer-dc', kind: 'idira-service', product: 'sm', label: 'Followers', labelKey: 'n_sm_follower', details: 'read replicas, API 443' },
-  { id: 'pam-vault', zone: 'customer-dc', kind: 'idira-service', product: 'cp', label: 'Digital Vault (PAM)', labelKey: 'n_vault', details: 'TCP 1858' },
-  { id: 'pvwa', zone: 'customer-dc', kind: 'idira-service', product: 'cp', label: 'PVWA', labelKey: 'n_pvwa', details: 'PAM 11.5+ for Secrets Hub' },
-  { id: 'cpm', zone: 'customer-dc', kind: 'idira-service', product: 'cp', label: 'CPM', labelKey: 'n_cpm', details: 'rotates passwords' },
-  { id: 'synchronizer', zone: 'customer-dc', kind: 'agent', product: 'sm', label: 'Vault Synchronizer', labelKey: 'n_sync', details: 'PAM to Secrets Manager' },
-  { id: 'shub-connector', zone: 'customer-dc', kind: 'agent', product: 'shub', label: 'Secrets Hub connector', labelKey: 'n_shub_conn', details: 'Windows, outbound MQTT' },
+  { id: 'sm-lb', zone: 'customer-idira', kind: 'network', product: 'sm', label: 'Leader load balancer', labelKey: 'n_sm_lb', details: 'TLS 443, health 444' },
+  { id: 'sm-leader', zone: 'customer-idira', kind: 'idira-service', product: 'sm', label: 'Leader + Standbys', labelKey: 'n_sm_leader', details: 'Self-Hosted cluster' },
+  { id: 'sm-follower', zone: 'customer-idira', kind: 'idira-service', product: 'sm', label: 'Followers', labelKey: 'n_sm_follower', details: 'read replicas, API 443' },
+  { id: 'pam-vault', zone: 'customer-pam', kind: 'idira-service', product: 'cp', label: 'Digital Vault (PAM)', labelKey: 'n_vault', details: 'TCP 1858' },
+  { id: 'pvwa', zone: 'customer-pam', kind: 'idira-service', product: 'cp', label: 'PVWA', labelKey: 'n_pvwa', details: 'PAM 11.5+ for Secrets Hub' },
+  { id: 'cpm', zone: 'customer-pam', kind: 'idira-service', product: 'cp', label: 'CPM', labelKey: 'n_cpm', details: 'rotates passwords' },
+  { id: 'synchronizer', zone: 'customer-idira', kind: 'agent', product: 'sm', label: 'Vault Synchronizer', labelKey: 'n_sync', details: 'PAM to Secrets Manager' },
+  { id: 'shub-connector', zone: 'customer-idira', kind: 'agent', product: 'shub', label: 'Secrets Hub connector', labelKey: 'n_shub_conn', details: 'Windows, outbound MQTT' },
 
   // Mainframe
   { id: 'zos-job', zone: 'customer-mainframe', kind: 'workload', product: 'customer', label: 'Batch jobs (JCL)', labelKey: 'n_zos_job', details: 'Java or C/C++ SDK' },
@@ -477,16 +479,21 @@ export const ADAPTER: Record<string, string[]> = {
   'pam.privilegecloud': ['pam:privilegecloud'], 'pam.selfhosted': ['pam:selfhosted'],
   'cicd.jenkins': ['jenkins'], 'cicd.gitlab': ['gitlab'], 'cicd.github': ['gha'], 'cicd.bitbucket': ['bitbucket'], 'cicd.circleci': ['circleci'],
   'cicd.octopus': ['octopus'], 'cicd.ansible': ['ansible'], 'cicd.terraform': ['terraform'], 'cicd.puppet': ['puppet'],
+  // wizard detail ids (src/pages/finderModel.ts DETAILS)
+  aws_ec2: ['aws-ec2'], aws_lambda: ['aws-lambda'], aws_ecs: ['aws-ecs'], aws_eks: ['aws-eks'], aws_sm: ['shub-aws'],
+  az_vm: ['azure-vm'], az_app: ['azure-func'], az_aks: ['azure-aks'], az_kv: ['shub-akv'],
+  gcp_ce: ['gcp-gce'], gcp_run: ['gcp-func'], gcp_gke: ['gcp-gke'], gcp_sm: ['shub-gsm'],
+  op_hcv: ['shub-hcv'], op_iot: ['iot'], pam_pc: ['pam:privilegecloud'], pam_sh: ['pam:selfhosted'],
   // current tile ids
   awssm: ['shub-aws'], akv: ['shub-akv'], gsm: ['shub-gsm'], hcv: ['shub-hcv'], iot: ['iot'],
 }
 
 /** Cloud hints used to pick the right Secrets Hub store / dynamic-secrets cloud when none is explicit. */
 const CLOUD_HINT: Array<{ test: RegExp; store: string; dynamic?: string }> = [
-  { test: /^(aws|aws\..*|aws-.*)$/, store: 'shub-aws', dynamic: 'dynamic-aws' },
-  { test: /^(azure|azure\..*|azure-.*)$/, store: 'shub-akv' },
-  { test: /^(gcp|gcp\..*|gcp-.*)$/, store: 'shub-gsm', dynamic: 'dynamic-gcp' },
-  { test: /^(hcv|onprem\.hashicorp|shub-hcv)$/, store: 'shub-hcv' },
+  { test: /^(aws|aws[._-].*)$/, store: 'shub-aws', dynamic: 'dynamic-aws' },
+  { test: /^(azure|azure[._-].*|az_.*)$/, store: 'shub-akv' },
+  { test: /^(gcp|gcp[._-].*)$/, store: 'shub-gsm', dynamic: 'dynamic-gcp' },
+  { test: /^(hcv|onprem\.hashicorp|shub-hcv|op_hcv)$/, store: 'shub-hcv' },
 ]
 
 export interface ResolveInput {
@@ -521,6 +528,32 @@ export function expandKeys(input: ResolveInput): { keys: Set<string>; pam: PamBa
   if (STORES.some(s => keys.has(s)) && !keys.has('shubPc') && !keys.has('shubSh')) keys.add(pam === 'selfhosted' ? 'shubSh' : 'shubPc')
   return { keys, pam }
 }
+
+/**
+ * Wizard details only add their context key when the recommendation that
+ * uses them is included (an EC2 tile with only the workload identity goal
+ * must not draw the authn-iam flows).
+ */
+const DETAIL_GATE: Record<string, string[]> = {
+  aws_ec2: ['awsIam'], aws_lambda: ['awsIam'], aws_ecs: ['awsIam'],
+  az_vm: ['azureMi'], az_app: ['azureMi'], gcp_ce: ['gcpId'], gcp_run: ['gcpId'],
+  aws_sm: ['shubPc', 'shubSh'], az_kv: ['shubPc', 'shubSh'], gcp_sm: ['shubPc', 'shubSh'], op_hcv: ['shubPc', 'shubSh'],
+  aws_eks: K8S, az_aks: K8S, gcp_gke: K8S, op_iot: ['apiKey', 'cert'],
+}
+
+/** Resolve input from the wizard's evaluate(selection) result (src/pages/finderModel.ts). */
+export function inputFromEvaluation(ev: { recs: string[]; details: string[]; byRec?: Record<string, string[]> }, edition: Edition = 'saas'): ResolveInput {
+  // the Python page is also suggested for Lambda; the Lambda card already carries that flow
+  const recs = ev.recs.filter(r => !(r === 'python' && ev.byRec && !(ev.byRec.python ?? []).includes('app_python')))
+  ev = { ...ev, recs }
+  const have = ev.details.filter(d => !DETAIL_GATE[d] || DETAIL_GATE[d].some(r => ev.recs.includes(r)))
+  const pam: PamBackend | undefined = ev.details.includes('pam_sh') && !ev.details.includes('pam_pc') ? 'selfhosted'
+    : ev.details.includes('pam_pc') && !ev.details.includes('pam_sh') ? 'privilegecloud' : undefined
+  return { recs, have, edition, pam }
+}
+
+/** Recommendations whose flows depend on the Secrets Manager edition (the edition switch only matters then). */
+export const usesSecretsManager = (recs: string[]) => recs.some(r => SM_KEYS.includes(r) || ['k8sArch', 'audit', 'rotation'].includes(r))
 
 // ---------------------------------------------------------------------------
 // Resolver
