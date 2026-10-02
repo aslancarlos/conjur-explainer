@@ -67,7 +67,9 @@
     "c_saas": "Arquitetura SaaS",
     "c_saas_sub": "Secrets Manager SaaS com Edge",
     "c_sh": "Arquitetura Self-Hosted",
-    "c_sh_sub": "Leader, Standbys e Followers"
+    "c_sh_sub": "Leader, Standbys e Followers",
+    "c_swa": "Arquitetura do Secure Workload Access",
+    "c_swa_sub": "Identidades SPIFFE com o SWA"
   },
   "hero": {
     "eyebrow": "Identidade de máquina · Secrets · IDIRA by Palo Alto Networks",
@@ -2136,5 +2138,217 @@
     "s8_desc": "Alguém acha um token antigo num log e tenta usar. Ele já expirou, e assinatura, emissor e audience não batem mais, então o IDIRA recusa.",
     "s9_title": "9. Resumindo",
     "s9_desc": "Uma identidade de máquina é emitida pela plataforma, verificada a cada pedido e dura pouco. Não há senha no código para vazar, e é sobre isso que os próximos conceitos se apoiam."
+  },
+  "swaarch": {
+    "title": "Arquitetura do Secure Workload Access",
+    "subtitle": "Como o IDIRA Secure Workload Access (SWA) emite identidades SPIFFE para os seus workloads: um control plane no Secrets Manager SaaS, um SWA Server e SWA Agents na sua própria infraestrutura.",
+    "intro": {
+      "issue_title": "Identidades de curta duração",
+      "issue_desc": "Os workloads recebem SVIDs (X.509 e JWT) depois da atestação. O SWA Agent renova antes de expirar, sem reiniciar nada.",
+      "federate_title": "Sem chaves de nuvem guardadas",
+      "federate_desc": "Um JWT-SVID é trocado por credenciais temporárias de AWS, Azure ou Google Cloud via federação OIDC.",
+      "exchange_title": "Secrets só quando precisa",
+      "exchange_desc": "Workloads que ainda precisam de senha autenticam no Secrets Manager com o JWT-SVID e buscam só o que a policy permite."
+    },
+    "flow_title": "O fluxo de identidade padrão (com Agent)",
+    "flow_intro": "Implantações em Kubernetes e VMs usam o SWA Server e os SWA Agents. Control plane, inventário, auditoria e JWKS público ficam no Secrets Manager SaaS. As portas aparecem em cada conexão.",
+    "flow": {
+      "diagram_label": "Arquitetura do IDIRA Secure Workload Access",
+      "lane_idira": "Nuvem IDIRA (Secrets Manager SaaS)",
+      "lane_cloud": "Provedores de nuvem",
+      "lane_k8s": "Seu cluster Kubernetes",
+      "lane_vm": "VMs",
+      "n_sm_sub": "control plane do SWA · US-EAST-1",
+      "n_oidc_sub": "/.well-known (público)",
+      "n_cloud": "IAM de nuvem",
+      "n_cloud_sub": "federação OIDC",
+      "n_wl_sub": "workload · pod k8s",
+      "r_inventory": "inventário",
+      "r_attest": "atestação",
+      "r_keys": "chaves",
+      "r_node": "nó",
+      "r_cloud": "nuvem",
+      "st_served": "entregue",
+      "st_added": "workload criado",
+      "st_logged": "registrada",
+      "st_published": "publicado",
+      "st_tempcreds": "creds temp.",
+      "st_federated": "federado",
+      "st_nodeok": "nó ok",
+      "st_issued": "emitido",
+      "st_onserver": "no servidor",
+      "st_attested": "atestado",
+      "st_renewed": "renovado",
+      "p_fetch": "pede SVID",
+      "p_inventory": "inventário",
+      "s1_title": "1. Duas metades: control plane e data plane",
+      "s1_desc": "O SWA é uma implementação de SPIFFE entregue como recurso do Secrets Manager. O Secrets Manager SaaS é o control plane; o SWA Server e os SWA Agents rodam na sua infraestrutura e emitem as identidades.",
+      "s2_title": "2. Trust domain e SWA Server",
+      "s2_desc": "No Secrets Manager você define o trust domain, o server group e os node groups. O SWA Server, registrado com um authn_id e instalado via Helm, conecta ao tenant por HTTPS para buscar a configuração.",
+      "s3_title": "3. Chaves públicas para quem verifica",
+      "s3_desc": "O Secrets Manager publica o documento de descoberta OIDC e o JWKS do trust domain em /.well-known. Quem precisa validar um JWT-SVID, como um provedor de nuvem, lê as chaves públicas ali.",
+      "s4_title": "4. Atestação do nó no Kubernetes",
+      "s4_desc": "O SWA Agent roda como DaemonSet e apresenta um token projetado de service account (k8s_psat) na porta TCP 8443. O SWA Server valida o token na API do Kubernetes e lê o label swa_nodegroup para colocar o nó num node group.",
+      "s5_title": "5. VMs e outros clusters por um load balancer",
+      "s5_desc": "Agents fora do cluster do servidor chegam a ele por um Service do tipo LoadBalancer que encaminha TCP 8443. Eles atestam com um certificado de máquina X.509 (x509pop) ou com o Instance Identity Document da AWS.",
+      "s6_title": "6. Atestação do workload",
+      "s6_desc": "O workload chama a Workload API num Unix domain socket local, sem chamada de rede e sem credencial. O agent confere os atributos de execução (namespace, service account, labels; ou uid, caminho e hash do binário em Unix).",
+      "s7_title": "7. SVIDs emitidos e workload inventariado",
+      "s7_desc": "O agent obtém o SVID do servidor e entrega ao workload um X.509-SVID, um JWT-SVID e o trust bundle. O SWA registra o workload em data/swa/trust-domains/<trust-domain>/workloads/, sem acesso a secrets por padrão.",
+      "s8_title": "8. Serviço a serviço com mTLS",
+      "s8_desc": "O SPIFFE ID fica no SAN URI do X.509-SVID, então dois workloads se autenticam por mTLS sem chaves de API compartilhadas nem certificados feitos à mão.",
+      "s9_title": "9. Acesso à nuvem sem chaves guardadas",
+      "s9_desc": "O payments-api pede um JWT-SVID com a audience da nuvem (na AWS, sts.amazonaws.com). A nuvem valida contra o JWKS público do emissor SWA e devolve credenciais temporárias, por exemplo via AssumeRoleWithWebIdentity.",
+      "s10_title": "10. Troca por secret quando ainda precisa de credencial",
+      "s10_desc": "Para destinos que não entendem SPIFFE, o orders-api apresenta o JWT-SVID assinado com RSA ao JWT authenticator do Secrets Manager, que mapeia o SPIFFE ID para o host do workload e devolve só os secrets que a policy permite.",
+      "s11_title": "11. Rotação automática e auditoria",
+      "s11_desc": "Os SVIDs duram pouco e o SWA Agent renova antes de expirar, sem reiniciar. O Secrets Manager mantém o inventário de workloads e o log de auditoria."
+    },
+    "components_title": "Componentes e sua função",
+    "col_component": "Componente",
+    "col_role": "Função",
+    "col_where": "Onde roda e como se conecta",
+    "components": {
+      "sm": {
+        "name": "Secrets Manager SaaS (control plane)",
+        "role": "Define trust domains, server groups, node groups e policies de atestação. Fornece o inventário de workloads, o log de auditoria e os endpoints públicos de JWKS.",
+        "where": "Nuvem IDIRA. O SWA está disponível em US-EAST-1. Gerenciado pela UI, pela API REST ou pelo provider Terraform."
+      },
+      "oidc": {
+        "name": "Descoberta OIDC e JWKS",
+        "role": "Endpoints públicos de emissor de cada trust domain, usados por relying parties e provedores de nuvem para validar JWT-SVIDs.",
+        "where": "https://<subdomain>.secretsmgr.cyberark.cloud/api/swa/trust-domains/<trust-domain>/.well-known/ (openid-configuration, jwks)."
+      },
+      "server": {
+        "name": "SWA Server",
+        "role": "Faz a atestação do cliente (nó), emite SVIDs e gerencia as chaves de assinatura do trust domain. Busca a configuração no Secrets Manager e reporta o inventário.",
+        "where": "Seu cluster Kubernetes (chart Helm, namespace swa-system). Escuta na 8443 para os agents; replicaCount padrão 1."
+      },
+      "lb": {
+        "name": "Load balancer",
+        "role": "Expõe a API do SWA Server para agents fora do cluster dele (VMs ou outro cluster). Agents dentro do cluster usam o nome DNS do Service.",
+        "where": "Service do Kubernetes do tipo LoadBalancer encaminhando TCP 8443; pode ser interno com annotations da nuvem."
+      },
+      "agent": {
+        "name": "SWA Agent (Kubernetes)",
+        "role": "Expõe a Workload API, faz a atestação de workloads e pede SVIDs ao servidor em nome dos workloads locais.",
+        "where": "DaemonSet em cada nó; atestação do nó com k8s_psat (ou k8s_jwt quando o servidor não alcança a API server)."
+      },
+      "vm": {
+        "name": "SWA Agent (VM)",
+        "role": "Mesma função em máquinas Unix ou Linux, atestando processos com o workload attestor unix.",
+        "where": "Serviço do sistema instalado com Ansible; atestação do nó com x509pop ou AWS IID; conecta ao load balancer do servidor na 8443."
+      },
+      "attestors": {
+        "name": "Atestação de nó",
+        "role": "Verifica o nó que se conecta antes que qualquer workload nele receba um SVID: k8s_psat, k8s_jwt, x509pop ou AWS IID (EC2).",
+        "where": "Avaliada pelo SWA Server contra as policies do server group; o nó entra num node group."
+      },
+      "wapi": {
+        "name": "Workload API",
+        "role": "API local que os workloads chamam para obter seus SVIDs e o trust bundle, sem chamadas de rede nem credenciais pré-compartilhadas.",
+        "where": "Unix domain socket exposto pelo agent (padrão /tmp/swa-agent/public/api.sock no Kubernetes)."
+      },
+      "svid": {
+        "name": "X.509-SVID e JWT-SVID",
+        "role": "Documentos de identidade assinados que provam o SPIFFE ID: X.509 para mTLS, JWT para federação e autenticação no Secrets Manager.",
+        "where": "Ficam com o workload; duram pouco e são renovados automaticamente pelo agent."
+      },
+      "cloud": {
+        "name": "Federação com nuvem",
+        "role": "Provider OIDC do AWS IAM (AssumeRoleWithWebIdentity), federated identity credential do Azure, Workload Identity Federation do Google: trocam um JWT-SVID por credenciais temporárias.",
+        "where": "Em cada conta de nuvem, confiando na URL pública do emissor SWA e no SPIFFE ID do workload."
+      },
+      "authn": {
+        "name": "JWT authenticator do Secrets Manager",
+        "role": "Permite ao workload trocar o JWT-SVID pelos secrets que a policy permite (troca por secret).",
+        "where": "Secrets Manager SaaS; aceita apenas JWTs assinados com RSA (RS* com RSA_*)."
+      }
+    },
+    "ports_title": "Portas e protocolos",
+    "ports_sub": "Só os valores que a documentação informa. Onde não há porta documentada, aparece o protocolo.",
+    "col_port": "Porta / protocolo",
+    "col_path": "De e para",
+    "col_purpose": "Finalidade",
+    "ports": {
+      "p8443": {
+        "port": "TCP 8443",
+        "path": "Todo SWA Agent para o SWA Server (ou o load balancer dele)",
+        "purpose": "API do SWA Server: atestação e pedidos de SVID. Precisa estar acessível de todo nó com agent."
+      },
+      "p8080": {
+        "port": "TCP 8080",
+        "path": "Service do SWA Server",
+        "purpose": "Interface web do servidor (service.webPort)."
+      },
+      "p8082": {
+        "port": "TCP 8082",
+        "path": "Kubernetes para o SWA Agent",
+        "purpose": "Health probe HTTP (agent.healthPort)."
+      },
+      "pcp": {
+        "port": "HTTPS",
+        "path": "SWA Server e agents para o tenant",
+        "purpose": "Configuração do control plane e trust bundle de bootstrap (.well-known/ca-bundles)."
+      },
+      "puds": {
+        "port": "Unix socket",
+        "path": "Workload para o SWA Agent local",
+        "purpose": "Workload API; sem tráfego de rede."
+      },
+      "poidc": {
+        "port": "HTTPS (público)",
+        "path": "Provedores de nuvem e verificadores para o tenant",
+        "purpose": "Descoberta OIDC e JWKS; a URL do emissor precisa ser pública e sem autenticação."
+      },
+      "pk8s": {
+        "port": "API do Kubernetes",
+        "path": "SWA Server para a API server do cluster",
+        "purpose": "Valida tokens projetados de service account no k8s_psat."
+      },
+      "paws": {
+        "port": "API do AWS EC2",
+        "path": "SWA Server para a AWS",
+        "purpose": "ec2:DescribeInstances para verificar instâncias que atestam com AWS IID."
+      }
+    },
+    "limits_title": "Requisitos e limites",
+    "limits": {
+      "i1": "O SWA está disponível apenas na região US-EAST-1.",
+      "i2": "O JWT authenticator do Secrets Manager aceita apenas JWTs assinados com RSA (RS* com RSA_*). Mantenha assinatura RSA no trust domain para a troca por secret; trust domains novos usam RS512 com RSA_4096 por padrão.",
+      "i3": "A porta TCP 8443 do SWA Server precisa estar acessível de todo nó ou VM com agent; senão o agent falha no bootstrap e nunca atesta.",
+      "i4": "Para federação com AWS e Google Cloud, a URL do emissor precisa ser HTTPS pública e sem autenticação.",
+      "i5": "O k8s_psat exige acesso de rede do SWA Server à API server do Kubernetes; use k8s_jwt quando isso não for possível (por exemplo, hub and spoke).",
+      "i6": "Identidades novas de workload não têm acesso a secrets por padrão: conceda permissões antes de o workload precisar.",
+      "i7": "Migrando de outro authenticator: o SWA não reaproveita a identidade existente. Apague-a, dê permissões à nova identidade SPIFFE e planeje uma breve interrupção.",
+      "i8": "Sem bootstrap.bundleSourceUrl, uma rotação da CA do servidor exige reiniciar o agent manualmente.",
+      "i9": "O fluxo sem agent (swa_identity_sdk) vale para computação gerenciada no GCP, como o Gemini Enterprise; não tem node groups nem socket da Workload API."
+    },
+    "practices_title": "Boas práticas",
+    "practices": {
+      "i1": "Configure bootstrap.bundleSourceUrl em produção para os agents se recuperarem sozinhos quando a CA do servidor rotacionar.",
+      "i2": "Exponha o SWA Server por um load balancer interno quando houver agents fora do cluster, e libere a TCP 8443 cedo com o time de firewall.",
+      "i3": "Restrinja as roles de nuvem ao SPIFFE ID esperado (o claim sub do JWT) e peça a audience que cada provedor espera.",
+      "i4": "Dê à role do SWA Server apenas ec2:DescribeInstances quando usar atestação AWS IID.",
+      "i5": "Use trust domains separados para fronteiras administrativas separadas, como produção e não produção.",
+      "i6": "Prefira o acesso baseado em SPIFFE (mTLS, federação) e deixe a troca por secret para destinos que ainda precisam de credencial.",
+      "i7": "Gerencie trust domains, server groups e node groups como código com a API REST ou o provider Terraform."
+    },
+    "docs_title": "Documentação oficial",
+    "docs": {
+      "overview": "Entenda identidades de workload SPIFFE",
+      "getstarted": "Primeiros passos com SWA no Kubernetes",
+      "helm": "Instalar o SWA com Helm",
+      "values": "Referência de valores do chart Helm",
+      "lb": "Expor o SWA Server por um load balancer",
+      "vm": "Instalar um SWA agent numa máquina",
+      "oidc": "Valores do emissor OIDC",
+      "jwt": "Requisitos de JWT",
+      "aws": "Autenticar workloads SWA na AWS",
+      "azure": "Autenticar workloads SWA no Azure",
+      "gcp": "Autenticar workloads SWA no Google Cloud",
+      "authn": "SWA com a autenticação JWT do Secrets Manager",
+      "support": "Suporte e escopo do Secrets Manager"
+    }
   }
 }
