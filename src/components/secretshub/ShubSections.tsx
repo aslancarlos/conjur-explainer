@@ -7,7 +7,7 @@ import type { ShubEnv } from '../flow/specs/ShubFlow'
 export const docsBase = (env: ShubEnv) =>
   env === 'saas' ? 'https://docs.cyberark.com/secrets-hub-privilege-cloud/latest/en' : 'https://docs.cyberark.com/secrets-hub-pam-sh/latest/en'
 
-/** Segmented PAM source switch (same visual language as NavViewToggle). */
+/** Segmented PAM source switch (segmented control, DESIGN.md tokens). */
 export function EnvToggle({ env, onChange }: { env: ShubEnv; onChange: (e: ShubEnv) => void }) {
   const { t } = useTranslation()
   const opts: Array<{ v: ShubEnv; Icon: LucideIcon }> = [{ v: 'saas', Icon: Cloud }, { v: 'pamsh', Icon: Server }]
