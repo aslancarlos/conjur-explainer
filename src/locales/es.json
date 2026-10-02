@@ -8058,16 +8058,76 @@
   },
   "finder": {
     "badge": "Qué solución usar",
-    "title": "¿Qué tiene su entorno?",
-    "subtitle": "Seleccione las plataformas, herramientas y aplicaciones que usa. A medida que elige, el panel muestra qué productos encajan y qué páginas explican cada integración.",
+    "title": "Encuentre la solución adecuada",
+    "subtitle": "Responda tres preguntas rápidas sobre su entorno. Todas son opcionales; el resultado muestra qué productos encajan y qué leer primero.",
+    "stepper_label": "Progreso",
+    "s1_label": "Dónde se ejecuta",
+    "s1_title": "¿Dónde se ejecutan sus workloads?",
+    "s1_help": "Seleccione todas las plataformas que apliquen. Los workloads son las aplicaciones, servicios y jobs que necesitan secretos.",
+    "s2_label": "CI/CD",
+    "s2_title": "¿Qué herramientas de CI/CD y automatización usa?",
+    "s2_help": "Los pipelines y las herramientas de automatización suelen guardar la mayoría de las credenciales. Seleccione las que usa hoy.",
+    "s3_label": "Todo lo demás",
+    "s3_title": "¿Qué más hay en el entorno?",
+    "s3_help": "Lenguajes, almacenes de secretos ya en uso, datos y personas, e IA. Marque lo que aplique.",
+    "result_label": "Resultado",
     "groups": {
-      "platforms": "Plataformas y runtimes",
-      "cicd": "CI/CD y automatización",
-      "cloud": "Nube y almacenes de secretos",
-      "apps": "Aplicaciones y legado",
-      "ai": "IA",
-      "other": "Otro"
+      "apps": "Aplicaciones",
+      "stores": "Almacenes de secretos ya en uso",
+      "access": "Datos, personas y servicios",
+      "ai": "IA y otros"
     },
+    "step_of": "Paso {{current}} de {{total}}",
+    "optional": "Opcional",
+    "selected_short_one": "{{count}} seleccionado",
+    "selected_short_other": "{{count}} seleccionados",
+    "selected_in_step_one": "{{count}} elemento seleccionado en este paso",
+    "selected_in_step_other": "{{count}} elementos seleccionados en este paso",
+    "none_in_step": "Nada seleccionado en este paso todavía. Puede omitirlo.",
+    "so_far": "Hasta ahora:",
+    "so_far_empty": "La recomendación se arma a medida que selecciona.",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "see_result": "Ver resultado",
+    "skip": "Ninguno, omitir",
+    "result_title": "Su recomendación",
+    "result_based_one": "Según el {{count}} elemento que seleccionó.",
+    "result_based_other": "Según los {{count}} elementos que seleccionó.",
+    "main_eyebrow": "Producto principal",
+    "covers": "Cubre {{covered}} de {{total}} elementos",
+    "covers_short": "{{covered}} de {{total}}",
+    "complements_title": "Complementos",
+    "coverage_title": "Qué cubre cada elemento",
+    "coverage_none": "Sin cobertura",
+    "coverage_other": "Vea el contacto abajo",
+    "coverage_gap": "Los elementos marcados como \"Sin cobertura\" aún no tienen recomendación en este sitio; use el contacto para conversar sobre ellos.",
+    "no_dedicated": "Sin integración dedicada",
+    "path_title": "Ruta de lectura",
+    "path_lead": "Lea de arriba hacia abajo: primero las visiones generales, luego una página por elemento y al final las capacidades.",
+    "edit": "Editar respuestas",
+    "restart": "Empezar de nuevo",
+    "copy": "Copiar enlace",
+    "copied": "Enlace copiado",
+    "empty_result_title": "Nada seleccionado todavía",
+    "empty_result_desc": "Responda al menos una pregunta para ver qué productos encajan en su entorno.",
+    "empty_result_cta": "Ir al paso 1",
+    "why": {
+      "sm": "Workloads, pipelines y scripts obtienen secretos en tiempo de ejecución con una identidad atestada por la plataforma, así nada queda fijo en el código.",
+      "swa": "Los workloads prueban quiénes son con SPIFFE IDs de vida corta (SVIDs) y los usan para mTLS, federación con la nube o intercambio por secretos.",
+      "cp": "Las aplicaciones que consumen cuentas privilegiadas del PAM las obtienen en tiempo de ejecución, con caché local y rotación a cargo del CPM.",
+      "shub": "Los secretos quedan donde los desarrolladores ya los leen (almacenes en la nube y HashiCorp Vault) mientras el PAM mantiene la rotación y la auditoría."
+    },
+    "for": "Para",
+    "live": "{{products}} productos y {{pages}} páginas recomendados.",
+    "note_iot_title": "IoT: no hay una integración dedicada documentada.",
+    "note_iot": "Los enfoques generales de abajo (autenticación por certificado de cliente o API key) son un punto de partida; valide las restricciones del dispositivo con el equipo.",
+    "other_title": "¿No está en la lista?",
+    "other_desc": "Describa su entorno y le indicamos la integración adecuada.",
+    "other_cta": "Enviar un correo",
+    "other_subject": "¿qué solución encaja en mi entorno?",
+    "other_body": "Mi entorno tiene:",
+    "starting_point": "Las recomendaciones son un punto de partida, no un dimensionamiento. Revise disponibilidad y limitaciones en cada página, o",
+    "compare_link": "compare las opciones lado a lado.",
     "tiles": {
       "k8s": {
         "name": "Kubernetes / OpenShift"
@@ -8173,31 +8233,6 @@
         "name": "Otra cosa"
       }
     },
-    "panel_title": "Soluciones recomendadas",
-    "pages_count_one": "{{count}} página",
-    "pages_count_other": "{{count}} páginas",
-    "live": "{{products}} productos y {{pages}} páginas recomendados.",
-    "live_empty": "Nada seleccionado.",
-    "clear": "Borrar selección",
-    "copy": "Copiar enlace",
-    "copied": "Enlace copiado",
-    "empty_title": "Empiece seleccionando lo que tiene",
-    "empty_desc": "Elija uno o más elementos. Las recomendaciones aparecen aquí, agrupadas por producto, con la página que explica cada una.",
-    "for": "Para",
-    "note_iot_title": "IoT: no hay una integración dedicada documentada.",
-    "note_iot": "Los enfoques generales de abajo (autenticación por certificado de cliente o API key) son un punto de partida; valide las restricciones del dispositivo con el equipo.",
-    "other_title": "¿No está en la lista?",
-    "other_desc": "Describa su entorno y le indicamos la integración adecuada.",
-    "other_cta": "Enviar un correo",
-    "other_subject": "¿qué solución encaja en mi entorno?",
-    "other_body": "Mi entorno tiene:",
-    "starting_point": "Las recomendaciones son un punto de partida, no un dimensionamiento. Revise disponibilidad y limitaciones en cada página, o",
-    "compare_link": "compare las opciones lado a lado.",
-    "rec_label": {
-      "swaArch": "Arquitectura de SWA",
-      "shubPc": "Secrets Hub con Privilege Cloud",
-      "shubSh": "Secrets Hub con PAM Self-Hosted"
-    },
     "reason": {
       "k8sArch": "Los pods prueban quiénes son con su identidad de Kubernetes (JWT); empiece aquí para ver las opciones.",
       "sdk": "La aplicación se autentica y obtiene los secretos ella misma, con el SDK.",
@@ -8241,6 +8276,259 @@
       "dual": "Dos cuentas se alternan para que la rotación no cause indisponibilidad.",
       "shubPc": "Mantiene los almacenes de nube sincronizados con Privilege Cloud, sin cambiar la aplicación.",
       "shubSh": "La misma sincronización con PAM Self-Hosted 11.5 o superior como origen."
+    },
+    "rec_label": {
+      "swaArch": "Arquitectura de SWA",
+      "shubPc": "Secrets Hub con Privilege Cloud",
+      "shubSh": "Secrets Hub con PAM Self-Hosted"
+    },
+    "prereq_title": "Lista de requisitos previos",
+    "prereq_lead": "Lo que debe estar listo antes de cada integración. Tomado de los requisitos y límites documentados en cada página.",
+    "prereq_show": "Mostrar lista ({{count}} elementos)",
+    "prereq_hide": "Ocultar lista",
+    "prereq_general": "General: {{product}}",
+    "prereq_see_page": "Esta página aún no lista requisitos previos: vea la página para los detalles de configuración.",
+    "print": "Imprimir / Guardar como PDF",
+    "copy_prereq": "Copiar requisitos",
+    "copied_prereq": "Requisitos copiados",
+    "download": "Descargar .txt",
+    "report_title": "Recomendación de solución y requisitos previos",
+    "report_prepared": "Preparado con demo.minha.cloud",
+    "report_date": "Fecha",
+    "report_env": "Entorno",
+    "report_solution": "Solución recomendada",
+    "report_main": "Producto principal",
+    "report_complement": "Complemento",
+    "report_notes": "Notas",
+    "report_sources": "Las recomendaciones son un punto de partida, no un dimensionamiento. Revise disponibilidad y limitaciones en cada página antes de planificar.",
+    "prereq": {
+      "general": {
+        "sm": [
+          "Un tenant de IDIRA Secrets Manager SaaS o un clúster Self-Hosted; en SaaS, los workloads quedan bajo la rama data/.",
+          "Workloads y pipelines alcanzan la API de Secrets Manager por HTTPS (TCP 443).",
+          "Un administrador que pueda cargar policy y crear o habilitar autenticadores (SaaS: Authn_Admins o Conjur_Cloud_Admins).",
+          "Secrets Manager CLI v9.x para los pasos de configuración."
+        ],
+        "swa": [
+          "Secure Workload Access está disponible solo en la región US-EAST-1.",
+          "TCP 8443 del SWA Server accesible desde cada nodo o VM que ejecuta un agente.",
+          "Permisos sobre secretos otorgados a las nuevas identidades de workload antes de que los necesiten."
+        ],
+        "cp": [
+          "PAM Self-Hosted (Digital Vault 14.0 o posterior) o Privilege Cloud.",
+          "Un usuario administrativo del Vault o de Privilege Cloud para la instalación.",
+          "El usuario del provider en cada Safe de contraseñas con List, Retrieve y View Safe Members; la aplicación necesita List y Retrieve."
+        ],
+        "shub": [
+          "Privilege Cloud, o PAM Self-Hosted 11.5 o posterior a través de un conector, como origen.",
+          "Hasta 5 conectores por tenant; host del conector en Windows Server 2016 a 2025, con 8 núcleos y 8 GB de RAM.",
+          "Solo se sincronizan secretos (sin claves, certificados ni dual accounts), en un solo sentido."
+        ]
+      },
+      "rec": {
+        "k8sArch": [
+          "SaaS: la integración con Kubernetes usa el autenticador JWT (authn-jwt); authn-k8s basado en certificado es solo de Self-Hosted.",
+          "La configuración necesita un admin de Secrets Manager y un admin del clúster Kubernetes, además de Secrets Manager CLI v9 o posterior."
+        ],
+        "sdk": [
+          "Java 8 o posterior con Spring Boot 2.x o 3.x.",
+          "Spring Cloud 2021.x o 2022.x para la configuración externa de propiedades.",
+          "Un autenticador JWT para el clúster, o autenticación por API key (un secreto cero que proteger)."
+        ],
+        "sidecar": [
+          "Secrets Provider for Kubernetes agregado como sidecar en el Pod de la aplicación.",
+          "Un autenticador JWT configurado para el clúster.",
+          "Los contenedores que leen variables de entorno solo ven el valor nuevo tras un reinicio: planifique Reloader o archivos montados."
+        ],
+        "eso": [
+          "External Secrets Operator instalado en el clúster.",
+          "Kubernetes 1.22 o posterior cuando el JWT de la service account viene de la TokenRequest API.",
+          "El JWT debe ser compatible con el autenticador JWT configurado."
+        ],
+        "csi": [
+          "Secrets Store CSI Driver instalado con Helm (un DaemonSet en cada nodo).",
+          "El audience de tokenRequests del CSIDriver definido como conjur.",
+          "Secrets Manager CLI v9.x instalado y con sesión iniciada."
+        ],
+        "spmodes": [
+          "Elija init container, sidecar, Job o standalone: solo el sidecar y el standalone se actualizan después del inicio.",
+          "Push-to-File funciona solo con el init container y el sidecar.",
+          "Fetch all: como máximo 500 secretos; mantenga el host limitado a una aplicación (mínimo privilegio)."
+        ],
+        "reloader": [
+          "Helm chart del Secrets Provider en modo application o standalone.",
+          "Workloads que referencian el Secret directamente (envFrom, secretKeyRef o volumen).",
+          "Modo application: un disparador externo, como un CronJob, para volver a ejecutar el Job."
+        ],
+        "secretless": [
+          "Secrets Manager Self-Hosted (Secretless no está documentado para SaaS).",
+          "Un Follower con el Kubernetes Authenticator en el clúster.",
+          "Un destino con conector soportado (PostgreSQL, MySQL, MSSQL, SSH, HTTP).",
+          "Secretless escuchando solo en localhost, o un socket Unix protegido por permisos del SO."
+        ],
+        "jenkins": [
+          "El plugin de secretos de Jenkins instalado por un administrador, seguido de un reinicio de Jenkins.",
+          "Jenkins 2.455 o posterior para el plugin actual.",
+          "Autenticación JWT o por API key configurada en Secrets Manager para los jobs."
+        ],
+        "gha": [
+          "Un workflow con permiso para pedir un token OIDC (permissions: id-token: write).",
+          "Secrets Manager CLI instalado y con sesión iniciada para la configuración.",
+          "Docker para Linux y un runner self-hosted de GitHub, como se lista en los requisitos del sistema."
+        ],
+        "ansible": [
+          "La colección Ansible de Secrets Manager, que incluye el lookup plugin.",
+          "Una identidad para el control node (API key o un autenticador soportado).",
+          "Archivos de Ansible con permisos mínimos."
+        ],
+        "terraform": [
+          "Terraform 0.13.0 o posterior.",
+          "Recursos ephemeral (Terraform 1.10+) o argumentos write-only (1.11+) para mantener los secretos fuera del state; proteja el state de todos modos.",
+          "api_key fuera del archivo .tf (variables de entorno o sensitive).",
+          "Modo JWT: host_id cuando el autenticador no define token-app-property e identity-path."
+        ],
+        "gitlab": [
+          "Docker, Go 1.20.2+, GitLab 15.11.2+, GitLab Runner 15.8.2+ y Secrets Manager CLI v9.x.",
+          "Imágenes de runner basadas en Alpine, Ubuntu o UBI-FIPS.",
+          "aud del ID token igual al audience del autenticador.",
+          "Permisos de admin para crear el autenticador JWT."
+        ],
+        "azdo": [
+          "Una identidad de Azure (managed identity o app registration) y una service connection de Azure Resource Manager.",
+          "secrets.yml en el repositorio que dispara el pipeline.",
+          "Service ID solo con el nombre del autenticador (azure-devops)."
+        ],
+        "bitbucket": [
+          "Un repositorio en Bitbucket Cloud y un step con oidc: true.",
+          "Nombre y anotación del workload iguales al UUID del repositorio, con las llaves.",
+          "Borre secrets.env después si no usa load_secrets.sh."
+        ],
+        "circleci": [
+          "Audience definido con el ID de la organización en CircleCI.",
+          "La anotación sub del workload igual al claim sub completo.",
+          "El certificado PEM cuando Secrets Manager usa un certificado autofirmado."
+        ],
+        "octopus": [
+          "Una cuenta Generic OIDC con audience conjur.",
+          "Nombre y anotación sub del workload iguales al claim sub.",
+          "Todos los secretos mapeados accesibles: un secreto faltante hace fallar el step."
+        ],
+        "python": [
+          "Python 3.10 o posterior.",
+          "El cliente AWS IAM instalado desde el código en GitHub (git clone y pip3 install).",
+          "Volver a llamar a create_conjur_iam_client tras cinco a ocho minutos (el token no se renueva)."
+        ],
+        "cf": [
+          "Secrets Manager Self-Hosted (no hay página para SaaS).",
+          "Ops Manager v2.7 a v3.0 y TAS v4, v5, v6 o 10.2; cf CLI más nuevo que 6.38 para múltiples buildpacks.",
+          "Una instancia de servicio por space y una rama de policy dedicada para el host del broker."
+        ],
+        "puppet": [
+          "Secrets Manager Self-Hosted (no hay página para SaaS).",
+          "Una API key de host en cada nodo, protegida y rotada.",
+          "Secretos resueltos con Deferred para quedar fuera del catálogo, PuppetDB y los reportes."
+        ],
+        "mulesoft": [
+          "Java 8 u 11 y Mule SDK 4.4.0.",
+          "Una API key guardada en secure properties y rotada.",
+          "Al menos un archivo de certificado (.pem o .der) para el Edge (SaaS) o Self-Hosted."
+        ],
+        "awsIam": [
+          "ID del workload exactamente AccountID/RoleName del recurso AWS.",
+          "El permiso STS documentado en el IAM role (SaaS).",
+          "Región de la firma SigV4 igual a la del endpoint STS (us-east-1 para el endpoint global)."
+        ],
+        "azureMi": [
+          "Un servicio soportado: Virtual Machines, App Services, Functions o Container Instances.",
+          "Anotaciones de subscription ID y resource group en cada host.",
+          "provider-uri definido y el autenticador habilitado antes de que los workloads se autentiquen."
+        ],
+        "gcpId": [
+          "Compute Engine o Cloud Functions.",
+          "Audience del identity token igual al host ID completo; en Compute Engine pida format=full.",
+          "Solo se puede configurar un autenticador GCP."
+        ],
+        "dynamic": [
+          "Un issuer creado por un admin de Secrets Manager y pertenencia a su grupo de consumers.",
+          "Una clave de IAM user o de service account de GCP de larga duración para el issuer, guardada en PAM con rotación.",
+          "Secretos dinámicos bajo data/dynamic, con un TTL entre 900 y 43.200 segundos."
+        ],
+        "apiKey": [
+          "La API key guardada y protegida como una contraseña: es un secreto cero.",
+          "Un plan de rotación manual que reemplace la clave en todos los lugares donde se usa.",
+          "El login codificado en URL en la ruta de la solicitud."
+        ],
+        "cert": [
+          "SaaS: la autenticación por certificado funciona solo hacia un Secrets Manager Edge.",
+          "Un bundle de CA en PEM con exactamente una CA raíz.",
+          "Al menos una anotación (san-uri, san-dns, san-ip o cn) y el autenticador habilitado."
+        ],
+        "summon": [
+          "Summon instalado desde su repositorio en GitHub (tiene versión propia).",
+          "Una identidad ya configurada en la máquina (login del CLI, API key de host u otro método).",
+          "Privilegio execute o update sobre cada variable listada en secrets.yml."
+        ],
+        "rotation": [
+          "SaaS: los secretos rotan solo cuando vienen del PAM.",
+          "Rotación local en Self-Hosted: solo claves de acceso AWS y PostgreSQL; habilítela de nuevo tras upgrades y failover del Leader.",
+          "Aplicaciones que vuelven a leer el secreto ante errores de autenticación, o dual accounts."
+        ],
+        "mcp": [
+          "Solo entornos de desarrollo (no soportado en producción).",
+          "Un usuario dedicado para la herramienta de IA: el agente alcanza cada secreto que ese usuario alcanza.",
+          "El .env generado con la API key del workload fuera del control de versiones."
+        ],
+        "users": [
+          "OIDC en Self-Hosted: autenticadores separados para la UI y el CLI, con el servidor y los clientes alcanzando el IdP en el puerto 443.",
+          "Un CLI que pueda abrir un navegador para OIDC (no funciona sin interfaz).",
+          "LDAP: cada usuario declarado en policy, salvo que el aprovisionamiento just-in-time esté habilitado (CLI 9.3 o posterior)."
+        ],
+        "swaArch": [
+          "Firma RSA en el trust domain cuando se intercambian secretos (el autenticador JWT acepta solo RSA).",
+          "k8s_psat necesita acceso de red del SWA Server a la API de Kubernetes; si no, use k8s_jwt.",
+          "bootstrap.bundleSourceUrl definido, o reinicio manual del agente tras una rotación de la CA del servidor."
+        ],
+        "swaS3": [
+          "Para la federación con AWS, la URL del issuer debe ser HTTPS pública y sin autenticación.",
+          "Un IAM OIDC provider y un rol que confíen en el issuer de SWA."
+        ],
+        "swaAi": [
+          "JWT-SVIDs para la federación con la Claude API (los SVIDs X.509 no se pueden intercambiar).",
+          "La URL del issuer registrada en Anthropic igual al claim iss, carácter por carácter.",
+          "Gemini Enterprise: el SWA server expuesto con un service LoadBalancer (gRPC en 8443).",
+          "El socket de la Workload API y los archivos de token protegidos."
+        ],
+        "cpAgent": [
+          "Un SO soportado (por ejemplo RHEL, Ubuntu, AIX o Windows Server 2016 a 2025).",
+          "Application Password SDKs en la misma máquina y en la misma versión del CP.",
+          "El usuario de SO de la aplicación con lectura y escritura en /tmp o en la carpeta definida en AIM_TEMP_FOLDER."
+        ],
+        "ascp": [
+          "Un Credential Provider soportado en la misma máquina (ASCP es un complemento).",
+          "JRE 1.8.x o superior en Linux, Windows o AIX; solo IPv4.",
+          "Servidor de aplicaciones, data source y base de datos presentes en la tabla de soporte."
+        ],
+        "ccp": [
+          "Windows con IIS 10 (compatibilidad con IIS 6), ASP.NET 4.x e ISAPI.",
+          "Hardening de IIS a cargo del cliente.",
+          "Detrás de un balanceador: X-Forwarded-For con TrustedProxies, o pass-through del certificado."
+        ],
+        "zos": [
+          "z/OS 2.5, 3.1 o 3.2 con IBM Java 8, SMP/E V3R6 o posterior, IBM XML Toolkit V1.11 y JZOS.",
+          "Un provider por LPAR, con su STC bajo un usuario UID 0; solo IPv4.",
+          "Relojes de z/OS y del Vault sincronizados en UTC (por ejemplo con NTP)."
+        ],
+        "shubPc": [
+          "Un tenant de Privilege Cloud como origen.",
+          "Azure Key Vault en el modelo de permisos RBAC (los vaults con Access policy no son soportados).",
+          "Nombres de secretos dentro de los límites de cada almacén (AWS hasta 512 caracteres, Azure hasta 127)."
+        ],
+        "shubSh": [
+          "PAM Self-Hosted 11.5 o posterior alcanzando Secrets Hub a través de un conector.",
+          "Host del conector en Windows Server 2016 a 2025, con 8 núcleos, 8 GB de RAM y 500 MB de disco.",
+          "Escritura sobre los secretos sincronizados restringida en el destino (la sincronización es en un sentido)."
+        ]
+      }
     }
   },
   "c_secretzero": {
