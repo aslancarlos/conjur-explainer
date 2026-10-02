@@ -3,7 +3,9 @@
   "icons": {
     "pack": "color",
     "sizes": [
-      32
+      20,
+      32,
+      48
     ],
     "color": "original (color pack)",
     "items": {
@@ -266,6 +268,226 @@
         "id": "21895",
         "commonName": "api-settings",
         "file": "public/icons/tech/app_mulesoft.png"
+      },
+      "nav_home": {
+        "id": "12229",
+        "commonName": "home",
+        "file": "public/icons/nav/home.png"
+      },
+      "nav_finder": {
+        "id": "13730",
+        "commonName": "compass",
+        "file": "public/icons/nav/finder.png"
+      },
+      "nav_g_concepts": {
+        "id": "12197",
+        "commonName": "graduation-cap",
+        "file": "public/icons/nav/g_concepts.png"
+      },
+      "nav_c_secret": {
+        "id": "12279",
+        "commonName": "key",
+        "file": "public/icons/nav/c_secret.png"
+      },
+      "nav_c_identity": {
+        "id": "16207",
+        "commonName": "fingerprint-scan",
+        "file": "public/icons/nav/c_identity.png"
+      },
+      "nav_c_secretzero": {
+        "id": "16238",
+        "commonName": "warning-shield",
+        "file": "public/icons/nav/c_secretzero.png"
+      },
+      "nav_c_compare": {
+        "id": "12928",
+        "commonName": "scales",
+        "file": "public/icons/nav/c_compare.png"
+      },
+      "nav_c_glossary": {
+        "id": "16369",
+        "commonName": "book",
+        "file": "public/icons/nav/c_glossary.png"
+      },
+      "nav_g_sm": {
+        "id": "13018",
+        "commonName": "safe",
+        "file": "public/icons/nav/g_sm.png"
+      },
+      "nav_c_saas": {
+        "id": "11871",
+        "commonName": "cloud",
+        "file": "public/icons/nav/c_saas.png"
+      },
+      "nav_c_sh": {
+        "id": "13051",
+        "commonName": "server",
+        "file": "public/icons/nav/c_sh.png"
+      },
+      "nav_sec_authn": {
+        "id": "31005",
+        "commonName": "user-credentials",
+        "file": "public/icons/nav/sec_authn.png"
+      },
+      "nav_authn_hub": {
+        "id": "26223",
+        "commonName": "login-rounded-right",
+        "file": "public/icons/nav/authn_hub.png"
+      },
+      "nav_jwt": {
+        "id": "18804",
+        "commonName": "id-verified",
+        "file": "public/icons/nav/jwt.png"
+      },
+      "nav_apikey": {
+        "id": "84474",
+        "commonName": "password1",
+        "file": "public/icons/nav/apikey.png"
+      },
+      "nav_cert": {
+        "id": "13194",
+        "commonName": "diploma",
+        "file": "public/icons/nav/cert.png"
+      },
+      "nav_users": {
+        "id": "108349",
+        "commonName": "group2",
+        "file": "public/icons/nav/users.png"
+      },
+      "nav_policy": {
+        "id": "114447",
+        "commonName": "policy-document",
+        "file": "public/icons/nav/policy.png"
+      },
+      "nav_dynamic": {
+        "id": "63256",
+        "commonName": "timer",
+        "file": "public/icons/nav/dynamic.png"
+      },
+      "nav_sm_certs": {
+        "id": "16232",
+        "commonName": "security-ssl",
+        "file": "public/icons/nav/sm_certs.png"
+      },
+      "nav_rotation": {
+        "id": "13113",
+        "commonName": "refresh",
+        "file": "public/icons/nav/rotation.png"
+      },
+      "nav_audit": {
+        "id": "107441",
+        "commonName": "assignment-turned-in",
+        "file": "public/icons/nav/audit.png"
+      },
+      "nav_summon": {
+        "id": "19292",
+        "commonName": "console",
+        "file": "public/icons/nav/summon.png"
+      },
+      "nav_g_usecases": {
+        "id": "13803",
+        "commonName": "layers",
+        "file": "public/icons/nav/g_usecases.png"
+      },
+      "nav_eso": {
+        "id": "63322",
+        "commonName": "synchronize",
+        "file": "public/icons/nav/eso.png"
+      },
+      "nav_csi": {
+        "id": "12212",
+        "commonName": "hdd",
+        "file": "public/icons/nav/csi.png"
+      },
+      "nav_spmodes": {
+        "id": "12782",
+        "commonName": "puzzle",
+        "file": "public/icons/nav/spmodes.png"
+      },
+      "nav_reloader": {
+        "id": "63693",
+        "commonName": "restart",
+        "file": "public/icons/nav/reloader.png"
+      },
+      "nav_secretless": {
+        "id": "34271",
+        "commonName": "hide",
+        "file": "public/icons/nav/secretless.png"
+      },
+      "nav_g_swa": {
+        "id": "16231",
+        "commonName": "security-checked",
+        "file": "public/icons/nav/g_swa.png"
+      },
+      "nav_swa_arch": {
+        "id": "16236",
+        "commonName": "user-shield",
+        "file": "public/icons/nav/swa_arch.png"
+      },
+      "nav_svid": {
+        "id": "39174",
+        "commonName": "badge",
+        "file": "public/icons/nav/svid.png"
+      },
+      "nav_swa_s3": {
+        "id": "106501",
+        "commonName": "amazon-s3",
+        "file": "public/icons/nav/swa_s3.png"
+      },
+      "nav_g_cp": {
+        "id": "16204",
+        "commonName": "password",
+        "file": "public/icons/nav/g_cp.png"
+      },
+      "nav_cp_hub": {
+        "id": "XnHBz2LnhELw",
+        "commonName": "dashboard-layout",
+        "file": "public/icons/nav/cp_hub.png"
+      },
+      "nav_cp_cp": {
+        "id": "16190",
+        "commonName": "key-security",
+        "file": "public/icons/nav/cp_cp.png"
+      },
+      "nav_ccp": {
+        "id": "13118",
+        "commonName": "services",
+        "file": "public/icons/nav/ccp.png"
+      },
+      "nav_dual": {
+        "id": "23282",
+        "commonName": "change-user-male",
+        "file": "public/icons/nav/dual.png"
+      },
+      "nav_g_shub": {
+        "id": "b4s5PZ0DSPmg",
+        "commonName": "cloud-sync",
+        "file": "public/icons/nav/g_shub.png"
+      },
+      "nav_shub_saas": {
+        "id": "71524",
+        "commonName": "cloud-connection",
+        "file": "public/icons/nav/shub_saas.png"
+      },
+      "nav_g_tools": {
+        "id": "13121",
+        "commonName": "support",
+        "file": "public/icons/nav/g_tools.png"
+      },
+      "nav_compare": {
+        "id": "11897",
+        "commonName": "compare",
+        "file": "public/icons/nav/compare.png"
+      },
+      "nav_livetools": {
+        "id": "11890",
+        "commonName": "combo-chart",
+        "file": "public/icons/nav/livetools.png"
+      },
+      "nav_controller": {
+        "id": "11905",
+        "commonName": "control-panel",
+        "file": "public/icons/nav/controller.png"
       }
     }
   }

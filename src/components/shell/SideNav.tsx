@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ChevronDown } from 'lucide-react'
 import { navBy, SECTIONS, type NavItem } from '../../lib/nav'
+import NavGlyph from './NavGlyph'
 
 /** Split a group's flat items into runs: plain items, or a run sharing one `section` (submenu). */
 function segments(items: NavItem[]) {
@@ -25,6 +26,14 @@ function segments(items: NavItem[]) {
  * - `collapsed` (icon rail): no headers, every item visible, labels kept for
  *   screen readers and as tooltips.
  */
+/** Product colour bar next to each group header (literal classes so Tailwind keeps them). */
+const ACCENT: Record<string, string> = {
+  'text-domain-idira': 'bg-domain-idira',
+  'text-tone-live': 'bg-tone-live',
+  'text-domain-cp': 'bg-domain-cp',
+  'text-domain-svc': 'bg-domain-svc',
+}
+
 export default function SideNav({ collapsed = false, dense = false, idPrefix = 'nav' }: {
   collapsed?: boolean; dense?: boolean; idPrefix?: string
 }) {
@@ -64,11 +73,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
         {active && (
           <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r bg-idira-blue" aria-hidden="true" />
         )}
-        {item.logo
-          ? <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-white ring-1 ring-border" aria-hidden="true">
-              <img src={item.logo} alt="" width={16} height={16} loading="lazy" decoding="async" className="h-4 w-4 object-contain" />
-            </span>
-          : <item.Icon size={18} strokeWidth={1.9} aria-hidden="true" className={`shrink-0 ${item.color ?? 'text-text-2'}`} />}
+        <NavGlyph logo={item.logo} Icon={item.Icon} className={item.color ?? 'text-text-2'} />
         <span className={collapsed ? 'sr-only' : 'text-sm leading-tight'}>{label}</span>
       </>
     )
@@ -120,7 +125,8 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
                   aria-expanded={expanded} aria-controls={listId}
                   className={`flex w-full items-center gap-2.5 rounded-lg px-3 text-left transition-colors duration-150
                     hover:bg-bg-muted/70 ${dense ? 'min-h-9' : 'min-h-11'} ${hasActive && !expanded ? 'bg-bg-muted/60' : ''}`}>
-                  {group.Icon && <group.Icon size={16} strokeWidth={2} aria-hidden="true" className={`shrink-0 ${group.color ?? 'text-domain-idira'}`} />}
+                  <span className={`h-4 w-[3px] shrink-0 rounded-full ${ACCENT[group.color ?? ''] ?? 'bg-border'}`} aria-hidden="true" />
+                  <NavGlyph logo={group.logo} Icon={group.Icon} iconSize={16} className={group.color ?? 'text-domain-idira'} />
                   <span className={`flex-1 text-sm font-semibold leading-tight ${hasActive ? 'text-text' : 'text-text-2'}`}>{label}</span>
                   {!expanded && (
                     <span className="rounded-full bg-bg-muted px-1.5 font-mono text-[11px] text-text-muted tabular-nums">
@@ -149,7 +155,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
                       className={`flex w-full items-center gap-2.5 rounded-lg px-3 text-left transition-colors duration-150
                         hover:bg-bg-muted/70
                         ${dense ? 'min-h-9' : 'min-h-11'} ${subActive && !subOpen ? 'bg-bg-muted/60' : ''}`}>
-                      <sec.Icon size={16} strokeWidth={2} aria-hidden="true" className={`shrink-0 ${group.color ?? 'text-domain-idira'}`} />
+                      <NavGlyph logo={sec.logo} Icon={sec.Icon} iconSize={16} className={group.color ?? 'text-domain-idira'} />
                       <span className={`flex-1 text-sm font-semibold leading-tight ${subActive ? 'text-text' : 'text-text-2'}`}>{t(sec.labelKey)}</span>
                       {!subOpen && (
                         <span className="rounded-full bg-bg-muted px-1.5 font-mono text-[11px] text-text-muted tabular-nums">{seg.items.length}</span>

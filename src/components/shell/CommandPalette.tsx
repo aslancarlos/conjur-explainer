@@ -6,12 +6,13 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { BookOpen, CornerDownLeft, Search } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { NAV } from '../../lib/nav'
+import NavGlyph from './NavGlyph'
 
 const TERMS = ['workload', 'host', 'authenticator', 'token', 'policy', 'variable', 'fetchers', 'dynamic', 'rotation', 'secretzero', 'spiffe', 'nhi']
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
 const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 
-interface Entry { id: string; label: string; sub?: string; group: string; to: string; external?: boolean; hash?: string; Icon: LucideIcon; color?: string }
+interface Entry { id: string; label: string; sub?: string; group: string; to: string; external?: boolean; hash?: string; Icon: LucideIcon; logo?: string; color?: string }
 
 /**
  * ⌘K / Ctrl+K command palette (sinfonia-style top-bar search): jump to any
@@ -35,7 +36,7 @@ export default function CommandPalette() {
       seen.add(it.to); return true
     }).map(({ g, it }) => ({
       id: `p-${it.to}`, label: t(it.labelKey), sub: it.subKey ? t(it.subKey) : undefined,
-      group: g.labelKey ? t(g.labelKey) : t('nav.home'), to: it.to, external: Boolean(it.href), Icon: it.Icon, color: it.color,
+      group: g.labelKey ? t(g.labelKey) : t('nav.home'), to: it.to, external: Boolean(it.href), Icon: it.Icon, logo: it.logo, color: it.color,
     }))
     const terms = TERMS.map(k => ({
       id: `t-${k}`, label: t(`glossary.terms.${k}.term`), sub: t(`glossary.terms.${k}.def`),
@@ -138,7 +139,7 @@ export default function CommandPalette() {
                   <li key={e.id} id={`cmdk-${i}`} data-idx={i} role="option" aria-selected={i === active}
                     onMouseMove={() => setActive(i)} onClick={() => go(e)}
                     className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 ${i === active ? 'bg-bg-muted' : ''}`}>
-                    <e.Icon size={17} strokeWidth={1.9} className={`shrink-0 ${e.color ?? 'text-text-2'}`} aria-hidden="true" />
+                    <NavGlyph logo={e.logo} Icon={e.Icon} iconSize={17} className={e.color ?? 'text-text-2'} />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-medium text-text">{e.label}</span>
                       {e.sub && <span className="block truncate text-xs text-text-muted">{e.sub}</span>}

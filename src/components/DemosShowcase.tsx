@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight } from 'lucide-react'
 import { demoGroups } from '../lib/nav'
+import NavGlyph from './shell/NavGlyph'
 
 // The catalogue mirrors the sidebar (lib/nav.ts): same use-case / product
 // grouping and shared toggle, same icon per concept (DESIGN.md §9).
@@ -39,7 +40,7 @@ export default function DemosShowcase() {
                   const cls = 'group flex min-h-11 items-center gap-3 rounded-lg px-2 -mx-2 transition-colors hover:bg-bg-muted'
                   const inner = (
                     <>
-                      <item.Icon size={17} strokeWidth={1.9} aria-hidden="true" className={`shrink-0 ${item.color ?? 'text-text-2'}`} />
+                      <NavGlyph logo={item.logo} Icon={item.Icon} iconSize={17} className={item.color ?? 'text-text-2'} />
                       <span className="min-w-0 flex-1">
                         <span className="block text-sm font-medium text-text leading-tight">{item.demo!.name}</span>
                         <span className="block font-mono text-xs text-text-muted">{item.demo!.secret}</span>

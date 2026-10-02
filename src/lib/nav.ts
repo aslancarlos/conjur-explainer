@@ -41,16 +41,17 @@ export interface NavItem {
 
 export type SectionKey = 'authn' | 'usecases'
 /** Sidebar submenus inside a group (the flat list still drives trails, search and catalogue). */
-export const SECTIONS: Record<SectionKey, { labelKey: string; Icon: LucideIcon }> = {
-  authn:    { labelKey: 'nav.sec_authn', Icon: Fingerprint },
-  usecases: { labelKey: 'nav.sec_usecases', Icon: Layers },
+export const SECTIONS: Record<SectionKey, { labelKey: string; Icon: LucideIcon; logo?: string }> = {
+  authn:    { labelKey: 'nav.sec_authn', Icon: Fingerprint, logo: '/icons/nav/sec_authn.png' },
+  usecases: { labelKey: 'nav.sec_usecases', Icon: Layers, logo: '/icons/nav/g_usecases.png' },
 }
 
 export interface NavGroup {
   key: string
   labelKey?: string
   descKey?: string      // one-line group description (home catalogue)
-  Icon?: LucideIcon     // sidebar group header icon
+  Icon?: LucideIcon     // sidebar group header icon (fallback)
+  logo?: string         // Icons8 Flat Color icon for the group header
   color?: string        // product colour (header + items; DESIGN.md: one hue per product)
   items: NavItem[]
 }
@@ -59,8 +60,8 @@ export const NAV: NavGroup[] = [
   {
     key: 'home',
     items: [
-      { to: '/', labelKey: 'nav.home', Icon: Home, color: 'text-domain-idira' },
-      { to: '/finder', labelKey: 'nav.finder', subKey: 'nav.finder_sub', Icon: Compass, color: 'text-domain-idira' },
+      { to: '/', labelKey: 'nav.home', logo: '/icons/nav/home.png', Icon: Home, color: 'text-domain-idira' },
+      { to: '/finder', labelKey: 'nav.finder', subKey: 'nav.finder_sub', logo: '/icons/nav/finder.png', Icon: Compass, color: 'text-domain-idira' },
     ],
   },
   {
@@ -68,42 +69,44 @@ export const NAV: NavGroup[] = [
     key: 'concepts',
     color: 'text-text-2',
     labelKey: 'nav.group_concepts',
+    logo: '/icons/nav/g_concepts.png',
     Icon: GraduationCap,
     items: [
-      { to: '/concepts/secrets',            labelKey: 'nav.c_secret',   subKey: 'nav.c_secret_sub',   Icon: KeyRound,       color: 'text-text-2' },
-      { to: '/concepts/machine-identity',   labelKey: 'nav.c_identity', subKey: 'nav.c_identity_sub', Icon: Fingerprint,    color: 'text-text-2' },
-      { to: '/concepts/secret-zero',        labelKey: 'nav.c_secretzero', subKey: 'nav.c_secretzero_sub', Icon: ShieldAlert,    color: 'text-tone-danger' },
-      { to: '/concepts/secret-vs-identity', labelKey: 'nav.c_compare',  subKey: 'nav.c_compare_sub',  Icon: ArrowLeftRight, color: 'text-text-2' },
-      { to: '/concepts/glossary',           labelKey: 'nav.c_glossary', subKey: 'nav.c_glossary_sub', Icon: BookOpen,       color: 'text-text-2' },
+      { to: '/concepts/secrets',            labelKey: 'nav.c_secret',   subKey: 'nav.c_secret_sub',   logo: '/icons/nav/c_secret.png', Icon: KeyRound,       color: 'text-text-2' },
+      { to: '/concepts/machine-identity',   labelKey: 'nav.c_identity', subKey: 'nav.c_identity_sub', logo: '/icons/nav/c_identity.png', Icon: Fingerprint,    color: 'text-text-2' },
+      { to: '/concepts/secret-zero',        labelKey: 'nav.c_secretzero', subKey: 'nav.c_secretzero_sub', logo: '/icons/nav/c_secretzero.png', Icon: ShieldAlert,    color: 'text-tone-danger' },
+      { to: '/concepts/secret-vs-identity', labelKey: 'nav.c_compare',  subKey: 'nav.c_compare_sub',  logo: '/icons/nav/c_compare.png', Icon: ArrowLeftRight, color: 'text-text-2' },
+      { to: '/concepts/glossary',           labelKey: 'nav.c_glossary', subKey: 'nav.c_glossary_sub', logo: '/icons/nav/c_glossary.png', Icon: BookOpen,       color: 'text-text-2' },
     ],
   },
   {
     key: 'secretsmanager',
     color: 'text-domain-idira',
     labelKey: 'nav.group_sm',
+    logo: '/icons/nav/g_sm.png',
     Icon: Vault,
     descKey: 'demos.group_sm',
     items: [
-      { to: '/concepts/saas-architecture',  product: 'secretsmanager', labelKey: 'nav.c_saas', subKey: 'nav.c_saas_sub', Icon: CloudCog, color: 'text-domain-idira', heading: 'nav.h_arch', shortKey: 'nav.c_saas_short' },
-      { to: '/concepts/self-hosted-architecture', product: 'secretsmanager', labelKey: 'nav.c_sh', subKey: 'nav.c_sh_sub', Icon: Network, color: 'text-domain-idira', heading: 'nav.h_arch', shortKey: 'nav.c_sh_short' },
-      { to: '/authn', product: 'secretsmanager', labelKey: 'nav.a_hub', subKey: 'nav.a_hub_sub', Icon: Fingerprint, color: 'text-domain-idira', section: 'authn' },
-      { to: '/jwt', product: 'secretsmanager', labelKey: 'nav.jwt', subKey: 'nav.jwt_sub', Icon: KeyRound, color: 'text-domain-idira', section: 'authn', heading: 'nav.h_workloads', shortKey: 'nav.a_jwt',
+      { to: '/concepts/saas-architecture',  product: 'secretsmanager', labelKey: 'nav.c_saas', subKey: 'nav.c_saas_sub', logo: '/icons/nav/c_saas.png', Icon: CloudCog, color: 'text-domain-idira', heading: 'nav.h_arch', shortKey: 'nav.c_saas_short' },
+      { to: '/concepts/self-hosted-architecture', product: 'secretsmanager', labelKey: 'nav.c_sh', subKey: 'nav.c_sh_sub', logo: '/icons/nav/c_sh.png', Icon: Network, color: 'text-domain-idira', heading: 'nav.h_arch', shortKey: 'nav.c_sh_short' },
+      { to: '/authn', product: 'secretsmanager', labelKey: 'nav.a_hub', subKey: 'nav.a_hub_sub', logo: '/icons/nav/authn_hub.png', Icon: Fingerprint, color: 'text-domain-idira', section: 'authn' },
+      { to: '/jwt', product: 'secretsmanager', labelKey: 'nav.jwt', subKey: 'nav.jwt_sub', logo: '/icons/nav/jwt.png', Icon: KeyRound, color: 'text-domain-idira', section: 'authn', heading: 'nav.h_workloads', shortKey: 'nav.a_jwt',
         demo: { name: 'authn-jwt', secret: 'identity handshake', descKey: 'demos.jwt' } },
-      { to: '/authn/api-key', product: 'secretsmanager', labelKey: 'nav.a_apikey', subKey: 'nav.a_apikey_sub', Icon: KeySquare, color: 'text-domain-idira', section: 'authn', heading: 'nav.h_workloads' },
-      { to: '/authn/certificate', product: 'secretsmanager', labelKey: 'nav.a_cert', subKey: 'nav.a_cert_sub', Icon: BadgeCheck, color: 'text-domain-idira', section: 'authn', heading: 'nav.h_workloads' },
+      { to: '/authn/api-key', product: 'secretsmanager', labelKey: 'nav.a_apikey', subKey: 'nav.a_apikey_sub', logo: '/icons/nav/apikey.png', Icon: KeySquare, color: 'text-domain-idira', section: 'authn', heading: 'nav.h_workloads' },
+      { to: '/authn/certificate', product: 'secretsmanager', labelKey: 'nav.a_cert', subKey: 'nav.a_cert_sub', logo: '/icons/nav/cert.png', Icon: BadgeCheck, color: 'text-domain-idira', section: 'authn', heading: 'nav.h_workloads' },
       { to: '/authn/aws-iam', product: 'secretsmanager', labelKey: 'nav.a_aws', subKey: 'nav.a_aws_sub', logo: '/icons/tech/aws.png', Icon: Cloud, color: 'text-domain-idira', section: 'authn', heading: 'nav.h_workloads' },
       { to: '/authn/azure', product: 'secretsmanager', labelKey: 'nav.a_azure', subKey: 'nav.a_azure_sub', logo: '/icons/tech/azure.png', Icon: Cloud, color: 'text-domain-idira', section: 'authn', heading: 'nav.h_workloads' },
       { to: '/authn/gcp', product: 'secretsmanager', labelKey: 'nav.a_gcp', subKey: 'nav.a_gcp_sub', logo: '/icons/tech/gcp.png', Icon: Cloud, color: 'text-domain-idira', section: 'authn', heading: 'nav.h_workloads' },
       { to: '/authn/kubernetes', product: 'secretsmanager', labelKey: 'nav.a_k8s', subKey: 'nav.a_k8s_sub', logo: '/icons/tech/k8s.png', Icon: ShipWheel, color: 'text-domain-idira', section: 'authn', heading: 'nav.h_workloads' },
-      { to: '/authn/users', product: 'secretsmanager', labelKey: 'nav.a_users', subKey: 'nav.a_users_sub', Icon: Users, color: 'text-domain-idira', section: 'authn', heading: 'nav.h_people' },
-      { to: '/policy', product: 'secretsmanager', labelKey: 'nav.policy', subKey: 'nav.policy_sub', Icon: ScrollText, color: 'text-domain-idira', heading: 'nav.h_policy',
+      { to: '/authn/users', product: 'secretsmanager', labelKey: 'nav.a_users', subKey: 'nav.a_users_sub', logo: '/icons/nav/users.png', Icon: Users, color: 'text-domain-idira', section: 'authn', heading: 'nav.h_people' },
+      { to: '/policy', product: 'secretsmanager', labelKey: 'nav.policy', subKey: 'nav.policy_sub', logo: '/icons/nav/policy.png', Icon: ScrollText, color: 'text-domain-idira', heading: 'nav.h_policy',
         demo: { name: 'Policy as Code', secret: 'YAML + git', descKey: 'demos.policy' } },
-      { to: '/sm/dynamic-secrets', product: 'secretsmanager', labelKey: 'nav.sm_dynamic', subKey: 'nav.sm_dynamic_sub', Icon: Timer, color: 'text-domain-idira', heading: 'nav.h_capabilities' },
-      { to: '/sm/certificates', product: 'secretsmanager', labelKey: 'nav.sm_certs', subKey: 'nav.sm_certs_sub', Icon: FileKey2, color: 'text-domain-idira', heading: 'nav.h_capabilities' },
-      { to: '/sm/rotation', product: 'secretsmanager', labelKey: 'nav.sm_rotation', subKey: 'nav.sm_rotation_sub', Icon: RotateCw, color: 'text-domain-idira', heading: 'nav.h_capabilities' },
-      { to: '/sm/audit', product: 'secretsmanager', labelKey: 'nav.sm_audit', subKey: 'nav.sm_audit_sub', Icon: ClipboardList, color: 'text-domain-idira', heading: 'nav.h_capabilities' },
-      { to: '/sm/summon', product: 'secretsmanager', labelKey: 'nav.sm_summon', subKey: 'nav.sm_summon_sub', Icon: Terminal, color: 'text-domain-idira', heading: 'nav.h_capabilities' },
-      { to: '/ai/mcp-server', product: 'secretsmanager', labelKey: 'nav.ai_mcp', subKey: 'nav.ai_mcp_sub', Icon: Bot, color: 'text-domain-idira', heading: 'nav.h_ai' },
+      { to: '/sm/dynamic-secrets', product: 'secretsmanager', labelKey: 'nav.sm_dynamic', subKey: 'nav.sm_dynamic_sub', logo: '/icons/nav/dynamic.png', Icon: Timer, color: 'text-domain-idira', heading: 'nav.h_capabilities' },
+      { to: '/sm/certificates', product: 'secretsmanager', labelKey: 'nav.sm_certs', subKey: 'nav.sm_certs_sub', logo: '/icons/nav/sm_certs.png', Icon: FileKey2, color: 'text-domain-idira', heading: 'nav.h_capabilities' },
+      { to: '/sm/rotation', product: 'secretsmanager', labelKey: 'nav.sm_rotation', subKey: 'nav.sm_rotation_sub', logo: '/icons/nav/rotation.png', Icon: RotateCw, color: 'text-domain-idira', heading: 'nav.h_capabilities' },
+      { to: '/sm/audit', product: 'secretsmanager', labelKey: 'nav.sm_audit', subKey: 'nav.sm_audit_sub', logo: '/icons/nav/audit.png', Icon: ClipboardList, color: 'text-domain-idira', heading: 'nav.h_capabilities' },
+      { to: '/sm/summon', product: 'secretsmanager', labelKey: 'nav.sm_summon', subKey: 'nav.sm_summon_sub', logo: '/icons/nav/summon.png', Icon: Terminal, color: 'text-domain-idira', heading: 'nav.h_capabilities' },
+      { to: '/ai/mcp-server', product: 'secretsmanager', labelKey: 'nav.ai_mcp', subKey: 'nav.ai_mcp_sub', logo: '/icons/tech/ai_mcp.png', Icon: Bot, color: 'text-domain-idira', heading: 'nav.h_ai' },
     ],
   },
   {
@@ -111,6 +114,7 @@ export const NAV: NavGroup[] = [
     key: 'usecases',
     color: 'text-domain-idira',
     labelKey: 'nav.sec_usecases',
+    logo: '/icons/nav/g_usecases.png',
     Icon: Layers,
     items: [
       { to: '/concepts/kubernetes', product: 'secretsmanager', labelKey: 'nav.c_k8s', subKey: 'nav.c_k8s_sub', logo: '/icons/tech/k8s.png', Icon: Container, color: 'text-domain-idira', heading: 'nav.h_k8s', shortKey: 'nav.c_k8s_short' },
@@ -118,13 +122,13 @@ export const NAV: NavGroup[] = [
         demo: { name: 'SDK', secret: 'direct JWT', descKey: 'demos.spring' } },
       { to: '/dotnet', product: 'secretsmanager', labelKey: 'nav.dotnet', subKey: 'nav.dotnet_sub', logo: '/icons/tech/app_dotnet.png', Icon: Hexagon, color: 'text-domain-cp', heading: 'nav.h_k8s',
         demo: { name: 'Sidecar', secret: 'Secrets Provider', descKey: 'demos.dotnet' } },
-      { to: '/eso-shop', product: 'secretsmanager', labelKey: 'nav.esoshop', subKey: 'nav.esoshop_sub', Icon: ShoppingCart, color: 'text-eso', heading: 'nav.h_k8s',
+      { to: '/eso-shop', product: 'secretsmanager', labelKey: 'nav.esoshop', subKey: 'nav.esoshop_sub', logo: '/icons/nav/eso.png', Icon: ShoppingCart, color: 'text-eso', heading: 'nav.h_k8s',
         demo: { name: 'External Secrets Operator', secret: 'Kubernetes Secret', descKey: 'demos.eso' } },
-      { to: '/csi', product: 'secretsmanager', labelKey: 'nav.csidriver', subKey: 'nav.csidriver_sub', Icon: ShipWheel, color: 'text-csi', heading: 'nav.h_k8s',
+      { to: '/csi', product: 'secretsmanager', labelKey: 'nav.csidriver', subKey: 'nav.csidriver_sub', logo: '/icons/nav/csi.png', Icon: ShipWheel, color: 'text-csi', heading: 'nav.h_k8s',
         demo: { name: 'CSI Driver', secret: 'tmpfs volume', descKey: 'demos.csi' } },
-      { to: '/k8s/secrets-provider-modes', product: 'secretsmanager', labelKey: 'nav.k8s_spmodes', subKey: 'nav.k8s_spmodes_sub', Icon: Columns3, color: 'text-domain-idira', heading: 'nav.h_k8s' },
-      { to: '/k8s/reloader', product: 'secretsmanager', labelKey: 'nav.k8s_reloader', subKey: 'nav.k8s_reloader_sub', Icon: RefreshCcw, color: 'text-domain-idira', heading: 'nav.h_k8s' },
-      { to: '/k8s/secretless', product: 'secretsmanager', labelKey: 'nav.k8s_secretless', subKey: 'nav.k8s_secretless_sub', Icon: EyeOff, color: 'text-domain-idira', heading: 'nav.h_k8s' },
+      { to: '/k8s/secrets-provider-modes', product: 'secretsmanager', labelKey: 'nav.k8s_spmodes', subKey: 'nav.k8s_spmodes_sub', logo: '/icons/nav/spmodes.png', Icon: Columns3, color: 'text-domain-idira', heading: 'nav.h_k8s' },
+      { to: '/k8s/reloader', product: 'secretsmanager', labelKey: 'nav.k8s_reloader', subKey: 'nav.k8s_reloader_sub', logo: '/icons/nav/reloader.png', Icon: RefreshCcw, color: 'text-domain-idira', heading: 'nav.h_k8s' },
+      { to: '/k8s/secretless', product: 'secretsmanager', labelKey: 'nav.k8s_secretless', subKey: 'nav.k8s_secretless_sub', logo: '/icons/nav/secretless.png', Icon: EyeOff, color: 'text-domain-idira', heading: 'nav.h_k8s' },
       { to: '/github-actions', product: 'secretsmanager', labelKey: 'nav.gha', subKey: 'nav.gha_sub', logo: '/icons/tech/ci_gha.png', Icon: Github, color: 'text-gh', heading: 'nav.h_cicd',
         demo: { name: 'GitHub Actions', secret: 'OIDC', descKey: 'demos.gha' } },
       { to: '/jenkins', product: 'secretsmanager', labelKey: 'nav.jenkins', subKey: 'nav.jenkins_sub', logo: '/icons/tech/ci_jenkins.png', Icon: Server, color: 'text-spring', heading: 'nav.h_cicd',
@@ -139,21 +143,22 @@ export const NAV: NavGroup[] = [
       { to: '/cicd/octopus', product: 'secretsmanager', labelKey: 'nav.ci_octopus', subKey: 'nav.ci_octopus_sub', logo: '/icons/tech/ci_octopus.png', Icon: Rocket, color: 'text-domain-idira', heading: 'nav.h_cicd' },
       { to: '/platforms/python-aws', product: 'secretsmanager', labelKey: 'nav.pf_python', subKey: 'nav.pf_python_sub', logo: '/icons/tech/app_python.png', Icon: Code, color: 'text-domain-idira', heading: 'nav.h_platforms' },
       { to: '/platforms/cloud-foundry', product: 'secretsmanager', labelKey: 'nav.pf_cf', subKey: 'nav.pf_cf_sub', logo: '/icons/tech/op_cf.png', Icon: CloudUpload, color: 'text-domain-idira', heading: 'nav.h_platforms' },
-      { to: '/platforms/puppet', product: 'secretsmanager', labelKey: 'nav.pf_puppet', subKey: 'nav.pf_puppet_sub', Icon: Cog, color: 'text-domain-idira', heading: 'nav.h_platforms' },
-      { to: '/platforms/mulesoft', product: 'secretsmanager', labelKey: 'nav.pf_mulesoft', subKey: 'nav.pf_mulesoft_sub', Icon: Workflow, color: 'text-domain-idira', heading: 'nav.h_platforms' },
+      { to: '/platforms/puppet', product: 'secretsmanager', labelKey: 'nav.pf_puppet', subKey: 'nav.pf_puppet_sub', logo: '/icons/tech/ci_puppet.png', Icon: Cog, color: 'text-domain-idira', heading: 'nav.h_platforms' },
+      { to: '/platforms/mulesoft', product: 'secretsmanager', labelKey: 'nav.pf_mulesoft', subKey: 'nav.pf_mulesoft_sub', logo: '/icons/tech/app_mulesoft.png', Icon: Workflow, color: 'text-domain-idira', heading: 'nav.h_platforms' },
     ],
   },
   {
     key: 'swa',
     color: 'text-tone-live',
     labelKey: 'nav.group_swa',
+    logo: '/icons/nav/g_swa.png',
     Icon: ShieldCheck,
     descKey: 'demos.group_swa',
     items: [
-      { to: '/concepts/swa-architecture', product: 'swa', labelKey: 'nav.c_swa', subKey: 'nav.c_swa_sub', Icon: ShieldCheck, color: 'text-tone-live' },
-      { to: '/svid', product: 'swa', href: '/svid', labelKey: 'nav.svid', subKey: 'nav.svid_sub', Icon: FileBadge, color: 'text-tone-live',
+      { to: '/concepts/swa-architecture', product: 'swa', labelKey: 'nav.c_swa', subKey: 'nav.c_swa_sub', logo: '/icons/nav/swa_arch.png', Icon: ShieldCheck, color: 'text-tone-live' },
+      { to: '/svid', product: 'swa', href: '/svid', labelKey: 'nav.svid', subKey: 'nav.svid_sub', logo: '/icons/nav/svid.png', Icon: FileBadge, color: 'text-tone-live',
         demo: { name: 'SVID Explorer', secret: 'X.509-SVID + JWT-SVID', descKey: 'demos.svid' } },
-      { to: '/swa-s3', product: 'swa', href: '/swa-s3', labelKey: 'nav.swa', subKey: 'nav.swa_sub', Icon: Database, color: 'text-tone-live',
+      { to: '/swa-s3', product: 'swa', href: '/swa-s3', labelKey: 'nav.swa', subKey: 'nav.swa_sub', logo: '/icons/nav/swa_s3.png', Icon: Database, color: 'text-tone-live',
         demo: { name: 'SWA → AWS S3', secret: 'SPIFFE/SVID → STS', descKey: 'demos.swa' } },
       { to: '/ai/swa-agents', product: 'swa', labelKey: 'nav.ai_swa', subKey: 'nav.ai_swa_sub', logo: '/icons/tech/ai_agents.png', Icon: Bot, color: 'text-tone-live' },
     ],
@@ -163,14 +168,15 @@ export const NAV: NavGroup[] = [
     color: 'text-domain-cp',
     labelKey: 'nav.group_cp',
     descKey: 'demos.group_cp',
+    logo: '/icons/nav/g_cp.png',
     Icon: AppWindow,
     items: [
-      { to: '/cp', product: 'pam', labelKey: 'nav.cp_hub', subKey: 'nav.cp_hub_sub', Icon: LayoutGrid, color: 'text-domain-cp' },
-      { to: '/cp/credential-provider', product: 'pam', labelKey: 'nav.cp_cp', subKey: 'nav.cp_cp_sub', Icon: HardDrive, color: 'text-domain-cp' },
-      { to: '/cp/ascp', product: 'pam', labelKey: 'nav.cp_ascp', subKey: 'nav.cp_ascp_sub', Icon: Database, color: 'text-domain-cp' },
-      { to: '/cp/ccp', product: 'pam', labelKey: 'nav.cp_ccp', subKey: 'nav.cp_ccp_sub', Icon: Globe, color: 'text-domain-cp' },
+      { to: '/cp', product: 'pam', labelKey: 'nav.cp_hub', subKey: 'nav.cp_hub_sub', logo: '/icons/nav/cp_hub.png', Icon: LayoutGrid, color: 'text-domain-cp' },
+      { to: '/cp/credential-provider', product: 'pam', labelKey: 'nav.cp_cp', subKey: 'nav.cp_cp_sub', logo: '/icons/nav/cp_cp.png', Icon: HardDrive, color: 'text-domain-cp' },
+      { to: '/cp/ascp', product: 'pam', labelKey: 'nav.cp_ascp', subKey: 'nav.cp_ascp_sub', logo: '/icons/tech/op_appservers.png', Icon: Database, color: 'text-domain-cp' },
+      { to: '/cp/ccp', product: 'pam', labelKey: 'nav.cp_ccp', subKey: 'nav.cp_ccp_sub', logo: '/icons/nav/ccp.png', Icon: Globe, color: 'text-domain-cp' },
       { to: '/cp/zos', product: 'pam', labelKey: 'nav.cp_zos', subKey: 'nav.cp_zos_sub', logo: '/icons/tech/mf_zos.png', Icon: Cpu, color: 'text-domain-cp' },
-      { to: '/dualaccounts', product: 'pam', labelKey: 'nav.dualaccounts', subKey: 'nav.dualaccounts_sub', Icon: RefreshCw, color: 'text-domain-cp',
+      { to: '/dualaccounts', product: 'pam', labelKey: 'nav.dualaccounts', subKey: 'nav.dualaccounts_sub', logo: '/icons/nav/dual.png', Icon: RefreshCw, color: 'text-domain-cp',
         demo: { name: 'Dual Accounts', secret: 'zero-downtime rotation', descKey: 'demos.dual' } },
     ],
   },
@@ -179,22 +185,24 @@ export const NAV: NavGroup[] = [
     color: 'text-domain-svc',
     labelKey: 'nav.group_shub',
     descKey: 'demos.group_shub',
+    logo: '/icons/nav/g_shub.png',
     Icon: Combine,
     items: [
-      { to: '/secretshub', product: 'secretshub', labelKey: 'nav.shub_saas', subKey: 'nav.shub_saas_sub', Icon: Cloud, color: 'text-domain-svc',
+      { to: '/secretshub', product: 'secretshub', labelKey: 'nav.shub_saas', subKey: 'nav.shub_saas_sub', logo: '/icons/nav/shub_saas.png', Icon: Cloud, color: 'text-domain-svc',
         demo: { name: 'Secrets Hub', secret: 'PAM → cloud sync', descKey: 'demos.secretshub' } },
-      { to: '/secretshub?env=pamsh', product: 'secretshub', labelKey: 'nav.shub_pamsh', subKey: 'nav.shub_pamsh_sub', Icon: Server, color: 'text-domain-svc' },
+      { to: '/secretshub?env=pamsh', product: 'secretshub', labelKey: 'nav.shub_pamsh', subKey: 'nav.shub_pamsh_sub', logo: '/icons/tech/onprem.png', Icon: Server, color: 'text-domain-svc' },
     ],
   },
   {
     key: 'tools',
     color: 'text-text-2',
     labelKey: 'nav.tools',
+    logo: '/icons/nav/g_tools.png',
     Icon: Wrench,
     items: [
-      { to: '/compare',       labelKey: 'nav.compare',      subKey: 'nav.compare_sub',      Icon: GitCompareArrows, color: 'text-text-2' },
-      { to: '/tools',         labelKey: 'nav.livetools',    subKey: 'nav.livetools_sub',    Icon: Wrench,           color: 'text-text-2' },
-      { to: '/controller', href: '/controller', labelKey: 'nav.controller', subKey: 'nav.controller_sub', Icon: LayoutDashboard, color: 'text-text-2' },
+      { to: '/compare',       labelKey: 'nav.compare',      subKey: 'nav.compare_sub',      logo: '/icons/nav/compare.png', Icon: GitCompareArrows, color: 'text-text-2' },
+      { to: '/tools',         labelKey: 'nav.livetools',    subKey: 'nav.livetools_sub',    logo: '/icons/nav/livetools.png', Icon: Wrench,           color: 'text-text-2' },
+      { to: '/controller', href: '/controller', labelKey: 'nav.controller', subKey: 'nav.controller_sub', logo: '/icons/nav/controller.png', Icon: LayoutDashboard, color: 'text-text-2' },
     ],
   },
 ]
