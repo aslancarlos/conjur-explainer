@@ -1,7 +1,7 @@
 import {
   Home, BookOpen, ArrowLeftRight, Container, Fingerprint, FileBadge, RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
   Leaf, Hexagon, Github, ShoppingCart, Database,
-  Workflow, GitCompareArrows, Wrench, LayoutDashboard,
+  Workflow, GitCompareArrows, Wrench, LayoutDashboard, CloudCog, Network,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -55,6 +55,8 @@ export const NAV: NavGroup[] = [
       { to: '/concepts/machine-identity',   labelKey: 'nav.c_identity', subKey: 'nav.c_identity_sub', Icon: Fingerprint,    color: 'text-domain-idira' },
       { to: '/concepts/secret-vs-identity', labelKey: 'nav.c_compare',  subKey: 'nav.c_compare_sub',  Icon: ArrowLeftRight, color: 'text-domain-idira' },
       { to: '/concepts/kubernetes',         labelKey: 'nav.c_k8s',      subKey: 'nav.c_k8s_sub',      Icon: Container,      color: 'text-domain-idira' },
+      { to: '/concepts/saas-architecture',  labelKey: 'nav.c_saas',     subKey: 'nav.c_saas_sub',     Icon: CloudCog,       color: 'text-domain-idira' },
+      { to: '/concepts/self-hosted-architecture', labelKey: 'nav.c_sh', subKey: 'nav.c_sh_sub',       Icon: Network,        color: 'text-domain-idira' },
       { to: '/concepts/glossary',           labelKey: 'nav.c_glossary', subKey: 'nav.c_glossary_sub', Icon: BookOpen,       color: 'text-domain-idira' },
     ],
   },

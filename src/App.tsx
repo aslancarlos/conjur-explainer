@@ -17,6 +17,8 @@ const IntegrationFlow = lazy(() => import('./components/IntegrationFlow'))
 const ComparisonTable = lazy(() => import('./components/ComparisonTable'))
 const LiveToolsSection = lazy(() => import('./components/LiveToolsSection'))
 const DualAccountsPage = lazy(() => import('./pages/DualAccountsPage'))
+const SaasArchitecturePage = lazy(() => import('./pages/concepts/SaasArchitecturePage'))
+const SelfHostedArchitecturePage = lazy(() => import('./pages/concepts/SelfHostedArchitecturePage'))
 const JwtPage = lazy(() => import('./pages/JwtPage'))
 const SecretsHubPage = lazy(() => import('./pages/SecretsHubPage'))
 const JenkinsPage = lazy(() => import('./pages/JenkinsPage'))
@@ -77,6 +79,8 @@ export default function App() {
           <Route path="/concepts/machine-identity"   element={<IdentityConcept />} />
           <Route path="/concepts/secret-vs-identity" element={<CompareConcept />} />
           <Route path="/concepts/kubernetes"         element={<KubernetesConcept />} />
+          <Route path="/concepts/saas-architecture"  element={<SaasArchitecturePage />} />
+          <Route path="/concepts/self-hosted-architecture" element={<SelfHostedArchitecturePage />} />
           <Route path="/concepts/glossary"           element={<GlossaryConcept />} />
         </Route>
       </Routes>
