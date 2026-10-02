@@ -42,6 +42,9 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
   useEffect(() => {
     const g = groups.find(gr => gr.items.some(i => i.to === pathname))
     if (g && open[g.key] === false) setOpen(o => ({ ...o, [g.key]: true }))
+    // ...and so does navigating into a hidden submenu (it can still be collapsed by hand)
+    const sec = g?.items.find(i => i.to === pathname)?.section
+    if (sec && open[`sec-${sec}`] === false) setOpen(o => ({ ...o, [`sec-${sec}`]: true }))
   }, [pathname]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -114,7 +117,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
                 const sec = SECTIONS[seg.section]
                 const key = `sec-${seg.section}`
                 const subActive = seg.items.some(i => i.to === pathname)
-                const subOpen = subActive || open[key] !== false
+                const subOpen = open[key] !== false
                 const subId = `${idPrefix}-${key}`
                 return (
                   <li key={key}>
