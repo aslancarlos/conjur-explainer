@@ -8174,9 +8174,6 @@
       }
     },
     "panel_title": "Soluciones recomendadas",
-    "selected_count_zero": "Ninguno seleccionado",
-    "selected_count_one": "{{count}} seleccionado",
-    "selected_count_other": "{{count}} seleccionados",
     "pages_count_one": "{{count}} página",
     "pages_count_other": "{{count}} páginas",
     "live": "{{products}} productos y {{pages}} páginas recomendados.",

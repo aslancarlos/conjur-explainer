@@ -181,28 +181,30 @@ export default function SolutionFinderPage() {
       <div className="mx-auto max-w-6xl space-y-10">
         <PageHeader badge={f('badge')} title={f('title')} subtitle={f('subtitle')} />
 
-        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
           {/* Tile picker */}
           <div className="space-y-8">
             {GROUPS.map(g => (
               <fieldset key={g.key} className="space-y-3">
                 <legend className="text-xs font-semibold uppercase tracking-wider text-text-muted">{f(`groups.${g.key}`)}</legend>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(196px,1fr))] gap-2.5">
                   {g.tiles.map(tile => {
                     const on = isOn(tile.id)
                     return (
                       <button key={tile.id} type="button" aria-pressed={on} onClick={() => toggle(tile.id)}
-                        className={`relative flex min-h-[104px] flex-col items-center justify-center gap-2 rounded-2xl border px-3 py-4 text-center transition-colors duration-200
+                        className={`relative flex min-h-[60px] items-center gap-3 rounded-xl border py-2.5 pl-3 pr-8 text-left transition-colors duration-200
                           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base
                           ${on ? 'border-idira-blue bg-idira-blue/10 shadow-sm' : 'border-border bg-bg-card hover:border-idira-blue/60 hover:bg-bg-muted'}`}>
                         {on && (
-                          <span className="absolute right-2 top-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-idira-blue text-white" aria-hidden="true">
+                          <span className="absolute right-2.5 top-1/2 inline-flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full bg-idira-blue text-white" aria-hidden="true">
                             <Check size={13} strokeWidth={3} />
                           </span>
                         )}
-                        <tile.Icon size={24} aria-hidden="true" className={on ? 'text-domain-idira' : 'text-text-2'} />
-                        <span className="text-sm font-semibold leading-tight text-text">{tileName(tile.id)}</span>
-                        {tile.sub && <span className="text-[11px] leading-snug text-text-muted">{f(`tiles.${tile.id}.sub`)}</span>}
+                        <tile.Icon size={20} aria-hidden="true" className={`shrink-0 ${on ? 'text-domain-idira' : 'text-text-2'}`} />
+                        <span className="min-w-0">
+                          <span className="block text-sm font-semibold leading-tight text-text">{tileName(tile.id)}</span>
+                          {tile.sub && <span className="mt-0.5 block text-[11px] leading-snug text-text-muted">{f(`tiles.${tile.id}.sub`)}</span>}
+                        </span>
                       </button>
                     )
                   })}
@@ -215,19 +217,14 @@ export default function SolutionFinderPage() {
           <aside aria-labelledby="finder-panel-title"
             className="rounded-2xl border border-border bg-bg-card lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto">
             <div className="sticky top-0 z-10 space-y-3 border-b border-border bg-bg-card p-5">
-              <div className="flex items-center justify-between gap-3">
-                <h2 id="finder-panel-title" className="text-base font-semibold text-text">{f('panel_title')}</h2>
-                <span className="shrink-0 whitespace-nowrap rounded-full bg-bg-muted px-2 py-0.5 font-mono text-xs text-text-muted tabular-nums">
-                  {f('selected_count', { count: selected.length })}
-                </span>
-              </div>
+              <h2 id="finder-panel-title" className="text-base font-semibold text-text">{f('panel_title')}</h2>
               <p className="sr-only" aria-live="polite">
                 {selected.length ? f('live', { products: ranked.length, pages: recCount }) : f('live_empty')}
               </p>
               <div className="flex flex-wrap gap-2">
                 <button type="button" onClick={() => write([])} disabled={!selected.length}
                   className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-medium text-text-2 transition-colors hover:border-idira-blue hover:text-text disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">
-                  <Eraser size={14} aria-hidden="true" />{f('clear')}
+                  <Eraser size={14} aria-hidden="true" />{f('clear')}{selected.length > 0 && <span className="font-mono tabular-nums text-text-muted">({selected.length})</span>}
                 </button>
                 <button type="button" onClick={copyLink} disabled={!selected.length}
                   className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-medium text-text-2 transition-colors hover:border-idira-blue hover:text-text disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">
@@ -235,6 +232,23 @@ export default function SolutionFinderPage() {
                   {copied ? f('copied') : f('copy')}
                 </button>
               </div>
+              {ranked.length > 0 && (
+                <nav aria-label={f('panel_title')} className="flex flex-wrap gap-1.5 pt-1">
+                  {ranked.map(p => {
+                    const g = GROUP(p.navKey)
+                    const Icon = g?.Icon ?? Compass
+                    return (
+                      <a key={p.key} href={`#rec-${p.key}`}
+                        onClick={e => { e.preventDefault(); document.getElementById(`rec-${p.key}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }) }}
+                        className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-border bg-bg-base px-2.5 text-xs font-medium text-text transition-colors hover:border-idira-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">
+                        <Icon size={14} aria-hidden="true" className={g?.color ?? 'text-domain-idira'} />
+                        {p.key === 'swa' ? 'SWA' : t(g?.labelKey ?? '')}
+                        <span className="rounded-full bg-bg-muted px-1.5 font-mono text-[11px] tabular-nums text-text-2">{p.recs.length}</span>
+                      </a>
+                    )
+                  })}
+                </nav>
+              )}
             </div>
 
             <div className="space-y-5 p-5">
@@ -257,7 +271,7 @@ export default function SolutionFinderPage() {
                 const g = GROUP(p.navKey)
                 const Icon = g?.Icon ?? Compass
                 return (
-                  <section key={p.key} aria-label={t(g?.labelKey ?? '')} className="space-y-2.5">
+                  <section key={p.key} id={`rec-${p.key}`} aria-label={t(g?.labelKey ?? '')} className="scroll-mt-44 space-y-2.5">
                     <div className="flex items-center justify-between gap-2">
                       <h3 className="inline-flex items-center gap-2 text-sm font-semibold text-text">
                         <Icon size={18} aria-hidden="true" className={g?.color ?? 'text-domain-idira'} />
