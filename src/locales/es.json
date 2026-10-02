@@ -2,14 +2,14 @@
   "nav": {
     "home": "Inicio",
     "tools": "Herramientas",
-    "springboot": "Spring Boot",
-    "springboot_sub": "Autenticación JWT Directa",
-    "dotnet": ".NET 8",
-    "dotnet_sub": "Sidecar Secrets Provider",
+    "springboot": "SDK",
+    "springboot_sub": "La app se autentica y obtiene los secretos por sí misma",
+    "dotnet": "Sidecar",
+    "dotnet_sub": "Secrets Provider inyecta, cero código de bóveda en la app",
     "gha": "GitHub Actions",
     "gha_sub": "OIDC / Cero credenciales almacenadas",
-    "esoshop": "ESO Shop",
-    "esoshop_sub": "External Secrets Operator",
+    "esoshop": "External Secrets Operator",
+    "esoshop_sub": "Sincroniza secretos en Kubernetes Secrets",
     "flow": "Flujo de Integración",
     "flow_sub": "Diagrama de autenticación paso a paso",
     "compare": "Comparar Patrones",
@@ -232,7 +232,7 @@
   },
   "springboot": {
     "badge": "Patrón 1",
-    "title": "Spring Boot",
+    "title": "SDK",
     "titleAccent": "Autenticación JWT Directa",
     "label": "authn-jwt / Java SDK",
     "desc": "La app Spring Boot se integra directamente con la API REST de Secrets Manager. Lee el JWT de Kubernetes, se autentica con Secrets Manager y obtiene los secretos al inicio: con caché en memoria de 5 minutos.",
@@ -283,11 +283,12 @@
         "desc": "JwtNotFoundException, AuthException, SecretFetchException con códigos HTTP"
       }
     ],
-    "cta": "Abrir Dashboard →"
+    "cta": "Abrir Dashboard →",
+    "example": "App de ejemplo: Spring Boot (Java)"
   },
   "dotnet": {
     "badge": "Patrón 2",
-    "title": ".NET",
+    "title": "Sidecar",
     "titleAccent": "Secrets Provider para Kubernetes",
     "label": "Sidecar K8s / Cero código",
     "desc": "La app .NET no tiene ningún código Secrets Manager. Un sidecar Palo Alto Networks | IDIRA Secrets Provider gestiona la autenticación e inyecta las credenciales como Kubernetes Secrets: que la app lee como variables de entorno estándar.",
@@ -335,7 +336,8 @@
         "desc": "Funciona con Java, Go, Python, Ruby: sin cambios de SDK"
       }
     ],
-    "cta": "Abrir App .NET →"
+    "cta": "Abrir App .NET →",
+    "example": "App de ejemplo: .NET 8"
   },
   "gha": {
     "badge": "Patrón 3",
@@ -447,12 +449,13 @@
       "err_rate_limited": "Disparaste una ejecución recientemente: espera ~{{wait}} antes de disparar otra.",
       "err_global_cap": "Cuota diaria de este demo alcanzada. Intenta mañana o abre el repositorio en GitHub.",
       "err_generic": "No se pudo iniciar la ejecución: {{msg}}"
-    }
+    },
+    "example": "Ejemplo: workflow de GitHub Actions"
   },
   "esoshop": {
     "badge": "Patrón 4",
-    "title": "ESO Shop",
-    "titleAccent": "External Secrets Operator",
+    "title": "External Secrets Operator",
+    "titleAccent": "Secretos sincronizados en Kubernetes",
     "label": "ESO / nativo K8s / Cero código en la app",
     "desc": "Una app Node.js de e-commerce en vivo que usa el External Secrets Operator para sincronizar credenciales de Palo Alto Networks | IDIRA Secrets Manager en un Kubernetes Secret: con un operador Python que monitorea cambios en el secret y dispara rolling restarts con cero downtime automáticamente.",
     "steps": [
@@ -524,7 +527,8 @@
         "title": "Rolling Restart",
         "desc": "Parchea la anotación eso-operator/restartedAt del deployment. Kubernetes rota los pods uno a uno con maxUnavailable: 0."
       }
-    ]
+    ],
+    "example": "App de ejemplo: ESO Shop (Node.js)"
   },
   "compare": {
     "badge": "Comparación",
