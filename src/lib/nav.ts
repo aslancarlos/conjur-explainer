@@ -1,7 +1,7 @@
 import {
   Home, BookOpen, ArrowLeftRight, Container, Fingerprint, FileBadge, RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
   Leaf, Hexagon, Github, ShoppingCart, Database,
-  Workflow, GitCompareArrows, Wrench, LayoutDashboard, CloudCog, Network, ShieldCheck, Layers,
+  Workflow, GitCompareArrows, Wrench, LayoutDashboard, CloudCog, Network, ShieldCheck, Layers, GraduationCap, Vault,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -47,6 +47,7 @@ export interface NavGroup {
   key: string
   labelKey?: string
   descKey?: string      // one-line group description (home catalogue)
+  Icon?: LucideIcon     // sidebar group header icon
   items: NavItem[]
 }
 
@@ -59,6 +60,7 @@ export const NAV: NavGroup[] = [
     // Learning trail (ConceptLayout follows this order for prev / next).
     key: 'concepts',
     labelKey: 'nav.group_concepts',
+    Icon: GraduationCap,
     items: [
       { to: '/concepts/secrets',            labelKey: 'nav.c_secret',   subKey: 'nav.c_secret_sub',   Icon: KeyRound,       color: 'text-domain-idira' },
       { to: '/concepts/machine-identity',   labelKey: 'nav.c_identity', subKey: 'nav.c_identity_sub', Icon: Fingerprint,    color: 'text-domain-idira' },
@@ -69,6 +71,7 @@ export const NAV: NavGroup[] = [
   {
     key: 'secretsmanager',
     labelKey: 'nav.group_sm',
+    Icon: Vault,
     descKey: 'demos.group_sm',
     items: [
       { to: '/concepts/saas-architecture',  product: 'secretsmanager', labelKey: 'nav.c_saas', subKey: 'nav.c_saas_sub', Icon: CloudCog, color: 'text-domain-idira', heading: 'nav.h_arch', shortKey: 'nav.c_saas_short' },
@@ -97,6 +100,7 @@ export const NAV: NavGroup[] = [
   {
     key: 'swa',
     labelKey: 'nav.group_swa',
+    Icon: ShieldCheck,
     descKey: 'demos.group_swa',
     items: [
       { to: '/concepts/swa-architecture', product: 'swa', labelKey: 'nav.c_swa', subKey: 'nav.c_swa_sub', Icon: ShieldCheck, color: 'text-domain-idira' },
@@ -109,6 +113,7 @@ export const NAV: NavGroup[] = [
   {
     key: 'lifecycle',
     labelKey: 'nav.group_lifecycle',
+    Icon: RefreshCw,
     descKey: 'demos.group_lifecycle',
     items: [
       { to: '/dualaccounts', product: 'pam', labelKey: 'nav.dualaccounts', subKey: 'nav.dualaccounts_sub', Icon: RefreshCw, color: 'text-domain-idira',
@@ -120,6 +125,7 @@ export const NAV: NavGroup[] = [
   {
     key: 'tools',
     labelKey: 'nav.tools',
+    Icon: Wrench,
     items: [
       { to: '/flow',          labelKey: 'nav.flow',         subKey: 'nav.flow_sub',         Icon: Workflow,         color: 'text-text-2' },
       { to: '/compare',       labelKey: 'nav.compare',      subKey: 'nav.compare_sub',      Icon: GitCompareArrows, color: 'text-text-2' },

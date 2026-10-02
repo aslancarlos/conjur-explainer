@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ChevronDown, ChevronRight } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import { navBy, SECTIONS, type NavItem } from '../../lib/nav'
 
 const GROUPS_KEY = 'idira-nav-groups'
@@ -115,20 +115,20 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
               : (
                 <button type="button" onClick={() => toggle(group.key)}
                   aria-expanded={expanded} aria-controls={listId}
-                  className={`flex w-full items-center gap-2 rounded-md px-3 text-left text-xs font-semibold uppercase tracking-wider
-                    transition-colors hover:bg-bg-muted/70 hover:text-text ${dense ? 'min-h-8' : 'min-h-11'}
-                    ${hasActive && !expanded ? 'text-text' : 'text-text-muted'}`}>
-                  <ChevronRight size={14} strokeWidth={2.2} aria-hidden="true"
-                    className={`shrink-0 transition-transform duration-150 ${expanded ? 'rotate-90' : ''}`} />
-                  <span className="flex-1 py-1.5 leading-snug">{label}</span>
+                  className={`flex w-full items-center gap-2.5 rounded-lg px-3 text-left transition-colors duration-150
+                    hover:bg-bg-muted/70 ${dense ? 'min-h-9' : 'min-h-11'} ${hasActive && !expanded ? 'bg-bg-muted/60' : ''}`}>
+                  {group.Icon && <group.Icon size={16} strokeWidth={2} aria-hidden="true" className="shrink-0 text-domain-idira" />}
+                  <span className={`flex-1 text-sm font-semibold leading-tight ${hasActive ? 'text-text' : 'text-text-2'}`}>{label}</span>
                   {!expanded && (
-                    <span className="rounded-full bg-bg-muted px-1.5 font-mono text-[11px] normal-case tracking-normal text-text-muted tabular-nums">
+                    <span className="rounded-full bg-bg-muted px-1.5 font-mono text-[11px] text-text-muted tabular-nums">
                       {group.items.length}
                     </span>
                   )}
+                  <ChevronDown size={16} strokeWidth={2} aria-hidden="true"
+                    className={`shrink-0 text-text-muted transition-transform duration-200 ${expanded ? '' : '-rotate-90'}`} />
                 </button>
               ))}
-            <ul id={listId} hidden={!expanded} className={`space-y-0.5 ${label && !collapsed ? 'mt-0.5' : ''}`}
+            <ul id={listId} hidden={!expanded} className={`space-y-0.5 ${label && !collapsed ? 'mt-1 ml-[19px] border-l border-border pl-2.5' : ''}`}
               aria-label={label}>
               {segments(group.items).map(seg => {
                 if (collapsed) return seg.items.map(i => row(i))
@@ -154,7 +154,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
                       <ChevronDown size={16} strokeWidth={2} aria-hidden="true"
                         className={`shrink-0 text-text-muted transition-transform duration-200 ${subOpen ? '' : '-rotate-90'}`} />
                     </button>
-                    <ul id={subId} hidden={!subOpen} className="mt-1 ml-[19px] space-y-0.5 border-l border-border pl-2.5">
+                    <ul id={subId} hidden={!subOpen} className="mt-1 ml-[15px] space-y-0.5 border-l border-border pl-2">
                       {withHeadings(seg.items, true)}
                     </ul>
                   </li>
