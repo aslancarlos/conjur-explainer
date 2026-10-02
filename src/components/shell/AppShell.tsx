@@ -6,6 +6,7 @@ import { Menu, PanelLeftClose, PanelLeftOpen, X } from 'lucide-react'
 import ThemeToggle from '../ThemeToggle'
 import EnvStatus from './EnvStatus'
 import CommandPalette from './CommandPalette'
+import VisitCounter from './VisitCounter'
 import LanguageSwitcher from './LanguageSwitcher'
 import SideNav from './SideNav'
 import logoLight from '../../assets/brand/idira-logo-light.png'
@@ -88,6 +89,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
           <div className="pl-1"><Brand /></div>
           <span className="hidden xl:block h-7 w-px bg-border" aria-hidden="true" />
           <span className="hidden xl:block text-sm font-semibold leading-tight text-text">{t('shell.site_name')}</span>
+          <VisitCounter className="hidden md:flex ml-1" />
 
           <div className="ml-auto flex items-center gap-2">
             <CommandPalette />
