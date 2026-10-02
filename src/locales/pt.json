@@ -3399,5 +3399,10 @@
     "doc_sh_authn": "Autenticação (Self-Hosted)",
     "doc_sh_oidc": "OIDC para UI e CLI (Self-Hosted)",
     "doc_sh_ldap": "Autenticação LDAP (Self-Hosted)"
+  },
+  "cphub": {
+    "platform_sh": "PAM Self-Hosted",
+    "platform_saas": "Privilege Cloud (SaaS)",
+    "platform_label": "Plataforma PAM"
   }
 }
