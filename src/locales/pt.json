@@ -72,7 +72,14 @@
     "c_swa_sub": "Server, agents, SVIDs e federação",
     "group_swa": "Secure Workload Access",
     "group_sm": "Secrets Manager",
-    "sec_usecases": "Casos de uso"
+    "sec_usecases": "Casos de uso",
+    "h_arch": "Arquitetura",
+    "h_authz": "Autenticação e policy",
+    "h_k8s": "Kubernetes",
+    "h_cicd": "CI/CD",
+    "c_saas_short": "SaaS",
+    "c_sh_short": "Self-Hosted",
+    "c_k8s_short": "Visão geral"
   },
   "hero": {
     "eyebrow": "Identidade de máquina · Secrets · IDIRA by Palo Alto Networks",

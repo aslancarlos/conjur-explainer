@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ChevronRight } from 'lucide-react'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 import { navBy, SECTIONS, type NavItem } from '../../lib/nav'
 
 const GROUPS_KEY = 'idira-nav-groups'
@@ -11,7 +11,7 @@ function segments(items: NavItem[]) {
   const out: Array<{ section?: NavItem['section']; items: NavItem[] }> = []
   for (const it of items) {
     const last = out[out.length - 1]
-    if (last && it.section && last.section === it.section) last.items.push(it)
+    if (last && last.section === it.section) last.items.push(it)
     else out.push({ section: it.section, items: [it] })
   }
   return out
@@ -83,6 +83,24 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
     )
   }
 
+  const withHeadings = (items: NavItem[], nested = false) => {
+    let last: string | undefined
+    return items.flatMap(it => {
+      const out = []
+      if (it.heading && it.heading !== last) {
+        out.push(
+          <li key={`h-${it.heading}-${it.to}`} role="presentation"
+            className={`px-3 pb-1 text-[11px] font-medium uppercase tracking-[0.08em] text-text-muted ${nested ? 'pt-2' : 'pt-3'}`}>
+            {t(it.heading)}
+          </li>,
+        )
+      }
+      last = it.heading
+      out.push(row(it, Boolean(it.heading) || nested))
+      return out
+    })
+  }
+
   return (
     <div className="space-y-1">
       {groups.map((group, gi) => {
@@ -113,25 +131,31 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
             <ul id={listId} hidden={!expanded} className={`space-y-0.5 ${label && !collapsed ? 'mt-0.5' : ''}`}
               aria-label={label}>
               {segments(group.items).map(seg => {
-                if (!seg.section || collapsed) return seg.items.map(i => row(i))
+                if (collapsed) return seg.items.map(i => row(i))
+                if (!seg.section) return withHeadings(seg.items)
+                // Collapsible submenu: styled as a sub-section header (not a link), chevron
+                // down when open, item count when closed, children under a guide line.
                 const sec = SECTIONS[seg.section]
                 const key = `sec-${seg.section}`
                 const subActive = seg.items.some(i => i.to === pathname)
                 const subOpen = open[key] !== false
                 const subId = `${idPrefix}-${key}`
                 return (
-                  <li key={key}>
+                  <li key={key} className="pt-2">
                     <button type="button" onClick={() => toggle(key)} aria-expanded={subOpen} aria-controls={subId}
-                      className={`group flex w-full items-center gap-3 rounded-lg px-3 text-left transition-colors duration-150
-                        hover:bg-bg-muted/70 hover:text-text ${dense ? 'min-h-9 py-1.5' : 'min-h-11 py-2'}
-                        ${subActive ? 'text-text' : 'text-text-2'}`}>
-                      <sec.Icon size={18} strokeWidth={1.9} aria-hidden="true" className="shrink-0 text-domain-idira" />
-                      <span className="flex-1 text-sm leading-tight">{t(sec.labelKey)}</span>
-                      <ChevronRight size={14} strokeWidth={2.2} aria-hidden="true"
-                        className={`shrink-0 text-text-muted transition-transform duration-150 ${subOpen ? 'rotate-90' : ''}`} />
+                      className={`flex w-full items-center gap-2.5 rounded-lg px-3 text-left transition-colors duration-150
+                        hover:bg-bg-muted/70
+                        ${dense ? 'min-h-9' : 'min-h-11'} ${subActive && !subOpen ? 'bg-bg-muted/60' : ''}`}>
+                      <sec.Icon size={16} strokeWidth={2} aria-hidden="true" className="shrink-0 text-domain-idira" />
+                      <span className={`flex-1 text-sm font-semibold leading-tight ${subActive ? 'text-text' : 'text-text-2'}`}>{t(sec.labelKey)}</span>
+                      {!subOpen && (
+                        <span className="rounded-full bg-bg-muted px-1.5 font-mono text-[11px] text-text-muted tabular-nums">{seg.items.length}</span>
+                      )}
+                      <ChevronDown size={16} strokeWidth={2} aria-hidden="true"
+                        className={`shrink-0 text-text-muted transition-transform duration-200 ${subOpen ? '' : '-rotate-90'}`} />
                     </button>
-                    <ul id={subId} hidden={!subOpen} className="mt-0.5 ml-[21px] space-y-0.5 border-l border-border pl-2">
-                      {seg.items.map(i => row(i, true))}
+                    <ul id={subId} hidden={!subOpen} className="mt-1 ml-[19px] space-y-0.5 border-l border-border pl-2.5">
+                      {withHeadings(seg.items, true)}
                     </ul>
                   </li>
                 )

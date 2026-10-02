@@ -32,8 +32,9 @@ export interface NavItem {
   Icon: LucideIcon
   color?: string
   demo?: { name: string; secret: string; descKey: string }
-  section?: SectionKey  // consecutive items with the same section render as a sidebar submenu
-  shortKey?: string     // shorter label used inside that submenu
+  section?: SectionKey  // consecutive items with the same section render as a collapsible sidebar submenu
+  heading?: string      // i18n key of a small non-interactive sub-heading shown when it changes
+  shortKey?: string     // shorter label used under a heading / inside a submenu (sidebar only)
 }
 
 export type SectionKey = 'usecases'
@@ -70,26 +71,26 @@ export const NAV: NavGroup[] = [
     labelKey: 'nav.group_sm',
     descKey: 'demos.group_sm',
     items: [
-      { to: '/concepts/saas-architecture',  product: 'secretsmanager', labelKey: 'nav.c_saas', subKey: 'nav.c_saas_sub', Icon: CloudCog, color: 'text-domain-idira' },
-      { to: '/concepts/self-hosted-architecture', product: 'secretsmanager', labelKey: 'nav.c_sh', subKey: 'nav.c_sh_sub', Icon: Network, color: 'text-domain-idira' },
-      { to: '/jwt', product: 'secretsmanager', labelKey: 'nav.jwt', subKey: 'nav.jwt_sub', Icon: KeyRound, color: 'text-domain-idira',
+      { to: '/concepts/saas-architecture',  product: 'secretsmanager', labelKey: 'nav.c_saas', subKey: 'nav.c_saas_sub', Icon: CloudCog, color: 'text-domain-idira', heading: 'nav.h_arch', shortKey: 'nav.c_saas_short' },
+      { to: '/concepts/self-hosted-architecture', product: 'secretsmanager', labelKey: 'nav.c_sh', subKey: 'nav.c_sh_sub', Icon: Network, color: 'text-domain-idira', heading: 'nav.h_arch', shortKey: 'nav.c_sh_short' },
+      { to: '/jwt', product: 'secretsmanager', labelKey: 'nav.jwt', subKey: 'nav.jwt_sub', Icon: KeyRound, color: 'text-domain-idira', heading: 'nav.h_authz',
         demo: { name: 'authn-jwt', secret: 'identity handshake', descKey: 'demos.jwt' } },
-      { to: '/policy', product: 'secretsmanager', labelKey: 'nav.policy', subKey: 'nav.policy_sub', Icon: ScrollText, color: 'text-domain-idira',
+      { to: '/policy', product: 'secretsmanager', labelKey: 'nav.policy', subKey: 'nav.policy_sub', Icon: ScrollText, color: 'text-domain-idira', heading: 'nav.h_authz',
         demo: { name: 'Policy as Code', secret: 'YAML + git', descKey: 'demos.policy' } },
-      { to: '/concepts/kubernetes', product: 'secretsmanager', labelKey: 'nav.c_k8s', subKey: 'nav.c_k8s_sub', Icon: Container, color: 'text-domain-idira', section: 'usecases' },
-      { to: '/spring-boot', product: 'secretsmanager', labelKey: 'nav.springboot', subKey: 'nav.springboot_sub', Icon: Leaf, color: 'text-spring', section: 'usecases',
+      { to: '/concepts/kubernetes', product: 'secretsmanager', labelKey: 'nav.c_k8s', subKey: 'nav.c_k8s_sub', Icon: Container, color: 'text-domain-idira', section: 'usecases', heading: 'nav.h_k8s', shortKey: 'nav.c_k8s_short' },
+      { to: '/spring-boot', product: 'secretsmanager', labelKey: 'nav.springboot', subKey: 'nav.springboot_sub', Icon: Leaf, color: 'text-spring', section: 'usecases', heading: 'nav.h_k8s',
         demo: { name: 'SDK', secret: 'direct JWT', descKey: 'demos.spring' } },
-      { to: '/dotnet', product: 'secretsmanager', labelKey: 'nav.dotnet', subKey: 'nav.dotnet_sub', Icon: Hexagon, color: 'text-domain-cp', section: 'usecases',
+      { to: '/dotnet', product: 'secretsmanager', labelKey: 'nav.dotnet', subKey: 'nav.dotnet_sub', Icon: Hexagon, color: 'text-domain-cp', section: 'usecases', heading: 'nav.h_k8s',
         demo: { name: 'Sidecar', secret: 'Secrets Provider', descKey: 'demos.dotnet' } },
-      { to: '/eso-shop', product: 'secretsmanager', labelKey: 'nav.esoshop', subKey: 'nav.esoshop_sub', Icon: ShoppingCart, color: 'text-eso', section: 'usecases',
+      { to: '/eso-shop', product: 'secretsmanager', labelKey: 'nav.esoshop', subKey: 'nav.esoshop_sub', Icon: ShoppingCart, color: 'text-eso', section: 'usecases', heading: 'nav.h_k8s',
         demo: { name: 'External Secrets Operator', secret: 'Kubernetes Secret', descKey: 'demos.eso' } },
-      { to: '/csi', product: 'secretsmanager', labelKey: 'nav.csidriver', subKey: 'nav.csidriver_sub', Icon: ShipWheel, color: 'text-csi', section: 'usecases',
+      { to: '/csi', product: 'secretsmanager', labelKey: 'nav.csidriver', subKey: 'nav.csidriver_sub', Icon: ShipWheel, color: 'text-csi', section: 'usecases', heading: 'nav.h_k8s',
         demo: { name: 'CSI Driver', secret: 'tmpfs volume', descKey: 'demos.csi' } },
-      { to: '/github-actions', product: 'secretsmanager', labelKey: 'nav.gha', subKey: 'nav.gha_sub', Icon: Github, color: 'text-gh', section: 'usecases',
+      { to: '/github-actions', product: 'secretsmanager', labelKey: 'nav.gha', subKey: 'nav.gha_sub', Icon: Github, color: 'text-gh', section: 'usecases', heading: 'nav.h_cicd',
         demo: { name: 'GitHub Actions', secret: 'OIDC', descKey: 'demos.gha' } },
-      { to: '/jenkins', product: 'secretsmanager', labelKey: 'nav.jenkins', subKey: 'nav.jenkins_sub', Icon: Server, color: 'text-spring', section: 'usecases',
+      { to: '/jenkins', product: 'secretsmanager', labelKey: 'nav.jenkins', subKey: 'nav.jenkins_sub', Icon: Server, color: 'text-spring', section: 'usecases', heading: 'nav.h_cicd',
         demo: { name: 'Jenkins', secret: 'plugin JWT', descKey: 'demos.jenkins' } },
-      { to: '/ansible', product: 'secretsmanager', labelKey: 'nav.ansible', subKey: 'nav.ansible_sub', Icon: Boxes, color: 'text-ansible', section: 'usecases',
+      { to: '/ansible', product: 'secretsmanager', labelKey: 'nav.ansible', subKey: 'nav.ansible_sub', Icon: Boxes, color: 'text-ansible', section: 'usecases', heading: 'nav.h_cicd',
         demo: { name: 'Ansible', secret: 'lookup', descKey: 'demos.ansible' } },
     ],
   },
