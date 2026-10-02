@@ -1621,7 +1621,12 @@
   "shell": {
     "site_name": "Machine Identity Academy",
     "visits_label": "Accesses",
-    "visits_title": "{{exact}} accesses to demo.minha.cloud since {{since}}, measured at the AWS load balancer and updated hourly. Counts visits, not unique people."
+    "visits_title": "{{exact}} accesses to demo.minha.cloud since {{since}}, measured at the AWS load balancer and updated hourly. Counts visits, not unique people.",
+    "like": "Like",
+    "liked": "Liked",
+    "like_title": "Liked the site? Let us know",
+    "liked_title": "Thanks for the like!",
+    "likes_count": "{{count}} likes"
   },
   "search": {
     "open": "Search",

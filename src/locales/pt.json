@@ -1621,7 +1621,12 @@
   "shell": {
     "site_name": "Machine Identity Academy",
     "visits_label": "Acessos",
-    "visits_title": "{{exact}} acessos ao demo.minha.cloud desde {{since}}, medidos no load balancer da AWS e atualizados a cada hora. Conta visitas, não pessoas únicas."
+    "visits_title": "{{exact}} acessos ao demo.minha.cloud desde {{since}}, medidos no load balancer da AWS e atualizados a cada hora. Conta visitas, não pessoas únicas.",
+    "like": "Curtir",
+    "liked": "Curtido",
+    "like_title": "Gostou do site? Deixe sua curtida",
+    "liked_title": "Obrigado pela curtida!",
+    "likes_count": "{{count}} curtidas"
   },
   "search": {
     "open": "Buscar",
