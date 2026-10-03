@@ -10,6 +10,7 @@ import VisitCounter from './VisitCounter'
 import LikeButton from './LikeButton'
 import LanguageSwitcher from './LanguageSwitcher'
 import SideNav from './SideNav'
+import ReleaseInfo from './ReleaseInfo'
 import logoLight from '../../assets/brand/idira-logo-light.png'
 import logoDark from '../../assets/brand/idira-logo-dark.png'
 
@@ -108,6 +109,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
         <nav aria-label={t('nav.primary')} className="nav-scroll flex-1 min-h-0 overflow-y-auto overscroll-contain px-2 pt-4 pb-10">
           <SideNav collapsed={collapsed} dense idPrefix="side" />
         </nav>
+        <ReleaseInfo collapsed={collapsed} />
       </aside>
 
       {/* ── Drawer (< lg) ── */}
@@ -133,6 +135,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
               <nav aria-label={t('nav.primary')} className="nav-scroll flex-1 min-h-0 overflow-y-auto overscroll-contain px-2 pt-4 pb-10">
                 <SideNav idPrefix="drawer" />
               </nav>
+              <ReleaseInfo />
               <div className="border-t border-border p-3">
                 <LanguageSwitcher />
               </div>

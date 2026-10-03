@@ -1567,7 +1567,11 @@
     "like_title": "¿Te gustó el sitio? Déjanos tu me gusta",
     "liked_title": "¡Gracias por tu me gusta!",
     "likes_count": "{{count}} me gusta",
-    "live_unavailable": "La demo en vivo no está disponible ahora. Inténtalo de nuevo en unos minutos."
+    "live_unavailable": "La demo en vivo no está disponible ahora. Inténtalo de nuevo en unos minutos.",
+    "release_current": "Contenido actualizado",
+    "release_version": "Versión {{v}}",
+    "release_updated": "Actualizado el {{date}}",
+    "release_label": "Versión del sitio y fecha de la última actualización"
   },
   "search": {
     "open": "Buscar",

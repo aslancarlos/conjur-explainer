@@ -1567,7 +1567,11 @@
     "like_title": "Gostou do site? Deixe sua curtida",
     "liked_title": "Obrigado pela curtida!",
     "likes_count": "{{count}} curtidas",
-    "live_unavailable": "A demo ao vivo está indisponível no momento. Tente de novo em alguns minutos."
+    "live_unavailable": "A demo ao vivo está indisponível no momento. Tente de novo em alguns minutos.",
+    "release_current": "Conteúdo atualizado",
+    "release_version": "Versão {{v}}",
+    "release_updated": "Atualizado em {{date}}",
+    "release_label": "Versão do site e data da última atualização"
   },
   "search": {
     "open": "Buscar",
