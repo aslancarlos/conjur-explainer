@@ -83,7 +83,7 @@ export default function ArchitecturePreview({ resolved, labels = DEFAULT_PREVIEW
     <figure className={`relative w-full rounded-2xl border border-border bg-bg-card p-4 ${className}`}>
       {!fit && (
         <button type="button" onClick={() => setFull(v => !v)} aria-pressed={full}
-          className="absolute right-3 top-3 z-10 inline-flex min-h-9 items-center gap-1.5 rounded-full border border-border bg-bg-card px-3 text-xs font-medium text-text-2 shadow-sm transition-colors hover:border-idira-blue hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">
+          className="absolute right-3 top-3 z-raised inline-flex min-h-9 items-center gap-1.5 rounded-full border border-border bg-bg-card px-3 text-xs font-medium text-text-2 shadow-sm transition-colors hover:border-idira-blue hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">
           {full ? <Minimize2 size={14} aria-hidden="true" /> : <Maximize2 size={14} aria-hidden="true" />}
           {full ? labels.fitWidth : labels.fullSize}
         </button>

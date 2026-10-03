@@ -114,7 +114,7 @@ export default function CommandPalette() {
 
       <AnimatePresence>
         {open && (
-          <div className="fixed inset-0 z-[70]">
+          <div className="fixed inset-0 z-modal">
             <motion.div className="absolute inset-0 bg-black/55" onClick={() => setOpen(false)} aria-hidden="true"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduce ? 0 : 0.15 }} />
             <motion.div role="dialog" aria-modal="true" aria-label={t('search.open')}
@@ -128,7 +128,7 @@ export default function CommandPalette() {
                   aria-activedescendant={results[active] ? `cmdk-${active}` : undefined}
                   placeholder={t('search.placeholder')} aria-label={t('search.placeholder')}
                   className="h-14 flex-1 bg-transparent text-base text-text placeholder:text-text-muted outline-none" />
-                <kbd className="rounded border border-border bg-bg-muted px-1.5 font-mono text-[11px] text-text-muted">esc</kbd>
+                <kbd className="rounded border border-border bg-bg-muted px-1.5 font-mono text-xs text-text-muted">esc</kbd>
               </div>
               <ul id="cmdk-list" ref={listRef} role="listbox" aria-label={t('search.results')}
                 className="max-h-[min(60vh,28rem)] overflow-y-auto overscroll-contain p-2">

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useToolsCopy } from '../lib/toolsCopy'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
 import {
@@ -57,9 +58,8 @@ const NAV_ITEMS = NAV.flatMap(g => g.items)
 const GROUP = (navKey: string) => NAV.find(g => g.key === navKey)
 const PROD_OF = (p: Prod) => GROUP(PRODUCTS.find(x => x.key === p)!.navKey)
 
-const btnBase = 'inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue focus-visible:ring-offset-2 focus-visible:ring-offset-bg-card disabled:cursor-not-allowed disabled:opacity-50'
-const btnPrimary = `${btnBase} bg-idira-blue text-white hover:bg-idira-blue-2 active:bg-idira-blue-deep`
-const btnSecondary = `${btnBase} border border-border bg-bg-card text-text hover:border-idira-blue`
+const btnPrimary = 'btn-primary'
+const btnSecondary = 'btn-secondary'
 const btnGhost = 'inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-sm font-medium text-text-2 underline-offset-4 transition-colors hover:text-text hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue'
 
 /** Reading path: the first START pages get full cards, the rest a compact list. */
@@ -86,7 +86,7 @@ function Logo({ id, size, fallback: Fallback, className = '' }: { id: string; si
   )
 }
 
-export default function SolutionFinderPage() {
+function SolutionFinderPageView() {
   const { t, i18n } = useTranslation()
   const f = (k: string, o?: Record<string, unknown>) => t(`finder.${k}`, o) as string
   const reduce = useReducedMotion()
@@ -377,7 +377,7 @@ export default function SolutionFinderPage() {
     return (
       <AnimatePresence>
         {id && item && (
-          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 print:hidden">
+          <div className="fixed inset-0 z-modal flex items-center justify-center p-4 print:hidden">
             <motion.div className="absolute inset-0 bg-black/55" aria-hidden="true" onClick={closeInfo}
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduce ? 0 : 0.15 }} />
             <motion.div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="finder-info-title"
@@ -460,7 +460,7 @@ export default function SolutionFinderPage() {
                   </section>
                 )}
                 {notesFor.length > 0 && (
-                  <div role="note" className="space-y-1.5 rounded-xl border border-tone-warning/40 bg-tone-warning/10 p-3">
+                  <div role="note" className="callout-warning flex-col gap-1.5 p-3">
                     {notesFor.map(n => (
                       <p key={n} className="flex gap-2 text-xs leading-relaxed text-text-2">
                         <TriangleAlert size={14} aria-hidden="true" className="mt-0.5 shrink-0 text-tone-warning" />{n}
@@ -575,7 +575,7 @@ export default function SolutionFinderPage() {
   const StepHead = (k: StepKey) => (
     <div className="space-y-1.5">
       <p className="font-mono text-xs uppercase tracking-wider text-text-muted">{f('step_of', { current: idx + 1, total: 3 })}</p>
-      <h2 ref={headingRef} tabIndex={-1} className="text-2xl font-bold tracking-[-0.01em] text-text focus:outline-none">{f(`${k}_title`)}</h2>
+      <h2 ref={headingRef} tabIndex={-1} className="text-xl font-semibold text-text focus:outline-none">{f(`${k}_title`)}</h2>
       <p className="max-w-[65ch] text-sm leading-relaxed text-text-2">{f(`${k}_help`)}</p>
     </div>
   )
@@ -666,19 +666,19 @@ export default function SolutionFinderPage() {
   const Notes = () => (
     <>
       {ev.needsPam.map(p => (
-        <div key={p} role="note" className="flex gap-2.5 rounded-xl border border-tone-warning/40 bg-tone-warning/10 p-4">
+        <div key={p} role="note" className="callout-warning">
           <TriangleAlert size={16} aria-hidden="true" className="mt-0.5 shrink-0 text-tone-warning" />
           <p className="text-sm leading-relaxed text-text-2"><span className="font-semibold text-text">{f('needs_pam_title')}</span> {f(`needs_pam.${p}`)}</p>
         </div>
       ))}
       {notes.has('iot') && (
-        <div role="note" className="flex gap-2.5 rounded-xl border border-tone-warning/40 bg-tone-warning/10 p-4">
+        <div role="note" className="callout-warning">
           <TriangleAlert size={16} aria-hidden="true" className="mt-0.5 shrink-0 text-tone-warning" />
           <p className="text-sm leading-relaxed text-text-2"><span className="font-semibold text-text">{f('note_iot_title')}</span> {f('note_iot')}</p>
         </div>
       )}
       {notes.has('stores') && (
-        <div role="note" className="flex gap-2.5 rounded-xl border border-tone-warning/40 bg-tone-warning/10 p-4">
+        <div role="note" className="callout-warning">
           <TriangleAlert size={16} aria-hidden="true" className="mt-0.5 shrink-0 text-tone-warning" />
           <div className="space-y-1">
             <p className="text-sm font-semibold text-text">{t('cmp.shub_limits_title')}</p>
@@ -709,7 +709,7 @@ export default function SolutionFinderPage() {
     if (!items.length && !notes.has('other')) {
       return (
         <div className="flex flex-col items-center gap-3 py-10 text-center">
-          <h2 ref={headingRef} tabIndex={-1} className="text-xl font-bold text-text focus:outline-none">{f('empty_result_title')}</h2>
+          <h2 ref={headingRef} tabIndex={-1} className="text-xl font-semibold text-text focus:outline-none">{f('empty_result_title')}</h2>
           <p className="max-w-md text-sm leading-relaxed text-text-2">{f('empty_result_desc')}</p>
           <button type="button" onClick={() => go('s1')} className={`${btnPrimary} mt-2`}>
             <ArrowLeft size={16} aria-hidden="true" />{f('empty_result_cta')}
@@ -726,7 +726,7 @@ export default function SolutionFinderPage() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="space-y-1.5">
             <p className="font-mono text-xs uppercase tracking-wider text-text-muted">{f('result_label')}</p>
-            <h2 ref={headingRef} tabIndex={-1} className="text-2xl font-bold tracking-[-0.01em] text-text focus:outline-none">{f('result_title')}</h2>
+            <h2 ref={headingRef} tabIndex={-1} className="text-xl font-semibold text-text focus:outline-none">{f('result_title')}</h2>
             <p className="text-sm text-text-2">{f('result_based', { count: items.length })}</p>
             {goalNames.length > 0 && <p className="text-sm text-text-2"><span className="font-medium text-text">{f('goals_line')}:</span> {goalNames.join(', ')}{ev.inferred && <span className="text-text-muted"> ({f('goals_suggested')})</span>}</p>}
           </div>
@@ -805,7 +805,7 @@ export default function SolutionFinderPage() {
                 <li key={id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3">
                   <span className="inline-flex items-center gap-2.5 text-sm font-medium text-text">
                     <Logo id={id} size={18} fallback={T.Icon} className="text-text-2" />{tileName(id)}
-                    {T.note === 'iot' && <span className="inline-flex items-center gap-1 rounded-full bg-tone-warning/10 px-2 py-0.5 text-[11px] font-medium text-tone-warning"><TriangleAlert size={12} aria-hidden="true" />{f('no_dedicated')}</span>}
+                    {T.note === 'iot' && <span className="inline-flex items-center gap-1 rounded-full bg-tone-warning/10 px-2 py-0.5 text-xs font-medium text-tone-warning"><TriangleAlert size={12} aria-hidden="true" />{f('no_dedicated')}</span>}
                   </span>
                   <span className="flex flex-wrap gap-1.5">
                     {ps.length ? ps.map(p => ProdChip(p)) : <span className="text-xs text-text-muted">{id === 'other' ? f('coverage_other') : f('coverage_none')}</span>}
@@ -897,7 +897,7 @@ export default function SolutionFinderPage() {
               )}
             </div>
             <div className="flex flex-wrap gap-2" role="toolbar" aria-label={a('section_title')}>
-              <button type="button" onClick={downloadDrawio} className={btnPrimary}>
+              <button type="button" onClick={downloadDrawio} className={btnSecondary}>
                 <Download size={16} aria-hidden="true" />{a('download_drawio')}
               </button>
               {drawioUrl
@@ -1104,7 +1104,7 @@ export default function SolutionFinderPage() {
         html, body, #root, #main { background: white !important; }
         header.nav-iridescent, aside, footer, [href="#main"] { display: none !important; }
         #main { padding-top: 0 !important; }
-        [class~="lg:pl-16"], [class~="lg:pl-[17rem]"] { padding-left: 0 !important; }
+        [class~="lg:pl-16"], [class~="lg:pl-[18rem]"] { padding-left: 0 !important; }
         .sr-only { display: none !important; }
       }`}</style>
       <div className="mx-auto max-w-4xl space-y-6 print:max-w-none print:space-y-0">
@@ -1122,7 +1122,7 @@ export default function SolutionFinderPage() {
             </AnimatePresence>
           </div>
 
-          <div className={`${isStep ? 'sticky bottom-0 z-10 bg-bg-card/95 backdrop-blur' : 'bg-bg-card'} flex flex-wrap items-center gap-3 rounded-b-2xl border-t border-border px-6 py-3.5 sm:px-8`}>
+          <div className={`${isStep ? 'sticky bottom-0 z-sticky bg-bg-card/95 backdrop-blur' : 'bg-bg-card'} flex flex-wrap items-center gap-3 rounded-b-2xl border-t border-border px-6 py-3.5 sm:px-8`}>
             {isStep ? (
               <>
                 <p className="mr-auto flex min-w-0 flex-wrap items-center gap-1.5 text-xs text-text-muted" aria-live="polite">
@@ -1163,4 +1163,10 @@ export default function SolutionFinderPage() {
       {InfoDialog()}
     </section>
   )
+}
+
+/** Waits for the lazily loaded tools copy (src/lib/toolsCopy.ts) before rendering. */
+export default function SolutionFinderPage() {
+  const ready = useToolsCopy()
+  return ready ? <SolutionFinderPageView /> : <section className="min-h-screen bg-bg-base" aria-busy="true" />
 }

@@ -33,11 +33,13 @@ export default function DemosShowcase() {
           transition={{ duration: 0.4, ease: [0.2, 0.7, 0.2, 1] }}
           className="mt-10 grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
           {groupsList.map(group => (
-            <div key={group.key}>
+            // Use cases hold most demos: give them the full row (4 columns) so
+            // the catalogue stays balanced instead of one long first column.
+            <div key={group.key} className={group.key === 'usecases' ? 'sm:col-span-2 lg:col-span-4' : undefined}>
               <h3 className="border-b border-border pb-2 text-sm font-semibold text-text">{t(group.labelKey!)}</h3>
-              <ul className="mt-2 space-y-0.5">
+              <ul className={`mt-2 ${group.key === 'usecases' ? 'grid gap-x-8 gap-y-0.5 sm:grid-cols-2 lg:grid-cols-4' : 'space-y-0.5'}`}>
                 {group.items.map(item => {
-                  const cls = 'group flex min-h-11 items-center gap-3 rounded-lg px-2 -mx-2 transition-colors hover:bg-bg-muted'
+                  const cls = 'group flex min-h-11 items-center gap-3 rounded-lg px-2 -mx-2 transition-colors duration-150 hover:bg-bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue'
                   const inner = (
                     <>
                       <NavGlyph logo={item.logo} Icon={item.Icon} iconSize={17} className={item.color ?? 'text-text-2'} />

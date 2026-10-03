@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useToolsCopy } from '../lib/toolsCopy'
 import type { LucideIcon } from 'lucide-react'
 import {
   ArrowRight, Check, Compass, Minus, Container, Workflow, Server, Cpu, Bot, Cloud,
@@ -165,7 +166,7 @@ function Matrix({ caption, corner, head, rows }: {
         <caption className="sr-only">{caption}</caption>
         <thead>
           <tr>
-            <th scope="col" className="sticky left-0 z-20 min-w-[168px] w-[168px] border-b border-r border-border bg-bg-muted px-4 py-3 text-xs font-semibold uppercase tracking-wider text-text-muted">
+            <th scope="col" className="sticky left-0 z-sticky min-w-[168px] w-[168px] border-b border-r border-border bg-bg-muted px-4 py-3 text-xs font-semibold uppercase tracking-wider text-text-muted">
               {corner}
             </th>
             {head.map(h => (
@@ -176,7 +177,7 @@ function Matrix({ caption, corner, head, rows }: {
         <tbody>
           {rows.map((r, ri) => (
             <tr key={r.key} className="align-top">
-              <th scope="row" className={`sticky left-0 z-10 border-r border-border bg-bg-card px-4 py-3 text-xs font-semibold text-text ${ri < rows.length - 1 ? 'border-b' : ''}`}>
+              <th scope="row" className={`sticky left-0 z-raised border-r border-border bg-bg-card px-4 py-3 text-xs font-semibold text-text ${ri < rows.length - 1 ? 'border-b' : ''}`}>
                 {r.label}
               </th>
               {r.cells.map((c, ci) => (
@@ -190,7 +191,7 @@ function Matrix({ caption, corner, head, rows }: {
   )
 }
 
-export default function ComparePage() {
+function ComparePageView() {
   const { t } = useTranslation()
   const p = (k: string) => t(`cmp.${k}`)
   const [params, setParams] = useSearchParams()
@@ -260,7 +261,7 @@ export default function ComparePage() {
             )}
 
             {product.key === 'shub' && (
-              <div role="note" className="flex gap-3 rounded-2xl border border-tone-warning/40 bg-tone-warning/10 p-4">
+              <div role="note" className="callout-warning">
                 <TriangleAlert size={18} aria-hidden="true" className="mt-0.5 shrink-0 text-tone-warning" />
                 <div className="space-y-1">
                   <p className="text-sm font-semibold text-text">{p('shub_limits_title')}</p>
@@ -320,4 +321,10 @@ export default function ComparePage() {
       </div>
     </section>
   )
+}
+
+/** Waits for the lazily loaded tools copy (src/lib/toolsCopy.ts) before rendering. */
+export default function ComparePage() {
+  const ready = useToolsCopy()
+  return ready ? <ComparePageView /> : <section className="min-h-screen bg-bg-base" aria-busy="true" />
 }

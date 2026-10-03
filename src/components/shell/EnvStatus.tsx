@@ -74,7 +74,7 @@ export default function EnvStatus() {
         aria-expanded={open} aria-controls="env-panel" aria-label={`${t('env.title')}: ${label}`} title={label}
         className="inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-lg border border-border bg-bg-card px-3 text-xs font-medium text-text-2
           hover:bg-bg-muted hover:text-text transition-colors">
-        <span className={`h-2 w-2 shrink-0 rounded-full ${STATE[overall].dot} ${overall === 'checking' ? 'animate-pulse' : ''}`} aria-hidden="true" />
+        <span className={`h-2 w-2 shrink-0 rounded-full ${STATE[overall].dot} ${overall === 'checking' ? 'motion-safe:animate-pulse' : ''}`} aria-hidden="true" />
         <span className="hidden 2xl:inline">{label}</span>
         <span className="2xl:hidden tabular-nums">{checking ? '…' : `${okCount}/${list.length}`}</span>
       </button>
@@ -84,7 +84,7 @@ export default function EnvStatus() {
           <motion.div id="env-panel" role="dialog" aria-label={t('env.title')}
             initial={reduce ? false : { opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={reduce ? undefined : { opacity: 0, y: -4 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute right-0 top-full z-50 mt-2 w-[min(22rem,calc(100vw-1.5rem))] overflow-hidden rounded-xl border border-border bg-bg-card shadow-2xl">
+            className="absolute right-0 top-full z-header mt-2 w-[min(22rem,calc(100vw-1.5rem))] overflow-hidden rounded-xl border border-border bg-bg-card shadow-2xl">
             <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
               <div>
                 <p className="text-sm font-semibold text-text">{t('env.title')}</p>

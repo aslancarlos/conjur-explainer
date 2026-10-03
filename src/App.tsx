@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense, useEffect, useRef } from 'react'
 import AppShell from './components/shell/AppShell'
 import Footer from './components/Footer'
 import Loading from './components/Loading'
@@ -70,7 +70,14 @@ const GlossaryConcept = concept('GlossaryConcept')
 
 function ScrollToTop() {
   const { pathname } = useLocation()
-  useEffect(() => { window.scrollTo(0, 0) }, [pathname])
+  const first = useRef(true)
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    // WCAG focus-on-route-change: after an in-app navigation, move focus to the
+    // main region so screen readers start at the new page (not on first load).
+    if (first.current) { first.current = false; return }
+    document.getElementById('main')?.focus({ preventScroll: true })
+  }, [pathname])
   return null
 }
 
@@ -78,7 +85,7 @@ function Layout() {
   return (
     <AppShell>
       <ScrollToTop />
-      <main id="main" className="pt-14">
+      <main id="main" tabIndex={-1} className="pt-14 outline-none">
         <Suspense fallback={<Loading />}>
           <PageTransition>
             <Outlet />

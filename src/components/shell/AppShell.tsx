@@ -69,12 +69,12 @@ export default function AppShell({ children }: { children: ReactNode }) {
     }
   }, [drawer])
 
-  const pad = collapsed ? 'lg:pl-16' : 'lg:pl-[17rem]'
+  const pad = collapsed ? 'lg:pl-16' : 'lg:pl-[18rem]'
 
   return (
     <div className="min-h-screen bg-bg-base text-text">
       {/* ── Top bar ── */}
-      <header className="nav-iridescent fixed top-0 inset-x-0 z-50 h-14 bg-bg-card/90 backdrop-blur-xl border-b border-border">
+      <header className="nav-iridescent fixed top-0 inset-x-0 z-header h-14 bg-bg-card/90 backdrop-blur-xl border-b border-border">
         <div className="h-full px-2 sm:px-4 flex items-center gap-2">
           {/* < lg: opens the drawer · ≥ lg: collapses / expands the sidebar */}
           <button ref={menuBtn} type="button" onClick={() => setDrawer(true)}
@@ -104,8 +104,8 @@ export default function AppShell({ children }: { children: ReactNode }) {
       </header>
 
       {/* ── Sidebar (≥ lg) ── */}
-      <aside className={`hidden lg:flex fixed top-14 bottom-0 left-0 z-40 flex-col border-r border-border bg-bg-card
-        ${collapsed ? 'w-16' : 'w-[17rem]'}`}>
+      <aside className={`hidden lg:flex fixed top-14 bottom-0 left-0 z-sidebar flex-col border-r border-border bg-bg-card
+        ${collapsed ? 'w-16' : 'w-[18rem]'}`}>
         <nav aria-label={t('nav.primary')} className="nav-scroll flex-1 min-h-0 overflow-y-auto overscroll-contain px-2 pt-4 pb-10">
           <SideNav collapsed={collapsed} dense idPrefix="side" />
         </nav>
@@ -115,7 +115,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
       {/* ── Drawer (< lg) ── */}
       <AnimatePresence>
         {drawer && (
-          <div className="lg:hidden fixed inset-0 z-[60]" id="nav-drawer">
+          <div className="lg:hidden fixed inset-0 z-drawer" id="nav-drawer">
             <motion.button type="button" aria-label={t('nav.close_menu')} tabIndex={-1}
               onClick={() => setDrawer(false)}
               className="absolute inset-0 bg-black/55"

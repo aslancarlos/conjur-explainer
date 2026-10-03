@@ -60,7 +60,7 @@ const DIR_ICON: Record<Direction, { Icon: LucideIcon; cls: string; badge: string
 function ConfidenceBadge({ c, labels, note }: { c: Confidence; labels: NetworkTableLabels; note?: string }) {
   const ok = c === 'documented'
   return (
-    <span title={note} className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-[11px] font-medium
+    <span title={note} className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-xs font-medium
       ${ok ? 'border-tone-success/40 bg-tone-success/10 text-tone-success' : 'border-tone-warning/40 bg-tone-warning/10 text-tone-warning'}`}>
       {ok ? <CircleCheck size={12} aria-hidden="true" /> : <CircleDashed size={12} aria-hidden="true" />}
       {ok ? labels.documented : labels.inferred}
@@ -89,7 +89,7 @@ export function FlowsTable({ resolved, labels = DEFAULT_TABLE_LABELS, print = fa
               <td className={cell}>
                 {print
                   ? <span className="font-bold">{f.no}</span>
-                  : <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold tabular-nums text-bg-base ${badge}`}>{f.no}</span>}
+                  : <span className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold tabular-nums text-bg-base ${badge}`}>{f.no}</span>}
               </td>
               <td className={cell}>
                 <span className={`inline-flex items-center gap-1 ${print ? '' : 'whitespace-nowrap text-text-2'}`}>
@@ -112,7 +112,7 @@ export function FlowsTable({ resolved, labels = DEFAULT_TABLE_LABELS, print = fa
                     <div className="flex flex-col items-start gap-1.5">
                       <ConfidenceBadge c={f.confidence} labels={labels} note={f.note} />
                       <a href={f.source.url} target="_blank" rel="noreferrer"
-                        className="inline-flex min-h-6 items-center gap-1 rounded text-[11px] font-medium text-text-2 underline underline-offset-2 hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">
+                        className="inline-flex min-h-6 items-center gap-1 rounded text-xs font-medium text-text-2 underline underline-offset-2 hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">
                         {labels.doc}<ExternalLink size={11} aria-hidden="true" />
                       </a>
                     </div>

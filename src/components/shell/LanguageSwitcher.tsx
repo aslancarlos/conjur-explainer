@@ -51,7 +51,7 @@ export default function LanguageSwitcher({ tone = 'theme', className = '' }: { t
           aria-label={lang.toUpperCase()}
           className={`inline-flex h-9 items-center gap-1.5 rounded-md px-2 text-xs font-semibold transition-colors duration-200 ${current === lang ? active : idle}`}
         >
-          <span className="inline-block w-[18px] h-[13px] rounded-[2px] overflow-hidden ring-1 ring-black/20 shrink-0">
+          <span className="inline-block w-[18px] h-[13px] rounded-sm overflow-hidden ring-1 ring-black/20 shrink-0">
             {FLAGS[lang]}
           </span>
           {lang.toUpperCase()}

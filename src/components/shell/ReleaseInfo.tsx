@@ -14,7 +14,7 @@ export default function ReleaseInfo({ collapsed = false }: { collapsed?: boolean
   if (collapsed) {
     return (
       <div className="border-t border-border py-3 text-center" title={full}>
-        <span className="font-mono text-[11px] text-text-muted">{RELEASE}</span>
+        <span className="font-mono text-xs text-text-muted">{RELEASE}</span>
         <span className="sr-only">{full}</span>
       </div>
     )
@@ -24,7 +24,7 @@ export default function ReleaseInfo({ collapsed = false }: { collapsed?: boolean
       <p className="flex items-center gap-2 text-xs text-text-2">
         <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-tone-success" aria-hidden="true" />
         <span className="font-medium text-text">{t('shell.release_current')}</span>
-        <span className="ml-auto rounded-full border border-border bg-bg-muted px-2 py-0.5 font-mono text-[11px] text-text-2">{RELEASE}</span>
+        <span className="ml-auto rounded-full border border-border bg-bg-muted px-2 py-0.5 font-mono text-xs text-text-2">{RELEASE}</span>
       </p>
       <p className="mt-1 pl-3.5 text-xs text-text-muted">
         {t('shell.release_updated', { date: '' }).trim()} <time dateTime={BUILD_DATE}>{day}</time>

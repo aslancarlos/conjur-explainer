@@ -42,6 +42,17 @@ const chevron = (open: boolean) => (
  * - `collapsed` (icon rail): no labels or headers, every item visible, section
  *   labels become thin separators; names stay for screen readers and tooltips.
  */
+/** Full product/component name; a trailing official acronym "(ASCP)" is shown
+ *  muted after it (never instead of it). Wraps to two lines when needed. */
+function NavLabel({ text, className = '' }: { text: string; className?: string }) {
+  const m = text.match(/^(.*\S)\s+\(([A-Z0-9/.-]{2,8})\)$/)
+  return (
+    <span className={`min-w-0 flex-1 text-sm leading-5 [overflow-wrap:anywhere] ${className}`}>
+      {m ? <>{m[1]} <span className="whitespace-nowrap font-normal text-text-muted">{m[2]}</span></> : text}
+    </span>
+  )
+}
+
 export default function SideNav({ collapsed = false, dense = false, idPrefix = 'nav' }: {
   collapsed?: boolean; dense?: boolean; idPrefix?: string
 }) {
@@ -74,9 +85,9 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
     const active = isActive(item.to)
     const label = t(item.shortKey ?? item.labelKey)
     const cls =
-      'group relative flex items-center gap-3 rounded-lg transition-colors duration-150 ' +
+      'group relative flex items-start gap-3 rounded-lg transition-colors duration-150 ' +
       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue ' +
-      (collapsed ? 'h-10 w-10 justify-center mx-auto ' : `${rowH} px-3 py-1.5 `) +
+      (collapsed ? 'h-10 w-10 items-center justify-center mx-auto ' : `${rowH} px-3 py-1.5 `) +
       (active ? 'bg-bg-muted text-text font-semibold' : 'text-text-2 hover:bg-bg-muted/70 hover:text-text')
     const inner = (
       <>
@@ -84,7 +95,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
           <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r bg-idira-blue" aria-hidden="true" />
         )}
         <NavGlyph logo={item.logo} Icon={item.Icon} className={item.color ?? 'text-text-2'} />
-        <span className={collapsed ? 'sr-only' : 'min-w-0 truncate text-sm leading-tight'}>{label}</span>
+        {collapsed ? <span className="sr-only">{label}</span> : <NavLabel text={label} />}
       </>
     )
     const tip = t(item.labelKey) !== label ? t(item.labelKey) : item.subKey ? t(item.subKey) : undefined
@@ -109,7 +120,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
       if (it.heading && it.heading !== last) {
         out.push(
           <li key={`h-${it.heading}-${it.to}`} aria-hidden="true"
-            className="px-3 pb-1 pt-2.5 text-[11px] font-medium uppercase tracking-[0.08em] text-text-muted">
+            className="text-overline px-3 pb-1 pt-2.5 font-medium">
             {t(it.heading)}
           </li>,
         )
@@ -138,8 +149,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
             ${rowH} ${hasActive && !expanded ? 'bg-bg-muted/60' : ''}`}>
           <NavGlyph logo={group.logo} Icon={group.Icon} iconSize={16} className={group.color ?? 'text-domain-idira'}
             accent={RING[group.color ?? '']} />
-          <span className={`min-w-0 flex-1 truncate text-sm font-semibold leading-tight ${hasActive ? 'text-text' : 'text-text-2'}`}
-            title={label}>{group.shortKey ? t(group.shortKey) : label}</span>
+          <NavLabel text={label} className={`font-semibold ${hasActive ? 'text-text' : 'text-text-2'}`} />
           {chevron(expanded)}
         </button>
         <ul id={listId} hidden={!expanded} aria-label={label}
@@ -160,7 +170,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
                     hover:bg-bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue
                     ${rowH} ${subActive && !subOpen ? 'bg-bg-muted/60' : ''}`}>
                   <NavGlyph logo={sec.logo} Icon={sec.Icon} iconSize={16} className={group.color ?? 'text-domain-idira'} />
-                  <span className={`min-w-0 flex-1 truncate text-sm font-medium leading-tight ${subActive ? 'text-text' : 'text-text-2'}`}>{t(sec.labelKey)}</span>
+                  <NavLabel text={t(sec.labelKey)} className={`font-medium ${subActive ? 'text-text' : 'text-text-2'}`} />
                   {chevron(subOpen)}
                 </button>
                 <ul id={subId} hidden={!subOpen} className="mt-0.5 ml-[21px] space-y-0.5 border-l border-border pl-2">
@@ -187,7 +197,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
                   {zi > 0 && <div className="mx-3 mb-3 h-px bg-border" aria-hidden="true" />}
                   <span id={labelId} className="sr-only">{t(zone.labelKey)}</span>
                 </>
-              : <p id={labelId} className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-text-muted">
+              : <p id={labelId} className="text-overline px-3 pb-2">
                   {t(zone.labelKey)}
                 </p>}
             <div className="space-y-0.5">{zg.map(groupBlock)}</div>
