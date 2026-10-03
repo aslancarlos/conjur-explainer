@@ -63,7 +63,7 @@ export function FitPanel() {
   const { t } = useTranslation()
   return (
     <div className="rounded-2xl border border-border bg-bg-muted/50 p-6 sm:p-8">
-      <h2 className="text-lg font-semibold text-text">{t('fundamentals.fit_title')}</h2>
+      <h2 className="text-xl font-semibold text-text">{t('fundamentals.fit_title')}</h2>
       <ol className="mt-5 grid gap-5 md:grid-cols-3">
         {STEPS.map((s, i) => (
           <li key={s.key} className="relative flex gap-3">
@@ -104,7 +104,7 @@ export function CompareTable() {
     <>
       <div className="grid gap-4 sm:hidden">
         {(['secret', 'identity'] as const).map(col => (
-          <div key={col} className="rounded-2xl border border-border bg-bg-card p-5">
+          <div key={col} className="card">
             <p>{head(col)}</p>
             <dl className="mt-3 space-y-3">
               {ROWS.map(r => (

@@ -30,7 +30,7 @@ export default function CiOidcPage({ ns, Flow, saas, selfHosted, docs }: {
       {items.map(it => (
         <li key={it} className="flex gap-2.5 text-sm leading-relaxed text-text-2">
           {ok
-            ? <Check size={16} strokeWidth={2.2} className="mt-0.5 shrink-0 text-tone-success" aria-hidden="true" />
+            ? <Check size={16} strokeWidth={2.2} className="mt-0.5 shrink-0 text-domain-idira" aria-hidden="true" />
             : <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-domain-idira" aria-hidden="true" />}
           <span>{it}</span>
         </li>

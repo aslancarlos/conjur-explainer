@@ -39,7 +39,7 @@ export default function SwaAiAgentsPage() {
         <Section title={p('variants_title')} lead={p('variants_lead')}>
           <div className="grid gap-4 lg:grid-cols-3">
             {list<Variant>('variants').map(v => (
-              <article key={v.title} className="flex flex-col gap-3 rounded-2xl border border-border bg-bg-card p-5">
+              <article key={v.title} className="flex flex-col gap-3 card">
                 <h3 className="text-base font-semibold text-text">{v.title}</h3>
                 <p className="text-xs font-medium uppercase tracking-wider text-text-muted">{v.who}</p>
                 <p className="text-sm leading-relaxed text-text-2">{v.how}</p>

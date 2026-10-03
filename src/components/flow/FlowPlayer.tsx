@@ -284,8 +284,8 @@ export default function FlowPlayer({ spec, className = '' }: { spec: FlowSpec; c
     go(clampStep(idx))
   }
 
-  const btn = 'inline-flex h-11 w-11 items-center justify-center rounded-md border border-border text-text-2 transition-colors duration-200 ' +
-    'hover:border-idira-blue hover:text-text disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:text-text-2'
+  const btn = 'btn-icon border border-border hover:border-idira-blue ' +
+    'disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:border-border disabled:hover:text-text-2'
   const ts = L.title ?? 15
   const cur = steps[step]
   const zonesUsed = ZONE_ORDER.filter(d => L.zones?.some(z => z.d === d))
@@ -310,7 +310,7 @@ export default function FlowPlayer({ spec, className = '' }: { spec: FlowSpec; c
             <ChevronLeft size={18} aria-hidden="true" />
           </button>
           <button type="button" onClick={togglePlay} aria-label={playing ? t('dual.ctl_pause') : t('dual.ctl_play')} title={playing ? t('dual.ctl_pause') : t('dual.ctl_play')}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-md bg-idira-blue text-white transition-colors duration-200 hover:bg-idira-blue-2 active:bg-idira-blue-deep">
+            className="btn-icon bg-idira-blue text-white hover:bg-idira-blue-2 hover:text-white active:bg-idira-blue-deep">
             {playing ? <Pause size={18} aria-hidden="true" /> : <Play size={18} aria-hidden="true" />}
           </button>
           <button type="button" onClick={() => go(step + 1)} disabled={step === TOTAL - 1} aria-label={t('dual.ctl_next')} title={t('dual.ctl_next')} className={btn}>

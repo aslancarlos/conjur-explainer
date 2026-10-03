@@ -44,11 +44,11 @@ export default function SecretZeroPage() {
     <ConceptLayout title={c('title')} subtitle={c('subtitle')}>
       {/* The problem, highlighted in red (icon + label, never colour alone) */}
       <section role="note" aria-labelledby="sz-problem"
-        className="rounded-2xl border-2 border-tone-danger/50 bg-tone-danger/10 p-6 sm:p-7">
+        className="callout-danger flex-col gap-0 rounded-2xl border-2 p-6">
         <p className="inline-flex items-center gap-1.5 rounded-full border border-tone-danger/40 bg-tone-danger/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-tone-danger">
           <ShieldAlert size={14} aria-hidden="true" />{c('problem_badge')}
         </p>
-        <h2 id="sz-problem" className="mt-3 text-2xl font-semibold text-tone-danger">{c('problem_title')}</h2>
+        <h2 id="sz-problem" className="mt-3 text-xl font-semibold text-tone-danger">{c('problem_title')}</h2>
         <p className="mt-3 max-w-[72ch] text-base leading-relaxed text-text">{c('problem_desc')}</p>
         <p className="mt-3 max-w-[72ch] text-sm leading-relaxed text-text-2">{c('problem_regress')}</p>
         <blockquote className="mt-4 max-w-[72ch] border-l-4 border-tone-danger/60 pl-4 text-sm italic leading-relaxed text-text-2">
@@ -92,7 +92,7 @@ export default function SecretZeroPage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {SOLVE.map(([k, Icon, to]) => (
             <Link key={k} to={to}
-              className="group flex flex-col rounded-2xl border border-border bg-bg-card p-5 transition-colors duration-200 hover:border-tone-success/50 hover:bg-bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">
+              className="group flex flex-col card transition-colors duration-200 hover:border-tone-success/50 hover:bg-bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">
               <Icon size={20} className="text-tone-success" aria-hidden="true" />
               <h3 className="mt-3 text-base font-semibold text-text">{c(`solve.${k}_title`)}</h3>
               <p className="mt-1.5 flex-1 text-sm leading-relaxed text-text-2">{c(`solve.${k}_desc`)}</p>
@@ -106,8 +106,8 @@ export default function SecretZeroPage() {
 
       {/* Honest note: an API key is still a secret zero */}
       <section role="note" aria-labelledby="sz-apikey"
-        className="rounded-2xl border border-tone-warning/40 bg-tone-warning/10 p-5 sm:p-6">
-        <h2 id="sz-apikey" className="flex items-center gap-2 text-lg font-semibold text-text">
+        className="callout-warning flex-col gap-0 rounded-2xl p-6">
+        <h2 id="sz-apikey" className="flex items-center gap-2 text-xl font-semibold text-text">
           <KeyRound size={20} className="shrink-0 text-tone-warning" aria-hidden="true" />{c('apikey_title')}
         </h2>
         <p className="mt-2 max-w-[72ch] text-sm leading-relaxed text-text-2">{c('apikey_desc')}</p>

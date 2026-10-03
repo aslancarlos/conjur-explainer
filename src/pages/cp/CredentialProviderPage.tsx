@@ -36,7 +36,7 @@ export default function CredentialProviderPage() {
         <Section title={p('caps_title')} lead={p('caps_lead')}>
           <div className="grid gap-4 md:grid-cols-3">
             {caps.map(c => (
-              <div key={c.title} className="rounded-2xl border border-border bg-bg-card p-5">
+              <div key={c.title} className="card">
                 <h3 className="text-base font-semibold text-text">{c.title}</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-text-2">{c.desc}</p>
               </div>

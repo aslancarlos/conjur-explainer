@@ -136,13 +136,13 @@ export default function ArchitectureDiagram() {
   }, [t])
 
   return (
-    <section id="architecture" className="py-24 px-6 bg-bg-muted/40">
-      <div className="max-w-6xl mx-auto space-y-10">
-        <div className="text-center space-y-3">
+    <section id="architecture" className="py-16 px-6 bg-bg-muted/40">
+      <div className="max-w-5xl mx-auto space-y-6">
+        <div className="space-y-3">
           <span className="badge bg-idira-blue/10 text-tone-accent border border-idira-blue/20">
             {t('architecture.badge')}
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold">{t('architecture.title')}</h2>
+          <h2 className="text-xl font-semibold text-text">{t('architecture.title')}</h2>
         </div>
         <FlowPlayer spec={spec} />
       </div>

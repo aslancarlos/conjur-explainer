@@ -32,7 +32,7 @@ export default function ConceptLayout({ title, subtitle, children }: {
         <div className="hero-grid pointer-events-none absolute inset-0" aria-hidden="true" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#131b2b] via-[#131b2b]/85 to-transparent" aria-hidden="true" />
         <div className="relative max-w-6xl mx-auto px-6 lg:px-10 pt-14 pb-14 md:pt-20 md:pb-16">
-          <p className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-[#4ad1f0]">
+          <p className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-idira-cyan">
             {Icon && <Icon size={14} aria-hidden="true" />}
             {t(group?.labelKey ?? 'nav.group_concepts')}{i >= 0 && items.length > 1 && <span className="text-slate-400">· {i + 1}/{items.length}</span>}
           </p>

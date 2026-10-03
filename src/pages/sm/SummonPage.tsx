@@ -31,7 +31,7 @@ export default function SummonPage() {
         <Section title={p('caps_title')} lead={p('caps_lead')}>
           <div className="grid gap-4 md:grid-cols-3">
             {caps.map(c => (
-              <div key={c.title} className="rounded-2xl border border-border bg-bg-card p-5">
+              <div key={c.title} className="card">
                 <h3 className="text-base font-semibold text-text">{c.title}</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-text-2">{c.desc}</p>
               </div>
@@ -49,13 +49,13 @@ export default function SummonPage() {
 
         <Section title={p('example_title')} lead={p('example_lead')}>
           <div className="grid gap-4 lg:grid-cols-2">
-            <figure className="rounded-2xl border border-border bg-bg-card p-5">
+            <figure className="card">
               <figcaption className="text-sm font-semibold text-text">{p('example_yml')}</figcaption>
               <pre className="code-block mt-3 overflow-x-auto text-xs leading-relaxed" tabIndex={0}><code>{`# secrets.yml
 TF_VAR_access_key: !var aws/dev/access_key_id
 TF_VAR_secret_key: !var aws/dev/secret_access_key`}</code></pre>
             </figure>
-            <figure className="rounded-2xl border border-border bg-bg-card p-5">
+            <figure className="card">
               <figcaption className="text-sm font-semibold text-text">{p('example_run')}</figcaption>
               <pre className="code-block mt-3 overflow-x-auto text-xs leading-relaxed" tabIndex={0}><code>{`summon terraform apply
 

@@ -56,7 +56,7 @@ export default function CpHubPage() {
           <div className="grid gap-4 md:grid-cols-3">
             {OFFERINGS.map(({ key, to, Icon }) => (
               <Link key={key} to={to}
-                className="group flex flex-col rounded-2xl border border-border bg-bg-card p-5 transition-colors hover:border-idira-blue">
+                className="group flex flex-col card transition-colors hover:border-idira-blue">
                 <Icon size={20} className="text-domain-idira" aria-hidden="true" />
                 <h3 className="mt-3 text-base font-semibold text-text">{p(`off_${key}_title`)}</h3>
                 <p className="mt-1.5 flex-1 text-sm leading-relaxed text-text-2">{p(`off_${key}_desc`)}</p>
@@ -138,11 +138,11 @@ export default function CpHubPage() {
 
         <Section title={p('more_title')}>
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-border bg-bg-card p-5">
+            <div className="card">
               <h3 className="text-base font-semibold text-text">{p('zos_title')}</h3>
               <p className="mt-1.5 text-sm leading-relaxed text-text-2">{p('zos_desc')}</p>
             </div>
-            <Link to="/dualaccounts" className="group rounded-2xl border border-border bg-bg-card p-5 transition-colors hover:border-idira-blue">
+            <Link to="/dualaccounts" className="group card transition-colors hover:border-idira-blue">
               <h3 className="text-base font-semibold text-text">{p('dual_title')}</h3>
               <p className="mt-1.5 text-sm leading-relaxed text-text-2">{p('dual_desc')}</p>
               <span className="mt-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-tone-accent">
