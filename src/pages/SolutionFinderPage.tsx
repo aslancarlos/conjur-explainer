@@ -7,7 +7,7 @@ import {
   ArrowLeft, ArrowRight, Check, Compass, Copy, Download, Flag, Info, ListChecks, Mail, Pencil, Printer, RotateCcw, TriangleAlert, Sparkles, Lock,
   ShipWheel, Monitor, CloudUpload, RadioTower, Server, GitBranch, Infinity as InfinityIcon, Github, GitPullRequest, CircleDot, Rocket, Boxes, Blocks, Cog,
   Cloud, Vault, KeyRound, Leaf, Hexagon, Code, Workflow, Layers, AppWindow, Cpu, Database, Bot, Plug, CircleHelp, Building2, Zap, Container,
-  Fingerprint, Timer, RefreshCw, ClipboardList, ScanLine, Network, ExternalLink, ChevronDown, FileSpreadsheet, FileText,
+  Fingerprint, Timer, RefreshCw, ClipboardList, ScanLine, Network, ExternalLink, ChevronDown, FileSpreadsheet, FileText, X,
 } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import ArchitecturePreview, { type ArchitecturePreviewLabels } from '../components/finder/ArchitecturePreview'
@@ -16,7 +16,7 @@ import { ZONES, inputFromEvaluation, resolve, usesSecretsManager, type Edition }
 import { buildDrawio, drawioOpenUrl } from '../lib/finder/drawio'
 import { toCsv, toMarkdown, type ExportLabels } from '../lib/finder/exports'
 import { NAV } from '../lib/nav'
-import { APPS_ENVS, DETAIL_GROUPS, DETAILS, ENVS, GOALS, LOGO, PRODUCTS, RECS, evaluate, goalEnabled, effectiveDetails } from './finderModel'
+import { APPS_ENVS, DETAIL_GROUPS, DETAILS, ENVS, GOALS, LOGO, PRODUCTS, RECS, STORES, evaluate, goalEnabled, effectiveDetails } from './finderModel'
 import type { GoalId, Prod } from './finderModel'
 
 /**
@@ -95,6 +95,30 @@ export default function SolutionFinderPage() {
   const [copiedPrereq, setCopiedPrereq] = useState(false)
   const [showPrereq, setShowPrereq] = useState(false)
   const [showOff, setShowOff] = useState(false)
+  // Info dialog: which tile is explained, and the button that opened it (focus returns there).
+  const [infoId, setInfoId] = useState<string | null>(null)
+  const infoOpener = useRef<HTMLElement | null>(null)
+  const openInfo = (id: string, el: HTMLElement) => { infoOpener.current = el; setInfoId(id) }
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const closeInfo = () => { setInfoId(null); const el = infoOpener.current; requestAnimationFrame(() => el?.focus()) }
+  // While the dialog is open: lock page scroll, focus inside, Esc closes, Tab stays inside.
+  useEffect(() => {
+    if (!infoId) return
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const focusTimer = window.setTimeout(() => dialogRef.current?.querySelector<HTMLElement>('[data-autofocus]')?.focus(), 30)
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { e.preventDefault(); closeInfo(); return }
+      if (e.key !== 'Tab' || !dialogRef.current) return
+      const els = [...dialogRef.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+      if (!els.length) return
+      const first = els[0], last = els[els.length - 1]
+      if (e.shiftKey && (document.activeElement === first || !dialogRef.current.contains(document.activeElement))) { e.preventDefault(); last.focus() }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => { window.clearTimeout(focusTimer); document.removeEventListener('keydown', onKey); document.body.style.overflow = prevOverflow }
+  }, [infoId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const readHave = (ps: URLSearchParams) => (ps.get('have') ?? '').split(',').filter(id => ALL_IDS.has(id))
   const readView = (ps: URLSearchParams): View => {
@@ -309,6 +333,160 @@ export default function SolutionFinderPage() {
     )
   }
 
+  // ---------- info dialog ----------
+  /** Pages a tile (or goal) can lead to, grouped by product, from the RECS rules. */
+  const CP_RECS = ['cpAgent', 'ascp', 'ccp', 'zos', 'dual']
+  const infoRecs = (id: string): Array<{ prod: Prod; pages: Array<{ rid: string; goals: GoalId[] }> }> => {
+    const hits = new Map<string, Set<GoalId>>()
+    const addRec = (rid: string, goals: GoalId[]) => { const g = hits.get(rid) ?? new Set<GoalId>(); goals.forEach(x => g.add(x)); hits.set(rid, g) }
+    if (id.startsWith('g_')) {
+      const goal = id.slice(2) as GoalId
+      if (goal !== ('unsure' as GoalId)) Object.entries(RECS).forEach(([rid, r]) => { if (r.when.some(c => c.goals.includes(goal))) addRec(rid, []) })
+    } else if (id === 'pam' || id === 'pam_pc' || id === 'pam_sh') {
+      const pams = id === 'pam' ? ['pc', 'sh'] : [id.slice(4)]
+      Object.entries(RECS).forEach(([rid, r]) => { if (r.pam && pams.includes(r.pam)) addRec(rid, r.when.flatMap(c => c.goals)) })
+      CP_RECS.forEach(rid => addRec(rid, RECS[rid].when.flatMap(c => c.goals)))
+    } else {
+      const ids = (ENVS as string[]).includes(id) ? DETAIL_GROUPS.filter(g => g.env === id).flatMap(g => g.details) : [id]
+      Object.entries(RECS).forEach(([rid, r]) => r.when.forEach(c => { if (c.any.some(d => ids.includes(d))) addRec(rid, c.goals) }))
+    }
+    return PRODUCTS.map(p => ({ prod: p.key, pages: [...hits].filter(([rid]) => RECS[rid].product === p.key).map(([rid, g]) => ({ rid, goals: [...g] })) }))
+      .filter(x => x.pages.length)
+  }
+  const infoNotes = (id: string): string[] => {
+    const n: string[] = []
+    const goal = id.startsWith('g_') ? id.slice(2) : ''
+    if (id === 'op_iot') n.push(`${f('note_iot_title')} ${f('note_iot')}`)
+    if (id === 'op_cf' || id === 'ci_puppet') n.push(f('info.note_sh_only'))
+    if (id === 'op_db') n.push(f('info.note_secretless'))
+    if (STORES.includes(id) || goal === 'vault_gov') n.push(`${f('needs_pam_title')} ${f('needs_pam.shub')}`)
+    if (['mf_zos', 'op_appservers', 'op_legacy', 'mainframe'].includes(id) || goal === 'legacy_pam') n.push(`${f('needs_pam_title')} ${f('needs_pam.cp')}`)
+    if (id === 'pam' || id === 'pam_pc' || id === 'pam_sh') n.push(f('info.note_pam_cp'))
+    return n
+  }
+  const MAX_PAGES = 6
+  const InfoDialog = () => {
+    const id = infoId
+    const item = id ? (t(`finder.info.items.${id}`, { returnObjects: true }) as { what: string; signs: string[]; includes?: string }) : null
+    const goal = id?.startsWith('g_') ? id.slice(2) : ''
+    const disabled = !!goal && goal !== 'unsure' && !goalEnabled(goal as GoalId, visibleDetails)
+    const on = !!id && selected.includes(id)
+    const recs = id ? infoRecs(id) : []
+    const notesFor = id ? infoNotes(id) : []
+    const sectionTitle = 'text-xs font-semibold uppercase tracking-wider text-text-muted'
+    return (
+      <AnimatePresence>
+        {id && item && (
+          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 print:hidden">
+            <motion.div className="absolute inset-0 bg-black/55" aria-hidden="true" onClick={closeInfo}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduce ? 0 : 0.15 }} />
+            <motion.div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="finder-info-title"
+              className="relative flex max-h-[min(40rem,calc(100vh-2rem))] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-border bg-bg-card shadow-2xl"
+              initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96 }} animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1 }}
+              exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.97 }} transition={{ duration: reduce ? 0 : 0.18, ease: 'easeOut' }}>
+              <div className="flex items-start gap-3 border-b border-border px-5 py-4">
+                {goal ? (
+                  (() => { const GI = ICON[id] ?? CircleHelp; return <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-idira-blue/10 text-domain-idira" aria-hidden="true"><GI size={20} /></span> })()
+                ) : <Logo id={id} size={32} fallback={ICON[id] ?? CircleHelp} className="text-text-2" />}
+                <div className="min-w-0 flex-1 pt-0.5">
+                  <h2 id="finder-info-title" tabIndex={-1} data-autofocus className="text-lg font-semibold leading-snug text-text focus:outline-none">{tileName(id)}</h2>
+                  {WITH_SUB.has(id) && !goal && <p className="mt-0.5 text-sm text-text-muted">{f(`tiles.${id}.sub`)}</p>}
+                </div>
+                <button type="button" onClick={closeInfo} aria-label={f('info.close')} title={f('info.close')}
+                  className="-mr-2 -mt-1 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-text-2 transition-colors hover:bg-bg-muted hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">
+                  <X size={20} aria-hidden="true" />
+                </button>
+              </div>
+
+              <div className="flex-1 space-y-5 overflow-y-auto overscroll-contain px-5 py-5">
+                {disabled && (
+                  <p role="note" className="flex gap-2.5 rounded-xl border border-border bg-bg-muted p-3 text-sm leading-relaxed text-text-2">
+                    <Lock size={16} aria-hidden="true" className="mt-0.5 shrink-0 text-text-muted" />
+                    <span><span className="font-semibold text-text">{f('info.unavailable')}.</span> {f(`goals.${goal}.needs`)}</span>
+                  </p>
+                )}
+                <section className="space-y-1.5">
+                  <h3 className={sectionTitle}>{f('info.what')}</h3>
+                  <p className="text-sm leading-relaxed text-text">{item.what}</p>
+                </section>
+                <section className="space-y-1.5">
+                  <h3 className={sectionTitle}>{f('info.signs')}</h3>
+                  <ul className="space-y-1.5">
+                    {item.signs.map(x => (
+                      <li key={x} className="flex gap-2.5 text-sm leading-relaxed text-text-2">
+                        <Check size={16} aria-hidden="true" className="mt-0.5 shrink-0 text-tone-success" />{x}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+                {item.includes && (
+                  <section className="space-y-1.5">
+                    <h3 className={sectionTitle}>{f('info.includes')}</h3>
+                    <p className="text-sm leading-relaxed text-text-2">{item.includes}</p>
+                  </section>
+                )}
+                {id !== 'other' && id !== 'g_unsure' && (
+                  <section className="space-y-2">
+                    <h3 className={sectionTitle}>{f('info.recommend')}</h3>
+                    {recs.length === 0 ? <p className="text-sm text-text-muted">{f('info.recommend_none')}</p> : (
+                      <ul className="space-y-3">
+                        {recs.map(({ prod, pages }) => (
+                          <li key={prod} className="rounded-xl border border-border bg-bg-base p-3">
+                            <p className="flex items-center gap-2 text-sm font-semibold text-text">{ProdDot(prod)}{prodName(prod)}</p>
+                            <ul className="mt-2 flex flex-wrap gap-1.5">
+                              {pages.slice(0, MAX_PAGES).map(({ rid, goals }) => {
+                                const nav = NAV_ITEMS.find(x => x.to === RECS[rid].to)
+                                const cls = 'inline-flex min-h-8 items-center gap-1 rounded-full border border-border bg-bg-card px-2.5 text-xs font-medium text-text transition-colors hover:border-idira-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue'
+                                const when = !goal && goals.length ? `${f('info.when')}: ${goals.map(g => f(`goals.${g}.name`)).join(', ')}` : undefined
+                                const inner = <>{recLabel(rid)}<ArrowRight size={12} aria-hidden="true" className="text-text-muted" /></>
+                                return (
+                                  <li key={rid}>
+                                    {nav?.href
+                                      ? <a href={nav.href} className={cls} title={when}>{inner}</a>
+                                      : <Link to={RECS[rid].to} className={cls} title={when} onClick={() => setInfoId(null)}>{inner}</Link>}
+                                  </li>
+                                )
+                              })}
+                              {pages.length > MAX_PAGES && <li className="inline-flex min-h-8 items-center px-1 text-xs text-text-muted">{f('info.more_pages', { count: pages.length - MAX_PAGES })}</li>}
+                            </ul>
+                            {!goal && (() => {
+                              const gs = [...new Set(pages.flatMap(x => x.goals))]
+                              return gs.length ? <p className="mt-2 text-xs text-text-muted">{f('info.when')}: {gs.map(g => f(`goals.${g}.name`)).join(', ')}</p> : null
+                            })()}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </section>
+                )}
+                {notesFor.length > 0 && (
+                  <div role="note" className="space-y-1.5 rounded-xl border border-tone-warning/40 bg-tone-warning/10 p-3">
+                    {notesFor.map(n => (
+                      <p key={n} className="flex gap-2 text-xs leading-relaxed text-text-2">
+                        <TriangleAlert size={14} aria-hidden="true" className="mt-0.5 shrink-0 text-tone-warning" />{n}
+                      </p>
+                    ))}
+                  </div>
+                )}
+                {id === 'other' && (
+                  <a href={mailHref} className={btnSecondary}><Mail size={16} aria-hidden="true" className="text-tone-accent" />{f('other_cta')}</a>
+                )}
+              </div>
+
+              <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border px-5 py-3.5">
+                <button type="button" onClick={closeInfo} className={btnGhost}>{f('info.close')}</button>
+                <button type="button" disabled={disabled} onClick={() => toggle(id)} className={on || disabled ? btnSecondary : btnPrimary}>
+                  {disabled ? <><Lock size={16} aria-hidden="true" />{f('info.unavailable')}</>
+                    : on ? <><X size={16} aria-hidden="true" />{f('info.remove')}</> : <><Check size={16} aria-hidden="true" />{f('info.select')}</>}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    )
+  }
+
   const checklist = (items: string[]) => (
     <ul className="space-y-1.5">
       {items.map(x => (
@@ -351,30 +529,46 @@ export default function SolutionFinderPage() {
     </nav>
   )
 
+  /** Small "i" button that opens the info dialog for a tile (sibling of the toggle, never nested in it). */
+  const InfoButton = (id: string, className = '') => (
+    <button type="button" onClick={e => openInfo(id, e.currentTarget)}
+      aria-label={f('info.open', { name: tileName(id) })} title={f('info.open', { name: tileName(id) })} aria-haspopup="dialog"
+      className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-text-muted transition-colors hover:bg-bg-muted hover:text-text
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue ${className}`}>
+      <Info size={16} aria-hidden="true" />
+    </button>
+  )
+
   const TileButton = (id: string, opts: { disabledHint?: string; help?: string } = {}) => {
     const on = selected.includes(id)
     const disabled = !!opts.disabledHint
     const Icon = ICON[id] ?? CircleHelp
     const sub = opts.disabledHint ?? opts.help ?? (WITH_SUB.has(id) ? f(`tiles.${id}.sub`) : undefined)
     return (
-      <button key={id} type="button" aria-pressed={on} aria-disabled={disabled || undefined} onClick={() => !disabled && toggle(id)}
-        className={`relative flex min-h-[60px] items-center gap-3 rounded-xl border py-2.5 pl-3.5 pr-9 text-left transition-colors duration-200
-          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue focus-visible:ring-offset-2 focus-visible:ring-offset-bg-card
-          ${disabled ? 'cursor-not-allowed border-dashed border-border bg-bg-card' : on ? 'border-idira-blue bg-idira-blue/10' : 'border-border bg-bg-base hover:border-idira-blue/60 hover:bg-bg-muted'}`}>
-        {disabled
-          ? <Lock size={18} aria-hidden="true" className="shrink-0 text-text-muted" />
-          : <Logo id={id} size={28} fallback={Icon} className={on ? 'text-domain-idira' : 'text-text-2'} />}
-        <span className="min-w-0 flex-1">
-          <span className={`block text-sm font-semibold leading-tight ${disabled ? 'text-text-muted' : 'text-text'}`}>{tileName(id)}</span>
-          {sub && <span title={sub} className={`mt-0.5 block text-xs leading-snug ${opts.help || disabled ? '' : 'truncate'} text-text-muted`}>{sub}</span>}
-        </span>
-        {!disabled && (
-          <span aria-hidden="true" className={`absolute right-3 top-1/2 inline-flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full border transition-colors
-            ${on ? 'border-idira-blue bg-idira-blue text-white' : 'border-border bg-bg-card text-transparent'}`}>
-            <Check size={12} strokeWidth={3} />
+      <div key={id} className="relative">
+        <button type="button" aria-pressed={on} aria-disabled={disabled || undefined} onClick={() => !disabled && toggle(id)}
+          className={`flex h-full min-h-[60px] w-full items-center gap-3 rounded-xl border py-2.5 pl-3.5 pr-11 text-left transition-colors duration-200
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue focus-visible:ring-offset-2 focus-visible:ring-offset-bg-card
+            ${disabled ? 'cursor-not-allowed border-dashed border-border bg-bg-card' : on ? 'border-idira-blue bg-idira-blue/10' : 'border-border bg-bg-base hover:border-idira-blue/60 hover:bg-bg-muted'}`}>
+          <span className="relative shrink-0">
+            {disabled
+              ? <Lock size={18} aria-hidden="true" className="text-text-muted" />
+              : <Logo id={id} size={28} fallback={Icon} className={on ? 'text-domain-idira' : 'text-text-2'} />}
+            {/* selected: check badge on the logo corner (shape, not colour alone) */}
+            {!disabled && (
+              <span aria-hidden="true" className={`absolute -bottom-1 -right-1 inline-flex h-[18px] w-[18px] items-center justify-center rounded-full border-2 border-bg-card transition-all duration-200
+                ${on ? 'scale-100 bg-idira-blue text-white opacity-100' : 'scale-75 opacity-0'}`}>
+                <Check size={10} strokeWidth={3.5} />
+              </span>
+            )}
           </span>
-        )}
-      </button>
+          <span className="min-w-0 flex-1">
+            <span className={`block text-sm font-semibold leading-tight ${disabled ? 'text-text-muted' : 'text-text'}`}>{tileName(id)}</span>
+            {sub && <span title={sub} className={`mt-0.5 block text-xs leading-snug ${opts.help || disabled ? '' : 'truncate'} text-text-muted`}>{sub}</span>}
+          </span>
+        </button>
+        {InfoButton(id, 'absolute right-1.5 top-1/2 -translate-y-1/2')}
+      </div>
     )
   }
 
@@ -452,9 +646,12 @@ export default function SolutionFinderPage() {
               </button>
               <ul id="finder-goals-off" className={`${showOff ? 'block' : 'hidden'} mt-1 divide-y divide-border overflow-hidden rounded-xl border border-dashed border-border`}>
                 {goalsOff.map(g => (
-                  <li key={g.id} className="flex flex-wrap items-baseline gap-x-2 px-4 py-2.5 text-sm">
-                    <span className="font-medium text-text-2">{f(`goals.${g.id}.name`)}</span>
-                    <span className="text-xs text-text-muted">{f(`goals.${g.id}.needs`)}</span>
+                  <li key={g.id} className="flex items-center gap-2 py-1.5 pl-4 pr-1.5 text-sm">
+                    <span className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-2">
+                      <span className="font-medium text-text-2">{f(`goals.${g.id}.name`)}</span>
+                      <span className="text-xs text-text-muted">{f(`goals.${g.id}.needs`)}</span>
+                    </span>
+                    {InfoButton(`g_${g.id}`)}
                   </li>
                 ))}
               </ul>
@@ -963,6 +1160,7 @@ export default function SolutionFinderPage() {
           </div>
         </div>
       </div>
+      {InfoDialog()}
     </section>
   )
 }

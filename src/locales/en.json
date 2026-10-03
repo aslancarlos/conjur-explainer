@@ -161,7 +161,23 @@
     "finder": "Solution finder",
     "finder_sub": "Tick what you have, get the matching products",
     "c_secretzero": "Secret zero",
-    "c_secretzero_sub": "The bootstrap credential problem"
+    "c_secretzero_sub": "The bootstrap credential problem",
+    "zone_start": "Start here",
+    "zone_products": "Products",
+    "zone_integrations": "Integrations",
+    "zone_resources": "Resources",
+    "group_swa_short": "Workload Access (SWA)",
+    "c_identity_side": "Machine identity",
+    "a_hub_side": "Overview",
+    "cp_hub_side": "Overview",
+    "a_k8s_side": "Kubernetes",
+    "cp_ascp_side": "ASCP (app servers)",
+    "cp_ccp_side": "CCP (central)",
+    "cp_zos_side": "CP for z/OS",
+    "esoshop_side": "External Secrets (ESO)",
+    "pf_python_side": "Python / Lambda",
+    "k8s_spmodes_side": "Secrets Provider modes",
+    "ai_swa_side": "AI agents"
   },
   "hero": {
     "eyebrow": "Machine identity · Secrets · IDIRA by Palo Alto Networks",
@@ -8651,6 +8667,464 @@
     "needs_pam": {
       "cp": "Credential Providers need PAM Self-Hosted (Digital Vault 14.0 or later) or Privilege Cloud. Add the PAM you have in step 1 to tailor the result.",
       "shub": "Secrets Hub needs Privilege Cloud, or PAM Self-Hosted 11.5 or later through a connector, as the source. Add the PAM you have in step 1 to tailor the result."
+    },
+    "info": {
+      "open": "More about {{name}}",
+      "close": "Close",
+      "what": "What it is",
+      "signs": "Select it if",
+      "includes": "Includes",
+      "recommend": "What we usually recommend",
+      "recommend_none": "Nothing on the site maps to this item yet.",
+      "when": "when the goal is",
+      "select": "Select",
+      "remove": "Remove",
+      "unavailable": "Not available yet",
+      "more_pages": "+{{count}} more",
+      "note_sh_only": "Documented for Secrets Manager Self-Hosted only.",
+      "note_secretless": "Secretless Broker is documented for Secrets Manager Self-Hosted only.",
+      "note_pam_cp": "Credential Providers work with both PAM back ends (PAM Self-Hosted and Privilege Cloud).",
+      "dialog_label": "Details",
+      "items": {
+        "aws": {
+          "what": "Workloads running on Amazon Web Services: virtual machines, functions, containers and the AWS secret store.",
+          "signs": [
+            "Your apps run on EC2, Lambda, EKS or ECS.",
+            "You already keep secrets in AWS Secrets Manager."
+          ],
+          "includes": "EC2, Lambda, EKS, ECS / Fargate, AWS Secrets Manager"
+        },
+        "azure": {
+          "what": "Workloads and tools on Microsoft Azure: virtual machines, AKS, App Service and Functions, Azure DevOps pipelines and Key Vault.",
+          "signs": [
+            "Your apps run on Azure VMs, AKS or App Service.",
+            "Your pipelines run in Azure DevOps or you use Azure Key Vault."
+          ],
+          "includes": "Virtual Machines, AKS, App Service / Functions, Azure DevOps, Azure Key Vault"
+        },
+        "gcp": {
+          "what": "Workloads on Google Cloud: Compute Engine, GKE, Cloud Run and Cloud Functions, and GCP Secret Manager.",
+          "signs": [
+            "Your apps run on Compute Engine, GKE or Cloud Run.",
+            "You already keep secrets in GCP Secret Manager."
+          ],
+          "includes": "Compute Engine, GKE, Cloud Run / Functions, GCP Secret Manager"
+        },
+        "k8s": {
+          "what": "Kubernetes clusters you run yourself or on premises, including OpenShift. Managed clusters (EKS, AKS, GKE) are under each cloud.",
+          "signs": [
+            "You deploy containers with Kubernetes or OpenShift.",
+            "Pods need database passwords, API tokens or certificates."
+          ],
+          "includes": "OpenShift, other distributions (Rancher, Tanzu Kubernetes, vanilla and others)"
+        },
+        "onprem": {
+          "what": "Your own data center: Linux and Windows servers, app servers, packaged or legacy apps, databases, Cloud Foundry, HashiCorp Vault and devices.",
+          "signs": [
+            "You run servers or VMs in your own data center.",
+            "Legacy apps or app servers still keep passwords in files."
+          ],
+          "includes": "Linux and Windows servers, app servers, legacy apps, Cloud Foundry / Tanzu, databases, HashiCorp Vault, IoT devices"
+        },
+        "mainframe": {
+          "what": "IBM z/OS batch jobs and programs that need passwords for databases or other systems.",
+          "signs": [
+            "JCL jobs or programs on z/OS use stored passwords.",
+            "You want those passwords to come from PAM and rotate."
+          ],
+          "includes": "z/OS batch, JCL, programs that call the SDK"
+        },
+        "cicd": {
+          "what": "Pipelines and automation tools that need credentials to build, test and deploy.",
+          "signs": [
+            "Pipelines keep secrets in CI variables or in the repository.",
+            "Automation (Ansible, Terraform, Puppet) needs credentials to reach systems."
+          ],
+          "includes": "Jenkins, GitLab, GitHub Actions, Azure DevOps, Bitbucket, CircleCI, Octopus Deploy, Ansible, Terraform, Puppet"
+        },
+        "ai": {
+          "what": "AI agents and AI coding assistants that call APIs or need secrets to do their work.",
+          "signs": [
+            "You build or run AI agents that call other services.",
+            "Developers use AI assistants that create or read secrets."
+          ],
+          "includes": "AI agents (custom, Claude, Gemini Enterprise), AI coding assistants that use MCP"
+        },
+        "pam": {
+          "what": "The privileged access management you already have. It is the source for Secrets Hub and the back end for Credential Providers.",
+          "signs": [
+            "You already use Privilege Cloud or PAM Self-Hosted.",
+            "Privileged accounts are stored in Safes and rotated by the CPM."
+          ],
+          "includes": "Privilege Cloud, PAM Self-Hosted"
+        },
+        "other": {
+          "what": "Something that is not on the list. Tell us about it and we will point you to the right integration.",
+          "signs": [
+            "Your platform or tool is not listed here.",
+            "You are not sure where your case fits."
+          ]
+        },
+        "aws_ec2": {
+          "what": "Virtual machines on AWS. They can prove who they are with their IAM role.",
+          "signs": [
+            "Apps or scripts run on EC2 instances.",
+            "Instances read credentials from files or environment variables."
+          ]
+        },
+        "aws_lambda": {
+          "what": "Serverless functions on AWS that run with an IAM execution role.",
+          "signs": [
+            "You run Lambda functions that call databases or APIs.",
+            "Function settings hold passwords or tokens."
+          ]
+        },
+        "aws_eks": {
+          "what": "Managed Kubernetes on AWS. Pods prove who they are with the cluster service account token.",
+          "signs": [
+            "You run workloads on Amazon EKS.",
+            "Pods use Kubernetes Secrets or files with credentials."
+          ]
+        },
+        "aws_ecs": {
+          "what": "Containers on Amazon ECS or Fargate, running with an IAM task role.",
+          "signs": [
+            "You run containers on ECS or Fargate.",
+            "Task definitions carry passwords or tokens."
+          ]
+        },
+        "aws_sm": {
+          "what": "The AWS secret store. Developers read secrets there with the native AWS SDK.",
+          "signs": [
+            "Your apps already read secrets from AWS Secrets Manager.",
+            "You want PAM rotation and audit without changing those apps."
+          ]
+        },
+        "az_vm": {
+          "what": "Virtual machines on Azure. They can prove who they are with a managed identity.",
+          "signs": [
+            "Apps or scripts run on Azure VMs.",
+            "VMs read credentials from files or environment variables."
+          ]
+        },
+        "az_aks": {
+          "what": "Managed Kubernetes on Azure. Pods prove who they are with the cluster service account token.",
+          "signs": [
+            "You run workloads on AKS.",
+            "Pods use Kubernetes Secrets or files with credentials."
+          ]
+        },
+        "az_app": {
+          "what": "Azure App Service and Azure Functions, which can use a managed identity.",
+          "signs": [
+            "Web apps or functions run on App Service or Functions.",
+            "App settings hold connection strings or keys."
+          ]
+        },
+        "azdo": {
+          "what": "Azure DevOps pipelines. The same item appears under Azure and under CI/CD.",
+          "signs": [
+            "Your builds and releases run in Azure DevOps.",
+            "Pipelines keep secrets in variable groups or service connections."
+          ]
+        },
+        "az_kv": {
+          "what": "The Azure secret store. Developers read secrets there with the native Azure SDK.",
+          "signs": [
+            "Your apps already read secrets from Azure Key Vault.",
+            "You want PAM rotation and audit without changing those apps."
+          ]
+        },
+        "gcp_ce": {
+          "what": "Virtual machines on Google Cloud, running with a service account.",
+          "signs": [
+            "Apps or scripts run on Compute Engine.",
+            "VMs read credentials from files or metadata."
+          ]
+        },
+        "gcp_gke": {
+          "what": "Managed Kubernetes on Google Cloud. Pods prove who they are with the cluster service account token.",
+          "signs": [
+            "You run workloads on GKE.",
+            "Pods use Kubernetes Secrets or files with credentials."
+          ]
+        },
+        "gcp_run": {
+          "what": "Cloud Run services and Cloud Functions, running with a service account.",
+          "signs": [
+            "You run containers on Cloud Run or functions on Cloud Functions.",
+            "Their settings hold passwords or tokens."
+          ]
+        },
+        "gcp_sm": {
+          "what": "The Google Cloud secret store. Developers read secrets there with the native Google SDK.",
+          "signs": [
+            "Your apps already read secrets from GCP Secret Manager.",
+            "You want PAM rotation and audit without changing those apps."
+          ]
+        },
+        "k8s_openshift": {
+          "what": "Red Hat OpenShift clusters. They use the same Kubernetes integrations.",
+          "signs": [
+            "You deploy apps on OpenShift.",
+            "Pods need credentials for databases or APIs."
+          ]
+        },
+        "k8s_other": {
+          "what": "Any other Kubernetes distribution you manage yourself.",
+          "signs": [
+            "You run self-managed Kubernetes clusters.",
+            "Pods need credentials for databases or APIs."
+          ]
+        },
+        "op_linux": {
+          "what": "Linux servers and VMs in your data center.",
+          "signs": [
+            "Scripts, cron jobs or services read passwords from files.",
+            "You want servers to authenticate without a stored password."
+          ]
+        },
+        "op_windows": {
+          "what": "Windows servers in your data center.",
+          "signs": [
+            "Services or scheduled tasks use stored passwords.",
+            "Windows apps keep credentials in config files."
+          ]
+        },
+        "op_appservers": {
+          "what": "Java application servers that keep data source passwords in their configuration.",
+          "signs": [
+            "Data sources in Tomcat, JBoss, WebSphere or WebLogic hold passwords.",
+            "You want the app server to fetch them from PAM."
+          ],
+          "includes": "Tomcat, JBoss, WebSphere, WebLogic"
+        },
+        "op_legacy": {
+          "what": "Packaged or legacy applications you cannot easily change.",
+          "signs": [
+            "The app reads a password from a file, registry or database table.",
+            "Changing the app code is hard or not allowed."
+          ]
+        },
+        "op_cf": {
+          "what": "Cloud Foundry or VMware Tanzu Application Service platforms.",
+          "signs": [
+            "You push apps to Cloud Foundry or Tanzu.",
+            "Apps get credentials from service bindings or manifests."
+          ]
+        },
+        "op_db": {
+          "what": "Databases your applications connect to.",
+          "signs": [
+            "Apps connect with a shared database password.",
+            "Rotating that password breaks apps or needs a maintenance window."
+          ]
+        },
+        "op_hcv": {
+          "what": "HashiCorp Vault, Open Source or Enterprise, already used by developers.",
+          "signs": [
+            "Developers read secrets from HashiCorp Vault.",
+            "You want PAM rotation and audit for those secrets."
+          ]
+        },
+        "op_iot": {
+          "what": "Devices in the field that connect to your services.",
+          "signs": [
+            "Devices carry passwords, keys or certificates.",
+            "You want devices to authenticate without a shared password."
+          ]
+        },
+        "mf_zos": {
+          "what": "Batch jobs and programs on IBM z/OS that need passwords at run time.",
+          "signs": [
+            "JCL jobs pass passwords in datasets or members.",
+            "You want z/OS to fetch them from PAM with a local cache."
+          ]
+        },
+        "ci_jenkins": {
+          "what": "Jenkins pipelines that need secrets during builds and deployments.",
+          "signs": [
+            "Your pipelines run in Jenkins.",
+            "Secrets live in CI variables, credentials stores or the repository."
+          ]
+        },
+        "ci_gitlab": {
+          "what": "GitLab CI/CD pipelines that need secrets during builds and deployments.",
+          "signs": [
+            "Your pipelines run in GitLab CI/CD.",
+            "Secrets live in CI variables, credentials stores or the repository."
+          ]
+        },
+        "ci_gha": {
+          "what": "GitHub Actions pipelines that need secrets during builds and deployments.",
+          "signs": [
+            "Your pipelines run in GitHub Actions.",
+            "Secrets live in CI variables, credentials stores or the repository."
+          ]
+        },
+        "ci_bitbucket": {
+          "what": "Bitbucket Pipelines pipelines that need secrets during builds and deployments.",
+          "signs": [
+            "Your pipelines run in Bitbucket Pipelines.",
+            "Secrets live in CI variables, credentials stores or the repository."
+          ]
+        },
+        "ci_circleci": {
+          "what": "CircleCI pipelines that need secrets during builds and deployments.",
+          "signs": [
+            "Your pipelines run in CircleCI.",
+            "Secrets live in CI variables, credentials stores or the repository."
+          ]
+        },
+        "ci_octopus": {
+          "what": "Octopus Deploy pipelines that need secrets during builds and deployments.",
+          "signs": [
+            "Your pipelines run in Octopus Deploy.",
+            "Secrets live in CI variables, credentials stores or the repository."
+          ]
+        },
+        "ci_ansible": {
+          "what": "Playbooks that log in to servers and devices.",
+          "signs": [
+            "You automate with Ansible.",
+            "Credentials sit in variables, vaults or files next to the code."
+          ]
+        },
+        "ci_terraform": {
+          "what": "Infrastructure as code that needs provider and database credentials.",
+          "signs": [
+            "You automate with Terraform.",
+            "Credentials sit in variables, vaults or files next to the code."
+          ]
+        },
+        "ci_puppet": {
+          "what": "Configuration management that applies settings with credentials on each node.",
+          "signs": [
+            "You automate with Puppet.",
+            "Credentials sit in variables, vaults or files next to the code."
+          ]
+        },
+        "ai_agents": {
+          "what": "AI agents that call APIs and services on their own.",
+          "signs": [
+            "Your agents use long-lived API keys.",
+            "You want each agent to have its own short-lived identity."
+          ],
+          "includes": "Custom, Claude, Gemini Enterprise"
+        },
+        "ai_mcp": {
+          "what": "AI coding assistants that work with secrets through the Model Context Protocol (MCP).",
+          "signs": [
+            "Developers use AI tools while writing code.",
+            "You want the assistant to create secrets in the vault instead of in code."
+          ]
+        },
+        "pam_pc": {
+          "what": "PAM delivered as a service.",
+          "signs": [
+            "Your privileged accounts are in Privilege Cloud.",
+            "The CPM rotates them from your connectors."
+          ]
+        },
+        "pam_sh": {
+          "what": "PAM installed and operated in your own environment (Digital Vault, PVWA, CPM).",
+          "signs": [
+            "Your privileged accounts are in your own Digital Vault.",
+            "Your team runs the PAM servers."
+          ]
+        },
+        "app_java": {
+          "what": "Applications written in Java / Spring.",
+          "signs": [
+            "Your services are written in Java / Spring.",
+            "They read secrets from config files or environment variables."
+          ]
+        },
+        "app_dotnet": {
+          "what": "Applications written in .NET.",
+          "signs": [
+            "Your services are written in .NET.",
+            "They read secrets from config files or environment variables."
+          ]
+        },
+        "app_python": {
+          "what": "Applications written in Python.",
+          "signs": [
+            "Your services are written in Python.",
+            "They read secrets from config files or environment variables."
+          ]
+        },
+        "app_mulesoft": {
+          "what": "MuleSoft integration flows (Mule apps).",
+          "signs": [
+            "You build integrations on MuleSoft.",
+            "Mule apps keep credentials in properties."
+          ]
+        },
+        "g_unsure": {
+          "what": "We pick the goals from what you selected in steps 1 and 2.",
+          "signs": [
+            "You want a first recommendation quickly.",
+            "You will refine the goals later with the team."
+          ]
+        },
+        "g_hardcoded": {
+          "what": "Apps, scripts and pipelines fetch secrets at run time with their own identity, so nothing stays in code, images or config.",
+          "signs": [
+            "Passwords or tokens appear in repositories, images or CI variables.",
+            "Teams copy the same secret to many places."
+          ]
+        },
+        "g_vault_gov": {
+          "what": "Keep the cloud secret stores developers already use, with rotation, policy and audit coming from PAM.",
+          "signs": [
+            "Each cloud team runs its own secret store.",
+            "Security has no central view of rotation and access."
+          ]
+        },
+        "g_legacy_pam": {
+          "what": "Servers, app servers, legacy apps and mainframe jobs fetch privileged accounts from PAM at run time instead of storing them.",
+          "signs": [
+            "Privileged passwords sit in config files of servers or apps.",
+            "You already rotate those accounts in PAM, but apps break."
+          ]
+        },
+        "g_workload_id": {
+          "what": "Workloads get short-lived SPIFFE identities (SVIDs) and use them for mTLS between services, cloud federation or secret exchange.",
+          "signs": [
+            "Services talk to each other and need mutual trust.",
+            "You want workloads to reach cloud APIs without static keys."
+          ]
+        },
+        "g_ai": {
+          "what": "AI agents and AI tools work without long-lived keys in code or configuration.",
+          "signs": [
+            "Agents hold API keys to call models or services.",
+            "AI assistants could write secrets into code."
+          ]
+        },
+        "g_dynamic": {
+          "what": "Cloud credentials created on demand with a time to live, which expire on their own.",
+          "signs": [
+            "Long-lived cloud access keys are shared across teams.",
+            "You want access that disappears after the job."
+          ]
+        },
+        "g_rotation": {
+          "what": "Rotate passwords on a schedule without breaking the applications that use them.",
+          "signs": [
+            "Password changes cause outages or need a maintenance window.",
+            "Some passwords have not changed in years."
+          ]
+        },
+        "g_audit": {
+          "what": "Know which workload or person accessed which secret, when, and send those events to your SIEM.",
+          "signs": [
+            "Auditors ask who used a credential.",
+            "You need machine access events in the SIEM."
+          ]
+        }
+      }
     }
   },
   "c_secretzero": {

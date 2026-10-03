@@ -161,7 +161,23 @@
     "finder": "Qual solução usar",
     "finder_sub": "Marque o que você tem e veja os produtos que atendem",
     "c_secretzero": "Segredo Zero",
-    "c_secretzero_sub": "O problema da credencial inicial"
+    "c_secretzero_sub": "O problema da credencial inicial",
+    "zone_start": "Comece aqui",
+    "zone_products": "Produtos",
+    "zone_integrations": "Integrações",
+    "zone_resources": "Recursos",
+    "group_swa_short": "Workload Access (SWA)",
+    "c_identity_side": "Identidade de máquina",
+    "a_hub_side": "Visão geral",
+    "cp_hub_side": "Visão geral",
+    "a_k8s_side": "Kubernetes",
+    "cp_ascp_side": "ASCP (app servers)",
+    "cp_ccp_side": "CCP (central)",
+    "cp_zos_side": "CP para z/OS",
+    "esoshop_side": "External Secrets (ESO)",
+    "pf_python_side": "Python / Lambda",
+    "k8s_spmodes_side": "Modos do Provider",
+    "ai_swa_side": "Agentes de IA"
   },
   "hero": {
     "eyebrow": "Identidade de máquina · Secrets · IDIRA by Palo Alto Networks",
@@ -8651,6 +8667,464 @@
     "needs_pam": {
       "cp": "Os Credential Providers precisam de PAM Self-Hosted (Digital Vault 14.0 ou superior) ou Privilege Cloud. Marque o PAM que você tem no passo 1 para ajustar o resultado.",
       "shub": "O Secrets Hub precisa do Privilege Cloud, ou do PAM Self-Hosted 11.5 ou superior via conector, como origem. Marque o PAM que você tem no passo 1 para ajustar o resultado."
+    },
+    "info": {
+      "open": "Mais sobre {{name}}",
+      "close": "Fechar",
+      "what": "O que é",
+      "signs": "Marque se",
+      "includes": "Inclui",
+      "recommend": "O que costumamos recomendar",
+      "recommend_none": "Ainda não há página no site para este item.",
+      "when": "quando o objetivo é",
+      "select": "Selecionar",
+      "remove": "Remover",
+      "unavailable": "Ainda não disponível",
+      "more_pages": "+{{count}}",
+      "note_sh_only": "Documentado só para o Secrets Manager Self-Hosted.",
+      "note_secretless": "O Secretless Broker é documentado só para o Secrets Manager Self-Hosted.",
+      "note_pam_cp": "Os Credential Providers funcionam com os dois back ends de PAM (PAM Self-Hosted e Privilege Cloud).",
+      "dialog_label": "Detalhes",
+      "items": {
+        "aws": {
+          "what": "Workloads que rodam na Amazon Web Services: máquinas virtuais, funções, contêineres e o cofre de secrets da AWS.",
+          "signs": [
+            "Suas aplicações rodam em EC2, Lambda, EKS ou ECS.",
+            "Vocês já guardam secrets no AWS Secrets Manager."
+          ],
+          "includes": "EC2, Lambda, EKS, ECS / Fargate, AWS Secrets Manager"
+        },
+        "azure": {
+          "what": "Workloads e ferramentas no Microsoft Azure: máquinas virtuais, AKS, App Service e Functions, pipelines do Azure DevOps e Key Vault.",
+          "signs": [
+            "Suas aplicações rodam em VMs do Azure, AKS ou App Service.",
+            "Seus pipelines rodam no Azure DevOps ou vocês usam o Azure Key Vault."
+          ],
+          "includes": "Virtual Machines, AKS, App Service / Functions, Azure DevOps, Azure Key Vault"
+        },
+        "gcp": {
+          "what": "Workloads no Google Cloud: Compute Engine, GKE, Cloud Run e Cloud Functions, e o GCP Secret Manager.",
+          "signs": [
+            "Suas aplicações rodam em Compute Engine, GKE ou Cloud Run.",
+            "Vocês já guardam secrets no GCP Secret Manager."
+          ],
+          "includes": "Compute Engine, GKE, Cloud Run / Functions, GCP Secret Manager"
+        },
+        "k8s": {
+          "what": "Clusters Kubernetes que vocês mesmos operam ou rodam no data center, incluindo OpenShift. Clusters gerenciados (EKS, AKS, GKE) ficam em cada nuvem.",
+          "signs": [
+            "Vocês publicam contêineres com Kubernetes ou OpenShift.",
+            "Os pods precisam de senhas de banco, tokens de API ou certificados."
+          ],
+          "includes": "OpenShift, outras distribuições (Rancher, Tanzu Kubernetes, vanilla e outras)"
+        },
+        "onprem": {
+          "what": "O data center de vocês: servidores Linux e Windows, servidores de aplicação, apps legadas ou de prateleira, bancos de dados, Cloud Foundry, HashiCorp Vault e dispositivos.",
+          "signs": [
+            "Vocês rodam servidores ou VMs no próprio data center.",
+            "Apps legadas ou servidores de aplicação ainda guardam senhas em arquivos."
+          ],
+          "includes": "Servidores Linux e Windows, servidores de aplicação, apps legadas, Cloud Foundry / Tanzu, bancos de dados, HashiCorp Vault, dispositivos IoT"
+        },
+        "mainframe": {
+          "what": "Jobs batch e programas no IBM z/OS que precisam de senhas de bancos ou de outros sistemas.",
+          "signs": [
+            "Jobs JCL ou programas no z/OS usam senhas guardadas.",
+            "Vocês querem que essas senhas venham do PAM e sejam rotacionadas."
+          ],
+          "includes": "Batch z/OS, JCL, programas que chamam o SDK"
+        },
+        "cicd": {
+          "what": "Pipelines e ferramentas de automação que precisam de credenciais para compilar, testar e publicar.",
+          "signs": [
+            "Os pipelines guardam secrets em variáveis do CI ou no repositório.",
+            "A automação (Ansible, Terraform, Puppet) precisa de credenciais para acessar sistemas."
+          ],
+          "includes": "Jenkins, GitLab, GitHub Actions, Azure DevOps, Bitbucket, CircleCI, Octopus Deploy, Ansible, Terraform, Puppet"
+        },
+        "ai": {
+          "what": "Agentes de IA e assistentes de código com IA que chamam APIs ou precisam de secrets para trabalhar.",
+          "signs": [
+            "Vocês constroem ou rodam agentes de IA que chamam outros serviços.",
+            "Os desenvolvedores usam assistentes de IA que criam ou leem secrets."
+          ],
+          "includes": "Agentes de IA (próprios, Claude, Gemini Enterprise), assistentes de código com IA que usam MCP"
+        },
+        "pam": {
+          "what": "O gerenciamento de acesso privilegiado que vocês já têm. Ele é a origem do Secrets Hub e o back end dos Credential Providers.",
+          "signs": [
+            "Vocês já usam Privilege Cloud ou PAM Self-Hosted.",
+            "Contas privilegiadas ficam em Safes e são rotacionadas pelo CPM."
+          ],
+          "includes": "Privilege Cloud, PAM Self-Hosted"
+        },
+        "other": {
+          "what": "Algo que não está na lista. Conte para nós e indicamos a integração certa.",
+          "signs": [
+            "Sua plataforma ou ferramenta não aparece aqui.",
+            "Vocês não sabem onde o caso se encaixa."
+          ]
+        },
+        "aws_ec2": {
+          "what": "Máquinas virtuais na AWS. Elas podem provar quem são com a role do IAM.",
+          "signs": [
+            "Apps ou scripts rodam em instâncias EC2.",
+            "As instâncias leem credenciais de arquivos ou variáveis de ambiente."
+          ]
+        },
+        "aws_lambda": {
+          "what": "Funções serverless na AWS que rodam com uma role de execução do IAM.",
+          "signs": [
+            "Vocês rodam funções Lambda que chamam bancos ou APIs.",
+            "As configurações das funções guardam senhas ou tokens."
+          ]
+        },
+        "aws_eks": {
+          "what": "Kubernetes gerenciado na AWS. Os pods provam quem são com o token da service account do cluster.",
+          "signs": [
+            "Vocês rodam workloads no Amazon EKS.",
+            "Os pods usam Kubernetes Secrets ou arquivos com credenciais."
+          ]
+        },
+        "aws_ecs": {
+          "what": "Contêineres no Amazon ECS ou Fargate, rodando com uma role de tarefa do IAM.",
+          "signs": [
+            "Vocês rodam contêineres no ECS ou Fargate.",
+            "As task definitions carregam senhas ou tokens."
+          ]
+        },
+        "aws_sm": {
+          "what": "O cofre de secrets da AWS. Os desenvolvedores leem os secrets ali com o SDK nativo da AWS.",
+          "signs": [
+            "Suas aplicações já leem secrets do AWS Secrets Manager.",
+            "Vocês querem rotação e auditoria do PAM sem mudar essas aplicações."
+          ]
+        },
+        "az_vm": {
+          "what": "Máquinas virtuais no Azure. Elas podem provar quem são com uma managed identity.",
+          "signs": [
+            "Apps ou scripts rodam em VMs do Azure.",
+            "As VMs leem credenciais de arquivos ou variáveis de ambiente."
+          ]
+        },
+        "az_aks": {
+          "what": "Kubernetes gerenciado no Azure. Os pods provam quem são com o token da service account do cluster.",
+          "signs": [
+            "Vocês rodam workloads no AKS.",
+            "Os pods usam Kubernetes Secrets ou arquivos com credenciais."
+          ]
+        },
+        "az_app": {
+          "what": "Azure App Service e Azure Functions, que podem usar uma managed identity.",
+          "signs": [
+            "Apps web ou funções rodam no App Service ou no Functions.",
+            "As configurações guardam connection strings ou chaves."
+          ]
+        },
+        "azdo": {
+          "what": "Pipelines do Azure DevOps. O mesmo item aparece em Azure e em CI/CD.",
+          "signs": [
+            "Seus builds e releases rodam no Azure DevOps.",
+            "Os pipelines guardam secrets em variable groups ou service connections."
+          ]
+        },
+        "az_kv": {
+          "what": "O cofre de secrets do Azure. Os desenvolvedores leem os secrets ali com o SDK nativo do Azure.",
+          "signs": [
+            "Suas aplicações já leem secrets do Azure Key Vault.",
+            "Vocês querem rotação e auditoria do PAM sem mudar essas aplicações."
+          ]
+        },
+        "gcp_ce": {
+          "what": "Máquinas virtuais no Google Cloud, rodando com uma service account.",
+          "signs": [
+            "Apps ou scripts rodam no Compute Engine.",
+            "As VMs leem credenciais de arquivos ou metadados."
+          ]
+        },
+        "gcp_gke": {
+          "what": "Kubernetes gerenciado no Google Cloud. Os pods provam quem são com o token da service account do cluster.",
+          "signs": [
+            "Vocês rodam workloads no GKE.",
+            "Os pods usam Kubernetes Secrets ou arquivos com credenciais."
+          ]
+        },
+        "gcp_run": {
+          "what": "Serviços do Cloud Run e Cloud Functions, rodando com uma service account.",
+          "signs": [
+            "Vocês rodam contêineres no Cloud Run ou funções no Cloud Functions.",
+            "As configurações guardam senhas ou tokens."
+          ]
+        },
+        "gcp_sm": {
+          "what": "O cofre de secrets do Google Cloud. Os desenvolvedores leem os secrets ali com o SDK nativo do Google.",
+          "signs": [
+            "Suas aplicações já leem secrets do GCP Secret Manager.",
+            "Vocês querem rotação e auditoria do PAM sem mudar essas aplicações."
+          ]
+        },
+        "k8s_openshift": {
+          "what": "Clusters Red Hat OpenShift. Eles usam as mesmas integrações de Kubernetes.",
+          "signs": [
+            "Vocês publicam apps no OpenShift.",
+            "Os pods precisam de credenciais para bancos ou APIs."
+          ]
+        },
+        "k8s_other": {
+          "what": "Qualquer outra distribuição de Kubernetes que vocês mesmos administram.",
+          "signs": [
+            "Vocês rodam clusters Kubernetes autogerenciados.",
+            "Os pods precisam de credenciais para bancos ou APIs."
+          ]
+        },
+        "op_linux": {
+          "what": "Servidores e VMs Linux no data center de vocês.",
+          "signs": [
+            "Scripts, cron jobs ou serviços leem senhas de arquivos.",
+            "Vocês querem que os servidores se autentiquem sem senha guardada."
+          ]
+        },
+        "op_windows": {
+          "what": "Servidores Windows no data center de vocês.",
+          "signs": [
+            "Serviços ou tarefas agendadas usam senhas guardadas.",
+            "Apps Windows guardam credenciais em arquivos de configuração."
+          ]
+        },
+        "op_appservers": {
+          "what": "Servidores de aplicação Java que guardam as senhas dos data sources na configuração.",
+          "signs": [
+            "Data sources no Tomcat, JBoss, WebSphere ou WebLogic guardam senhas.",
+            "Vocês querem que o servidor de aplicação as busque no PAM."
+          ],
+          "includes": "Tomcat, JBoss, WebSphere, WebLogic"
+        },
+        "op_legacy": {
+          "what": "Aplicações de prateleira ou legadas que vocês não conseguem mudar com facilidade.",
+          "signs": [
+            "A app lê a senha de um arquivo, do registro ou de uma tabela.",
+            "Mudar o código da app é difícil ou não é permitido."
+          ]
+        },
+        "op_cf": {
+          "what": "Plataformas Cloud Foundry ou VMware Tanzu Application Service.",
+          "signs": [
+            "Vocês publicam apps no Cloud Foundry ou no Tanzu.",
+            "As apps recebem credenciais por service bindings ou manifestos."
+          ]
+        },
+        "op_db": {
+          "what": "Bancos de dados aos quais as aplicações se conectam.",
+          "signs": [
+            "As apps se conectam com uma senha de banco compartilhada.",
+            "Rotacionar essa senha quebra apps ou exige janela de manutenção."
+          ]
+        },
+        "op_hcv": {
+          "what": "HashiCorp Vault, Open Source ou Enterprise, já usado pelos desenvolvedores.",
+          "signs": [
+            "Os desenvolvedores leem secrets do HashiCorp Vault.",
+            "Vocês querem rotação e auditoria do PAM para esses secrets."
+          ]
+        },
+        "op_iot": {
+          "what": "Dispositivos em campo que se conectam aos serviços de vocês.",
+          "signs": [
+            "Os dispositivos carregam senhas, chaves ou certificados.",
+            "Vocês querem que os dispositivos se autentiquem sem senha compartilhada."
+          ]
+        },
+        "mf_zos": {
+          "what": "Jobs batch e programas no IBM z/OS que precisam de senhas em tempo de execução.",
+          "signs": [
+            "Jobs JCL passam senhas em datasets ou membros.",
+            "Vocês querem que o z/OS busque as senhas no PAM com cache local."
+          ]
+        },
+        "ci_jenkins": {
+          "what": "Pipelines do Jenkins que precisam de secrets nos builds e deploys.",
+          "signs": [
+            "Seus pipelines rodam no Jenkins.",
+            "Os secrets ficam em variáveis do CI, cofres de credenciais ou no repositório."
+          ]
+        },
+        "ci_gitlab": {
+          "what": "Pipelines do GitLab CI/CD que precisam de secrets nos builds e deploys.",
+          "signs": [
+            "Seus pipelines rodam no GitLab CI/CD.",
+            "Os secrets ficam em variáveis do CI, cofres de credenciais ou no repositório."
+          ]
+        },
+        "ci_gha": {
+          "what": "Pipelines do GitHub Actions que precisam de secrets nos builds e deploys.",
+          "signs": [
+            "Seus pipelines rodam no GitHub Actions.",
+            "Os secrets ficam em variáveis do CI, cofres de credenciais ou no repositório."
+          ]
+        },
+        "ci_bitbucket": {
+          "what": "Pipelines do Bitbucket Pipelines que precisam de secrets nos builds e deploys.",
+          "signs": [
+            "Seus pipelines rodam no Bitbucket Pipelines.",
+            "Os secrets ficam em variáveis do CI, cofres de credenciais ou no repositório."
+          ]
+        },
+        "ci_circleci": {
+          "what": "Pipelines do CircleCI que precisam de secrets nos builds e deploys.",
+          "signs": [
+            "Seus pipelines rodam no CircleCI.",
+            "Os secrets ficam em variáveis do CI, cofres de credenciais ou no repositório."
+          ]
+        },
+        "ci_octopus": {
+          "what": "Pipelines do Octopus Deploy que precisam de secrets nos builds e deploys.",
+          "signs": [
+            "Seus pipelines rodam no Octopus Deploy.",
+            "Os secrets ficam em variáveis do CI, cofres de credenciais ou no repositório."
+          ]
+        },
+        "ci_ansible": {
+          "what": "Playbooks que acessam servidores e dispositivos.",
+          "signs": [
+            "Vocês automatizam com Ansible.",
+            "As credenciais ficam em variáveis, cofres ou arquivos junto do código."
+          ]
+        },
+        "ci_terraform": {
+          "what": "Infraestrutura como código que precisa de credenciais de providers e bancos.",
+          "signs": [
+            "Vocês automatizam com Terraform.",
+            "As credenciais ficam em variáveis, cofres ou arquivos junto do código."
+          ]
+        },
+        "ci_puppet": {
+          "what": "Gerência de configuração que aplica ajustes com credenciais em cada nó.",
+          "signs": [
+            "Vocês automatizam com Puppet.",
+            "As credenciais ficam em variáveis, cofres ou arquivos junto do código."
+          ]
+        },
+        "ai_agents": {
+          "what": "Agentes de IA que chamam APIs e serviços por conta própria.",
+          "signs": [
+            "Seus agentes usam API keys de longa duração.",
+            "Vocês querem que cada agente tenha sua própria identidade de curta duração."
+          ],
+          "includes": "Custom, Claude, Gemini Enterprise"
+        },
+        "ai_mcp": {
+          "what": "Assistentes de código com IA que trabalham com secrets pelo Model Context Protocol (MCP).",
+          "signs": [
+            "Os desenvolvedores usam ferramentas de IA enquanto programam.",
+            "Vocês querem que o assistente crie secrets no cofre em vez de no código."
+          ]
+        },
+        "pam_pc": {
+          "what": "PAM entregue como serviço.",
+          "signs": [
+            "Suas contas privilegiadas estão no Privilege Cloud.",
+            "O CPM as rotaciona a partir dos seus connectors."
+          ]
+        },
+        "pam_sh": {
+          "what": "PAM instalado e operado no ambiente de vocês (Digital Vault, PVWA, CPM).",
+          "signs": [
+            "Suas contas privilegiadas estão no Digital Vault de vocês.",
+            "O time de vocês opera os servidores do PAM."
+          ]
+        },
+        "app_java": {
+          "what": "Aplicações escritas em Java / Spring.",
+          "signs": [
+            "Seus serviços são escritos em Java / Spring.",
+            "Eles leem secrets de arquivos de configuração ou variáveis de ambiente."
+          ]
+        },
+        "app_dotnet": {
+          "what": "Aplicações escritas em .NET.",
+          "signs": [
+            "Seus serviços são escritos em .NET.",
+            "Eles leem secrets de arquivos de configuração ou variáveis de ambiente."
+          ]
+        },
+        "app_python": {
+          "what": "Aplicações escritas em Python.",
+          "signs": [
+            "Seus serviços são escritos em Python.",
+            "Eles leem secrets de arquivos de configuração ou variáveis de ambiente."
+          ]
+        },
+        "app_mulesoft": {
+          "what": "Fluxos de integração no MuleSoft (apps Mule).",
+          "signs": [
+            "Vocês constroem integrações no MuleSoft.",
+            "As apps Mule guardam credenciais em properties."
+          ]
+        },
+        "g_unsure": {
+          "what": "Escolhemos os objetivos a partir do que você marcou nos passos 1 e 2.",
+          "signs": [
+            "Você quer uma primeira recomendação rápida.",
+            "Vocês vão refinar os objetivos depois com o time."
+          ]
+        },
+        "g_hardcoded": {
+          "what": "Apps, scripts e pipelines buscam os secrets em tempo de execução com a própria identidade, e nada fica no código, na imagem ou na configuração.",
+          "signs": [
+            "Senhas ou tokens aparecem em repositórios, imagens ou variáveis do CI.",
+            "Os times copiam o mesmo secret para vários lugares."
+          ]
+        },
+        "g_vault_gov": {
+          "what": "Manter os cofres de nuvem que os desenvolvedores já usam, com rotação, policy e auditoria vindo do PAM.",
+          "signs": [
+            "Cada time de nuvem opera seu próprio cofre.",
+            "Segurança não tem visão central de rotação e acesso."
+          ]
+        },
+        "g_legacy_pam": {
+          "what": "Servidores, servidores de aplicação, apps legadas e jobs de mainframe buscam contas privilegiadas no PAM em tempo de execução, sem guardá-las.",
+          "signs": [
+            "Senhas privilegiadas ficam em arquivos de configuração de servidores ou apps.",
+            "Vocês já rotacionam essas contas no PAM, mas as apps quebram."
+          ]
+        },
+        "g_workload_id": {
+          "what": "Os workloads recebem identidades SPIFFE de curta duração (SVIDs) e as usam em mTLS entre serviços, federação com nuvens ou troca por secrets.",
+          "signs": [
+            "Serviços conversam entre si e precisam de confiança mútua.",
+            "Vocês querem que workloads acessem APIs de nuvem sem chaves fixas."
+          ]
+        },
+        "g_ai": {
+          "what": "Agentes e ferramentas de IA trabalham sem chaves de longa duração no código ou na configuração.",
+          "signs": [
+            "Os agentes guardam API keys para chamar modelos ou serviços.",
+            "Assistentes de IA podem escrever secrets no código."
+          ]
+        },
+        "g_dynamic": {
+          "what": "Credenciais de nuvem criadas sob demanda com tempo de vida, que expiram sozinhas.",
+          "signs": [
+            "Chaves de acesso de nuvem de longa duração são compartilhadas entre times.",
+            "Vocês querem um acesso que some depois do job."
+          ]
+        },
+        "g_rotation": {
+          "what": "Rotacionar senhas com frequência sem quebrar as aplicações que as usam.",
+          "signs": [
+            "Trocar senhas causa indisponibilidade ou exige janela de manutenção.",
+            "Algumas senhas não mudam há anos."
+          ]
+        },
+        "g_audit": {
+          "what": "Saber qual workload ou pessoa acessou qual secret, quando, e enviar esses eventos ao SIEM.",
+          "signs": [
+            "Os auditores perguntam quem usou uma credencial.",
+            "Vocês precisam dos eventos de acesso de máquinas no SIEM."
+          ]
+        }
+      }
     }
   },
   "c_secretzero": {
