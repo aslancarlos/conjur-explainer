@@ -72,6 +72,8 @@ Rules:
 
 ### 3.4 Brand constants & workload accents (theme-independent)
 
+Heroes use `.hero-band` (navy `idira-navy` #131b2b to `idira-deep` #091d58); large section callouts add `.callout-section` to `.callout-*`.
+
 Aligned with the official palette of paloaltonetworks.com/idira (Oct 2026): primary blue `#265BFF`, cyan `#4AD1F0` / `#00C0E8`, navy `#131B2B` to `#091D58`, cards `#142347` with a `rgba(38,91,255,.5)` border, soft text `#C9D6FF`, green `#00CC66`, orange `#FA582D`. The official font (TT Hoves) is licensed; the site keeps Onest.
 
 | Token | Hex | Use |

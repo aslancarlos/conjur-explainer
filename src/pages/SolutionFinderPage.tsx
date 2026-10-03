@@ -414,7 +414,7 @@ function SolutionFinderPageView() {
                   <ul className="space-y-1.5">
                     {item.signs.map(x => (
                       <li key={x} className="flex gap-2.5 text-sm leading-relaxed text-text-2">
-                        <Check size={16} aria-hidden="true" className="mt-0.5 shrink-0 text-tone-success" />{x}
+                        <Check size={16} aria-hidden="true" className="mt-0.5 shrink-0 text-domain-idira" />{x}
                       </li>
                     ))}
                   </ul>

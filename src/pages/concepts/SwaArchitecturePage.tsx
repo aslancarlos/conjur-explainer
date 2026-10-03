@@ -125,7 +125,7 @@ export default function SwaArchitecturePage() {
       </section>
 
       {/* Requirements and limits */}
-      <section aria-labelledby="swaarch-limits" className="callout-warning flex-col gap-0 rounded-2xl p-6">
+      <section aria-labelledby="swaarch-limits" className="callout-warning callout-section">
         <h2 id="swaarch-limits" className="flex items-center gap-2 text-xl font-semibold text-text">
           <TriangleAlert size={20} className="shrink-0 text-tone-warning" aria-hidden="true" />{c('limits_title')}
         </h2>

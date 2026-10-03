@@ -44,7 +44,7 @@ export default function SecretZeroPage() {
     <ConceptLayout title={c('title')} subtitle={c('subtitle')}>
       {/* The problem, highlighted in red (icon + label, never colour alone) */}
       <section role="note" aria-labelledby="sz-problem"
-        className="callout-danger flex-col gap-0 rounded-2xl border-2 p-6">
+        className="callout-danger callout-section border-2">
         <p className="inline-flex items-center gap-1.5 rounded-full border border-tone-danger/40 bg-tone-danger/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-tone-danger">
           <ShieldAlert size={14} aria-hidden="true" />{c('problem_badge')}
         </p>
@@ -106,7 +106,7 @@ export default function SecretZeroPage() {
 
       {/* Honest note: an API key is still a secret zero */}
       <section role="note" aria-labelledby="sz-apikey"
-        className="callout-warning flex-col gap-0 rounded-2xl p-6">
+        className="callout-warning callout-section">
         <h2 id="sz-apikey" className="flex items-center gap-2 text-xl font-semibold text-text">
           <KeyRound size={20} className="shrink-0 text-tone-warning" aria-hidden="true" />{c('apikey_title')}
         </h2>

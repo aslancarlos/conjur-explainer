@@ -102,7 +102,7 @@ export function LimitsCallout({ env }: { env: ShubEnv }) {
   const { t } = useTranslation()
   const s = (k: string) => t(`secretshub.limits.${k}`)
   return (
-    <section aria-labelledby="shub-limits" className="callout-warning flex-col gap-0 rounded-2xl border-2 p-6">
+    <section aria-labelledby="shub-limits" className="callout-warning callout-section border-2">
       <div className="flex items-start gap-3">
         <AlertTriangle size={22} strokeWidth={2.2} className="mt-0.5 shrink-0 text-tone-warning" aria-hidden="true" />
         <div>

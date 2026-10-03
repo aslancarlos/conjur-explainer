@@ -51,6 +51,7 @@ export default {
           cyan:        '#4ad1f0',
           gold:        '#ffb800',
           deep:        '#091d58',
+          navy:        '#131b2b',
         },
 
         // ─── Per-workload accents ──────────────────────────────────────
