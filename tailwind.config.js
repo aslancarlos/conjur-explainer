@@ -96,7 +96,16 @@ export default {
       },
       boxShadow: {
         'idira-blue': '0 12px 40px -8px rgba(38, 91, 255, 0.35)',
+        // Elevation scale (DESIGN.md §15): card < raised < overlay
+        card:    '0 1px 2px rgb(11 15 25 / 0.06), 0 1px 3px rgb(11 15 25 / 0.08)',
+        raised:  '0 8px 24px -6px rgb(11 15 25 / 0.18)',
+        overlay: '0 24px 64px -12px rgb(0 0 0 / 0.45)',
       },
+      // Motion tokens: fast (hover, press), base (state change), slow (panels, dialogs)
+      transitionDuration: { fast: '150ms', base: '200ms', slow: '300ms' },
+      transitionTimingFunction: { idira: 'cubic-bezier(0.2, 0.7, 0.2, 1)' },
+      // Layering scale: content 0 to 20, chrome 40 to 50, overlays 60 to 70, skip link 100
+      zIndex: { raised: '10', sticky: '20', sidebar: '40', header: '50', drawer: '60', modal: '70', skip: '100' },
     },
   },
   plugins: [],

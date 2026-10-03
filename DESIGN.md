@@ -93,7 +93,8 @@ Aligned with the official palette of paloaltonetworks.com/idira (Oct 2026): prim
 | Role | Classes |
 |---|---|
 | Hero title | `font-semibold tracking-[-0.03em] leading-[1.02] text-[clamp(34px,5.2vw,60px)]` (home: up to 80 px) + accent words in `.idira-shimmer` |
-| Section title (h2) | `text-3xl sm:text-4xl font-bold` |
+| Page title (h1, PageHeader) | `text-3xl sm:text-4xl font-bold` |
+| Section title (h2) | `text-xl font-semibold` (full scale in 15.2) |
 | Card / step title | `text-base sm:text-lg font-semibold` |
 | Body | `text-base leading-relaxed text-text-2`, measure `max-w-[62ch]`-`[75ch]` |
 | Small / caption | `text-sm` / `text-xs` (12 px floor. Never smaller for readable text) |
@@ -108,7 +109,7 @@ Headings are sequential (`h1` once per page → `h2` → `h3`).
 
 - 4 px grid (Tailwind scale). Section rhythm: `py-24 px-6` (use `px-4 sm:px-6` for dense explainers).
 - Containers: explainer pages `max-w-5xl`, home `max-w-7xl`, prose `max-w-2xl`.
-- Radius: cards `rounded-2xl`, panels/code `rounded-xl`, buttons `rounded-md`, badges/pills `rounded-full`, SVG nodes `rx=12`.
+- Radius and elevation: see 15.4 (cards `rounded-2xl`, panels/code `rounded-xl`, primary buttons and pills `rounded-full`, icon buttons `rounded-lg`, SVG nodes `rx=12`).
 - Breakpoints: Tailwind defaults. **640 px (`sm`) is where diagrams switch between the wide and narrow layouts.**
 - Never cause horizontal scroll: long identifiers get `[overflow-wrap:anywhere]`; flex children holding text get `min-w-0`.
 - Fixed navbar is 56 px (`main` has `pt-14`).
@@ -283,18 +284,97 @@ All interactive targets ≥ 44×44 px with ≥ 8 px spacing. Icon-only buttons n
 
 ---
 
-## 15. Known debt (fix opportunistically)
+## 15. Design system reference
 
-- Older components still use raw hex (`#64748b` ×67, `#94a3b8` ×57, `#a78bfa` ×50, `#4ade80` ×44 …). Migrate to tokens when touching them.
+The single page to check before writing UI. Tokens live in `src/index.css` (CSS variables) and `tailwind.config.js`; primitives in `src/index.css` `@layer components`.
+
+### 15.1 Colour
+- Use only semantic tokens (`bg-bg-*`, `text-text*`, `border-border`, `tone-*`, `domain-*`, brand accents). Every text token passes AA on `bg`, `bg-alt` and `surface` in both themes (lowest: 4.77:1, verified Oct 2026).
+- Raw hex is allowed only in: brand gradients (`Hero`, `ConceptLayout`, `DualAccountsPage` heroes, `.idira-shimmer`, `.hero-mesh`), the language flags (`LanguageSwitcher`) and exported files (`src/lib/finder/drawio.ts`, `exports.ts`), which leave the page and cannot read CSS variables.
+- Status colours (success, warning, danger) carry meaning only and always come with an icon or text.
+
+### 15.2 Type scale (Onest; IBM Plex Mono for anything copyable)
+
+| Role | Classes | Use |
+|---|---|---|
+| Display | `text-[clamp(34px,5.2vw,60px)] font-semibold tracking-[-0.03em]` | Home and concept heroes only |
+| H1 | `text-3xl sm:text-4xl font-bold` (PageHeader) | One per page |
+| H2 | `text-xl font-semibold` | Page sections |
+| H3 | `text-base font-semibold` | Card and table titles |
+| Body | `text-base leading-relaxed text-text-2`, measure 62 to 75ch | Prose |
+| Small | `text-sm` | Dense UI, card body, tables |
+| Caption | `text-xs text-text-muted` | Metadata, helper text |
+| Overline | `.text-overline` (12px, semibold, uppercase, tracking) | Eyebrows, sidebar section labels |
+| Mono | `font-mono text-xs/text-sm` | Paths, ids, ports, step counters |
+
+Floor: 12px for readable text on screen. Sub-12px sizes are allowed only in print output (`print:` report) and SVG labels at 11 user units with render scale at least 1. Weights: 400 body, 500 labels, 600 titles, 700 H1 only.
+
+### 15.3 Spacing and layout
+- 4px grid. Section tiers: page top `py-16`, between sections `mt-12` (`space-y-12`), inside a section `space-y-4`, card padding `.card` 24px (`p-6`), inset blocks 16px (`p-4`), large feature card 32px (`.section-card`).
+- Containers: explainer pages `max-w-5xl`, wide pages and wizard `max-w-6xl`, home `max-w-7xl`, prose `max-w-[70ch]`.
+- Sidebar 17rem (collapsed 4rem), top bar 56px.
+
+### 15.4 Radius and elevation
+
+| Element | Radius | Elevation |
+|---|---|---|
+| Chips, pills, primary/secondary buttons | `rounded-full` | none |
+| Icon buttons, inputs, small controls | `rounded-lg` | none |
+| Inset blocks, callouts, code | `rounded-xl` | none |
+| Cards, panels, diagram player | `rounded-2xl` | `shadow-card` optional |
+| Popovers, menus | `rounded-xl` | `shadow-raised` |
+| Dialogs, drawer | `rounded-2xl` | `shadow-overlay` + scrim `bg-black/55` |
+
+Avoid ad hoc radii (`rounded-[3px]`) and ad hoc shadows; borders do most of the separation work in this UI.
+
+### 15.5 Motion
+- Tokens: `duration-fast` 150ms (hover, press), `duration-base` 200ms (state changes, chevrons, tabs), `duration-slow` 300ms (panels, dialogs, drawer); easing `ease-idira` (cubic-bezier(0.2, 0.7, 0.2, 1)). Framer Motion uses the same values in seconds (0.15 / 0.2 / 0.3); entrance reveals may use 0.4 to 0.5.
+- Exit faster than enter. Animate transform and opacity only. Diagrams (GSAP) are the one place for longer, meaningful sequences.
+- `prefers-reduced-motion` is honoured globally in `index.css` and by `useReducedMotion` in components.
+
+### 15.6 Layering (z-index)
+`z-raised` 10 (sticky table headers, badges) · `z-sticky` 20 (in-page sticky bars) · `z-sidebar` 40 · `z-header` 50 (top bar, popovers) · `z-drawer` 60 · `z-modal` 70 · `z-skip` 100 (skip link). New stacking contexts isolate their children: do not reach for 9999.
+
+### 15.7 Component primitives (`src/index.css`)
+
+| Class | What it is |
+|---|---|
+| `.btn-primary` | Filled IDIRA blue pill, white text (5.2:1), 44px tall. One per view. |
+| `.btn-secondary` | Bordered pill on surface; hover border blue. |
+| `.btn-ghost` | Text button with tinted hover. |
+| `.btn-icon` | 44px square icon button; always pair with `aria-label`. |
+| `.chip` / `.chip-success` | 32px pill for metadata and availability; pair status with an icon. |
+| `.card` / `.card-inset` / `.section-card` | Content card (p-6) / inset block (p-4) / feature card (p-8). |
+| `.callout-info|warning|danger|success` | Icon + title + body; tone tints border and background, text stays neutral. |
+| `.text-overline` | Eyebrow label. |
+| `.badge`, `.code-block`, `.step-connector` | Existing helpers. |
+
+Focus: every interactive element shows a 2px ring (`focus-visible:ring-2 ring-idira-blue`, offset 2 on filled buttons); the global `:focus-visible` outline (#5b82ff) is the fallback. Never remove a focus style without a replacement.
+
+### 15.8 Do and don't
+- Do keep one primary action per view; group secondary actions as `.btn-secondary` or `.btn-ghost`.
+- Do collapse heavy reference content (tables, firewall rules, checklists) behind an explicit disclosure.
+- Do give every icon-only control a label and every image `alt` (decorative: `alt=""`).
+- Don't convey status by colour alone, use emoji as icons, mix icon packs at the same level, or let a sticky bar cover content.
+- Don't truncate meaning: prefer wrapping; when truncating, expose the full text (title, dialog).
+
+---
+
+## 16. Known debt (fix opportunistically)
+
+- Raw hex is now limited to the allowed places listed in 15.1 (93 occurrences in 6 files, Oct 2026).
+- Sub-12px text on screen: `SideNav` section labels (11px), `ReleaseInfo` badge (11px), `LiveToolsSection` badge (10px), `GhaLiveRunner` link (11px), `NetworkTable` notes and badges (11px), `CommandPalette` kbd. Move to `text-xs` / `.text-overline`.
+- Primary buttons are written inline in about 6 places with small differences (`rounded-md` vs `rounded-full`, hover token); adopt `.btn-primary`.
+- Locale bundles are large (en inside the 528 kB entry chunk; pt 480 kB, es 492 kB) mostly because of the solution finder copy; split `finder*` into a lazily loaded i18n namespace.
 - `CLAUDE.md` deploy section still shows `:latest`; production pins `aslancarlos/conjur-explainer:design2026rNN`.
 - `docs/IDIRA-REDESIGN.md` palette is outdated: this file wins.
-- Pre-existing horizontal overflow at 390 px on `/spring-boot` (137 px), `/dotnet` (94 px), `/eso-shop` (36 px): also present before the shell change.
-- Some older pages (e.g. `/jenkins`) still use emoji as icons; replace with lucide when touched.
 - Home copy disagrees on counts ("Eight live integration patterns" vs "Twelve patterns"); align with the real catalogue.
 
 ---
 
 ## Changelog
+
+- 2026-10-03: design system reference (15): type scale roles, spacing tiers, radius/elevation, motion and z-index tokens, component primitives (`.btn-*`, `.chip`, `.card`, `.callout-*`, `.text-overline`); palette aligned with paloaltonetworks.com/idira; all token pairs re-verified AA.
 
 - 2026-10-02: professional review pass. Theme-aware brand accents and `*-solid` fills (AA both themes), one `h1` per page, PageHeader for demo pages, 44px targets, unified menu headers (collapsed by default), friendly live-demo errors, CLS fix on lazy routes.
 

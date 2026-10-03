@@ -117,7 +117,7 @@
 
 /* Iridescent shimmer: official IDIRA palette (cyan → sky → blue) */
 .idira-shimmer {
-  background: linear-gradient(95deg, #4ad1f0 0%, #00c0e8 26%, #2589ff 62%, #265bff 100%);
+  background: linear-gradient(95deg, #4ad1f0 0%, #00c0e8 26%, #3d74ff 62%, #265bff 100%);
   background-size: 200% 100%;
   background-clip: text;
   -webkit-background-clip: text;
@@ -142,6 +142,44 @@
   .code-block {
     @apply bg-bg-muted border border-border rounded-xl p-4 font-mono text-sm overflow-x-auto;
   }
+
+  /* ── Design system primitives (DESIGN.md §15). Additive: existing inline
+     class strings keep working; new code should prefer these. ── */
+
+  /* Buttons: one primary per view; 44px targets; same focus ring everywhere. */
+  .btn {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold
+           transition-colors duration-200 cursor-pointer
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base
+           disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary   { @apply btn bg-idira-blue text-white hover:bg-idira-blue-2 active:bg-idira-blue-deep; }
+  .btn-secondary { @apply btn border border-border bg-bg-card text-text hover:border-idira-blue; }
+  .btn-ghost     { @apply btn text-text-2 hover:bg-bg-muted hover:text-text; }
+  .btn-icon {
+    @apply inline-flex h-11 w-11 items-center justify-center rounded-lg text-text-2 transition-colors duration-200 cursor-pointer
+           hover:bg-bg-muted hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue;
+  }
+
+  /* Chips: compact labels and availability pills (never the only signal: pair with an icon or text). */
+  .chip {
+    @apply inline-flex min-h-8 items-center gap-1.5 rounded-full border border-border bg-bg-muted px-3 text-xs font-medium text-text-2;
+  }
+  .chip-success { @apply chip border-tone-success/40 bg-tone-success/10 text-tone-success; }
+
+  /* Cards: .card for content blocks (p-6), .section-card for large feature blocks (p-8). */
+  .card       { @apply rounded-2xl border border-border bg-bg-card p-6; }
+  .card-inset { @apply rounded-xl border border-border bg-bg-base p-4; }
+
+  /* Callouts: icon + title + body; tone sets border and tint only, text stays neutral. */
+  .callout         { @apply flex gap-3 rounded-xl border p-4 text-sm leading-relaxed text-text-2; }
+  .callout-info    { @apply callout border-tone-accent/35 bg-tone-accent/10; }
+  .callout-warning { @apply callout border-tone-warning/40 bg-tone-warning/10; }
+  .callout-danger  { @apply callout border-tone-danger/40 bg-tone-danger/10; }
+  .callout-success { @apply callout border-tone-success/40 bg-tone-success/10; }
+
+  /* Overline: section eyebrow / sidebar section label (12px floor). */
+  .text-overline { @apply text-xs font-semibold uppercase tracking-wider text-text-muted; }
 }
 
 /* Respect prefers-reduced-motion (WCAG 2.3.3) */
@@ -188,7 +226,7 @@
   position: absolute;
   left: 0; right: 0; bottom: -1px;
   height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(74, 209, 240, 0.55) 22%, rgba(37, 137, 255, 0.55) 48%, rgba(38, 91, 255, 0.45) 72%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(74, 209, 240, 0.55) 22%, rgba(61, 116, 255, 0.55) 48%, rgba(38, 91, 255, 0.45) 72%, transparent 100%);
   opacity: 0.75;
 }
 
