@@ -6,22 +6,22 @@
 :root,
 [data-theme="light"] {
   --rgb-bg:         255 255 255;
-  --rgb-bg-alt:     245 247 251;
+  --rgb-bg-alt:     243 246 255;
   --rgb-surface:    255 255 255;
-  --rgb-line:       228 232 240;
+  --rgb-line:       222 228 245;
   --rgb-text:       11 15 25;
   --rgb-text-2:     42 51 68;
   --rgb-text-muted: 91 100 120;
 
   /* Semantic tones: foreground-safe (≥ 4.5:1 on surface and bg-alt) */
-  --rgb-tone-accent:  0 72 184;
+  --rgb-tone-accent:  30 72 217;
   --rgb-tone-live:    14 116 144;
   --rgb-tone-success: 4 120 87;
   --rgb-tone-warning: 138 80 4;
   --rgb-tone-danger:  185 28 28;
 
   /* Domain colours: who owns a component (never used for status) */
-  --rgb-domain-idira: 0 88 230;
+  --rgb-domain-idira: 38 91 255;
   --rgb-domain-cp:    96 72 214;
   --rgb-domain-k8s:   194 65 12;
   --rgb-domain-svc:   190 24 93;
@@ -29,7 +29,7 @@
   /* Demo brand accents (text/icons/tints), AA on light surfaces */
   --rgb-spring:  22 120 50;
   --rgb-dotnet:  96 72 214;
-  --rgb-gh:      0 88 230;
+  --rgb-gh:      38 91 255;
   --rgb-eso:     176 55 8;
   --rgb-ansible: 185 28 28;
   --rgb-csi:     37 90 210;
@@ -41,21 +41,21 @@
 }
 
 [data-theme="dark"], .dark {
-  --rgb-bg:         5 13 26;
-  --rgb-bg-alt:     12 24 40;
-  --rgb-surface:    15 30 48;
-  --rgb-line:       26 48 80;
-  --rgb-text:       226 232 240;
-  --rgb-text-2:     200 210 226;
-  --rgb-text-muted: 139 150 173;
+  --rgb-bg:         17 24 40;
+  --rgb-bg-alt:     16 28 56;
+  --rgb-surface:    20 35 71;
+  --rgb-line:       36 58 120;
+  --rgb-text:       240 244 255;
+  --rgb-text-2:     201 214 255;
+  --rgb-text-muted: 150 165 210;
 
-  --rgb-tone-accent:  125 176 255;
-  --rgb-tone-live:    0 212 255;
-  --rgb-tone-success: 52 211 153;
+  --rgb-tone-accent:  143 168 255;
+  --rgb-tone-live:    74 209 240;
+  --rgb-tone-success: 0 204 102;
   --rgb-tone-warning: 255 184 0;
   --rgb-tone-danger:  255 122 89;
 
-  --rgb-domain-idira: 92 152 255;
+  --rgb-domain-idira: 110 143 255;
   --rgb-domain-cp:    167 150 250;
   --rgb-domain-k8s:   255 138 92;
   --rgb-domain-svc:   244 114 182;
@@ -63,12 +63,12 @@
   /* Demo brand accents, AA on dark surfaces */
   --rgb-spring:  74 222 128;
   --rgb-dotnet:  167 150 250;
-  --rgb-gh:      125 176 255;
+  --rgb-gh:      143 168 255;
   --rgb-eso:     255 138 92;
   --rgb-ansible: 255 122 122;
   --rgb-csi:     125 165 255;
   --rgb-conjur-red:  250 88 45;
-  --rgb-conjur-cyan: 0 212 255;
+  --rgb-conjur-cyan: 74 209 240;
   --rgb-conjur-gold: 255 184 0;
 
   color-scheme: dark;
@@ -88,7 +88,7 @@
 
   /* Visible focus on all interactive elements */
   :focus-visible {
-    outline: 2px solid #2589ff;
+    outline: 2px solid #5b82ff;
     outline-offset: 3px;
     border-radius: 4px;
   }
@@ -99,7 +99,7 @@
   ::-webkit-scrollbar-thumb { background: rgb(var(--rgb-line)); border-radius: 4px; }
   ::-webkit-scrollbar-thumb:hover { background: rgb(var(--rgb-text-muted)); }
 
-  ::selection { background: #0067ff; color: #fff; }
+  ::selection { background: #265bff; color: #fff; }
 }
 
 /* Skip-to-content link (WCAG 2.4.1) */
@@ -107,7 +107,7 @@
   position: absolute; left: 0; top: 0;
   transform: translateY(-150%);
   z-index: 100;
-  background: #0067ff; color: #fff;
+  background: #265bff; color: #fff;
   padding: 14px 22px;
   font: 600 14px/1 'Onest', sans-serif;
   border-radius: 0 0 14px 0;

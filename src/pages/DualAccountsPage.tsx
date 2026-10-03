@@ -650,13 +650,13 @@ export default function DualAccountsPage() {
     <section id="dualaccounts" className="bg-bg-muted/40">
       {/* Hero band. Always deep navy with the official IDIRA "security layers"
           backdrop, mesh and dot grid, mirroring the home page Hero. */}
-      <header className="relative overflow-hidden bg-[#070c1c] text-white">
+      <header className="relative overflow-hidden bg-[#131b2b] bg-[linear-gradient(to_right,#131b2b_50%,#091d58)] text-white">
         <img src={securityLayers} alt="" aria-hidden="true"
           className="pointer-events-none absolute right-0 top-0 w-[95%] sm:w-[52%] max-w-[720px] h-auto
             opacity-40 sm:opacity-70 mix-blend-screen select-none" />
         <div className="hero-mesh pointer-events-none absolute inset-0 opacity-90" aria-hidden="true" />
         <div className="hero-grid pointer-events-none absolute inset-0" aria-hidden="true" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#070c1c] via-[#070c1c]/85 to-transparent"
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#131b2b] via-[#131b2b]/85 to-transparent"
           aria-hidden="true" />
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 pt-14 pb-28 sm:pb-32">
           <span className="badge bg-idira-gold/10 text-idira-gold border border-idira-gold/30">{t('dual.badge')}</span>

@@ -19,13 +19,13 @@ export default function Hero() {
   })
 
   return (
-    <section className="relative overflow-hidden bg-[#070c1c] text-white">
+    <section className="relative overflow-hidden bg-[#131b2b] bg-[linear-gradient(to_right,#131b2b_50%,#091d58)] text-white">
       {/* Official IDIRA "security layers" backdrop (right-anchored) */}
       <img src={securityLayers} alt="" aria-hidden="true"
         className="pointer-events-none absolute right-0 top-0 w-[95%] sm:w-[52%] max-w-[720px] h-auto opacity-40 sm:opacity-70 mix-blend-screen select-none" />
       <div className="hero-mesh pointer-events-none absolute inset-0 opacity-90" aria-hidden="true" />
       <div className="hero-grid pointer-events-none absolute inset-0" aria-hidden="true" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#070c1c] via-[#070c1c]/85 to-transparent" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#131b2b] via-[#131b2b]/85 to-transparent" aria-hidden="true" />
 
       <div className="relative max-w-7xl mx-auto px-6 lg:px-10 pt-16 pb-12 md:pt-24 md:pb-16">
         <div className="max-w-3xl">

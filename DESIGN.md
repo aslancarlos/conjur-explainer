@@ -37,29 +37,29 @@ Always use **semantic tokens** via Tailwind classes. **No raw hex in new compone
 
 | Token (Tailwind) | CSS var | Light | Dark | Use |
 |---|---|---|---|---|
-| `bg-bg-base` | `--rgb-bg` | `255 255 255` | `5 13 26` | Page background |
-| `bg-bg-muted` | `--rgb-bg-alt` | `245 247 251` | `12 24 40` | Section tint, diagram nodes |
-| `bg-bg-card` / `surface` | `--rgb-surface` | `255 255 255` | `15 30 48` | Cards, player, chips |
-| `border-border` / `line` | `--rgb-line` | `228 232 240` | `26 48 80` | Borders, dividers, tracks |
-| `text-text` | `--rgb-text` | `11 15 25` | `226 232 240` | Primary text |
-| `text-text-2` | `--rgb-text-2` | `42 51 68` | `200 210 226` | Body / secondary |
-| `text-text-muted` | `--rgb-text-muted` | `91 100 120` | `139 150 173` | Labels, captions (≥ 5.5:1) |
+| `bg-bg-base` | `--rgb-bg` | `255 255 255` | `17 24 40` | Page background |
+| `bg-bg-muted` | `--rgb-bg-alt` | `243 246 255` | `16 28 56` | Section tint, diagram nodes |
+| `bg-bg-card` / `surface` | `--rgb-surface` | `255 255 255` | `20 35 71` | Cards, player, chips |
+| `border-border` / `line` | `--rgb-line` | `222 228 245` | `36 58 120` | Borders, dividers, tracks |
+| `text-text` | `--rgb-text` | `11 15 25` | `240 244 255` | Primary text |
+| `text-text-2` | `--rgb-text-2` | `42 51 68` | `201 214 255` | Body / secondary |
+| `text-text-muted` | `--rgb-text-muted` | `91 100 120` | `150 165 210` | Labels, captions (≥ 5.5:1) |
 
 ### 3.2 Semantic tones. *what a signal means* (theme-aware, AA as text)
 
 | Token | Light | Dark | Reserved meaning |
 |---|---|---|---|
-| `tone-success` | `4 120 87` | `52 211 153` | Active, healthy, ready, done |
+| `tone-success` | `4 120 87` | `0 204 102` | Active, healthy, ready, done |
 | `tone-warning` | `161 98 7` | `255 184 0` | Pending, stale, in grace period, rotation due |
 | `tone-danger` | `185 28 28` | `255 122 89` | Error, failed, blocked |
-| `tone-live` | `14 116 144` | `0 212 255` | **Data plane**: requests, credentials, sync |
-| `tone-accent` | `0 72 184` | `125 176 255` | **Control plane**. Policy, rotation commands |
+| `tone-live` | `14 116 144` | `74 209 240` | **Data plane**: requests, credentials, sync |
+| `tone-accent` | `30 72 217` | `143 168 255` | **Control plane**. Policy, rotation commands |
 
 ### 3.3 Domain colours: *who owns a component* (diagrams)
 
 | Token | Light | Dark | Owns |
 |---|---|---|---|
-| `domain-idira` | `0 88 230` | `92 152 255` | IDIRA platform: Vault, accounts, CPM, Secrets Manager |
+| `domain-idira` | `38 91 255` | `110 143 255` | IDIRA platform: Vault, accounts, CPM, Secrets Manager |
 | `domain-cp` | `96 72 214` | `167 150 250` | Credential Provider / application path |
 | `domain-k8s` | `194 65 12` | `255 138 92` | Kubernetes / ESO path, workloads running in a cluster |
 | `domain-svc` | `190 24 93` | `244 114 182` | Target services and cloud providers (databases, AWS STS, S3) |
@@ -72,11 +72,13 @@ Rules:
 
 ### 3.4 Brand constants & workload accents (theme-independent)
 
+Aligned with the official palette of paloaltonetworks.com/idira (Oct 2026): primary blue `#265BFF`, cyan `#4AD1F0` / `#00C0E8`, navy `#131B2B` to `#091D58`, cards `#142347` with a `rgba(38,91,255,.5)` border, soft text `#C9D6FF`, green `#00CC66`, orange `#FA582D`. The official font (TT Hoves) is licensed; the site keeps Onest.
+
 | Token | Hex | Use |
 |---|---|---|
-| `idira-blue` | `#0067ff` | Primary buttons, selection, links on dark |
-| `idira-blue-2` / `-deep` | `#2589ff` / `#0048b8` | Hover / pressed; `#2589ff` is the focus ring |
-| `idira-cyan` · `idira-gold` · `idira-orange` · `idira-magenta` · `idira-deep` | `#00d4ff` · `#ffb800` · `#fa582d` · `#ff2d8a` · `#001236` | Brand accents on dark bands, gradients |
+| `idira-blue` | `#265bff` | Primary buttons, selection, links on dark |
+| `idira-blue-2` / `-deep` | `#1e48d9` / `#1a3bb8` | Hover / pressed (darker, keeps white text AA); focus ring `#5b82ff` |
+| `idira-cyan` · `idira-gold` · `idira-orange` · `idira-magenta` · `idira-deep` | `#4ad1f0` · `#ffb800` · `#fa582d` · `#ff2d8a` · `#091d58` | Brand accents on dark bands, gradients |
 | `spring` `dotnet` `gh` `eso` `ansible` `csi` | `#2d8a3e` `#6048d6` `#0067ff` `#fa582d` `#ee0000` `#326ce5` | Identity of each integration page (nav dots, page badge). Not for text on light backgrounds without an AA check. |
 
 ---

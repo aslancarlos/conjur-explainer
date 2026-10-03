@@ -43,14 +43,14 @@ export default {
 
         // ─── Brand accents (constant in both themes) ───────────────────
         idira: {
-          blue:        '#0067ff',
-          'blue-2':    '#2589ff',
-          'blue-deep': '#0048b8',
+          blue:        '#265bff',
+          'blue-2':    '#1e48d9',
+          'blue-deep': '#1a3bb8',
           orange:      '#fa582d',
           magenta:     '#ff2d8a',
-          cyan:        '#00d4ff',
+          cyan:        '#4ad1f0',
           gold:        '#ffb800',
-          deep:        '#001236',
+          deep:        '#091d58',
         },
 
         // ─── Per-workload accents ──────────────────────────────────────
@@ -64,7 +64,7 @@ export default {
         csi:     'rgb(var(--rgb-csi) / <alpha-value>)',
         'spring-solid':  '#167832',
         'dotnet-solid':  '#5a3fd0',
-        'gh-solid':      '#0058e6',
+        'gh-solid':      '#265bff',
         'eso-solid':     '#c2410c',
         'ansible-solid': '#b91c1c',
         'csi-solid':     '#255ad2',
@@ -95,7 +95,7 @@ export default {
         shimmer: { to: { backgroundPosition: '200% 0' } },
       },
       boxShadow: {
-        'idira-blue': '0 12px 40px -8px rgba(0, 103, 255, 0.35)',
+        'idira-blue': '0 12px 40px -8px rgba(38, 91, 255, 0.35)',
       },
     },
   },
