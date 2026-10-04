@@ -63,10 +63,13 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
   const groups = navBy('usecase')
   // Items may deep-link a page state (e.g. /secretshub?env=pamsh): such an item is
   // active only with its query; the plain path item yields when a sibling matches.
-  const all = groups.flatMap(g => g.items)
+  // Whether some query item matches the current URL is the same for every row:
+  // compute it once per render instead of scanning all items per row.
+  const here = pathname + search
+  const queryHit = groups.some(g => g.items.some(o => o.to.includes('?') && o.to === here))
   const isActive = (to: string) => {
-    if (to.includes('?')) return pathname + search === to
-    return pathname === to && !all.some(o => o.to.includes('?') && o.to === pathname + search)
+    if (to.includes('?')) return here === to
+    return pathname === to && !queryHit
   }
   const reduce = useReducedMotion()
   const [open, setOpen] = useState<Record<string, boolean>>({})

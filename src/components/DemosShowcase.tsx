@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { motion, useInView, useReducedMotion } from 'framer-motion'
+import { m, useInView, useReducedMotion } from 'framer-motion'
 import { Link } from '../lib/router'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight } from 'lucide-react'
@@ -28,7 +28,7 @@ export default function DemosShowcase() {
           </div>
         </div>
 
-        <motion.div
+        <m.div
           initial={reduce ? false : { opacity: 0, y: 12 }} animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.4, ease: [0.2, 0.7, 0.2, 1] }}
           className="mt-10 grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
@@ -61,7 +61,7 @@ export default function DemosShowcase() {
               </ul>
             </div>
           ))}
-        </motion.div>
+        </m.div>
       </div>
     </section>
   )

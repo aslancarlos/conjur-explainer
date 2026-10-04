@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { CircleCheck, CircleDashed, CircleX, ExternalLink, Loader2, OctagonPause, RefreshCw } from 'lucide-react'
 import { SERVICES, checkService, type ServiceResult, type ServiceState } from '../../lib/services'
 
 const POLL_MS = 60_000
+/** Floor between two checks (tab refocus right after a poll, for instance). */
+const MIN_GAP_MS = 30_000
 
 // Status = colour + icon + text (never colour alone: DESIGN.md §11).
 const STATE: Record<ServiceState, { Icon: typeof CircleCheck; text: string; dot: string }> = {
@@ -38,12 +40,27 @@ export default function EnvStatus() {
     setBusy(false)
   }, [])
 
+  // First check waits for idle time (it is never what the visitor came for);
+  // interval and tab-focus re-checks run at most once per MIN_GAP_MS.
   useEffect(() => {
-    run()
-    const id = setInterval(() => { if (document.visibilityState === 'visible') run() }, POLL_MS)
-    const onVis = () => { if (document.visibilityState === 'visible') run() }
-    document.addEventListener('visibilitychange', onVis)
-    return () => { clearInterval(id); document.removeEventListener('visibilitychange', onVis) }
+    let last = 0
+    const runThrottled = () => {
+      if (document.visibilityState !== 'visible' || Date.now() - last < MIN_GAP_MS) return
+      last = Date.now()
+      run()
+    }
+    const first = () => { last = Date.now(); run() }
+    let cancelFirst: () => void
+    if (typeof window.requestIdleCallback === 'function') {
+      const h = window.requestIdleCallback(first, { timeout: 3000 })
+      cancelFirst = () => window.cancelIdleCallback(h)
+    } else {
+      const h = window.setTimeout(first, 1500)
+      cancelFirst = () => window.clearTimeout(h)
+    }
+    const id = setInterval(runThrottled, POLL_MS)
+    document.addEventListener('visibilitychange', runThrottled)
+    return () => { cancelFirst(); clearInterval(id); document.removeEventListener('visibilitychange', runThrottled) }
   }, [run])
 
   // Close on outside click / Escape (focus back to the trigger).
@@ -82,7 +99,7 @@ export default function EnvStatus() {
       <AnimatePresence>
         {open && (
           // Disclosure panel (not a dialog): the trigger carries aria-expanded / aria-controls.
-          <motion.div id="env-panel"
+          <m.div id="env-panel"
             initial={reduce ? false : { opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={reduce ? undefined : { opacity: 0, y: -4 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
             className="absolute right-0 top-full z-header mt-2 w-[min(22rem,calc(100vw-1.5rem))] overflow-hidden rounded-xl border border-border bg-bg-card shadow-2xl">
@@ -123,7 +140,7 @@ export default function EnvStatus() {
             <p className="border-t border-border px-4 py-2.5 font-mono text-xs text-text-muted">
               {time ? t('env.checked', { time }) : t('env.checking')}
             </p>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Link } from '../../lib/router'
 import { useTranslation } from 'react-i18next'
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { Menu, PanelLeftClose, PanelLeftOpen, X } from 'lucide-react'
 import ThemeToggle from '../ThemeToggle'
 import EnvStatus from './EnvStatus'
@@ -118,12 +118,12 @@ export default function AppShell({ children }: { children: ReactNode }) {
       <AnimatePresence>
         {drawer && (
           <div className="lg:hidden fixed inset-0 z-drawer" id="nav-drawer">
-            <motion.button type="button" aria-label={t('nav.close_menu')} tabIndex={-1}
+            <m.button type="button" aria-label={t('nav.close_menu')} tabIndex={-1}
               onClick={() => setDrawer(false)}
               className="absolute inset-0 bg-black/55"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               transition={{ duration: reduce ? 0 : 0.2 }} />
-            <motion.div role="dialog" aria-modal="true" aria-label={t('nav.primary')}
+            <m.div role="dialog" aria-modal="true" aria-label={t('nav.primary')}
               className="absolute inset-y-0 left-0 flex w-[min(20rem,85vw)] flex-col bg-bg-card border-r border-border shadow-2xl"
               initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
               transition={reduce ? { duration: 0 } : { type: 'tween', duration: 0.24, ease: [0.2, 0.8, 0.2, 1] }}>
@@ -141,7 +141,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
               <div className="border-t border-border p-3">
                 <LanguageSwitcher />
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>

@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Link } from '../lib/router'
 import { useTranslation } from 'react-i18next'
 import { useToolsCopy } from '../lib/toolsCopy'
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
 import {
   ArrowLeft, ArrowRight, Check, Compass, Copy, Download, Flag, Info, ListChecks, Mail, Pencil, Printer, RotateCcw, TriangleAlert, Sparkles, Lock,
@@ -59,6 +59,9 @@ const VIEWS: View[] = ['s1', 's2', 's3', 'result']
 const CONTACT = 'asramos@paloaltonetworks.com'
 const SITE = 'https://demo.minha.cloud'
 const NAV_ITEMS = NAV.flatMap(g => g.items)
+/** Nav item by route (first one wins, as with find), for the lookups inside render loops. */
+const NAV_BY_TO = new Map<string, (typeof NAV_ITEMS)[number]>()
+for (const it of NAV_ITEMS) if (!NAV_BY_TO.has(it.to)) NAV_BY_TO.set(it.to, it)
 const GROUP = (navKey: string) => NAV.find(g => g.key === navKey)
 const PROD_OF = (p: Prod) => GROUP(PRODUCTS.find(x => x.key === p)!.navKey)
 
@@ -141,6 +144,7 @@ function SolutionFinderPageView() {
   const pendingFocus = useRef(false)
 
   const sorted = [...ALL_IDS].filter(id => selected.includes(id))
+  const selKey = sorted.join(',')
   useEffect(() => {
     const next = new URLSearchParams(params)
     if (sorted.length) next.set('have', sorted.join(',')); else next.delete('have')
@@ -191,13 +195,17 @@ function SolutionFinderPageView() {
   const tileName = (id: string) => (id.startsWith('g_') ? f(`goals.${id.slice(2)}.name`) : f(`tiles.${id}.name`))
 
   // ---------- model ----------
-  const sel = {
-    envs: sorted.filter(id => (ENVS as string[]).includes(id)),
-    details: sorted.filter(id => DETAILS.includes(id)),
-    goals: sorted.filter(id => id.startsWith('g_') && id !== 'g_unsure').map(id => id.slice(2)),
-    unsure: sorted.includes('g_unsure'),
-  }
-  const ev = evaluate(sel)
+  // The selection object and its evaluation are rebuilt only when the selection
+  // changes (selKey), not on every render (copy toasts, dialogs, hover state).
+  const { sel, ev } = useMemo(() => {
+    const sel = {
+      envs: sorted.filter(id => (ENVS as string[]).includes(id)),
+      details: sorted.filter(id => DETAILS.includes(id)),
+      goals: sorted.filter(id => id.startsWith('g_') && id !== 'g_unsure').map(id => id.slice(2)),
+      unsure: sorted.includes('g_unsure'),
+    }
+    return { sel, ev: evaluate(sel) }
+  }, [selKey]) // eslint-disable-line react-hooks/exhaustive-deps
   const visibleDetails = effectiveDetails(sel)
   const items = ev.items
   const ranked = ev.products
@@ -217,7 +225,7 @@ function SolutionFinderPageView() {
 
   const recLabel = (id: string) => {
     if (LABEL_OVERRIDE.has(id)) return f(`rec_label.${id}`)
-    const nav = NAV_ITEMS.find(i => i.to === RECS[id].to)
+    const nav = NAV_BY_TO.get(RECS[id].to)
     return nav ? t(nav.labelKey) : RECS[id].to
   }
   const prodName = (p: Prod) => t(PROD_OF(p)?.labelKey ?? '')
@@ -281,32 +289,35 @@ function SolutionFinderPageView() {
   const [showNet, setShowNet] = useState(false)
   const smUsed = usesSecretsManager(ev.recs)
   const isoDate = new Date().toISOString().slice(0, 10)
-  const zoneLabels = Object.fromEntries(ZONES.map(z => [z.id, a(z.labelKey)]))
-  const dirLabels = { outbound: a('dir_outbound'), inbound: a('dir_inbound'), internal: a('dir_internal'), external: a('dir_external') }
-  const exportLabels: Partial<ExportLabels> = {
-    title: a('export_title'), generatedBy: a('export_generated_by'), selected: a('export_selected'), goals: a('export_goals'),
-    edition: a('edition_label'), editionValue: smUsed ? a(edition === 'saas' ? 'edition_saas' : 'edition_sh') : '',
-    legend: a('export_legend'), outbound: a('export_outbound'), inbound: a('export_inbound'), internal: a('export_internal'), external: a('export_external'),
-    badgeDocumented: a('badge_documented'), badgeInferred: a('badge_inferred'), tableNote: a('table_note'), inferredNote: a('inferred_note'), products: a('products'),
-    zones: zoneLabels, number: a('col_number'), source: a('col_source'), destination: a('col_destination'), endpoint: a('col_endpoint'), port: a('col_port'),
-    protocol: a('col_protocol'), direction: a('col_direction'), purpose: a('col_purpose'), confidence: a('col_confidence'), documented: a('documented'),
-    inferred: a('inferred'), doc: a('col_doc'), environment: a('md_environment'), components: a('md_components'), flows: a('flows_title'),
-    rules: a('rules_title'), notes: a('md_notes'), documentation: a('md_documentation'), from: a('from'),
-    directions: { outbound: a('short_outbound'), inbound: a('short_inbound'), internal: a('short_internal'), external: a('short_external') },
-  }
-  const previewLabels: ArchitecturePreviewLabels = {
-    title: a('preview_title'), desc: a('preview_desc'), legend: a('legend'), outbound: a('dir_outbound'), inbound: a('dir_inbound'),
-    internal: a('dir_internal'), external: a('dir_external'), badgeDocumented: a('badge_documented'), badgeInferred: a('badge_inferred'), zones: zoneLabels,
-    fullSize: a('preview_full'), fitWidth: a('preview_fit'),
-  }
-  const tableLabels: NetworkTableLabels = {
-    flowsTitle: a('flows_title'), rulesTitle: a('rules_title'), number: a('col_number'), direction: a('col_direction'), source: a('col_source'),
-    destination: a('col_destination'), endpoint: a('col_endpoint'), port: a('col_port'), protocol: a('col_protocol'), purpose: a('col_purpose'),
-    doc: a('col_doc'), docFlow: no => a('doc_flow', { no }), status: a('col_status'),
-    from: a('from'), documented: a('documented'), inferred: a('inferred'), directions: dirLabels, empty: a('empty'), zones: zoneLabels,
-    shortDirections: { outbound: a('short_outbound'), inbound: a('short_inbound'), internal: a('short_internal'), external: a('short_external') },
-  }
-  const selKey = sorted.join(',')
+  // Label objects only change with the language and the edition shown in the export.
+  const { exportLabels, previewLabels, tableLabels } = useMemo(() => {
+    const zoneLabels = Object.fromEntries(ZONES.map(z => [z.id, a(z.labelKey)]))
+    const dirLabels = { outbound: a('dir_outbound'), inbound: a('dir_inbound'), internal: a('dir_internal'), external: a('dir_external') }
+    const exportLabels: Partial<ExportLabels> = {
+      title: a('export_title'), generatedBy: a('export_generated_by'), selected: a('export_selected'), goals: a('export_goals'),
+      edition: a('edition_label'), editionValue: smUsed ? a(edition === 'saas' ? 'edition_saas' : 'edition_sh') : '',
+      legend: a('export_legend'), outbound: a('export_outbound'), inbound: a('export_inbound'), internal: a('export_internal'), external: a('export_external'),
+      badgeDocumented: a('badge_documented'), badgeInferred: a('badge_inferred'), tableNote: a('table_note'), inferredNote: a('inferred_note'), products: a('products'),
+      zones: zoneLabels, number: a('col_number'), source: a('col_source'), destination: a('col_destination'), endpoint: a('col_endpoint'), port: a('col_port'),
+      protocol: a('col_protocol'), direction: a('col_direction'), purpose: a('col_purpose'), confidence: a('col_confidence'), documented: a('documented'),
+      inferred: a('inferred'), doc: a('col_doc'), environment: a('md_environment'), components: a('md_components'), flows: a('flows_title'),
+      rules: a('rules_title'), notes: a('md_notes'), documentation: a('md_documentation'), from: a('from'),
+      directions: { outbound: a('short_outbound'), inbound: a('short_inbound'), internal: a('short_internal'), external: a('short_external') },
+    }
+    const previewLabels: ArchitecturePreviewLabels = {
+      title: a('preview_title'), desc: a('preview_desc'), legend: a('legend'), outbound: a('dir_outbound'), inbound: a('dir_inbound'),
+      internal: a('dir_internal'), external: a('dir_external'), badgeDocumented: a('badge_documented'), badgeInferred: a('badge_inferred'), zones: zoneLabels,
+      fullSize: a('preview_full'), fitWidth: a('preview_fit'),
+    }
+    const tableLabels: NetworkTableLabels = {
+      flowsTitle: a('flows_title'), rulesTitle: a('rules_title'), number: a('col_number'), direction: a('col_direction'), source: a('col_source'),
+      destination: a('col_destination'), endpoint: a('col_endpoint'), port: a('col_port'), protocol: a('col_protocol'), purpose: a('col_purpose'),
+      doc: a('col_doc'), docFlow: no => a('doc_flow', { no }), status: a('col_status'),
+      from: a('from'), documented: a('documented'), inferred: a('inferred'), directions: dirLabels, empty: a('empty'), zones: zoneLabels,
+      shortDirections: { outbound: a('short_outbound'), inbound: a('short_inbound'), internal: a('short_internal'), external: a('short_external') },
+    }
+    return { exportLabels, previewLabels, tableLabels }
+  }, [i18n.language, edition, smUsed]) // eslint-disable-line react-hooks/exhaustive-deps
   // routing runs a small optimisation: only on the result step, once per selection / edition / language
   const net = useMemo(() => {
     if (view !== 'result' || !ev.recs.length) return null
@@ -404,9 +415,9 @@ function SolutionFinderPageView() {
       createPortal(<AnimatePresence>
         {id && item && (
           <div className="fixed inset-0 z-modal flex items-center justify-center p-4 print:hidden">
-            <motion.div className="absolute inset-0 bg-black/55" aria-hidden="true" onClick={closeInfo}
+            <m.div className="absolute inset-0 bg-black/55" aria-hidden="true" onClick={closeInfo}
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduce ? 0 : 0.15 }} />
-            <motion.div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="finder-info-title"
+            <m.div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="finder-info-title"
               className="relative flex max-h-[min(40rem,calc(100vh-2rem))] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-border bg-bg-card shadow-2xl"
               initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.96 }} animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1 }}
               exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.97 }} transition={{ duration: reduce ? 0 : 0.18, ease: 'easeOut' }}>
@@ -461,7 +472,7 @@ function SolutionFinderPageView() {
                             <p className="flex items-center gap-2 text-sm font-semibold text-text">{ProdDot(prod)}{prodName(prod)}</p>
                             <ul className="mt-2 flex flex-wrap gap-1.5">
                               {pages.slice(0, MAX_PAGES).map(({ rid, goals }) => {
-                                const nav = NAV_ITEMS.find(x => x.to === RECS[rid].to)
+                                const nav = NAV_BY_TO.get(RECS[rid].to)
                                 const cls = 'inline-flex min-h-8 items-center gap-1 rounded-full border border-border bg-bg-card px-2.5 text-xs font-medium text-text transition-colors hover:border-idira-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue'
                                 const when = !goal && goals.length ? `${f('info.when')}: ${goals.map(g => f(`goals.${g}.name`)).join(', ')}` : undefined
                                 const inner = <>{recLabel(rid)}<ArrowRight size={12} aria-hidden="true" className="text-text-muted" /></>
@@ -506,7 +517,7 @@ function SolutionFinderPageView() {
                     : on ? <><X size={16} aria-hidden="true" />{f('info.remove')}</> : <><Check size={16} aria-hidden="true" />{f('info.select')}</>}
                 </button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>, document.body)
@@ -866,7 +877,7 @@ function SolutionFinderPageView() {
             <p className="pt-1 text-xs font-semibold text-text">{f('path_start')}</p>
             <ol className="space-y-2">
               {path.slice(0, START).map((r, i) => {
-                const nav = NAV_ITEMS.find(x => x.to === RECS[r].to)
+                const nav = NAV_BY_TO.get(RECS[r].to)
                 const g = PROD_OF(RECS[r].product)
                 const cls = 'group flex gap-4 rounded-xl border border-border bg-bg-base p-4 transition-colors hover:border-idira-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue'
                 const inner = (
@@ -891,7 +902,7 @@ function SolutionFinderPageView() {
                 <p className="pt-3 text-xs font-semibold text-text">{f('path_more', { count: path.length - START })}</p>
                 <ol start={START + 1} className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-bg-base">
                   {path.slice(START).map((r, i) => {
-                    const nav = NAV_ITEMS.find(x => x.to === RECS[r].to)
+                    const nav = NAV_BY_TO.get(RECS[r].to)
                     const g = PROD_OF(RECS[r].product)
                     const cls = 'group flex min-h-11 items-center gap-3 px-4 py-2.5 transition-colors hover:bg-bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-idira-blue'
                     const inner = (
@@ -1153,9 +1164,9 @@ function SolutionFinderPageView() {
           {Stepper()}
           <div className="px-6 py-7 sm:px-8">
             <AnimatePresence mode="wait" initial={false}>
-              <motion.div key={view} {...motionProps} onAnimationComplete={() => focusHeading(view)}>
+              <m.div key={view} {...motionProps} onAnimationComplete={() => focusHeading(view)}>
                 {view === 'result' ? ResultView() : StepView(view)}
-              </motion.div>
+              </m.div>
             </AnimatePresence>
           </div>
 

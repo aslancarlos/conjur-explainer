@@ -1,4 +1,4 @@
-import { motion, useInView } from 'framer-motion'
+import { m, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AlertTriangle, Clock, Eye, ShieldCheck, ExternalLink, Fingerprint, Lock, RefreshCw, ScrollText } from 'lucide-react'
@@ -87,7 +87,7 @@ export default function ProblemSection() {
 
         {/* Problem */}
         <div className="space-y-10">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.3 }}
             className="space-y-3"
@@ -99,13 +99,13 @@ export default function ProblemSection() {
             <p className="max-w-[70ch] text-base text-text-2 leading-relaxed">
               {t('problem.subtitle')}
             </p>
-          </motion.div>
+          </m.div>
 
           <div className="grid sm:grid-cols-3 gap-6 items-stretch">
             {items.map((item, i) => {
               const Icon = icons[item.icon] ?? AlertTriangle
               return (
-                <motion.div
+                <m.div
                   key={i}
                   initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.3, delay: 0.1 + i * 0.1 }}
@@ -133,14 +133,14 @@ export default function ProblemSection() {
                     </p>
                     <RefPills refs={REFS[i] ?? []} accent="red" />
                   </div>
-                </motion.div>
+                </m.div>
               )
             })}
           </div>
         </div>
 
         {/* Solution */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.3, delay: 0.5 }}
           className="relative section-card bg-gradient-to-br from-conjur-cyan/5 to-bg-card border-conjur-cyan/20"
@@ -192,7 +192,7 @@ export default function ProblemSection() {
               <RefPills refs={SOLUTION_REFS} accent="cyan" />
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
       </div>
     </section>

@@ -4,7 +4,7 @@ import { Link } from '../../lib/router'
 import { useTranslation } from 'react-i18next'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { NAV } from '../../lib/nav'
-import securityLayers from '../../assets/brand/security-layers-blue.png'
+import securityLayers from '../../assets/brand/security-layers-blue.webp'
 
 /**
  * Shell for the Concepts pages (DESIGN.md §7): compact always-dark hero band

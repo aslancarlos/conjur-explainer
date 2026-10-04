@@ -1,4 +1,4 @@
-import { motion, useInView } from 'framer-motion'
+import { m, useInView } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ExternalLink, RefreshCw, Leaf, TriangleAlert } from 'lucide-react'
@@ -56,7 +56,7 @@ export default function SpringBootSection() {
       <div className="max-w-6xl mx-auto space-y-12">
 
         {/* Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.3 }}
           className="space-y-3"
@@ -72,7 +72,7 @@ export default function SpringBootSection() {
             <span className="text-spring">{t('springboot.titleAccent')}</span>
           </h1>
           <p className="text-text-muted leading-relaxed max-w-2xl">{t('springboot.desc')}</p>
-        </motion.div>
+        </m.div>
 
         {/* How it works (FlowPlayer, DESIGN.md §10) */}
         <SdkFlow />
@@ -83,7 +83,7 @@ export default function SpringBootSection() {
             {steps.map((step, i) => {
               const cls = colorMap[step.color] ?? colorMap.cyan
               return (
-                <motion.div
+                <m.div
                   key={i}
                   initial={{ opacity: 0, x: -16 }} animate={inView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.3, delay: 0.1 + i * 0.12 }}
@@ -101,7 +101,7 @@ export default function SpringBootSection() {
                     </pre>
                   </div>
                   {i < steps.length - 1 && <div className="step-connector" />}
-                </motion.div>
+                </m.div>
               )
             })}
           </div>
@@ -109,7 +109,7 @@ export default function SpringBootSection() {
           {/* Live status + features */}
           <div className="space-y-6">
             {/* Live card */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.3, delay: 0.4 }}
               className="section-card border-spring/20 space-y-4"
@@ -156,12 +156,12 @@ export default function SpringBootSection() {
                 <div className="text-xs text-text-muted animate-pulse">fetching /springboot/checkit…</div>
               )}
               <p className="text-xs text-text-muted">{t('springboot.live_note')}</p>
-            </motion.div>
+            </m.div>
 
             {/* Features */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {features.map((f, i) => (
-                <motion.div
+                <m.div
                   key={i}
                   initial={{ opacity: 0, y: 12 }} animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.3, delay: 0.5 + i * 0.08 }}
@@ -169,11 +169,11 @@ export default function SpringBootSection() {
                 >
                   <p className="text-sm font-semibold text-text">{f.title}</p>
                   <p className="text-xs text-text-muted leading-relaxed">{f.desc}</p>
-                </motion.div>
+                </m.div>
               ))}
             </div>
 
-            <motion.a
+            <m.a
               initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.3, delay: 0.7 }}
               href="/springboot/dashboard"
@@ -182,7 +182,7 @@ export default function SpringBootSection() {
               className="inline-flex min-h-11 items-center gap-2 px-5 rounded-full bg-spring-solid text-white text-sm font-semibold hover:bg-spring-solid/90 transition-colors"
             >
               {t('springboot.cta')} <ExternalLink size={14} />
-            </motion.a>
+            </m.a>
           </div>
         </div>
       </div>

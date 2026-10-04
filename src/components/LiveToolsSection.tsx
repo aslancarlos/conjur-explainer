@@ -1,4 +1,4 @@
-import { motion, useInView } from 'framer-motion'
+import { m, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ExternalLink, LayoutDashboard, ShoppingCart, BarChart2, Leaf, Code2, Monitor, Power, KeyRound } from 'lucide-react'
@@ -124,7 +124,7 @@ export default function LiveToolsSection() {
     <section id="livetools" ref={ref} className="py-24 px-6">
       <div className="max-w-6xl mx-auto space-y-12">
 
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
           className="text-center space-y-3"
@@ -134,10 +134,10 @@ export default function LiveToolsSection() {
           </span>
           <h1 className="text-3xl sm:text-4xl font-bold">{t('livetools.title')}</h1>
           <p className="text-text-muted max-w-2xl mx-auto">{t('livetools.subtitle')}</p>
-        </motion.div>
+        </m.div>
 
         {/* K8s Dashboard, featured card */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.15 }}
           className="section-card border-conjur-cyan/20 bg-gradient-to-br from-conjur-cyan/5 to-bg-card"
@@ -181,14 +181,14 @@ export default function LiveToolsSection() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Other tools grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {TOOLS.slice(1).map((tool, i) => {
             const Icon = tool.icon
             return (
-              <motion.a
+              <m.a
                 key={i}
                 href={tool.href}
                 target="_blank"
@@ -211,7 +211,7 @@ export default function LiveToolsSection() {
                   <p className="font-semibold text-text text-sm">{t(tool.titleKey)}</p>
                   <p className="text-xs text-text-muted mt-1 leading-relaxed">{t(tool.descKey)}</p>
                 </div>
-              </motion.a>
+              </m.a>
             )
           })}
         </div>

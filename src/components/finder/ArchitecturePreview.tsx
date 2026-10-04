@@ -1,4 +1,4 @@
-import { useId, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 import { Box, Cloud, Cpu, Database, Maximize2, Minimize2, Network } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { Direction, NodeKind, Product, Resolved } from '../../lib/finder/netCatalog'
@@ -72,7 +72,10 @@ export default function ArchitecturePreview({ resolved, labels = DEFAULT_PREVIEW
 }) {
   const uid = useId().replace(/:/g, '')
   const [full, setFull] = useState(false)
-  const { lay, top, routes } = routedLayout(resolved, { top: 0, left: 0 })
+  // Edge routing is the expensive part (~170 ms on large selections) and the
+  // hidden print report mounts a second preview: compute once per `resolved`
+  // (memoized upstream, so the reference only changes with the selection).
+  const { lay, top, routes } = useMemo(() => routedLayout(resolved, { top: 0, left: 0 }), [resolved])
   if (!lay.nodes.length) return null
   const minY = Math.min(top - 40, ...lay.zones.map(z => z.y))
   const legendY = top + lay.height + 44

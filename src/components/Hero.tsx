@@ -1,8 +1,8 @@
-import { motion, useReducedMotion } from 'framer-motion'
+import { m, useReducedMotion } from 'framer-motion'
 import { Link } from '../lib/router'
 import { useTranslation } from 'react-i18next'
 import { ArrowDown, Fingerprint, KeyRound } from 'lucide-react'
-import securityLayers from '../assets/brand/security-layers-blue.png'
+import securityLayers from '../assets/brand/security-layers-blue.webp'
 
 /**
  * Home hero: teaches first: the headline is the machine-identity idea, and the
@@ -29,19 +29,21 @@ export default function Hero() {
 
       <div className="relative max-w-7xl mx-auto px-6 lg:px-10 pt-16 pb-12 md:pt-24 md:pb-16">
         <div className="max-w-3xl">
-          <motion.p {...fadeUp(0)} className="font-mono text-xs uppercase tracking-[0.16em] text-idira-cyan">
+          <m.p {...fadeUp(0)} className="font-mono text-xs uppercase tracking-[0.16em] text-idira-cyan">
             {t('hero.eyebrow')}
-          </motion.p>
-          <motion.h1 {...fadeUp(0.05)}
+          </m.p>
+          {/* The headline is the LCP element: visible from the first paint (no
+              opacity fade), only a short rise. */}
+          <m.h1 initial={reduce ? false : { y: 10 }} animate={{ y: 0 }} transition={fadeUp(0).transition}
             className="mt-4 font-semibold tracking-[-0.03em] leading-[1.02] text-[clamp(38px,6vw,76px)] max-w-[16ch]">
             {t('hero.title')}{' '}
             <em className="not-italic idira-shimmer">{t('hero.titleAccent')}</em>
-          </motion.h1>
-          <motion.p {...fadeUp(0.16)} className="mt-6 text-base md:text-lg leading-relaxed text-slate-300/90 max-w-[60ch]">
+          </m.h1>
+          <m.p {...fadeUp(0.16)} className="mt-6 text-base md:text-lg leading-relaxed text-slate-300/90 max-w-[60ch]">
             {t('hero.subtitle')}
-          </motion.p>
+          </m.p>
 
-          <motion.div {...fadeUp(0.26)} className="mt-9 flex flex-wrap gap-3">
+          <m.div {...fadeUp(0.26)} className="mt-9 flex flex-wrap gap-3">
             <Link to="/concepts/secrets"
               className="btn-primary focus-visible:ring-offset-idira-deep">
               <KeyRound size={17} aria-hidden="true" />{t('hero.cta_secret')}
@@ -50,7 +52,7 @@ export default function Hero() {
               className="btn border border-white/25 bg-white/5 text-white hover:border-white/40 hover:bg-white/10 focus-visible:ring-offset-idira-deep">
               <Fingerprint size={17} aria-hidden="true" />{t('hero.cta_identity')}
             </Link>
-          </motion.div>
+          </m.div>
         </div>
       </div>
 

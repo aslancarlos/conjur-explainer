@@ -107,7 +107,10 @@ const GLANCE_ROWS = ['problem', 'consumer', 'identity', 'where', 'editions', 'us
 const ROWS = ['identity', 'delivery', 'code', 'rotation', 'avail', 'limit', 'best'] as const
 
 const GROUP = (navKey: string) => NAV.find(g => g.key === navKey)
-const NAV_ITEM = (to: string) => NAV.flatMap(g => g.items).find(i => i.to === to)
+/** Nav item by route (first one wins, as with find); built once instead of per lookup. */
+const NAV_BY_TO = new Map<string, (typeof NAV)[number]['items'][number]>()
+for (const it of NAV.flatMap(g => g.items)) if (!NAV_BY_TO.has(it.to)) NAV_BY_TO.set(it.to, it)
+const NAV_ITEM = (to: string) => NAV_BY_TO.get(to)
 
 function AvailChip({ ok, label }: { ok: boolean; label: string }) {
   const { t } = useTranslation()
