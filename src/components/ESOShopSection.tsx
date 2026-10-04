@@ -73,6 +73,18 @@ export default function ESOShopSection() {
             <span className="text-eso">{t('esoshop.titleAccent')}</span>
           </h1>
           <p className="text-text-muted leading-relaxed max-w-2xl">{t('esoshop.desc')}</p>
+          {/* Primary action up front: the live shop is what visitors come for. */}
+          <div className="pt-2">
+            <a
+              href="/k8s-eso/"
+              target="_blank"
+              rel="noopener"
+              className="inline-flex min-h-11 items-center gap-2 px-5 rounded-full bg-eso-solid text-white text-sm font-semibold hover:bg-eso-solid/90 transition-colors"
+            >
+              <ShoppingCart size={16} aria-hidden="true" /> {t('esoshop.cta_shop')}
+              <ExternalLink size={14} aria-hidden="true" className="opacity-80" />
+            </a>
+          </div>
         </m.div>
 
         {/* How it works (FlowPlayer, DESIGN.md §10) */}
@@ -174,20 +186,12 @@ export default function ESOShopSection() {
               ))}
             </div>
 
-            {/* CTA buttons */}
+            {/* Secondary links (the shop itself is the header CTA) */}
             <m.div
               initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.3, delay: 0.7 }}
               className="flex flex-wrap gap-3"
             >
-              <a
-                href="/k8s-eso/"
-                target="_blank"
-                rel="noopener"
-                className="inline-flex min-h-11 items-center gap-2 px-5 rounded-full bg-eso-solid text-white text-sm font-semibold hover:bg-eso-solid/90 transition-colors"
-              >
-                <ShoppingCart size={14} /> {t('esoshop.cta_shop')}
-              </a>
               <a
                 href="/k8s-eso/dashboard"
                 target="_blank"
