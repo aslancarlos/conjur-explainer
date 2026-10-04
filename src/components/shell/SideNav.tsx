@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Link } from '../../lib/router'
 import { useTranslation } from 'react-i18next'
@@ -33,10 +33,10 @@ const chevron = (open: boolean) => (
 
 /**
  * Grouped site navigation (sidebar + mobile drawer).
- * - Sections with an overline label (Start here · Products · Integrations ·
- *   Resources, see ZONES in lib/nav). Resources are flat links.
- * - Each other group header is a disclosure button. Every group and submenu
- *   starts collapsed on each visit (nothing is persisted); what the visitor
+ * - Sections with an overline label (Start here · Products · Resources, see
+ *   ZONES in lib/nav). Resources are flat links.
+ * - Each other group header is a disclosure button; inside a submenu, each
+ *   sub-heading run is a third disclosure level. Every level starts collapsed on each visit (nothing is persisted); what the visitor
  *   opens stays open while they navigate. A collapsed group holding the
  *   current page gets a tinted header.
  * - Product colour: a thin ring around the group's icon tile (no bars, no counts).
@@ -76,15 +76,57 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
   const isOpen = (key: string) => open[key] === true    // default: collapsed
   const rowH = dense ? 'min-h-9' : 'min-h-11'
 
-  const toggle = (key: string) => {
+  const toggle = (key: string, listId: string) => {
     const opening = !isOpen(key)
     setOpen(o => ({ ...o, [key]: opening }))
     // Bring the items that just appeared into view (a group near the bottom
     // would otherwise open below the fold with no visible change).
     if (opening) {
-      const id = key.startsWith('sec-') ? `${idPrefix}-${key}` : `${idPrefix}-grp-${key}`
-      requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' }))
+      requestAnimationFrame(() => document.getElementById(listId)?.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' }))
     }
+  }
+
+  /** Disclosure header shared by every level (group, submenu, sub-submenu). */
+  const disclosure = (key: string, listId: string, label: string, glyph: ReactNode, active: boolean, weight: string) => {
+    const expanded = isOpen(key)
+    return (
+      <button type="button" onClick={() => toggle(key, listId)} aria-expanded={expanded} aria-controls={listId}
+        className={`flex w-full items-center gap-3 rounded-lg px-3 text-left transition-colors duration-150
+          hover:bg-bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue
+          ${rowH} ${active && !expanded ? 'bg-bg-muted/60' : ''}`}>
+        {glyph}
+        <NavLabel text={label} className={`${weight} ${active ? 'text-text' : 'text-text-2'}`} />
+        {chevron(expanded)}
+      </button>
+    )
+  }
+
+  /**
+   * Inside a submenu, items sharing a sub-heading (Kubernetes, CI/CD, ...) form
+   * a third collapsible level; items without a heading stay plain rows.
+   */
+  const withSubmenus = (section: string, items: NavItem[]) => {
+    const runs: Array<{ heading?: string; items: NavItem[] }> = []
+    for (const it of items) {
+      const last = runs[runs.length - 1]
+      if (last && last.heading === it.heading) last.items.push(it)
+      else runs.push({ heading: it.heading, items: [it] })
+    }
+    return runs.flatMap(run => {
+      if (!run.heading) return run.items.map(row)
+      const key = `sub-${section}-${run.heading}`
+      const listId = `${idPrefix}-${key.replace(/\./g, '-')}`
+      const active = run.items.some(i => isActive(i.to))
+      return [
+        <li key={key}>
+          {disclosure(key, listId, t(run.heading), null, active, 'font-medium')}
+          <ul id={listId} hidden={!isOpen(key)} aria-label={t(run.heading)}
+            className="mt-0.5 ml-3 space-y-0.5 border-l border-border pl-2">
+            {run.items.map(row)}
+          </ul>
+        </li>,
+      ]
+    })
   }
 
   const row = (item: NavItem) => {
@@ -148,16 +190,10 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
     const hasActive = group.items.some(i => isActive(i.to))
     return (
       <div key={group.key}>
-        <button type="button" onClick={() => toggle(group.key)}
-          aria-expanded={expanded} aria-controls={listId}
-          className={`flex w-full items-center gap-3 rounded-lg px-3 text-left transition-colors duration-150
-            hover:bg-bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue
-            ${rowH} ${hasActive && !expanded ? 'bg-bg-muted/60' : ''}`}>
+        {disclosure(group.key, listId, label,
           <NavGlyph logo={group.logo} Icon={group.Icon} iconSize={16} className={group.color ?? 'text-domain-idira'}
-            accent={RING[group.color ?? '']} />
-          <NavLabel text={label} className={`font-semibold ${hasActive ? 'text-text' : 'text-text-2'}`} />
-          {chevron(expanded)}
-        </button>
+            accent={RING[group.color ?? '']} />,
+          hasActive, 'font-semibold')}
         <ul id={listId} hidden={!expanded} aria-label={label}
           className="mt-0.5 mb-1 ml-[21px] space-y-0.5 border-l border-border pl-2">
           {segments(group.items).map(seg => {
@@ -167,20 +203,14 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
             const sec = SECTIONS[seg.section]
             const key = `sec-${seg.section}`
             const subActive = seg.items.some(i => isActive(i.to))
-            const subOpen = open[key] === true
             const subId = `${idPrefix}-${key}`
             return (
               <li key={key}>
-                <button type="button" onClick={() => toggle(key)} aria-expanded={subOpen} aria-controls={subId}
-                  className={`flex w-full items-center gap-3 rounded-lg px-3 text-left transition-colors duration-150
-                    hover:bg-bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue
-                    ${rowH} ${subActive && !subOpen ? 'bg-bg-muted/60' : ''}`}>
-                  <NavGlyph logo={sec.logo} Icon={sec.Icon} iconSize={16} className={group.color ?? 'text-domain-idira'} />
-                  <NavLabel text={t(sec.labelKey)} className={`font-medium ${subActive ? 'text-text' : 'text-text-2'}`} />
-                  {chevron(subOpen)}
-                </button>
-                <ul id={subId} hidden={!subOpen} className="mt-0.5 ml-[21px] space-y-0.5 border-l border-border pl-2">
-                  {withHeadings(seg.items)}
+                {disclosure(key, subId, t(sec.labelKey),
+                  <NavGlyph logo={sec.logo} Icon={sec.Icon} iconSize={16} className={group.color ?? 'text-domain-idira'} />,
+                  subActive, 'font-medium')}
+                <ul id={subId} hidden={!isOpen(key)} className="mt-0.5 ml-[21px] space-y-0.5 border-l border-border pl-2">
+                  {withSubmenus(seg.section, seg.items)}
                 </ul>
               </li>
             )

@@ -187,7 +187,7 @@ Hero band recipe (copy from `DualAccountsPage.tsx` / `Hero.tsx`):
 
 **Demo / feature page header:** `src/components/PageHeader.tsx` (left aligned: badge, one `h1`, 16px lead at 70ch). Concepts pages use `ConceptLayout`'s hero band. Every page has exactly one `h1` and no skipped heading levels (the FlowPlayer step title is an `h2`).
 
-**Navigation:** every sidebar group and submenu uses the same disclosure header (icon, label, down chevron, count when collapsed, items under a guide line); every group and submenu starts collapsed on each visit (nothing persisted, no auto-open); a collapsed group holding the current page gets a tinted header. Sub-headings inside a group (`heading` on nav items) are small, non-interactive labels.
+**Navigation:** every sidebar group and submenu uses the same disclosure header (icon, label, down chevron, count when collapsed, items under a guide line); every group and submenu starts collapsed on each visit (nothing persisted, no auto-open); a collapsed group holding the current page gets a tinted header. Zones: Start here, Products, Resources. Use cases (Kubernetes, CI/CD, Platforms) are a submenu of Secrets Manager, not a group of their own. Sub-headings directly inside a group (`heading` on nav items) are small, non-interactive labels; inside a submenu, each sub-heading run is a third disclosure level (same header, no icon), also collapsed by default.
 
 **Audience:** desktop only (no phone use). Keep layouts responsive, but QA targets desktop widths (1366 to 1440) and short screens (about 700px tall). Click targets stay 44px.
 
