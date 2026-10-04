@@ -1048,7 +1048,11 @@
           ]
         }
       }
-    }
+    },
+    "copy_failed_link": "No se pudo copiar el enlace: selecciona la dirección en la barra del navegador y pulsa Ctrl+C o Cmd+C.",
+    "copy_failed_prereq": "No se pudieron copiar los requisitos: usa Descargar .txt para guardarlos y cópialos desde el archivo con Ctrl+C o Cmd+C.",
+    "restarted": "Respuestas borradas.",
+    "undo": "Deshacer"
   },
   "finder_arch": {
     "section_title": "Arquitectura y requisitos de red",
@@ -1106,7 +1110,7 @@
     "zone_idira": "IDIRA SaaS (Palo Alto Networks)",
     "products": "Productos",
     "edition_hint": "Cambia los componentes y flujos de Secrets Manager en el diagrama.",
-    "opening": "Abriendo...",
+    "opening": "Abriendo…",
     "badge_documented": "Conexión numerada: puerto y endpoint documentados",
     "badge_inferred": "Conexión numerada: inferida, confírmela antes de abrir reglas",
     "table_show": "Mostrar flujos de red y reglas de firewall ({{count}} flujos)",
@@ -1130,7 +1134,9 @@
     "zone_pam": "Cliente: PAM Self-Hosted",
     "report_arch": "Arquitectura y red",
     "preview_full": "Tamaño real",
-    "preview_fit": "Ajustar al ancho"
+    "preview_fit": "Ajustar al ancho",
+    "doc_flow": "Documentación del flujo {{no}}",
+    "col_status": "Confianza y fuente"
   },
   "cmp": {
     "scroll_hint": "Desplace hacia el lado para ver las {{count}} columnas; la primera columna queda fija.",

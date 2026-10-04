@@ -1,15 +1,26 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
-import en from './locales/en.json'
+import en from './locales/en.json?core'
 
 /** localStorage key holding the visitor's explicit language choice. */
 export const LANG_KEY = 'idira-lang'
 
-// English ships in the initial bundle (it is the default and the fallback).
-// The other locales are code-split and fetched on demand the first time they
-// are selected, keeping pt/es out of the initial download.
-const loaders: Record<string, () => Promise<{ default: Record<string, unknown> }>> = {
+/** Fallback language: its full file is loaded alongside any other locale. */
+const FALLBACK = 'en'
+
+type Bundle = () => Promise<{ default: Record<string, unknown> }>
+
+// The entry carries only the English *core* (shell + home keys, see
+// localeCore in vite.config.ts). The pt/es core is fetched at startup when that
+// language is active; the full files load with the first non-home route (App.tsx
+// route `lazy`), on link hover, or when the browser is idle.
+const coreLoaders: Record<string, Bundle> = {
+  pt: () => import('./locales/pt.json?core'),
+  es: () => import('./locales/es.json?core'),
+}
+const fullLoaders: Record<string, Bundle> = {
+  en: () => import('./locales/en.json'),
   pt: () => import('./locales/pt.json'),
   es: () => import('./locales/es.json'),
 }
@@ -19,7 +30,7 @@ i18n
   .use(initReactI18next)
   .init({
     resources: { en: { translation: en } },
-    fallbackLng: 'en',
+    fallbackLng: FALLBACK,
     // Every visit follows the browser language (navigator.languages), mapped
     // to the closest supported one (es-MX -> es, pt-PT -> pt, fr -> en). Only
     // an explicit choice in the language switch is stored (LANG_KEY) and wins.
@@ -44,14 +55,45 @@ i18n
     react: { useSuspense: false, bindI18nStore: 'added' },
   })
 
-async function ensureLocale(lng?: string) {
-  const base = (lng || 'en').split('-')[0]
-  if (base === 'en' || !loaders[base] || i18n.hasResourceBundle(base, 'translation')) return
-  const mod = await loaders[base]()
-  i18n.addResourceBundle(base, 'translation', mod.default, true, true)
-  // Re-emit so components re-render now that the bundle is present. The
-  // hasResourceBundle guard above stops this from recursing.
-  if (i18n.language.split('-')[0] === base) i18n.changeLanguage(base)
+const baseOf = (lng?: string) => (lng || 'en').split('-')[0]
+
+// One in-flight / settled promise per language and kind. A failed fetch is
+// forgotten so the next call retries. addResourceBundle emits the store's
+// 'added' event, which (bindI18nStore) re-renders every consumer.
+const pending = new Map<string, Promise<void>>()
+function load(kind: 'core' | 'full', base: string, loaders: Record<string, Bundle>): Promise<void> {
+  const key = `${kind}:${base}`
+  let p = pending.get(key)
+  if (!p) {
+    p = loaders[base]().then(mod => {
+      i18n.addResourceBundle(base, 'translation', mod.default, true, true)
+      // resolvedLanguage is only recomputed by changeLanguage: the first bundle
+      // of the active language must re-run it, or consumers that read it
+      // (toolsCopy) keep resolving to the English fallback. The memoized loads
+      // stop the resulting 'languageChanged' from fetching again.
+      if (baseOf(i18n.language) === base && i18n.resolvedLanguage !== base) void i18n.changeLanguage(i18n.language)
+    })
+    p.catch(() => pending.delete(key))
+    pending.set(key, p)
+  }
+  return p.catch(() => undefined)
+}
+
+function ensureLocale(lng?: string): Promise<void> {
+  const base = baseOf(lng)
+  return coreLoaders[base] ? load('core', base, coreLoaders) : Promise.resolve()
+}
+
+/**
+ * Merge the complete locale file for `lng` (plus English, the fallback) into
+ * the `translation` namespace. Memoized; never rejects. Every route except the
+ * home awaits it before committing, so a page never renders raw keys.
+ */
+export function ensureFullLocale(lng: string = i18n.language): Promise<void> {
+  const base = fullLoaders[baseOf(lng)] ? baseOf(lng) : FALLBACK
+  const jobs = [load('full', base, fullLoaders)]
+  if (base !== FALLBACK) jobs.push(load('full', FALLBACK, fullLoaders))
+  return Promise.all(jobs).then(() => undefined)
 }
 
 // Keep the document language in sync so screen readers announce content in the
@@ -62,13 +104,17 @@ function syncDocumentLang(lng?: string) {
   }
 }
 
-// Load the detected language at startup (if not English) and on every change.
+// Load the detected language's core at startup (if not English) and, on every
+// change, the core and the full file together (the small core lands first).
+// The router does not refetch the active route, so the store's 'added' event is
+// what re-renders the current page with its full strings.
 // main.tsx awaits `localeReady` before the first render, so a returning pt/es
 // visitor never sees an English flash (and no component misses the update).
-export const localeReady = ensureLocale(i18n.language).catch(() => undefined)
+export const localeReady = ensureLocale(i18n.language)
 syncDocumentLang(i18n.language)
 i18n.on('languageChanged', (lng) => {
-  ensureLocale(lng)
+  void ensureLocale(lng)
+  void ensureFullLocale(lng)
   syncDocumentLang(lng)
 })
 

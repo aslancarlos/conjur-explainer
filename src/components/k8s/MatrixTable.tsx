@@ -5,7 +5,7 @@
  */
 export default function MatrixTable({ caption, cols, rows }: { caption: string; cols: string[]; rows: string[][] }) {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-border bg-bg-card">
+    <div className="overflow-x-auto rounded-2xl border border-border bg-bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue" tabIndex={0} role="region" aria-label={caption}>
       <table className="w-full text-left text-sm">
         <caption className="sr-only">{caption}</caption>
         <thead className="bg-bg-muted text-xs font-semibold uppercase tracking-wider text-text-muted">

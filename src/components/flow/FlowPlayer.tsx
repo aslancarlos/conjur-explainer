@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -84,10 +84,10 @@ function useIsNarrow() {
   const query = '(max-width: 639px)'
   const [narrow, setNarrow] = useState(() => typeof window !== 'undefined' && window.matchMedia(query).matches)
   useEffect(() => {
-    const m = window.matchMedia(query)
-    const h = () => setNarrow(m.matches)
-    m.addEventListener('change', h)
-    return () => m.removeEventListener('change', h)
+    const mq = window.matchMedia(query)
+    const h = () => setNarrow(mq.matches)
+    mq.addEventListener('change', h)
+    return () => mq.removeEventListener('change', h)
   }, [])
   return narrow
 }
@@ -299,10 +299,10 @@ export default function FlowPlayer({ spec, className = '' }: { spec: FlowSpec; c
         <div className="flex-1 min-w-[12rem]">
           <p className="text-xs font-mono text-text-muted mb-1 tabular-nums">{t('dual.step_of', { current: step + 1, total: TOTAL })}</p>
           <AnimatePresence mode="wait" initial={false}>
-            <motion.h2 key={`${step}-${i18n.language}`}
+            <m.h2 key={`${step}-${i18n.language}`}
               initial={reduce ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
               exit={reduce ? undefined : { opacity: 0, y: -4 }} transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="text-base sm:text-lg font-semibold text-text leading-snug">{cur?.title}</motion.h2>
+              className="text-base sm:text-lg font-semibold text-text leading-snug">{cur?.title}</m.h2>
           </AnimatePresence>
         </div>
         <div className="flex items-center gap-2">
@@ -456,12 +456,12 @@ export default function FlowPlayer({ spec, className = '' }: { spec: FlowSpec; c
       <div className="border-t border-border px-4 sm:px-6 py-5 min-h-[7.5rem]" aria-live="polite" aria-atomic="true">
         <span className="sr-only">{t('dual.step_of', { current: step + 1, total: TOTAL })}: {cur?.title}. </span>
         <AnimatePresence mode="wait" initial={false}>
-          <motion.p key={`${step}-${i18n.language}`}
+          <m.p key={`${step}-${i18n.language}`}
             initial={reduce ? false : { opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={reduce ? undefined : { opacity: 0 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
             className="text-base text-text-2 leading-relaxed max-w-[75ch] [overflow-wrap:anywhere]">
             {cur?.desc}
-          </motion.p>
+          </m.p>
         </AnimatePresence>
       </div>
     </div>

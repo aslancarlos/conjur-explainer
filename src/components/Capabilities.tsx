@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { m, useInView } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { KeyRound, RefreshCw, ShieldCheck, ScrollText, Github, Globe } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
@@ -30,7 +30,7 @@ export default function Capabilities() {
 
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {CAPS.map((c, i) => (
-            <motion.div
+            <m.div
               key={c.key}
               initial={{ opacity: 0, y: 18 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -42,7 +42,7 @@ export default function Capabilities() {
               </span>
               <p className="mt-4 text-[15px] font-bold text-text">{t(`caps.${c.key}_title`)}</p>
               <p className="mt-2 text-sm leading-relaxed text-text-2">{t(`caps.${c.key}_desc`)}</p>
-            </motion.div>
+            </m.div>
           ))}
         </div>
       </div>

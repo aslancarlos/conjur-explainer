@@ -1,4 +1,4 @@
-import { motion, useInView } from 'framer-motion'
+import { m, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ExternalLink, GitBranch, Github, ShieldCheck } from 'lucide-react'
@@ -32,7 +32,7 @@ export default function GitHubActionsSection() {
       <div className="max-w-6xl mx-auto space-y-12">
 
         {/* Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.3 }}
           className="space-y-3"
@@ -48,13 +48,13 @@ export default function GitHubActionsSection() {
             <span className="text-gh">{t('gha.titleAccent')}</span>
           </h1>
           <p className="text-text-muted leading-relaxed max-w-2xl">{t('gha.desc')}</p>
-        </motion.div>
+        </m.div>
 
         {/* How it works (FlowPlayer, DESIGN.md §10) */}
         <GhaFlow />
 
         {/* Zero-credential highlight */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, scale: 0.97 }} animate={inView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.3, delay: 0.15 }}
           className="section-card border-gh/20 bg-gradient-to-r from-gh/5 to-bg-card"
@@ -64,7 +64,7 @@ export default function GitHubActionsSection() {
             <span className="text-text-muted font-normal text-lg">in the runner, repository, or pipeline.</span>{' '}
             <span className="text-text">GitHub's identity IS the credential.</span>
           </p>
-        </motion.div>
+        </m.div>
 
         <div className="grid lg:grid-cols-2 gap-8">
 
@@ -74,7 +74,7 @@ export default function GitHubActionsSection() {
               const cls = colorMap[step.color] ?? colorMap.cyan
               const borderCls = cls.split(' ').find(c => c.startsWith('border')) ?? ''
               return (
-                <motion.div
+                <m.div
                   key={i}
                   initial={{ opacity: 0, x: -16 }} animate={inView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.3, delay: 0.1 + i * 0.12 }}
@@ -87,12 +87,12 @@ export default function GitHubActionsSection() {
                       </span>
                       <span className="font-semibold text-text text-sm">{step.title}</span>
                     </div>
-                    <pre className="code-block text-xs leading-relaxed overflow-x-auto whitespace-pre-wrap">
+                    <pre translate="no" className="code-block text-xs leading-relaxed overflow-x-auto whitespace-pre-wrap">
                       <code className="text-text-2">{step.code}</code>
                     </pre>
                   </div>
                   {i < steps.length - 1 && <div className="step-connector" />}
-                </motion.div>
+                </m.div>
               )
             })}
           </div>
@@ -102,17 +102,17 @@ export default function GitHubActionsSection() {
 
             {/* Flow diagram */}
             {/* Workshop stages. Live runner */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.3, delay: 0.5 }}
             >
               <GhaLiveRunner stages={stages} />
-            </motion.div>
+            </m.div>
 
             {/* Features */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {features.map((f, i) => (
-                <motion.div
+                <m.div
                   key={i}
                   initial={{ opacity: 0, y: 12 }} animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.3, delay: 1.0 + i * 0.08 }}
@@ -120,12 +120,12 @@ export default function GitHubActionsSection() {
                 >
                   <p className="text-sm font-semibold text-text">{f.title}</p>
                   <p className="text-xs text-text-muted leading-relaxed">{f.desc}</p>
-                </motion.div>
+                </m.div>
               ))}
             </div>
 
             {/* CTA */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.3, delay: 1.2 }}
               className="flex flex-wrap gap-3"
@@ -146,7 +146,7 @@ export default function GitHubActionsSection() {
               >
                 <ShieldCheck size={14} /> {t('gha.cta_workflow')} <ExternalLink size={12} />
               </a>
-            </motion.div>
+            </m.div>
 
           </div>
         </div>

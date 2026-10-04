@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
+import { Link } from '../../lib/router'
 import { useTranslation } from 'react-i18next'
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { Menu, PanelLeftClose, PanelLeftOpen, X } from 'lucide-react'
 import ThemeToggle from '../ThemeToggle'
 import EnvStatus from './EnvStatus'
@@ -26,8 +27,9 @@ function readCollapsed() {
  * dark theme (official black-ground artwork converted to alpha. Exact, no recolour).
  */
 function Brand() {
+  const { t } = useTranslation()
   return (
-    <Link to="/" aria-label="IDIRA by Palo Alto Networks: Home" className="flex min-h-11 items-center shrink-0 rounded-md">
+    <Link to="/" translate="no" aria-label={`IDIRA by Palo Alto Networks: ${t('nav.home')}`} className="flex min-h-11 items-center shrink-0 rounded-md">
       <img src={logoLight} alt="" width={248} height={70} className="h-9 w-auto dark:hidden" />
       <img src={logoDark} alt="" width={251} height={71} className="hidden h-9 w-auto dark:block" />
     </Link>
@@ -74,7 +76,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-bg-base text-text">
       {/* ── Top bar ── */}
-      <header className="nav-iridescent fixed top-0 inset-x-0 z-header h-14 bg-bg-card/90 backdrop-blur-xl border-b border-border">
+      <header className="vt-shell-header nav-iridescent fixed top-0 inset-x-0 z-header h-14 bg-bg-card/90 backdrop-blur-xl border-b border-border">
         <div className="h-full px-2 sm:px-4 flex items-center gap-2">
           {/* < lg: opens the drawer · ≥ lg: collapses / expands the sidebar */}
           <button ref={menuBtn} type="button" onClick={() => setDrawer(true)}
@@ -104,7 +106,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
       </header>
 
       {/* ── Sidebar (≥ lg) ── */}
-      <aside className={`hidden lg:flex fixed top-14 bottom-0 left-0 z-sidebar flex-col border-r border-border bg-bg-card
+      <aside className={`vt-shell-nav hidden lg:flex fixed top-14 bottom-0 left-0 z-sidebar flex-col border-r border-border bg-bg-card
         ${collapsed ? 'w-16' : 'w-[18rem]'}`}>
         <nav aria-label={t('nav.primary')} className="nav-scroll flex-1 min-h-0 overflow-y-auto overscroll-contain px-2 pt-4 pb-10">
           <SideNav collapsed={collapsed} dense idPrefix="side" />
@@ -116,12 +118,12 @@ export default function AppShell({ children }: { children: ReactNode }) {
       <AnimatePresence>
         {drawer && (
           <div className="lg:hidden fixed inset-0 z-drawer" id="nav-drawer">
-            <motion.button type="button" aria-label={t('nav.close_menu')} tabIndex={-1}
+            <m.button type="button" aria-label={t('nav.close_menu')} tabIndex={-1}
               onClick={() => setDrawer(false)}
               className="absolute inset-0 bg-black/55"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               transition={{ duration: reduce ? 0 : 0.2 }} />
-            <motion.div role="dialog" aria-modal="true" aria-label={t('nav.primary')}
+            <m.div role="dialog" aria-modal="true" aria-label={t('nav.primary')}
               className="absolute inset-y-0 left-0 flex w-[min(20rem,85vw)] flex-col bg-bg-card border-r border-border shadow-2xl"
               initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
               transition={reduce ? { duration: 0 } : { type: 'tween', duration: 0.24, ease: [0.2, 0.8, 0.2, 1] }}>
@@ -139,7 +141,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
               <div className="border-t border-border p-3">
                 <LanguageSwitcher />
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>

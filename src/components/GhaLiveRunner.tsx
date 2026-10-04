@@ -115,6 +115,9 @@ export default function GhaLiveRunner({ stages }: Props) {
       if (!stopped) { setErr(formatErr(msg)); setBusy(false) }
     }
     const poll = async () => {
+      // Hidden tab: skip the tick without spending an attempt; polling resumes
+      // (and the cap keeps counting) once the visitor is back.
+      if (document.hidden) return
       if (++attempts > 200) { stop(); if (!stopped) setBusy(false); return } // ~10 min hard cap
       try {
         const r = await fetch(`/api/gha/runs/${runId}`)

@@ -1,4 +1,4 @@
-import { motion, useInView } from 'framer-motion'
+import { m, useInView } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ExternalLink, RefreshCw, ShoppingCart, BarChart2, TriangleAlert } from 'lucide-react'
@@ -57,7 +57,7 @@ export default function ESOShopSection() {
       <div className="max-w-6xl mx-auto space-y-12">
 
         {/* Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.3 }}
           className="space-y-3"
@@ -73,7 +73,7 @@ export default function ESOShopSection() {
             <span className="text-eso">{t('esoshop.titleAccent')}</span>
           </h1>
           <p className="text-text-muted leading-relaxed max-w-2xl">{t('esoshop.desc')}</p>
-        </motion.div>
+        </m.div>
 
         {/* How it works (FlowPlayer, DESIGN.md §10) */}
         <EsoFlow />
@@ -84,7 +84,7 @@ export default function ESOShopSection() {
             {steps.map((step, i) => {
               const cls = colorMap[step.color] ?? colorMap.eso
               return (
-                <motion.div
+                <m.div
                   key={i}
                   initial={{ opacity: 0, x: -16 }} animate={inView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.3, delay: 0.1 + i * 0.12 }}
@@ -97,12 +97,12 @@ export default function ESOShopSection() {
                       </span>
                       <span className="font-semibold text-text text-sm">{step.title}</span>
                     </div>
-                    <pre className="code-block text-xs leading-relaxed overflow-x-auto whitespace-pre-wrap">
+                    <pre translate="no" className="code-block text-xs leading-relaxed overflow-x-auto whitespace-pre-wrap">
                       <code className="text-text-2">{step.code}</code>
                     </pre>
                   </div>
                   {i < steps.length - 1 && <div className="step-connector" />}
-                </motion.div>
+                </m.div>
               )
             })}
           </div>
@@ -110,7 +110,7 @@ export default function ESOShopSection() {
           {/* Live status + features + links */}
           <div className="space-y-6">
             {/* Live health card */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.3, delay: 0.4 }}
               className="section-card border-eso/20 space-y-4"
@@ -157,12 +157,12 @@ export default function ESOShopSection() {
                 <div className="text-xs text-text-muted animate-pulse">fetching /k8s-eso/health…</div>
               )}
               <p className="text-xs text-text-muted">{t('esoshop.live_note')}</p>
-            </motion.div>
+            </m.div>
 
             {/* Features */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {features.map((f, i) => (
-                <motion.div
+                <m.div
                   key={i}
                   initial={{ opacity: 0, y: 12 }} animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.3, delay: 0.5 + i * 0.08 }}
@@ -170,12 +170,12 @@ export default function ESOShopSection() {
                 >
                   <p className="text-sm font-semibold text-text">{f.title}</p>
                   <p className="text-xs text-text-muted leading-relaxed">{f.desc}</p>
-                </motion.div>
+                </m.div>
               ))}
             </div>
 
             {/* CTA buttons */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.3, delay: 0.7 }}
               className="flex flex-wrap gap-3"
@@ -204,12 +204,12 @@ export default function ESOShopSection() {
               >
                 <ExternalLink size={14} /> {t('esoshop.cta_grafana')}
               </a>
-            </motion.div>
+            </m.div>
           </div>
         </div>
 
         {/* Operator architecture callout */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.3, delay: 0.8 }}
           className="section-card border-conjur-gold/20 space-y-4"
@@ -234,7 +234,7 @@ export default function ESOShopSection() {
               </div>
             ))}
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   )

@@ -89,7 +89,7 @@ Aligned with the official palette of paloaltonetworks.com/idira (Oct 2026): prim
 
 ## 4. Typography
 
-- **Onest** (300-900) for UI and display; **IBM Plex Mono** (400-600) for identifiers, paths, code, step counters. Loaded once in `index.html` with `display=swap`.
+- **Onest** (400, 500, 600, 700 and 900, the weights the code uses) for UI and display; **IBM Plex Mono** (400-600) for identifiers, paths, code, step counters. Loaded once in `index.html` with `display=swap`.
 - Use mono for anything the reader might copy: `data/vault/<safe>/dbuser_dual/password`, `eso-shop-db-creds`, `refreshInterval: 1m`.
 
 | Role | Classes |
@@ -187,7 +187,7 @@ Hero band recipe (copy from `DualAccountsPage.tsx` / `Hero.tsx`):
 
 **Demo / feature page header:** `src/components/PageHeader.tsx` (left aligned: badge, one `h1`, 16px lead at 70ch). Concepts pages use `ConceptLayout`'s hero band. Every page has exactly one `h1` and no skipped heading levels (the FlowPlayer step title is an `h2`).
 
-**Navigation:** every sidebar group and submenu uses the same disclosure header (icon, label, down chevron, count when collapsed, items under a guide line); every group and submenu starts collapsed on each visit (nothing persisted, no auto-open); a collapsed group holding the current page gets a tinted header. Sub-headings inside a group (`heading` on nav items) are small, non-interactive labels.
+**Navigation:** every sidebar group and submenu uses the same disclosure header (icon, label, down chevron, count when collapsed, items under a guide line); every group and submenu starts collapsed on each visit (nothing persisted, no auto-open); a collapsed group holding the current page gets a tinted header. Zones: Start here, Products, Resources. Use cases (Kubernetes, CI/CD, Platforms) are a submenu of Secrets Manager, not a group of their own. A run of two or more items sharing a `heading` is a collapsible submenu one level down: inside a group it gets an icon (`HEADINGS` in lib/nav, like Architecture and Capabilities); inside a submenu it is a third level without icon (Kubernetes, CI/CD, Platforms, Workloads). A heading with a single item is not a submenu: the item is listed directly. Every level is collapsed by default. Use cases is the only highlighted submenu: a count badge (border and tint in the product colour, number in `text-text` for AA at 12px; `highlight` in `SECTIONS`). Keep it to one highlight so it still means something. Labels must not repeat a zone name (pt Capabilities is "Funcionalidades", not "Recursos").
 
 **Audience:** desktop only (no phone use). Keep layouts responsive, but QA targets desktop widths (1366 to 1440) and short screens (about 700px tall). Click targets stay 44px.
 

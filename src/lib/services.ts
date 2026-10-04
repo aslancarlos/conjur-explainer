@@ -26,6 +26,37 @@ export type ServiceState = 'checking' | 'ok' | 'maintenance' | 'down'
 
 export interface ServiceResult { state: ServiceState; ms?: number; code?: number }
 
+const SPA_MARKER = '<div id="root"></div>'
+/** The marker sits in index.html's body, after the head; never read past this. */
+const MARKER_SCAN_BYTES = 16 * 1024
+
+/**
+ * Stream the body until the SPA marker shows up or MARKER_SCAN_BYTES were read,
+ * then cancel: a service page (dashboard, Grafana) can be large and only its
+ * start matters here.
+ */
+async function hasSpaMarker(r: Response): Promise<boolean> {
+  const reader = r.body?.getReader()
+  if (!reader) return false
+  const decoder = new TextDecoder()
+  let text = ''
+  let read = 0
+  try {
+    while (read < MARKER_SCAN_BYTES) {
+      const { done, value } = await reader.read()
+      if (done) break
+      read += value.byteLength
+      text += decoder.decode(value, { stream: true })
+      if (text.includes(SPA_MARKER)) return true
+    }
+    return false
+  } catch {
+    return false
+  } finally {
+    reader.cancel().catch(() => {})
+  }
+}
+
 export async function checkService(s: LiveService, timeoutMs = 6000): Promise<ServiceResult> {
   const ctrl = new AbortController()
   const timer = setTimeout(() => ctrl.abort(), timeoutMs)
@@ -41,8 +72,7 @@ export async function checkService(s: LiveService, timeoutMs = 6000): Promise<Se
     }
     // A 2xx that is this site's own SPA shell means the route is not served by
     // the service (dev server / nginx try_files fallback), so it is not "online".
-    const body = await r.text().catch(() => '')
-    if (body.includes('<div id="root"></div>')) return { state: 'down', ms, code: r.status }
+    if (await hasSpaMarker(r)) return { state: 'down', ms, code: r.status }
     return { state: 'ok', ms, code: r.status }
   } catch {
     return { state: 'down' }

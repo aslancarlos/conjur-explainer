@@ -51,13 +51,13 @@ export default function SummonPage() {
           <div className="grid gap-4 lg:grid-cols-2">
             <figure className="card">
               <figcaption className="text-sm font-semibold text-text">{p('example_yml')}</figcaption>
-              <pre className="code-block mt-3 overflow-x-auto text-xs leading-relaxed" tabIndex={0}><code>{`# secrets.yml
+              <pre translate="no" className="code-block mt-3 overflow-x-auto text-xs leading-relaxed" role="region" tabIndex={0} aria-label={p('example_yml')}><code>{`# secrets.yml
 TF_VAR_access_key: !var aws/dev/access_key_id
 TF_VAR_secret_key: !var aws/dev/secret_access_key`}</code></pre>
             </figure>
             <figure className="card">
               <figcaption className="text-sm font-semibold text-text">{p('example_run')}</figcaption>
-              <pre className="code-block mt-3 overflow-x-auto text-xs leading-relaxed" tabIndex={0}><code>{`summon terraform apply
+              <pre translate="no" className="code-block mt-3 overflow-x-auto text-xs leading-relaxed" role="region" tabIndex={0} aria-label={p('example_run')}><code>{`summon terraform apply
 
 # inline, one variable (systemd ExecStart)
 summon --yaml 'DB_PASSWORD: !var data/myapp/database/password' \\

@@ -1,4 +1,4 @@
-import { motion, useInView } from 'framer-motion'
+import { m, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AlertTriangle, Clock, Eye, ShieldCheck, ExternalLink, Fingerprint, Lock, RefreshCw, ScrollText } from 'lucide-react'
@@ -87,7 +87,7 @@ export default function ProblemSection() {
 
         {/* Problem */}
         <div className="space-y-10">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.3 }}
             className="space-y-3"
@@ -99,17 +99,17 @@ export default function ProblemSection() {
             <p className="max-w-[70ch] text-base text-text-2 leading-relaxed">
               {t('problem.subtitle')}
             </p>
-          </motion.div>
+          </m.div>
 
           <div className="grid sm:grid-cols-3 gap-6 items-stretch">
             {items.map((item, i) => {
               const Icon = icons[item.icon] ?? AlertTriangle
               return (
-                <motion.div
+                <m.div
                   key={i}
                   initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.3, delay: 0.1 + i * 0.1 }}
-                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-conjur-red/25 bg-gradient-to-b from-conjur-red/[0.07] to-bg-card p-6 transition-all hover:border-conjur-red/50 hover:-translate-y-1 hover:shadow-[0_20px_50px_-20px_rgba(239,68,68,0.35)]"
+                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-conjur-red/25 bg-gradient-to-b from-conjur-red/[0.07] to-bg-card p-6 transition-[transform,box-shadow,border-color] hover:border-conjur-red/50 hover:-translate-y-1 hover:shadow-[0_20px_50px_-20px_rgba(239,68,68,0.35)]"
                 >
                   {/* left accent bar */}
                   <span className="absolute left-0 top-0 h-full w-1 bg-conjur-red/70" aria-hidden />
@@ -133,14 +133,14 @@ export default function ProblemSection() {
                     </p>
                     <RefPills refs={REFS[i] ?? []} accent="red" />
                   </div>
-                </motion.div>
+                </m.div>
               )
             })}
           </div>
         </div>
 
         {/* Solution */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.3, delay: 0.5 }}
           className="relative section-card bg-gradient-to-br from-conjur-cyan/5 to-bg-card border-conjur-cyan/20"
@@ -192,7 +192,7 @@ export default function ProblemSection() {
               <RefPills refs={SOLUTION_REFS} accent="cyan" />
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
       </div>
     </section>

@@ -1,4 +1,4 @@
-import { motion, useInView } from 'framer-motion'
+import { m, useInView } from 'framer-motion'
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ExternalLink, Puzzle } from 'lucide-react'
@@ -27,7 +27,7 @@ export default function DotNetSection() {
       <div className="max-w-6xl mx-auto space-y-12">
 
         {/* Header */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.3 }}
           className="space-y-3"
@@ -43,13 +43,13 @@ export default function DotNetSection() {
             <span className="text-dotnet">{t('dotnet.titleAccent')}</span>
           </h1>
           <p className="text-text-muted leading-relaxed max-w-2xl">{t('dotnet.desc')}</p>
-        </motion.div>
+        </m.div>
 
         {/* How it works (FlowPlayer, DESIGN.md §10) */}
         <SidecarFlow />
 
         {/* Zero-code highlight */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, scale: 0.97 }} animate={inView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.3, delay: 0.15 }}
           className="section-card border-dotnet/20 bg-gradient-to-r from-dotnet/5 to-bg-card"
@@ -59,7 +59,7 @@ export default function DotNetSection() {
             <span className="text-text-muted font-normal text-lg">{t('dotnet.banner_app')}</span>{' '}
             <span className="text-text">{t('dotnet.banner_sidecar')}</span>
           </p>
-        </motion.div>
+        </m.div>
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Steps */}
@@ -68,7 +68,7 @@ export default function DotNetSection() {
               const cls = colorMap[step.color] ?? colorMap.cyan
               const borderCls = cls.split(' ').find(c => c.startsWith('border')) ?? ''
               return (
-                <motion.div
+                <m.div
                   key={i}
                   initial={{ opacity: 0, x: -16 }} animate={inView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.3, delay: 0.1 + i * 0.12 }}
@@ -81,12 +81,12 @@ export default function DotNetSection() {
                       </span>
                       <span className="font-semibold text-text text-sm">{step.title}</span>
                     </div>
-                    <pre className="code-block text-xs leading-relaxed overflow-x-auto whitespace-pre-wrap">
+                    <pre translate="no" className="code-block text-xs leading-relaxed overflow-x-auto whitespace-pre-wrap">
                       <code className="text-text-2">{step.code}</code>
                     </pre>
                   </div>
                   {i < steps.length - 1 && <div className="step-connector" />}
-                </motion.div>
+                </m.div>
               )
             })}
           </div>
@@ -96,7 +96,7 @@ export default function DotNetSection() {
             {/* Features */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {features.map((f, i) => (
-                <motion.div
+                <m.div
                   key={i}
                   initial={{ opacity: 0, y: 12 }} animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.3, delay: 0.5 + i * 0.08 }}
@@ -104,11 +104,11 @@ export default function DotNetSection() {
                 >
                   <p className="text-sm font-semibold text-text">{f.title}</p>
                   <p className="text-xs text-text-muted leading-relaxed">{f.desc}</p>
-                </motion.div>
+                </m.div>
               ))}
             </div>
 
-            <motion.a
+            <m.a
               initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.3, delay: 0.7 }}
               href="/dotnet/usuarios"
@@ -117,7 +117,7 @@ export default function DotNetSection() {
               className="inline-flex min-h-11 items-center gap-2 px-5 rounded-full bg-dotnet-solid text-white text-sm font-semibold hover:bg-dotnet-solid/90 transition-colors"
             >
               {t('dotnet.cta')} <ExternalLink size={14} />
-            </motion.a>
+            </m.a>
           </div>
         </div>
       </div>

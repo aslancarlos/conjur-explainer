@@ -1,6 +1,6 @@
 import { useRef } from 'react'
-import { motion, useInView, useReducedMotion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { m, useInView, useReducedMotion } from 'framer-motion'
+import { Link } from '../lib/router'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight } from 'lucide-react'
 import { demoGroups } from '../lib/nav'
@@ -28,16 +28,16 @@ export default function DemosShowcase() {
           </div>
         </div>
 
-        <motion.div
+        <m.div
           initial={reduce ? false : { opacity: 0, y: 12 }} animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.4, ease: [0.2, 0.7, 0.2, 1] }}
           className="mt-10 grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
           {groupsList.map(group => (
             // Use cases hold most demos: give them the full row (4 columns) so
             // the catalogue stays balanced instead of one long first column.
-            <div key={group.key} className={group.key === 'usecases' ? 'sm:col-span-2 lg:col-span-4' : undefined}>
+            <div key={group.key} className={group.key === 'secretsmanager' ? 'sm:col-span-2 lg:col-span-4' : undefined}>
               <h3 className="border-b border-border pb-2 text-sm font-semibold text-text">{t(group.labelKey!)}</h3>
-              <ul className={`mt-2 ${group.key === 'usecases' ? 'grid gap-x-8 gap-y-0.5 sm:grid-cols-2 lg:grid-cols-4' : 'space-y-0.5'}`}>
+              <ul className={`mt-2 ${group.key === 'secretsmanager' ? 'grid gap-x-8 gap-y-0.5 sm:grid-cols-2 lg:grid-cols-4' : 'space-y-0.5'}`}>
                 {group.items.map(item => {
                   const cls = 'group flex min-h-11 items-center gap-3 rounded-lg px-2 -mx-2 transition-colors duration-150 hover:bg-bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue'
                   const inner = (
@@ -45,7 +45,7 @@ export default function DemosShowcase() {
                       <NavGlyph logo={item.logo} Icon={item.Icon} iconSize={17} className={item.color ?? 'text-text-2'} />
                       <span className="min-w-0 flex-1">
                         <span className="block text-sm font-medium text-text leading-tight">{item.demo!.name}</span>
-                        <span className="block font-mono text-xs text-text-muted">{item.demo!.secret}</span>
+                        <span translate="no" className="block font-mono text-xs text-text-muted">{item.demo!.secret}</span>
                       </span>
                       <ArrowRight size={14} aria-hidden="true" className="shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5" />
                     </>
@@ -61,7 +61,7 @@ export default function DemosShowcase() {
               </ul>
             </div>
           ))}
-        </motion.div>
+        </m.div>
       </div>
     </section>
   )

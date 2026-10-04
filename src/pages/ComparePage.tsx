@@ -1,5 +1,5 @@
-import { useRef } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
+import { Link } from '../lib/router'
 import { useTranslation } from 'react-i18next'
 import { useToolsCopy } from '../lib/toolsCopy'
 import type { LucideIcon } from 'lucide-react'
@@ -10,6 +10,8 @@ import {
   Code, CloudUpload, Cog, Terminal, Timer, FileKey2, HardDrive, Globe, RefreshCw, Vault, TriangleAlert, MoveHorizontal,
 } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
+import Segmented from '../components/Segmented'
+import Loading from '../components/Loading'
 import { Section } from '../components/authn/AuthnPieces'
 import { NAV } from '../lib/nav'
 
@@ -105,42 +107,10 @@ const GLANCE_ROWS = ['problem', 'consumer', 'identity', 'where', 'editions', 'us
 const ROWS = ['identity', 'delivery', 'code', 'rotation', 'avail', 'limit', 'best'] as const
 
 const GROUP = (navKey: string) => NAV.find(g => g.key === navKey)
-const NAV_ITEM = (to: string) => NAV.flatMap(g => g.items).find(i => i.to === to)
-
-/** Segmented radiogroup with roving focus (arrow keys move focus and selection). */
-function Segmented<T extends string>({ label, value, onChange, options, size = 'md' }: {
-  label: string; value: T; onChange: (v: T) => void
-  options: Array<{ v: T; label: string; Icon?: LucideIcon; color?: string }>; size?: 'md' | 'sm'
-}) {
-  const ref = useRef<HTMLDivElement>(null)
-  const onKey = (e: React.KeyboardEvent) => {
-    if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) return
-    e.preventDefault()
-    const i = options.findIndex(o => o.v === value)
-    const n = e.key === 'Home' ? 0 : e.key === 'End' ? options.length - 1
-      : (i + (e.key === 'ArrowRight' ? 1 : options.length - 1)) % options.length
-    onChange(options[n].v)
-    requestAnimationFrame(() => ref.current?.querySelectorAll<HTMLButtonElement>('[role=radio]')[n]?.focus())
-  }
-  return (
-    <div ref={ref} role="radiogroup" aria-label={label} onKeyDown={onKey}
-      className={`inline-flex flex-wrap gap-1 rounded-xl border border-border bg-bg-card p-1 ${size === 'sm' ? 'text-xs' : 'text-sm'}`}>
-      {options.map(o => {
-        const on = value === o.v
-        return (
-          <button key={o.v} type="button" role="radio" aria-checked={on} tabIndex={on ? 0 : -1}
-            onClick={() => onChange(o.v)}
-            className={`inline-flex min-h-11 items-center gap-2 rounded-lg px-4 font-medium transition-colors duration-200
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue
-              ${on ? 'bg-bg-muted text-text shadow-sm' : 'text-text-2 hover:text-text'}`}>
-            {o.Icon && <o.Icon size={16} aria-hidden="true" className={on ? (o.color ?? 'text-domain-idira') : 'text-text-muted'} />}
-            {o.label}
-          </button>
-        )
-      })}
-    </div>
-  )
-}
+/** Nav item by route (first one wins, as with find); built once instead of per lookup. */
+const NAV_BY_TO = new Map<string, (typeof NAV)[number]['items'][number]>()
+for (const it of NAV.flatMap(g => g.items)) if (!NAV_BY_TO.has(it.to)) NAV_BY_TO.set(it.to, it)
+const NAV_ITEM = (to: string) => NAV_BY_TO.get(to)
 
 function AvailChip({ ok, label }: { ok: boolean; label: string }) {
   const { t } = useTranslation()
@@ -326,5 +296,5 @@ function ComparePageView() {
 /** Waits for the lazily loaded tools copy (src/lib/toolsCopy.ts) before rendering. */
 export default function ComparePage() {
   const ready = useToolsCopy()
-  return ready ? <ComparePageView /> : <section className="min-h-screen bg-bg-base" aria-busy="true" />
+  return ready ? <ComparePageView /> : <section className="min-h-screen bg-bg-base" aria-busy="true"><Loading /></section>
 }

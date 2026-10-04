@@ -46,7 +46,7 @@ export default function K8sAuthnPage() {
         </Section>
 
         <Section title={p('cmp_title')} lead={p('cmp_lead')}>
-          <div className="overflow-x-auto rounded-2xl border border-border bg-bg-card">
+          <div className="overflow-x-auto rounded-2xl border border-border bg-bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue" tabIndex={0} role="region" aria-label={p('cmp_title')}>
             <table className="w-full text-left text-sm">
               <caption className="sr-only">{p('cmp_title')}</caption>
               <thead className="bg-bg-muted text-xs font-semibold uppercase tracking-wider text-text-muted">

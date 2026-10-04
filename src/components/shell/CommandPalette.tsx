@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { KeyboardEvent as ReactKeyboardEvent } from 'react'
+import type { KeyboardEvent as ReactKeyboardEvent, SetStateAction } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { BookOpen, CornerDownLeft, Search } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { NAV } from '../../lib/nav'
@@ -12,7 +12,7 @@ const TERMS = ['workload', 'host', 'authenticator', 'token', 'policy', 'variable
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
 const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 
-interface Entry { id: string; label: string; sub?: string; group: string; to: string; external?: boolean; hash?: string; Icon: LucideIcon; logo?: string; color?: string }
+interface Entry { id: string; label: string; sub?: string; group: string; to: string; external?: boolean; hash?: string; Icon: LucideIcon; logo?: string; color?: string; hay: string }
 
 /**
  * ⌘K / Ctrl+K command palette (sinfonia-style top-bar search): jump to any
@@ -22,12 +22,16 @@ export default function CommandPalette() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const reduce = useReducedMotion()
-  const [open, setOpen] = useState(false)
+  const [open, setOpenState] = useState(false)
   const [q, setQ] = useState('')
   const [active, setActive] = useState(0)
+  // Opening, closing and typing put the highlight back on the first result
+  // (in the handlers, not in an effect that would re-render once more).
+  const setOpen = useCallback((v: SetStateAction<boolean>) => { setActive(0); setOpenState(v) }, [])
   const inputRef = useRef<HTMLInputElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
 
   const entries = useMemo<Entry[]>(() => {
     const seen = new Set<string>()
@@ -42,16 +46,15 @@ export default function CommandPalette() {
       id: `t-${k}`, label: t(`glossary.terms.${k}.term`), sub: t(`glossary.terms.${k}.def`),
       group: t('nav.c_glossary'), to: '/concepts/glossary', hash: `term-${k}`, Icon: BookOpen, color: 'text-text-2',
     }))
-    return [...pages, ...terms]
+    // Normalized search text, computed once per language instead of per keystroke.
+    return [...pages, ...terms].map(e => ({ ...e, hay: norm(`${e.label} ${e.sub ?? ''} ${e.group}`) }))
   }, [t])
 
   const results = useMemo(() => {
     const n = norm(q.trim())
     if (!n) return entries.filter(e => !e.hash)           // pages only until the user types
-    return entries.filter(e => norm(`${e.label} ${e.sub ?? ''} ${e.group}`).includes(n)).slice(0, 30)
+    return entries.filter(e => e.hay.includes(n)).slice(0, 30)
   }, [q, entries])
-
-  useEffect(() => { setActive(0) }, [q, open])
 
   // Global shortcut.
   useEffect(() => {
@@ -75,7 +78,7 @@ export default function CommandPalette() {
   const go = useCallback((e: Entry) => {
     setOpen(false)
     if (e.external) { window.location.assign(e.to); return }
-    navigate(e.to)
+    navigate(e.to, { viewTransition: true })
     if (e.hash) {
       // The glossary page is lazy-loaded: retry until the anchor exists.
       let tries = 0
@@ -86,13 +89,23 @@ export default function CommandPalette() {
       }
       setTimeout(seek, 120)
     }
-  }, [navigate, reduce])
+  }, [navigate, reduce, setOpen])
 
   const onKeyDown = (e: ReactKeyboardEvent) => {
     if (e.key === 'ArrowDown') { e.preventDefault(); setActive(a => Math.min(results.length - 1, a + 1)) }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(a => Math.max(0, a - 1)) }
     else if (e.key === 'Enter' && results[active]) { e.preventDefault(); go(results[active]) }
     else if (e.key === 'Escape') { e.preventDefault(); setOpen(false) }
+  }
+
+  // Tab stays inside the dialog (same focus trap as the Finder info dialog).
+  const trapTab = (e: ReactKeyboardEvent) => {
+    if (e.key !== 'Tab' || !dialogRef.current) return
+    const els = [...dialogRef.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])')]
+    if (!els.length) return
+    const first = els[0], last = els[els.length - 1]
+    if (e.shiftKey && (document.activeElement === first || !dialogRef.current.contains(document.activeElement))) { e.preventDefault(); last.focus() }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
   }
 
   useEffect(() => {
@@ -115,15 +128,16 @@ export default function CommandPalette() {
       <AnimatePresence>
         {open && (
           <div className="fixed inset-0 z-modal">
-            <motion.div className="absolute inset-0 bg-black/55" onClick={() => setOpen(false)} aria-hidden="true"
+            <m.div className="absolute inset-0 bg-black/55" onClick={() => setOpen(false)} aria-hidden="true"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduce ? 0 : 0.15 }} />
-            <motion.div role="dialog" aria-modal="true" aria-label={t('search.open')}
+            <m.div ref={dialogRef} role="dialog" aria-modal="true" aria-label={t('search.open')} onKeyDown={trapTab}
               initial={reduce ? false : { opacity: 0, scale: 0.98, y: -6 }} animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={reduce ? undefined : { opacity: 0, scale: 0.98 }} transition={{ duration: 0.15, ease: 'easeOut' }}
               className="relative mx-auto mt-[10vh] w-[min(40rem,calc(100vw-1.5rem))] overflow-hidden rounded-xl border border-border bg-bg-card shadow-2xl">
-              <div className="flex items-center gap-3 border-b border-border px-4">
+              <div className="flex items-center gap-3 border-b border-border px-4 focus-within:ring-2 focus-within:ring-inset focus-within:ring-idira-blue">
                 <Search size={18} className="shrink-0 text-text-muted" aria-hidden="true" />
-                <input ref={inputRef} value={q} onChange={e => setQ(e.target.value)} onKeyDown={onKeyDown}
+                <input ref={inputRef} type="search" name="q" autoComplete="off" spellCheck={false}
+                  value={q} onChange={e => { setQ(e.target.value); setActive(0) }} onKeyDown={onKeyDown}
                   role="combobox" aria-expanded="true" aria-controls="cmdk-list" aria-autocomplete="list"
                   aria-activedescendant={results[active] ? `cmdk-${active}` : undefined}
                   placeholder={t('search.placeholder')} aria-label={t('search.placeholder')}
@@ -154,7 +168,7 @@ export default function CommandPalette() {
                 <span><kbd className="font-mono">↵</kbd> {t('search.hint_open')}</span>
                 <span><kbd className="font-mono">esc</kbd> {t('search.hint_close')}</span>
               </p>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>
