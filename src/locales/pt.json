@@ -113,7 +113,7 @@
     "shub_saas_sub": "Secrets Hub com o Privilege Cloud como origem",
     "shub_pamsh": "PAM Self-Hosted",
     "shub_pamsh_sub": "Secrets Hub com o seu Vault PAM como origem",
-    "h_capabilities": "Recursos",
+    "h_capabilities": "Funcionalidades",
     "h_ai": "Agentes de IA",
     "h_platforms": "Plataformas",
     "sm_dynamic": "Secrets dinâmicos",

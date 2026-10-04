@@ -46,6 +46,12 @@ export const SECTIONS: Record<SectionKey, { labelKey: string; Icon: LucideIcon; 
   usecases: { labelKey: 'nav.sec_usecases', Icon: Layers, logo: '/icons/nav/g_usecases.svg' },
 }
 
+/** Icons for sub-headings that render as a collapsible submenu directly inside a group. */
+export const HEADINGS: Record<string, { Icon: LucideIcon; logo?: string }> = {
+  'nav.h_arch':         { Icon: Network, logo: '/icons/nav/h_arch.svg' },
+  'nav.h_capabilities': { Icon: Layers, logo: '/icons/nav/h_capabilities.svg' },
+}
+
 export interface NavGroup {
   key: string
   labelKey?: string

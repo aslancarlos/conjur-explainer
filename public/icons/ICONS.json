@@ -97,6 +97,8 @@
   "g_tools": "flat-color-icons:engineering",
   "compare": "flat-color-icons:bar-chart",
   "livetools": "flat-color-icons:combo-chart",
-  "controller": "flat-color-icons:settings"
+  "controller": "flat-color-icons:settings",
+  "h_arch": "flat-color-icons:org-unit",
+  "h_capabilities": "flat-color-icons:services"
  }
 }

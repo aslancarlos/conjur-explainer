@@ -3,8 +3,8 @@ import { useLocation } from 'react-router-dom'
 import { Link } from '../../lib/router'
 import { useTranslation } from 'react-i18next'
 import { useReducedMotion } from 'framer-motion'
-import { ChevronDown } from 'lucide-react'
-import { navBy, SECTIONS, ZONES, type NavGroup, type NavItem } from '../../lib/nav'
+import { ChevronDown, Layers } from 'lucide-react'
+import { HEADINGS, navBy, SECTIONS, ZONES, type NavGroup, type NavItem } from '../../lib/nav'
 import NavGlyph from './NavGlyph'
 
 /** Split a group's flat items into runs: plain items, or a run sharing one `section` (submenu). */
@@ -35,8 +35,8 @@ const chevron = (open: boolean) => (
  * Grouped site navigation (sidebar + mobile drawer).
  * - Sections with an overline label (Start here · Products · Resources, see
  *   ZONES in lib/nav). Resources are flat links.
- * - Each other group header is a disclosure button; inside a submenu, each
- *   sub-heading run is a third disclosure level. Every level starts collapsed on each visit (nothing is persisted); what the visitor
+ * - Each other group header is a disclosure button; sub-heading runs of two or
+ *   more items are submenus (third level inside a submenu). Every level starts collapsed on each visit (nothing is persisted); what the visitor
  *   opens stays open while they navigate. A collapsed group holding the
  *   current page gets a tinted header.
  * - Product colour: a thin ring around the group's icon tile (no bars, no counts).
@@ -101,34 +101,6 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
     )
   }
 
-  /**
-   * Inside a submenu, items sharing a sub-heading (Kubernetes, CI/CD, ...) form
-   * a third collapsible level; items without a heading stay plain rows.
-   */
-  const withSubmenus = (section: string, items: NavItem[]) => {
-    const runs: Array<{ heading?: string; items: NavItem[] }> = []
-    for (const it of items) {
-      const last = runs[runs.length - 1]
-      if (last && last.heading === it.heading) last.items.push(it)
-      else runs.push({ heading: it.heading, items: [it] })
-    }
-    return runs.flatMap(run => {
-      if (!run.heading) return run.items.map(row)
-      const key = `sub-${section}-${run.heading}`
-      const listId = `${idPrefix}-${key.replace(/\./g, '-')}`
-      const active = run.items.some(i => isActive(i.to))
-      return [
-        <li key={key}>
-          {disclosure(key, listId, t(run.heading), null, active, 'font-medium')}
-          <ul id={listId} hidden={!isOpen(key)} aria-label={t(run.heading)}
-            className="mt-0.5 ml-3 space-y-0.5 border-l border-border pl-2">
-            {run.items.map(row)}
-          </ul>
-        </li>,
-      ]
-    })
-  }
-
   const row = (item: NavItem) => {
     const active = isActive(item.to)
     const label = t(item.shortKey ?? item.labelKey)
@@ -161,21 +133,36 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
     )
   }
 
-  const withHeadings = (items: NavItem[]) => {
-    let last: string | undefined
-    return items.flatMap(it => {
-      const out = []
-      if (it.heading && it.heading !== last) {
-        out.push(
-          <li key={`h-${it.heading}-${it.to}`} aria-hidden="true"
-            className="text-overline px-3 pb-1 pt-2.5 font-medium">
-            {t(it.heading)}
-          </li>,
-        )
-      }
-      last = it.heading
-      out.push(row(it))
-      return out
+
+  /**
+   * Items sharing a sub-heading form a collapsible submenu one level down
+   * (inside a group: with an icon, like Use cases; inside a submenu: a third
+   * level without icon). A heading with a single item adds a click for nothing,
+   * so that item is listed directly; items without a heading stay plain rows.
+   */
+  const byHeading = (scope: string, items: NavItem[], tint: string, nested: boolean) => {
+    const runs: Array<{ heading?: string; items: NavItem[] }> = []
+    for (const it of items) {
+      const last = runs[runs.length - 1]
+      if (last && last.heading === it.heading) last.items.push(it)
+      else runs.push({ heading: it.heading, items: [it] })
+    }
+    return runs.flatMap(run => {
+      if (!run.heading || run.items.length < 2) return run.items.map(row)
+      const key = `sub-${scope}-${run.heading}`
+      const listId = `${idPrefix}-${key.replace(/\./g, '-')}`
+      const active = run.items.some(i => isActive(i.to))
+      const icon = HEADINGS[run.heading]
+      const glyph = nested ? null : <NavGlyph logo={icon?.logo} Icon={icon?.Icon ?? Layers} iconSize={16} className={tint} />
+      return [
+        <li key={key}>
+          {disclosure(key, listId, t(run.heading), glyph, active, 'font-medium')}
+          <ul id={listId} hidden={!isOpen(key)} aria-label={t(run.heading)}
+            className={`mt-0.5 space-y-0.5 border-l border-border pl-2 ${nested ? 'ml-3' : 'ml-[21px]'}`}>
+            {run.items.map(row)}
+          </ul>
+        </li>,
+      ]
     })
   }
 
@@ -197,7 +184,8 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
         <ul id={listId} hidden={!expanded} aria-label={label}
           className="mt-0.5 mb-1 ml-[21px] space-y-0.5 border-l border-border pl-2">
           {segments(group.items).map(seg => {
-            if (!seg.section) return withHeadings(seg.items)
+            const tint = group.color ?? 'text-domain-idira'
+            if (!seg.section) return byHeading(group.key, seg.items, tint, false)
             // Collapsible submenu: a sub-section header (not a link) with a chevron,
             // children under a guide line.
             const sec = SECTIONS[seg.section]
@@ -210,7 +198,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
                   <NavGlyph logo={sec.logo} Icon={sec.Icon} iconSize={16} className={group.color ?? 'text-domain-idira'} />,
                   subActive, 'font-medium')}
                 <ul id={subId} hidden={!isOpen(key)} className="mt-0.5 ml-[21px] space-y-0.5 border-l border-border pl-2">
-                  {withSubmenus(seg.section, seg.items)}
+                  {byHeading(seg.section, seg.items, tint, true)}
                 </ul>
               </li>
             )
