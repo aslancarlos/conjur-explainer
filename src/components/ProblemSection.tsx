@@ -109,7 +109,7 @@ export default function ProblemSection() {
                   key={i}
                   initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.3, delay: 0.1 + i * 0.1 }}
-                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-conjur-red/25 bg-gradient-to-b from-conjur-red/[0.07] to-bg-card p-6 transition-all hover:border-conjur-red/50 hover:-translate-y-1 hover:shadow-[0_20px_50px_-20px_rgba(239,68,68,0.35)]"
+                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-conjur-red/25 bg-gradient-to-b from-conjur-red/[0.07] to-bg-card p-6 transition-[transform,box-shadow,border-color] hover:border-conjur-red/50 hover:-translate-y-1 hover:shadow-[0_20px_50px_-20px_rgba(239,68,68,0.35)]"
                 >
                   {/* left accent bar */}
                   <span className="absolute left-0 top-0 h-full w-1 bg-conjur-red/70" aria-hidden />

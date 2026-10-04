@@ -107,7 +107,7 @@ export default function SelfHostedArchitecturePage() {
             <tbody className="divide-y divide-border">
               {PORTS.map(r => (
                 <tr key={r.port} className="align-top">
-                  <th scope="row" className="px-4 sm:px-6 py-4"><code className="rounded bg-bg-muted px-1.5 py-0.5 font-mono text-xs text-text">{r.port}</code></th>
+                  <th scope="row" className="px-4 sm:px-6 py-4"><code translate="no" className="rounded bg-bg-muted px-1.5 py-0.5 font-mono text-xs text-text">{r.port}</code></th>
                   <td className={`${td} whitespace-nowrap`}>{p(`who_${r.who}`)}</td>
                   <td className={td}>{p(r.key)}</td>
                 </tr>

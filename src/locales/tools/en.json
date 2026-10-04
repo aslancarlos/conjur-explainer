@@ -1048,7 +1048,11 @@
           ]
         }
       }
-    }
+    },
+    "copy_failed_link": "Could not copy the link: select the address in the browser bar and press Ctrl+C or Cmd+C.",
+    "copy_failed_prereq": "Could not copy the prerequisites: use Download .txt to save them, then copy from the file with Ctrl+C or Cmd+C.",
+    "restarted": "Answers cleared.",
+    "undo": "Undo"
   },
   "finder_arch": {
     "section_title": "Architecture and network requirements",
@@ -1106,7 +1110,7 @@
     "zone_idira": "IDIRA SaaS (Palo Alto Networks)",
     "products": "Products",
     "edition_hint": "Changes the Secrets Manager components and flows in the diagram.",
-    "opening": "Opening...",
+    "opening": "Opening…",
     "badge_documented": "Numbered connection: port and endpoint documented",
     "badge_inferred": "Numbered connection: inferred, confirm before opening rules",
     "table_show": "Show network flows and firewall rules ({{count}} flows)",
@@ -1130,7 +1134,9 @@
     "zone_pam": "Customer: PAM Self-Hosted",
     "report_arch": "Architecture and network",
     "preview_full": "Full size",
-    "preview_fit": "Fit to width"
+    "preview_fit": "Fit to width",
+    "doc_flow": "Documentation for flow {{no}}",
+    "col_status": "Confidence and source"
   },
   "cmp": {
     "scroll_hint": "Scroll sideways to see all {{count}} columns; the first column stays fixed.",

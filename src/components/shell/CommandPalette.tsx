@@ -28,6 +28,7 @@ export default function CommandPalette() {
   const inputRef = useRef<HTMLInputElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
 
   const entries = useMemo<Entry[]>(() => {
     const seen = new Set<string>()
@@ -95,6 +96,16 @@ export default function CommandPalette() {
     else if (e.key === 'Escape') { e.preventDefault(); setOpen(false) }
   }
 
+  // Tab stays inside the dialog (same focus trap as the Finder info dialog).
+  const trapTab = (e: ReactKeyboardEvent) => {
+    if (e.key !== 'Tab' || !dialogRef.current) return
+    const els = [...dialogRef.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input, [tabindex]:not([tabindex="-1"])')]
+    if (!els.length) return
+    const first = els[0], last = els[els.length - 1]
+    if (e.shiftKey && (document.activeElement === first || !dialogRef.current.contains(document.activeElement))) { e.preventDefault(); last.focus() }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+  }
+
   useEffect(() => {
     listRef.current?.querySelector(`[data-idx="${active}"]`)?.scrollIntoView({ block: 'nearest' })
   }, [active])
@@ -117,13 +128,14 @@ export default function CommandPalette() {
           <div className="fixed inset-0 z-modal">
             <motion.div className="absolute inset-0 bg-black/55" onClick={() => setOpen(false)} aria-hidden="true"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduce ? 0 : 0.15 }} />
-            <motion.div role="dialog" aria-modal="true" aria-label={t('search.open')}
+            <motion.div ref={dialogRef} role="dialog" aria-modal="true" aria-label={t('search.open')} onKeyDown={trapTab}
               initial={reduce ? false : { opacity: 0, scale: 0.98, y: -6 }} animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={reduce ? undefined : { opacity: 0, scale: 0.98 }} transition={{ duration: 0.15, ease: 'easeOut' }}
               className="relative mx-auto mt-[10vh] w-[min(40rem,calc(100vw-1.5rem))] overflow-hidden rounded-xl border border-border bg-bg-card shadow-2xl">
-              <div className="flex items-center gap-3 border-b border-border px-4">
+              <div className="flex items-center gap-3 border-b border-border px-4 focus-within:ring-2 focus-within:ring-inset focus-within:ring-idira-blue">
                 <Search size={18} className="shrink-0 text-text-muted" aria-hidden="true" />
-                <input ref={inputRef} value={q} onChange={e => setQ(e.target.value)} onKeyDown={onKeyDown}
+                <input ref={inputRef} type="search" name="q" autoComplete="off" spellCheck={false}
+                  value={q} onChange={e => setQ(e.target.value)} onKeyDown={onKeyDown}
                   role="combobox" aria-expanded="true" aria-controls="cmdk-list" aria-autocomplete="list"
                   aria-activedescendant={results[active] ? `cmdk-${active}` : undefined}
                   placeholder={t('search.placeholder')} aria-label={t('search.placeholder')}

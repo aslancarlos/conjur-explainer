@@ -17,7 +17,7 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
         <p className="text-sm text-text-muted leading-relaxed">
           © {new Date().getFullYear()} {t('shell.site_name')} · {t('footer.made_by')}{' '}
-          <span className="font-medium text-text">Aslan Carlos Ramos</span>
+          <span translate="no" className="font-medium text-text">Aslan Carlos Ramos</span>
           <span className="block text-xs">{t('footer.role')}</span>
         </p>
         <a href={href}

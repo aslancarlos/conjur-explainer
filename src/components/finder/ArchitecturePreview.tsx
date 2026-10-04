@@ -83,12 +83,14 @@ export default function ArchitecturePreview({ resolved, labels = DEFAULT_PREVIEW
     <figure className={`relative w-full rounded-2xl border border-border bg-bg-card p-4 ${className}`}>
       {!fit && (
         <button type="button" onClick={() => setFull(v => !v)} aria-pressed={full}
-          className="absolute right-3 top-3 z-raised inline-flex min-h-9 items-center gap-1.5 rounded-full border border-border bg-bg-card px-3 text-xs font-medium text-text-2 shadow-sm transition-colors hover:border-idira-blue hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">
+          className="absolute right-3 top-3 z-raised inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border bg-bg-card px-3 text-xs font-medium text-text-2 shadow-sm transition-colors hover:border-idira-blue hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">
           {full ? <Minimize2 size={14} aria-hidden="true" /> : <Maximize2 size={14} aria-hidden="true" />}
           {full ? labels.fitWidth : labels.fullSize}
         </button>
       )}
-      <div className={full && !fit ? 'max-h-[80vh] overflow-auto' : ''}>
+      {/* full size scrolls inside its own frame, reachable from the keyboard */}
+      <div className={full && !fit ? 'max-h-[80vh] overflow-auto rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue' : ''}
+        {...(full && !fit ? { tabIndex: 0, role: 'region', 'aria-label': labels.title } : {})}>
       <svg viewBox={`-16 ${minY - 8} ${W + 32} ${H + 16}`} className="h-auto" style={full && !fit ? { width: W + 32 } : { width: '100%' }}
         role="img" aria-labelledby={`${uid}-t ${uid}-d`}>
         <title id={`${uid}-t`}>{labels.title}</title>

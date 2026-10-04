@@ -27,8 +27,9 @@ function readCollapsed() {
  * dark theme (official black-ground artwork converted to alpha. Exact, no recolour).
  */
 function Brand() {
+  const { t } = useTranslation()
   return (
-    <Link to="/" aria-label="IDIRA by Palo Alto Networks: Home" className="flex min-h-11 items-center shrink-0 rounded-md">
+    <Link to="/" translate="no" aria-label={`IDIRA by Palo Alto Networks: ${t('nav.home')}`} className="flex min-h-11 items-center shrink-0 rounded-md">
       <img src={logoLight} alt="" width={248} height={70} className="h-9 w-auto dark:hidden" />
       <img src={logoDark} alt="" width={251} height={71} className="hidden h-9 w-auto dark:block" />
     </Link>

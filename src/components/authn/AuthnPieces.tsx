@@ -15,12 +15,12 @@ export function SupportChips({ saas, selfHosted }: { saas: boolean; selfHosted: 
     <span className={`inline-flex min-h-8 items-center gap-1.5 rounded-full border px-3 text-xs font-medium
       ${ok ? 'border-tone-success/40 bg-tone-success/10 text-tone-success' : 'border-border bg-bg-muted text-text-muted'}`}>
       {ok ? <Check size={14} aria-hidden="true" /> : <Minus size={14} aria-hidden="true" />}
-      {label}
+      <span translate="no">{label}</span>
       <span className="sr-only">: {ok ? t('authnhub.available') : t('authnhub.not_available')}</span>
     </span>
   )
   return (
-    <div className="flex flex-wrap gap-2" aria-label={t('authnhub.availability')}>
+    <div className="flex flex-wrap gap-2" role="group" aria-label={t('authnhub.availability')}>
       {chip(saas, 'Secrets Manager SaaS')}
       {chip(selfHosted, 'Secrets Manager Self-Hosted')}
     </div>
@@ -67,7 +67,7 @@ export function LimitsCallout({ title, items, source }: { title: string; items: 
 /** Two-column component/role table (cards stack naturally on narrow widths). */
 export function RoleTable({ caption, colA, colB, rows }: { caption: string; colA: string; colB: string; rows: Array<[string, string]> }) {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-border bg-bg-card">
+    <div className="overflow-x-auto rounded-2xl border border-border bg-bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue" tabIndex={0} role="region" aria-label={caption}>
       <table className="w-full text-left text-sm">
         <caption className="sr-only">{caption}</caption>
         <thead className="bg-bg-muted text-xs font-semibold uppercase tracking-wider text-text-muted">

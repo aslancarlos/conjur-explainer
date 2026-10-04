@@ -46,12 +46,13 @@ export default function LikeButton({ className = '' }: { className?: string }) {
   return (
     <button type="button" onClick={like} aria-pressed={liked} disabled={busy}
       title={liked ? t('shell.liked_title') : t('shell.like_title')}
-      className={`items-center gap-2 whitespace-nowrap rounded-full border px-3 min-h-8 text-xs transition-colors duration-200
+      className={`items-center gap-2 whitespace-nowrap rounded-full border px-3 min-h-11 text-xs transition-colors duration-200
         ${liked ? 'border-idira-blue/50 bg-idira-blue/10 text-text cursor-default' : 'border-border bg-bg-muted/60 text-text-2 hover:border-idira-blue hover:text-text'} ${className}`}>
       <ThumbsUp size={13} strokeWidth={2} aria-hidden="true"
         className={`shrink-0 transition-transform duration-200 ${liked ? 'fill-idira-blue text-idira-blue scale-110' : 'text-text-2'}`} />
       <span>{label}</span>
-      <span className="font-semibold tabular-nums text-text" aria-label={t('shell.likes_count', { count: likes })}>{count}</span>
+      <span className="font-semibold tabular-nums text-text" aria-hidden="true">{count}</span>
+      <span className="sr-only">{t('shell.likes_count', { count: likes })}</span>
     </button>
   )
 }

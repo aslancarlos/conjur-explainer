@@ -75,7 +75,13 @@
 }
 
 @layer base {
-  html { scroll-behavior: smooth; }
+  /* scroll-padding-top keeps anchors and focused elements clear of the 56px fixed top bar */
+  html { scroll-behavior: smooth; scroll-padding-top: 4.5rem; }
+  /* Finder steps: room for the sticky footer (class toggled by SolutionFinderPage) */
+  html.finder-sticky-foot { scroll-padding-bottom: 5rem; }
+
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
 
   body {
     background-color: rgb(var(--rgb-bg));
@@ -141,6 +147,8 @@
 
   .code-block {
     @apply bg-bg-muted border border-border rounded-xl p-4 font-mono text-sm overflow-x-auto;
+    /* scrollable blocks are focusable (tabIndex) so keyboard users can scroll them */
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue;
   }
 
   /* ── Design system primitives (DESIGN.md §15). Additive: existing inline

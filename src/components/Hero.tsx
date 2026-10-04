@@ -21,7 +21,7 @@ export default function Hero() {
   return (
     <section className="relative overflow-hidden hero-band">
       {/* Official IDIRA "security layers" backdrop (right-anchored) */}
-      <img src={securityLayers} alt="" aria-hidden="true"
+      <img src={securityLayers} alt="" aria-hidden="true" width={1024} height={569} decoding="async"
         className="pointer-events-none absolute right-0 top-0 w-[95%] sm:w-[52%] max-w-[720px] h-auto opacity-40 sm:opacity-70 mix-blend-screen select-none" />
       <div className="hero-mesh pointer-events-none absolute inset-0 opacity-90" aria-hidden="true" />
       <div className="hero-grid pointer-events-none absolute inset-0" aria-hidden="true" />

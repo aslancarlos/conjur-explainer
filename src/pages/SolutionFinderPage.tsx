@@ -13,6 +13,8 @@ import {
   Fingerprint, Timer, RefreshCw, ClipboardList, ScanLine, Network, ExternalLink, ChevronDown, FileSpreadsheet, FileText, X,
 } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
+import Segmented from '../components/Segmented'
+import Loading from '../components/Loading'
 import ArchitecturePreview, { type ArchitecturePreviewLabels } from '../components/finder/ArchitecturePreview'
 import NetworkTable, { FirewallRules, FlowsTable, type NetworkTableLabels } from '../components/finder/NetworkTable'
 import { ZONES, inputFromEvaluation, resolve, usesSecretsManager, type Edition } from '../lib/finder/netCatalog'
@@ -28,8 +30,8 @@ import type { GoalId, Prod } from './finderModel'
  * picks goals (disabled when the selection does not support them). The result
  * lists only the products whose recommendations match: main product,
  * complements, per-item coverage, a reading path, prerequisites and a print /
- * text report. State lives in the URL (?have=ids&step=1|2|3|result); goals are
- * stored as g_<id> and "Not sure" as g_unsure.
+ * text report. State lives in the URL (?have=ids&step=1|2|3|result&edition=selfhosted);
+ * goals are stored as g_<id> and "Not sure" as g_unsure.
  */
 const ICON: Record<string, LucideIcon> = {
   aws: Cloud, azure: Cloud, gcp: Cloud, k8s: ShipWheel, onprem: Building2, mainframe: Cpu, cicd: Workflow, ai: Bot, pam: Vault, other: CircleHelp,
@@ -95,6 +97,8 @@ function SolutionFinderPageView() {
   const [params, setParams] = useSearchParams()
   const [copied, setCopied] = useState(false)
   const [copiedPrereq, setCopiedPrereq] = useState(false)
+  // Clipboard can be blocked (permissions, insecure context): show the next step inline.
+  const [copyError, setCopyError] = useState<'link' | 'prereq' | null>(null)
   const [showPrereq, setShowPrereq] = useState(false)
   const [showOff, setShowOff] = useState(false)
   // Info dialog: which tile is explained, and the button that opened it (focus returns there).
@@ -132,6 +136,7 @@ function SolutionFinderPageView() {
   const [selected, setSelected] = useState<string[]>(() => readHave(params))
   const [view, setView] = useState<View>(() => readView(params))
   const [furthest, setFurthest] = useState(() => VIEWS.indexOf(readView(params)))
+  const [edition, setEdition] = useState<Edition>(() => params.get('edition') === 'selfhosted' ? 'selfhosted' : 'saas')
   const headingRef = useRef<HTMLHeadingElement>(null)
   const pendingFocus = useRef(false)
 
@@ -140,8 +145,13 @@ function SolutionFinderPageView() {
     const next = new URLSearchParams(params)
     if (sorted.length) next.set('have', sorted.join(',')); else next.delete('have')
     next.set('step', view === 'result' ? 'result' : view.slice(1))
+    if (edition !== 'saas') next.set('edition', edition); else next.delete('edition')
     if (next.toString() !== params.toString()) setParams(next, { replace: true, preventScrollReset: true })
-  }, [selected, view]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selected, view, edition]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // "Start over" keeps the previous answers for a few seconds so it can be undone.
+  const [undo, setUndo] = useState<{ selected: string[]; view: View; furthest: number } | null>(null)
+  useEffect(() => { if (!undo) return; const h = setTimeout(() => setUndo(null), 6000); return () => clearTimeout(h) }, [undo])
 
   // Move focus to the new step heading once the entering step has rendered
   // (AnimatePresence waits for the exit), and keep the wizard top in view.
@@ -157,9 +167,20 @@ function SolutionFinderPageView() {
 
   useEffect(() => { if (!copied) return; const h = setTimeout(() => setCopied(false), 2000); return () => clearTimeout(h) }, [copied])
   useEffect(() => { if (!copiedPrereq) return; const h = setTimeout(() => setCopiedPrereq(false), 2000); return () => clearTimeout(h) }, [copiedPrereq])
-  const copyLink = async () => { try { await navigator.clipboard.writeText(window.location.href); setCopied(true) } catch { /* clipboard blocked */ } }
+  const copyLink = async () => {
+    setCopyError(null)
+    try { await navigator.clipboard.writeText(window.location.href); setCopied(true) } catch { setCopyError('link') }
+  }
 
   const go = (v: View) => { pendingFocus.current = true; setView(v); setFurthest(n => Math.max(n, VIEWS.indexOf(v))) }
+  const restart = () => {
+    setUndo({ selected, view, furthest })
+    pendingFocus.current = true; setSelected([]); setFurthest(0); setView('s1')
+  }
+  const undoRestart = () => {
+    if (!undo) return
+    pendingFocus.current = true; setSelected(undo.selected); setFurthest(undo.furthest); setView(undo.view); setUndo(null)
+  }
   // "Not sure" and explicit goals are mutually exclusive.
   const toggle = (id: string) => setSelected(ids => {
     if (ids.includes(id)) return ids.filter(x => x !== id)
@@ -244,7 +265,10 @@ function SolutionFinderPageView() {
     L.push(f('report_sources'))
     return L.join('\n')
   }
-  const copyPrereq = async () => { try { await navigator.clipboard.writeText(buildText()); setCopiedPrereq(true) } catch { /* clipboard blocked */ } }
+  const copyPrereq = async () => {
+    setCopyError(null)
+    try { await navigator.clipboard.writeText(buildText()); setCopiedPrereq(true) } catch { setCopyError('prereq') }
+  }
   const downloadTxt = () => {
     const url = URL.createObjectURL(new Blob([buildText()], { type: 'text/plain;charset=utf-8' }))
     const a = document.createElement('a')
@@ -254,7 +278,6 @@ function SolutionFinderPageView() {
 
   // ---------- architecture and network (draw.io, CSV, Markdown) ----------
   const a = (k: string, o?: Record<string, unknown>) => t(`finder_arch.${k}`, o) as string
-  const [edition, setEdition] = useState<Edition>('saas')
   const [showNet, setShowNet] = useState(false)
   const smUsed = usesSecretsManager(ev.recs)
   const isoDate = new Date().toISOString().slice(0, 10)
@@ -279,7 +302,8 @@ function SolutionFinderPageView() {
   const tableLabels: NetworkTableLabels = {
     flowsTitle: a('flows_title'), rulesTitle: a('rules_title'), number: a('col_number'), direction: a('col_direction'), source: a('col_source'),
     destination: a('col_destination'), endpoint: a('col_endpoint'), port: a('col_port'), protocol: a('col_protocol'), purpose: a('col_purpose'),
-    doc: a('col_doc'), from: a('from'), documented: a('documented'), inferred: a('inferred'), directions: dirLabels, empty: a('empty'), zones: zoneLabels,
+    doc: a('col_doc'), docFlow: no => a('doc_flow', { no }), status: a('col_status'),
+    from: a('from'), documented: a('documented'), inferred: a('inferred'), directions: dirLabels, empty: a('empty'), zones: zoneLabels,
     shortDirections: { outbound: a('short_outbound'), inbound: a('short_inbound'), internal: a('short_internal'), external: a('short_external') },
   }
   const selKey = sorted.join(',')
@@ -535,9 +559,12 @@ function SolutionFinderPageView() {
   const InfoButton = (id: string, className = '') => (
     <button type="button" onClick={e => openInfo(id, e.currentTarget)}
       aria-label={f('info.open', { name: tileName(id) })} title={f('info.open', { name: tileName(id) })} aria-haspopup="dialog"
-      className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-text-muted transition-colors hover:bg-bg-muted hover:text-text
+      className={`group inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-text-muted
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue ${className}`}>
-      <Info size={16} aria-hidden="true" />
+      {/* 44px hit area, 32px visual circle */}
+      <span className="inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors group-hover:bg-bg-muted group-hover:text-text">
+        <Info size={16} aria-hidden="true" />
+      </span>
     </button>
   )
 
@@ -558,7 +585,7 @@ function SolutionFinderPageView() {
               : <Logo id={id} size={28} fallback={Icon} className={on ? 'text-domain-idira' : 'text-text-2'} />}
             {/* selected: check badge on the logo corner (shape, not colour alone) */}
             {!disabled && (
-              <span aria-hidden="true" className={`absolute -bottom-1 -right-1 inline-flex h-[18px] w-[18px] items-center justify-center rounded-full border-2 border-bg-card transition-all duration-200
+              <span aria-hidden="true" className={`absolute -bottom-1 -right-1 inline-flex h-[18px] w-[18px] items-center justify-center rounded-full border-2 border-bg-card transition-[transform,opacity] duration-200
                 ${on ? 'scale-100 bg-idira-blue text-white opacity-100' : 'scale-75 opacity-0'}`}>
                 <Check size={10} strokeWidth={3.5} />
               </span>
@@ -569,7 +596,7 @@ function SolutionFinderPageView() {
             {sub && <span title={sub} className={`mt-0.5 block text-xs leading-snug ${opts.help || disabled ? '' : 'truncate'} text-text-muted`}>{sub}</span>}
           </span>
         </button>
-        {InfoButton(id, 'absolute right-1.5 top-1/2 -translate-y-1/2')}
+        {InfoButton(id, 'absolute right-0 top-1/2 -translate-y-1/2')}
       </div>
     )
   }
@@ -648,7 +675,7 @@ function SolutionFinderPageView() {
               </button>
               <ul id="finder-goals-off" className={`${showOff ? 'block' : 'hidden'} mt-1 divide-y divide-border overflow-hidden rounded-xl border border-dashed border-border`}>
                 {goalsOff.map(g => (
-                  <li key={g.id} className="flex items-center gap-2 py-1.5 pl-4 pr-1.5 text-sm">
+                  <li key={g.id} className="flex items-center gap-2 py-0.5 pl-4 pr-0.5 text-sm">
                     <span className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-2">
                       <span className="font-medium text-text-2">{f(`goals.${g.id}.name`)}</span>
                       <span className="text-xs text-text-muted">{f(`goals.${g.id}.needs`)}</span>
@@ -748,6 +775,15 @@ function SolutionFinderPageView() {
             {copied ? <Check size={16} aria-hidden="true" className="text-tone-success" /> : <Copy size={16} aria-hidden="true" />}
             {copied ? f('copied') : f('copy')}
           </button>
+        </div>
+        <p className="sr-only" aria-live="polite">{copied ? f('copied') : copiedPrereq ? f('copied_prereq') : ''}</p>
+        <div aria-live="polite">
+          {copyError && (
+            <p className="flex gap-2 text-sm leading-relaxed text-text-2">
+              <TriangleAlert size={16} aria-hidden="true" className="mt-0.5 shrink-0 text-tone-danger" />
+              {f(copyError === 'link' ? 'copy_failed_link' : 'copy_failed_prereq')}
+            </p>
+          )}
         </div>
         <p className="sr-only" aria-live="polite">{f('live', { products: ranked.length, pages: path.length })}</p>
 
@@ -885,15 +921,8 @@ function SolutionFinderPageView() {
               </div>
               {smUsed && (
                 <div className="space-y-1">
-                  <div role="radiogroup" aria-label={a('edition_label')} className="inline-flex rounded-full border border-border bg-bg-base p-1">
-                    {(['saas', 'selfhosted'] as Edition[]).map(ed => (
-                      <button key={ed} type="button" role="radio" aria-checked={edition === ed} onClick={() => setEdition(ed)}
-                        className={`min-h-9 rounded-full px-4 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue
-                          ${edition === ed ? 'bg-idira-blue text-white' : 'text-text-2 hover:text-text'}`}>
-                        {a(ed === 'saas' ? 'edition_saas' : 'edition_sh')}
-                      </button>
-                    ))}
-                  </div>
+                  <Segmented<Edition> label={a('edition_label')} value={edition} onChange={setEdition}
+                    options={[{ v: 'saas', label: a('edition_saas') }, { v: 'selfhosted', label: a('edition_sh') }]} />
                   <p className="text-xs text-text-muted">{a('edition_hint')}</p>
                 </div>
               )}
@@ -1095,6 +1124,12 @@ function SolutionFinderPageView() {
   // ---------- footer ----------
   const soFar = ranked
   const isStep = view !== 'result'
+  // The sticky footer covers the bottom of the viewport on the steps: keep focused tiles above it.
+  useEffect(() => {
+    const root = document.documentElement
+    root.classList.toggle('finder-sticky-foot', isStep)
+    return () => root.classList.remove('finder-sticky-foot')
+  }, [isStep])
   const stepHasSel = isStep && stepCount(view) > 0
   const nextView = VIEWS[idx + 1]
 
@@ -1125,6 +1160,16 @@ function SolutionFinderPageView() {
           </div>
 
           <div className={`${isStep ? 'sticky bottom-0 z-sticky bg-bg-card/95 backdrop-blur' : 'bg-bg-card'} flex flex-wrap items-center gap-3 rounded-b-2xl border-t border-border px-6 py-3.5 sm:px-8`}>
+            {/* Undo for "Start over": visible for 6 s, announced politely */}
+            <div aria-live="polite" className={undo ? 'flex w-full flex-wrap items-center gap-2 text-sm text-text-2' : 'sr-only'}>
+              {undo && (
+                <>
+                  <RotateCcw size={16} aria-hidden="true" className="text-text-muted" />
+                  <span>{f('restarted')}</span>
+                  <button type="button" onClick={undoRestart} className={btnGhost}>{f('undo')}</button>
+                </>
+              )}
+            </div>
             {isStep ? (
               <>
                 <p className="mr-auto flex min-w-0 flex-wrap items-center gap-1.5 text-xs text-text-muted" aria-live="polite">
@@ -1154,7 +1199,7 @@ function SolutionFinderPageView() {
                 <button type="button" onClick={() => go('s1')} className={btnSecondary}>
                   <Pencil size={16} aria-hidden="true" />{f('edit')}
                 </button>
-                <button type="button" onClick={() => { pendingFocus.current = true; setSelected([]); setFurthest(0); setView('s1') }} className={btnGhost}>
+                <button type="button" onClick={restart} className={btnGhost}>
                   <RotateCcw size={16} aria-hidden="true" />{f('restart')}
                 </button>
               </>
@@ -1170,5 +1215,5 @@ function SolutionFinderPageView() {
 /** Waits for the lazily loaded tools copy (src/lib/toolsCopy.ts) before rendering. */
 export default function SolutionFinderPage() {
   const ready = useToolsCopy()
-  return ready ? <SolutionFinderPageView /> : <section className="min-h-screen bg-bg-base" aria-busy="true" />
+  return ready ? <SolutionFinderPageView /> : <section className="min-h-screen bg-bg-base" aria-busy="true"><Loading /></section>
 }

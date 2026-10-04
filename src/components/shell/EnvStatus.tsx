@@ -20,7 +20,7 @@ const STATE: Record<ServiceState, { Icon: typeof CircleCheck; text: string; dot:
  * link to open its console. Polls every 60 s while the tab is visible.
  */
 export default function EnvStatus() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const reduce = useReducedMotion()
   const [results, setResults] = useState<Record<string, ServiceResult>>(
     () => Object.fromEntries(SERVICES.map(s => [s.key, { state: 'checking' as const }])))
@@ -66,7 +66,7 @@ export default function EnvStatus() {
     : overall === 'ok'
       ? t('env.all_ok', { n: list.length })
       : t('env.partial', { ok: okCount, n: list.length })
-  const time = checkedAt?.toISOString().slice(11, 19)
+  const time = checkedAt ? new Intl.DateTimeFormat(i18n.language, { timeStyle: 'medium' }).format(checkedAt) : undefined
 
   return (
     <div ref={rootRef} className="relative">
@@ -81,7 +81,8 @@ export default function EnvStatus() {
 
       <AnimatePresence>
         {open && (
-          <motion.div id="env-panel" role="dialog" aria-label={t('env.title')}
+          // Disclosure panel (not a dialog): the trigger carries aria-expanded / aria-controls.
+          <motion.div id="env-panel"
             initial={reduce ? false : { opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={reduce ? undefined : { opacity: 0, y: -4 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
             className="absolute right-0 top-full z-header mt-2 w-[min(22rem,calc(100vw-1.5rem))] overflow-hidden rounded-xl border border-border bg-bg-card shadow-2xl">

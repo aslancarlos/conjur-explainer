@@ -171,7 +171,7 @@ export function PlatformsTable() {
             <tr key={p.key} className="align-top">
               <th scope="row" className="px-4 sm:px-6 py-4 font-semibold text-text">{t(`practice.platforms.${p.key}.name`)}</th>
               <td className="px-4 sm:px-6 py-4 leading-relaxed text-text-2">{t(`practice.platforms.${p.key}.evidence`)}</td>
-              <td className="px-4 sm:px-6 py-4"><code className="rounded bg-bg-muted px-1.5 py-0.5 font-mono text-xs text-text">{p.authn}</code></td>
+              <td className="px-4 sm:px-6 py-4"><code translate="no" className="rounded bg-bg-muted px-1.5 py-0.5 font-mono text-xs text-text">{p.authn}</code></td>
               <td className="px-4 sm:px-6 py-4">
                 <ul className="flex flex-wrap gap-x-3 gap-y-1">
                   {p.demos.map(d => (

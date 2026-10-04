@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Link } from '../../lib/router'
 import { useTranslation } from 'react-i18next'
+import { useReducedMotion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { navBy, SECTIONS, ZONES, type NavGroup, type NavItem } from '../../lib/nav'
 import NavGlyph from './NavGlyph'
@@ -67,6 +68,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
     if (to.includes('?')) return pathname + search === to
     return pathname === to && !all.some(o => o.to.includes('?') && o.to === pathname + search)
   }
+  const reduce = useReducedMotion()
   const [open, setOpen] = useState<Record<string, boolean>>({})
   const isOpen = (key: string) => open[key] === true    // default: collapsed
   const rowH = dense ? 'min-h-9' : 'min-h-11'
@@ -78,7 +80,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
     // would otherwise open below the fold with no visible change).
     if (opening) {
       const id = key.startsWith('sec-') ? `${idPrefix}-${key}` : `${idPrefix}-grp-${key}`
-      requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }))
+      requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' }))
     }
   }
 

@@ -31,7 +31,13 @@ const FLAGS: Record<(typeof LANGS)[number], ReactNode> = {
   ),
 }
 
-/** Segmented EN / PT / ES switch. `tone="dark"` for the always-dark top bar. */
+/** Native names: a language is announced in its own language, whatever the UI locale. */
+const NATIVE: Record<(typeof LANGS)[number], string> = { en: 'English', pt: 'Português', es: 'Español' }
+
+/**
+ * Segmented EN / PT / ES switch. `tone="dark"` for the always-dark top bar.
+ * Each button is a 44px hit area around a 36px visual pill (keeps the top bar light).
+ */
 export default function LanguageSwitcher({ tone = 'theme', className = '' }: { tone?: 'dark' | 'theme'; className?: string }) {
   const { t, i18n } = useTranslation()
   const current = LANGS.find(l => i18n.language.startsWith(l)) ?? 'en'
@@ -48,13 +54,17 @@ export default function LanguageSwitcher({ tone = 'theme', className = '' }: { t
           type="button"
           onClick={() => { try { localStorage.setItem(LANG_KEY, lang) } catch { /* private mode */ } i18n.changeLanguage(lang) }}
           aria-pressed={current === lang}
-          aria-label={lang.toUpperCase()}
-          className={`inline-flex h-9 items-center gap-1.5 rounded-md px-2 text-xs font-semibold transition-colors duration-200 ${current === lang ? active : idle}`}
+          aria-label={NATIVE[lang]}
+          lang={lang}
+          translate="no"
+          className="inline-flex h-11 items-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue"
         >
-          <span className="inline-block w-[18px] h-[13px] rounded-sm overflow-hidden ring-1 ring-black/20 shrink-0">
-            {FLAGS[lang]}
+          <span className={`inline-flex h-9 items-center gap-1.5 rounded-md px-2 text-xs font-semibold transition-colors duration-200 ${current === lang ? active : idle}`}>
+            <span className="inline-block w-[18px] h-[13px] rounded-sm overflow-hidden ring-1 ring-black/20 shrink-0">
+              {FLAGS[lang]}
+            </span>
+            {lang.toUpperCase()}
           </span>
-          {lang.toUpperCase()}
         </button>
       ))}
     </div>

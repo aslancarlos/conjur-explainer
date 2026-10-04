@@ -135,7 +135,7 @@ export default function PolicyPage() {
 
         {/* the policy file that builds the tree above */}
         <figure className="space-y-2">
-          <pre className="code-block text-[13px] leading-6" aria-label="policy.yml">
+          <pre translate="no" className="code-block text-[13px] leading-6" role="region" tabIndex={0} aria-label="policy.yml">
             {YAML.map((ln, i) => (
               <div key={i} className="flex">
                 <span className="w-7 shrink-0 pr-3 text-right text-text-muted select-none">{i + 1}</span>
@@ -144,7 +144,7 @@ export default function PolicyPage() {
             ))}
           </pre>
           <figcaption className="text-xs text-text-muted">
-            {t('policy.fqid_label')}: <code className="font-mono text-domain-idira">prod/app1/db-password</code>
+            {t('policy.fqid_label')}: <code translate="no" className="font-mono text-domain-idira">prod/app1/db-password</code>
           </figcaption>
         </figure>
 

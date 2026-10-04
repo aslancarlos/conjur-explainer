@@ -22,6 +22,8 @@ export interface NetworkTableLabels {
   protocol: string
   purpose: string
   doc: string
+  docFlow?: (no: number) => string   // accessible name of each row's doc link
+  status?: string             // screen-reader header of the confidence / doc column
   from: string                // "From"
   documented: string
   inferred: string
@@ -43,6 +45,8 @@ export const DEFAULT_TABLE_LABELS: NetworkTableLabels = {
   protocol: 'Protocol',
   purpose: 'Purpose',
   doc: 'Doc',
+  docFlow: no => `Documentation for flow ${no}`,
+  status: 'Confidence and source',
   from: 'From',
   documented: 'Documented',
   inferred: 'Inferred',
@@ -76,9 +80,10 @@ export function FlowsTable({ resolved, labels = DEFAULT_TABLE_LABELS, print = fa
     <table className={`w-full text-left ${print ? 'border-collapse text-[10.5px] text-black' : 'min-w-[980px] text-xs'}`}>
       <thead className={print ? '' : 'bg-bg-card'}>
         <tr className={print ? 'border-b border-black/40' : 'border-b border-border text-text-muted'}>
-          {[labels.number, labels.direction, labels.source, labels.destination, labels.endpoint, labels.port, labels.protocol, labels.purpose, ''].map((h, i) => (
+          {[labels.number, labels.direction, labels.source, labels.destination, labels.endpoint, labels.port, labels.protocol, labels.purpose].map((h, i) => (
             <th key={i} scope="col" className={`${cell} font-semibold ${print ? '' : 'uppercase tracking-wider'}`}>{h}</th>
           ))}
+          <th scope="col" className={cell}><span className="sr-only">{labels.status ?? DEFAULT_TABLE_LABELS.status}</span></th>
         </tr>
       </thead>
       <tbody>
@@ -98,8 +103,8 @@ export function FlowsTable({ resolved, labels = DEFAULT_TABLE_LABELS, print = fa
               </td>
               <td className={`${cell} font-medium ${print ? '' : 'text-text'}`}>{nodeById(f.from).label}</td>
               <td className={`${cell} ${print ? '' : 'text-text'}`}>{nodeById(f.to).label}</td>
-              <td className={`${cell} font-mono break-all ${print ? '' : 'min-w-[170px] text-text-2'}`}>{f.endpoint}</td>
-              <td className={`${cell} font-mono font-semibold whitespace-nowrap ${print ? '' : 'text-text'}`}>{f.port}</td>
+              <td translate="no" className={`${cell} font-mono break-all ${print ? '' : 'min-w-[170px] text-text-2'}`}>{f.endpoint}</td>
+              <td translate="no" className={`${cell} font-mono font-semibold tabular-nums whitespace-nowrap ${print ? '' : 'text-text'}`}>{f.port}</td>
               <td className={`${cell} ${print ? '' : 'text-text-2'}`}>{f.protocol}</td>
               <td className={`${cell} leading-relaxed ${print ? '' : 'min-w-[260px] text-text-2'}`}>
                 {f.purpose}
@@ -111,8 +116,9 @@ export function FlowsTable({ resolved, labels = DEFAULT_TABLE_LABELS, print = fa
                   : (
                     <div className="flex flex-col items-start gap-1.5">
                       <ConfidenceBadge c={f.confidence} labels={labels} note={f.note} />
-                      <a href={f.source.url} target="_blank" rel="noreferrer"
-                        className="inline-flex min-h-6 items-center gap-1 rounded text-xs font-medium text-text-2 underline underline-offset-2 hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">
+                      {/* the ::after layer grows the hit area to 44px without changing the row height */}
+                      <a href={f.source.url} target="_blank" rel="noreferrer" aria-label={(labels.docFlow ?? DEFAULT_TABLE_LABELS.docFlow!)(f.no)}
+                        className="relative inline-flex min-h-6 items-center gap-1 rounded text-xs font-medium text-text-2 underline underline-offset-2 after:absolute after:-inset-x-2 after:-inset-y-2.5 after:content-[''] hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">
                         {labels.doc}<ExternalLink size={11} aria-hidden="true" />
                       </a>
                     </div>
@@ -142,8 +148,8 @@ export function FirewallRules({ resolved, labels = DEFAULT_TABLE_LABELS, print =
               {g.rules.map((r, i) => (
                 <li key={i} className={`flex flex-wrap items-baseline gap-x-2 gap-y-1 ${print ? 'text-[10.5px]' : 'text-xs text-text-2'}`}>
                   {print && <span aria-hidden="true" className="inline-block h-2.5 w-2.5 shrink-0 border border-black" />}
-                  <span className={`font-mono font-semibold ${print ? '' : 'text-text'}`}>{r.protocol.replace(/\s*\(.*\)$/, '')} {r.port}</span>
-                  <span className="font-mono break-all">{r.endpoint}</span>
+                  <span translate="no" className={`font-mono font-semibold tabular-nums ${print ? '' : 'text-text'}`}>{r.protocol.replace(/\s*\(.*\)$/, '')} {r.port}</span>
+                  <span translate="no" className="font-mono break-all">{r.endpoint}</span>
                   <span className={print ? 'text-black/70' : 'text-text-muted'}>({r.destination})</span>
                   {r.confidence === 'inferred' && (print ? <span>[{labels.inferred}]</span> : <ConfidenceBadge c="inferred" labels={labels} />)}
                 </li>
@@ -162,7 +168,8 @@ export default function NetworkTable({ resolved, labels = DEFAULT_TABLE_LABELS }
     <div className="space-y-8">
       <section className="space-y-3">
         <h4 className="text-sm font-semibold text-text">{labels.flowsTitle}</h4>
-        <div className="max-h-[560px] overflow-auto rounded-xl border border-border [&_thead]:sticky [&_thead]:top-0 [&_thead]:z-10">
+        <div tabIndex={0} role="region" aria-label={labels.flowsTitle}
+          className="max-h-[560px] overflow-auto rounded-xl border border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue [&_thead]:sticky [&_thead]:top-0 [&_thead]:z-10">
           <FlowsTable resolved={resolved} labels={labels} />
         </div>
       </section>

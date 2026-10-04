@@ -89,7 +89,7 @@ Aligned with the official palette of paloaltonetworks.com/idira (Oct 2026): prim
 
 ## 4. Typography
 
-- **Onest** (300-900) for UI and display; **IBM Plex Mono** (400-600) for identifiers, paths, code, step counters. Loaded once in `index.html` with `display=swap`.
+- **Onest** (400, 500, 600, 700 and 900, the weights the code uses) for UI and display; **IBM Plex Mono** (400-600) for identifiers, paths, code, step counters. Loaded once in `index.html` with `display=swap`.
 - Use mono for anything the reader might copy: `data/vault/<safe>/dbuser_dual/password`, `eso-shop-db-creds`, `refreshInterval: 1m`.
 
 | Role | Classes |

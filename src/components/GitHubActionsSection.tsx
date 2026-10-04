@@ -87,7 +87,7 @@ export default function GitHubActionsSection() {
                       </span>
                       <span className="font-semibold text-text text-sm">{step.title}</span>
                     </div>
-                    <pre className="code-block text-xs leading-relaxed overflow-x-auto whitespace-pre-wrap">
+                    <pre translate="no" className="code-block text-xs leading-relaxed overflow-x-auto whitespace-pre-wrap">
                       <code className="text-text-2">{step.code}</code>
                     </pre>
                   </div>

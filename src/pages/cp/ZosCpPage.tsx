@@ -56,7 +56,7 @@ export default function ZosCpPage() {
         </Section>
 
         <Section title={p('jcl_title')} lead={p('jcl_lead')}>
-          <pre className="code-block overflow-x-auto text-xs leading-relaxed" tabIndex={0} aria-label={p('jcl_title')}><code>{`//GETPASS  EXEC JVMPRC70,
+          <pre translate="no" className="code-block overflow-x-auto text-xs leading-relaxed" role="region" tabIndex={0} aria-label={p('jcl_title')}><code>{`//GETPASS  EXEC JVMPRC70,
 // JAVACLS='-jar /APP_HOME_PATH/sdk/clipasswordsdk/clipasswordsdk.jar'
 //STDENV   DD   DSN=USS.ENV.PARM(CLIPASS),DISP=SHR
 //SYSIN    DD   *

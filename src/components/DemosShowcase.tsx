@@ -45,7 +45,7 @@ export default function DemosShowcase() {
                       <NavGlyph logo={item.logo} Icon={item.Icon} iconSize={17} className={item.color ?? 'text-text-2'} />
                       <span className="min-w-0 flex-1">
                         <span className="block text-sm font-medium text-text leading-tight">{item.demo!.name}</span>
-                        <span className="block font-mono text-xs text-text-muted">{item.demo!.secret}</span>
+                        <span translate="no" className="block font-mono text-xs text-text-muted">{item.demo!.secret}</span>
                       </span>
                       <ArrowRight size={14} aria-hidden="true" className="shrink-0 text-text-muted transition-transform group-hover:translate-x-0.5" />
                     </>
