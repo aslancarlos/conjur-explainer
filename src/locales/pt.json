@@ -60,7 +60,7 @@
     "c_k8s_sub": "Como o Secrets Manager autentica pods e entrega secrets em um cluster.",
     "c_glossary": "Glossário",
     "c_glossary_sub": "Workload, host, authenticator, policy, secret zero e mais.",
-    "svid": "Explorer SVID",
+    "svid": "SVID Explorer",
     "svid_sub": "X.509-SVID e JWT-SVID emitidos na hora",
     "c_saas": "Arquitetura SaaS",
     "c_saas_sub": "Secrets Manager SaaS com Edge",

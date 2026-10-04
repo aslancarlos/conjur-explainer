@@ -26,6 +26,14 @@ const RING: Record<string, string> = {
   'text-domain-svc': 'ring-[1.5px] ring-domain-svc/70',
 }
 
+/** Count badge tint per product colour (border and wash only; the number stays text-text for AA). */
+const BADGE: Record<string, string> = {
+  'text-domain-idira': 'border-domain-idira/50 bg-domain-idira/15',
+  'text-tone-live': 'border-tone-live/50 bg-tone-live/15',
+  'text-domain-cp': 'border-domain-cp/50 bg-domain-cp/15',
+  'text-domain-svc': 'border-domain-svc/50 bg-domain-svc/15',
+}
+
 const chevron = (open: boolean) => (
   <ChevronDown size={16} strokeWidth={2} aria-hidden="true"
     className={`shrink-0 text-text-muted transition-transform duration-200 ${open ? '' : '-rotate-90'}`} />
@@ -190,7 +198,8 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
             // Collapsible submenu: a sub-section header (not a link) with a chevron,
             // children under a guide line.
             const sec = SECTIONS[seg.section]
-            const key = `sec-${seg.section}`
+            // Keyed by group too: Secrets Manager and Secure Workload Access both have Use cases.
+            const key = `sec-${group.key}-${seg.section}`
             const subActive = seg.items.some(i => isActive(i.to))
             const subId = `${idPrefix}-${key}`
             return (
@@ -199,12 +208,12 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
                   <NavGlyph logo={sec.logo} Icon={sec.Icon} iconSize={16} className={group.color ?? 'text-domain-idira'} />,
                   subActive, 'font-medium',
                   sec.highlight && (
-                    <span className="shrink-0 rounded-full border border-domain-idira/50 bg-domain-idira/15 px-2 text-xs font-semibold leading-5 tabular-nums text-text">
+                    <span className={`shrink-0 rounded-full border px-2 text-xs font-semibold leading-5 tabular-nums text-text ${BADGE[tint] ?? BADGE['text-domain-idira']}`}>
                       {seg.items.length}
                     </span>
                   ))}
                 <ul id={subId} hidden={!isOpen(key)} className="mt-0.5 ml-[21px] space-y-0.5 border-l border-border pl-2">
-                  {byHeading(seg.section, seg.items, tint, true)}
+                  {byHeading(`${group.key}-${seg.section}`, seg.items, tint, true)}
                 </ul>
               </li>
             )
