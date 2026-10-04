@@ -1,7 +1,7 @@
 import { motion, useInView } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ExternalLink, RefreshCw, Leaf } from 'lucide-react'
+import { ExternalLink, RefreshCw, Leaf, TriangleAlert } from 'lucide-react'
 import SdkFlow from './flow/specs/SdkFlow'
 
 interface CheckItResponse {
@@ -58,7 +58,7 @@ export default function SpringBootSection() {
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.3 }}
           className="space-y-3"
         >
           <div className="flex flex-wrap items-center gap-2">
@@ -86,7 +86,7 @@ export default function SpringBootSection() {
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, x: -16 }} animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.4, delay: 0.1 + i * 0.12 }}
+                  transition={{ duration: 0.3, delay: 0.1 + i * 0.12 }}
                   className="flex flex-col"
                 >
                   <div className={`section-card border ${cls.split(' ').find(c => c.startsWith('border'))}`}>
@@ -111,20 +111,20 @@ export default function SpringBootSection() {
             {/* Live card */}
             <motion.div
               initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.4 }}
+              transition={{ duration: 0.3, delay: 0.4 }}
               className="section-card border-spring/20 space-y-4"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-spring animate-pulse-slow" />
-                  <span className="badge bg-spring/10 text-spring border border-spring/20 text-xs">
+                  <span className={`w-2 h-2 rounded-full ${error ? 'bg-text-muted' : 'bg-spring animate-pulse-slow'}`} aria-hidden="true" />
+                  <span className={`badge text-xs ${error ? 'border border-border bg-bg-muted text-text-muted' : 'bg-spring/10 text-spring border border-spring/20'}`}>
                     {t('springboot.live_badge')}
                   </span>
                 </div>
                 <button
                   onClick={fetchStatus}
                   disabled={loading}
-                  aria-label="Refresh"
+                  aria-label={t('shell.live_refresh')} title={t('shell.live_refresh')}
                   className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-text-muted hover:text-spring hover:bg-spring/10 transition-colors"
                 >
                   <RefreshCw size={14} aria-hidden="true" className={loading ? 'animate-spin' : ''} />
@@ -134,7 +134,7 @@ export default function SpringBootSection() {
               <h3 className="font-semibold text-text">{t('springboot.live_title')}</h3>
 
               {error && (
-                <p role="status" className="text-xs text-tone-warning bg-tone-warning/10 border border-tone-warning/30 rounded-lg px-3 py-2">{error}</p>
+                <p role="status" className="callout-warning text-text"><TriangleAlert size={16} className="mt-0.5 shrink-0 text-tone-warning" aria-hidden="true" /><span>{error}</span></p>
               )}
               {data && (
                 <div className="code-block space-y-1 text-xs">
@@ -164,7 +164,7 @@ export default function SpringBootSection() {
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, y: 12 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.4, delay: 0.5 + i * 0.08 }}
+                  transition={{ duration: 0.3, delay: 0.5 + i * 0.08 }}
                   className="section-card space-y-1"
                 >
                   <p className="text-sm font-semibold text-text">{f.title}</p>
@@ -175,7 +175,7 @@ export default function SpringBootSection() {
 
             <motion.a
               initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.4, delay: 0.7 }}
+              transition={{ duration: 0.3, delay: 0.7 }}
               href="/springboot/dashboard"
               target="_blank"
               rel="noopener"

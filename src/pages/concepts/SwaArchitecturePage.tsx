@@ -42,7 +42,7 @@ export default function SwaArchitecturePage() {
     <ConceptLayout title={c('title')} subtitle={c('subtitle')}>
       <section className="grid gap-4 md:grid-cols-3">
         {INTRO.map(({ key, Icon }) => (
-          <div key={key} className="rounded-2xl border border-border bg-bg-card p-5">
+          <div key={key} className="card">
             <Icon size={20} className="text-domain-idira" aria-hidden="true" />
             <h2 className="mt-3 text-base font-semibold text-text">{c(`intro.${key}_title`)}</h2>
             <p className="mt-1.5 text-sm leading-relaxed text-text-2">{c(`intro.${key}_desc`)}</p>
@@ -125,8 +125,8 @@ export default function SwaArchitecturePage() {
       </section>
 
       {/* Requirements and limits */}
-      <section aria-labelledby="swaarch-limits" className="rounded-2xl border border-tone-warning/40 bg-tone-warning/[0.06] p-5 sm:p-6">
-        <h2 id="swaarch-limits" className="flex items-center gap-2 text-lg font-semibold text-text">
+      <section aria-labelledby="swaarch-limits" className="callout-warning callout-section">
+        <h2 id="swaarch-limits" className="flex items-center gap-2 text-xl font-semibold text-text">
           <TriangleAlert size={20} className="shrink-0 text-tone-warning" aria-hidden="true" />{c('limits_title')}
         </h2>
         <ul className="mt-4 space-y-2.5 text-sm leading-relaxed text-text-2">

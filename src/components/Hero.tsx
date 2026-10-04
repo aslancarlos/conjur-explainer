@@ -19,17 +19,17 @@ export default function Hero() {
   })
 
   return (
-    <section className="relative overflow-hidden bg-[#070c1c] text-white">
+    <section className="relative overflow-hidden hero-band">
       {/* Official IDIRA "security layers" backdrop (right-anchored) */}
       <img src={securityLayers} alt="" aria-hidden="true"
         className="pointer-events-none absolute right-0 top-0 w-[95%] sm:w-[52%] max-w-[720px] h-auto opacity-40 sm:opacity-70 mix-blend-screen select-none" />
       <div className="hero-mesh pointer-events-none absolute inset-0 opacity-90" aria-hidden="true" />
       <div className="hero-grid pointer-events-none absolute inset-0" aria-hidden="true" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#070c1c] via-[#070c1c]/85 to-transparent" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-idira-navy via-idira-navy/85 to-transparent" aria-hidden="true" />
 
       <div className="relative max-w-7xl mx-auto px-6 lg:px-10 pt-16 pb-12 md:pt-24 md:pb-16">
         <div className="max-w-3xl">
-          <motion.p {...fadeUp(0)} className="font-mono text-xs uppercase tracking-[0.16em] text-[#4ad1f0]">
+          <motion.p {...fadeUp(0)} className="font-mono text-xs uppercase tracking-[0.16em] text-idira-cyan">
             {t('hero.eyebrow')}
           </motion.p>
           <motion.h1 {...fadeUp(0.05)}
@@ -43,13 +43,11 @@ export default function Hero() {
 
           <motion.div {...fadeUp(0.26)} className="mt-9 flex flex-wrap gap-3">
             <Link to="/concepts/secrets"
-              className="inline-flex min-h-11 items-center gap-2 rounded-md bg-idira-blue px-5 text-sm font-semibold text-white
-                hover:bg-idira-blue-2 active:bg-idira-blue-deep transition-colors">
+              className="btn-primary focus-visible:ring-offset-idira-deep">
               <KeyRound size={17} aria-hidden="true" />{t('hero.cta_secret')}
             </Link>
             <Link to="/concepts/machine-identity"
-              className="inline-flex min-h-11 items-center gap-2 rounded-md border border-white/20 bg-white/5 px-5 text-sm font-semibold
-                text-white hover:bg-white/10 hover:border-white/35 transition-colors">
+              className="btn border border-white/25 bg-white/5 text-white hover:border-white/40 hover:bg-white/10 focus-visible:ring-offset-idira-deep">
               <Fingerprint size={17} aria-hidden="true" />{t('hero.cta_identity')}
             </Link>
           </motion.div>
@@ -57,7 +55,7 @@ export default function Hero() {
       </div>
 
       <div className="relative pb-8 text-center">
-        <a href="#flow-live" className="inline-flex min-h-11 items-center gap-1.5 font-mono text-xs text-slate-400 hover:text-slate-200 transition-colors">
+        <a href="#flow-live" className="inline-flex min-h-11 items-center gap-1.5 rounded-md px-2 font-mono text-xs text-slate-300 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-cyan">
           {t('hero.cta_explore')}<ArrowDown size={13} aria-hidden="true" />
         </a>
       </div>

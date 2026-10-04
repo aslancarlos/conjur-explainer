@@ -82,21 +82,21 @@ export default function ProblemSection() {
   }>
 
   return (
-    <section id="problem" ref={ref} className="py-24 px-6">
-      <div className="max-w-6xl mx-auto space-y-16">
+    <section id="problem" ref={ref} className="py-16 px-6">
+      <div className="max-w-5xl mx-auto space-y-12">
 
         {/* Problem */}
         <div className="space-y-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5 }}
-            className="text-center space-y-3"
+            transition={{ duration: 0.3 }}
+            className="space-y-3"
           >
             <span className="badge bg-conjur-red/10 text-conjur-red border border-conjur-red/20">
               {t('problem.badge')}
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">{t('problem.title')}</h2>
-            <p className="max-w-2xl mx-auto text-base sm:text-lg text-text-2 leading-relaxed">
+            <h2 className="text-xl font-semibold text-text">{t('problem.title')}</h2>
+            <p className="max-w-[70ch] text-base text-text-2 leading-relaxed">
               {t('problem.subtitle')}
             </p>
           </motion.div>
@@ -108,7 +108,7 @@ export default function ProblemSection() {
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 0.1 + i * 0.1 }}
+                  transition={{ duration: 0.3, delay: 0.1 + i * 0.1 }}
                   className="group relative flex flex-col overflow-hidden rounded-2xl border border-conjur-red/25 bg-gradient-to-b from-conjur-red/[0.07] to-bg-card p-6 transition-all hover:border-conjur-red/50 hover:-translate-y-1 hover:shadow-[0_20px_50px_-20px_rgba(239,68,68,0.35)]"
                 >
                   {/* left accent bar */}
@@ -124,11 +124,11 @@ export default function ProblemSection() {
                     </div>
                   </div>
 
-                  <h3 className="relative mt-4 text-xl font-bold leading-snug text-text">{item.title}</h3>
+                  <h3 className="relative mt-4 text-base font-semibold leading-snug text-text">{item.title}</h3>
                   <p className="relative mt-2 text-sm leading-relaxed text-text-muted">{item.desc}</p>
 
                   <div className="relative mt-auto pt-5 space-y-2">
-                    <p className="text-[10px] font-mono font-semibold uppercase tracking-[0.16em] text-conjur-red/80">
+                    <p className="text-xs font-mono font-semibold uppercase tracking-[0.14em] text-conjur-red">
                       {t('problem.maps_to')}
                     </p>
                     <RefPills refs={REFS[i] ?? []} accent="red" />
@@ -142,7 +142,7 @@ export default function ProblemSection() {
         {/* Solution */}
         <motion.div
           initial={{ opacity: 0, y: 24 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.5 }}
+          transition={{ duration: 0.3, delay: 0.5 }}
           className="relative section-card bg-gradient-to-br from-conjur-cyan/5 to-bg-card border-conjur-cyan/20"
         >
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-conjur-cyan/5 to-transparent pointer-events-none" />
@@ -155,14 +155,14 @@ export default function ProblemSection() {
                 <span className="badge bg-conjur-cyan/10 text-conjur-cyan border border-conjur-cyan/20 text-xs">
                   {t('problem.solution_badge')}
                 </span>
-                <h3 className="text-xl sm:text-2xl font-bold text-text">{t('problem.solution_title')}</h3>
+                <h3 className="text-base font-semibold text-text">{t('problem.solution_title')}</h3>
                 <p className="text-text-muted leading-relaxed max-w-3xl">{t('problem.solution_desc')}</p>
               </div>
             </div>
 
             {/* Pillars. The four gaps, closed */}
             <div className="space-y-3">
-              <p className="text-[10px] font-mono font-semibold uppercase tracking-[0.16em] text-conjur-cyan/80">
+              <p className="text-xs font-mono font-semibold uppercase tracking-[0.14em] text-conjur-cyan">
                 {t('problem.pillars_label')}
               </p>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -174,8 +174,8 @@ export default function ProblemSection() {
                         <Icon size={18} />
                       </div>
                       <h4 className="mt-3 text-sm font-bold text-text leading-snug">{p.title}</h4>
-                      <p className="mt-1.5 text-[12.5px] leading-relaxed text-text-muted">{p.desc}</p>
-                      <span className="mt-3 inline-flex items-center rounded-md border border-conjur-cyan/25 bg-conjur-cyan/10 px-2 py-0.5 font-mono text-[10px] font-medium text-conjur-cyan">
+                      <p className="mt-1.5 text-sm leading-relaxed text-text-muted">{p.desc}</p>
+                      <span className="mt-3 inline-flex items-center rounded-md border border-conjur-cyan/25 bg-conjur-cyan/10 px-2 py-0.5 font-mono text-xs font-medium text-conjur-cyan">
                         {tag}
                       </span>
                     </div>
@@ -186,7 +186,7 @@ export default function ProblemSection() {
 
             {/* Framework references */}
             <div className="space-y-2 border-t border-border/60 pt-5">
-              <p className="text-[10px] font-mono font-semibold uppercase tracking-[0.16em] text-conjur-cyan/80">
+              <p className="text-xs font-mono font-semibold uppercase tracking-[0.14em] text-conjur-cyan">
                 {t('problem.maps_to')}
               </p>
               <RefPills refs={SOLUTION_REFS} accent="cyan" />

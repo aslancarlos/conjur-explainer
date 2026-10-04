@@ -153,7 +153,7 @@ export default function LiveToolsSection() {
                   {t('livetools.k8s_badge')}
                 </span>
                 <span className="flex items-center gap-1.5 text-xs text-tone-success">
-                  <span className="w-1.5 h-1.5 rounded-full bg-tone-success animate-pulse-slow" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-tone-success motion-safe:animate-pulse-slow" />
                   {t('livetools.live')}
                 </span>
               </div>
@@ -171,11 +171,11 @@ export default function LiveToolsSection() {
                   href="/dashboard/"
                   target="_blank"
                   rel="noopener"
-                  className="inline-flex min-h-11 items-center gap-2 px-5 rounded-full bg-conjur-cyan text-bg-base text-sm font-semibold hover:bg-conjur-cyan/80 transition-colors"
+                  className="btn-primary"
                 >
                   <Monitor size={14} /> {t('livetools.k8s_cta')}
                 </a>
-                <div className="flex items-center gap-2 text-xs text-text-muted px-3 py-2 rounded-full border border-border">
+                <div className="flex items-center gap-2 text-xs text-text-muted">
                   <span className="font-mono text-text-muted">{t('livetools.k8s_login')}</span>
                 </div>
               </div>
@@ -205,8 +205,8 @@ export default function LiveToolsSection() {
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className={`w-1.5 h-1.5 rounded-full ${tool.dot} animate-pulse-slow`} />
-                    <span className={`text-[10px] font-semibold ${tool.color}`}>{t(tool.badgeKey)}</span>
+                    <span className={`w-1.5 h-1.5 rounded-full ${tool.dot} motion-safe:animate-pulse-slow`} />
+                    <span className={`text-xs font-semibold ${tool.color}`}>{t(tool.badgeKey)}</span>
                   </div>
                   <p className="font-semibold text-text text-sm">{t(tool.titleKey)}</p>
                   <p className="text-xs text-text-muted mt-1 leading-relaxed">{t(tool.descKey)}</p>

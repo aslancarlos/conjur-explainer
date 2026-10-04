@@ -1,7 +1,7 @@
 import { motion, useInView } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ExternalLink, RefreshCw, ShoppingCart, BarChart2 } from 'lucide-react'
+import { ExternalLink, RefreshCw, ShoppingCart, BarChart2, TriangleAlert } from 'lucide-react'
 import EsoFlow from './flow/specs/EsoFlow'
 
 interface HealthResponse {
@@ -59,7 +59,7 @@ export default function ESOShopSection() {
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.3 }}
           className="space-y-3"
         >
           <div className="flex flex-wrap items-center gap-3">
@@ -87,7 +87,7 @@ export default function ESOShopSection() {
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, x: -16 }} animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.4, delay: 0.1 + i * 0.12 }}
+                  transition={{ duration: 0.3, delay: 0.1 + i * 0.12 }}
                   className="flex flex-col"
                 >
                   <div className={`section-card border ${cls.split(' ').find(c => c.startsWith('border'))}`}>
@@ -112,20 +112,20 @@ export default function ESOShopSection() {
             {/* Live health card */}
             <motion.div
               initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.4 }}
+              transition={{ duration: 0.3, delay: 0.4 }}
               className="section-card border-eso/20 space-y-4"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-eso animate-pulse-slow" />
-                  <span className="badge bg-eso/10 text-eso border border-eso/20 text-xs">
+                  <span className={`w-2 h-2 rounded-full ${error ? 'bg-text-muted' : 'bg-eso animate-pulse-slow'}`} aria-hidden="true" />
+                  <span className={`badge text-xs ${error ? 'border border-border bg-bg-muted text-text-muted' : 'bg-eso/10 text-eso border border-eso/20'}`}>
                     {t('esoshop.live_badge')}
                   </span>
                 </div>
                 <button
                   onClick={fetchHealth}
                   disabled={loading}
-                  aria-label="Refresh"
+                  aria-label={t('shell.live_refresh')} title={t('shell.live_refresh')}
                   className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-text-muted hover:text-eso hover:bg-eso/10 transition-colors"
                 >
                   <RefreshCw size={14} aria-hidden="true" className={loading ? 'animate-spin' : ''} />
@@ -135,7 +135,7 @@ export default function ESOShopSection() {
               <h3 className="font-semibold text-text">{t('esoshop.live_title')}</h3>
 
               {error && (
-                <p role="status" className="text-xs text-tone-warning bg-tone-warning/10 border border-tone-warning/30 rounded-lg px-3 py-2">{error}</p>
+                <p role="status" className="callout-warning text-text"><TriangleAlert size={16} className="mt-0.5 shrink-0 text-tone-warning" aria-hidden="true" /><span>{error}</span></p>
               )}
               {data && (
                 <div className="code-block space-y-1 text-xs">
@@ -165,7 +165,7 @@ export default function ESOShopSection() {
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, y: 12 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.4, delay: 0.5 + i * 0.08 }}
+                  transition={{ duration: 0.3, delay: 0.5 + i * 0.08 }}
                   className="section-card space-y-1"
                 >
                   <p className="text-sm font-semibold text-text">{f.title}</p>
@@ -177,7 +177,7 @@ export default function ESOShopSection() {
             {/* CTA buttons */}
             <motion.div
               initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.4, delay: 0.7 }}
+              transition={{ duration: 0.3, delay: 0.7 }}
               className="flex flex-wrap gap-3"
             >
               <a
@@ -211,7 +211,7 @@ export default function ESOShopSection() {
         {/* Operator architecture callout */}
         <motion.div
           initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.8 }}
+          transition={{ duration: 0.3, delay: 0.8 }}
           className="section-card border-conjur-gold/20 space-y-4"
         >
           <div className="flex items-center gap-3">

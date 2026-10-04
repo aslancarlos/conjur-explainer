@@ -61,7 +61,7 @@ export default function AuthnHubPage() {
         <Section title={p('what_title')} lead={p('what_lead')}>
           <ol className="grid gap-4 md:grid-cols-3">
             {STEPS.map(({ key, Icon }, i) => (
-              <li key={key} className="rounded-2xl border border-border bg-bg-card p-5">
+              <li key={key} className="card">
                 <div className="flex items-center gap-3">
                   <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-domain-idira/30 bg-domain-idira/10 text-domain-idira">
                     <Icon size={18} aria-hidden="true" />

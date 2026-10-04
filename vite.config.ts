@@ -26,6 +26,8 @@ const devVisits = (): Plugin => ({
 export default defineConfig({
   plugins: [react(), devVisits()],
   base: '/',
+  // Build timestamp for the sidebar "last updated" line (src/lib/release.ts).
+  define: { __BUILD_DATE__: JSON.stringify(new Date().toISOString()) },
   build: {
     // Split long-lived vendor libraries into their own chunks so that an app
     // change does not bust the browser cache for React / router / motion / i18n.

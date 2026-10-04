@@ -42,8 +42,8 @@ export function Section({ title, lead, children }: { title: string; lead?: strin
 export function LimitsCallout({ title, items, source }: { title: string; items: string[]; source?: { label: string; href: string } }) {
   return (
     <section role="note" aria-label={title}
-      className="rounded-2xl border border-tone-warning/40 bg-tone-warning/10 p-5 sm:p-6">
-      <h2 className="flex items-center gap-2 text-lg font-semibold text-text">
+      className="callout-warning callout-section">
+      <h2 className="flex items-center gap-2 text-xl font-semibold text-text">
         <TriangleAlert size={20} className="shrink-0 text-tone-warning" aria-hidden="true" />{title}
       </h2>
       <ul className="mt-4 space-y-2.5">
@@ -56,7 +56,7 @@ export function LimitsCallout({ title, items, source }: { title: string; items: 
       </ul>
       {source && (
         <a href={source.href} target="_blank" rel="noopener noreferrer"
-          className="mt-4 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-tone-accent hover:underline">
+          className="mt-4 inline-flex min-h-11 items-center gap-1.5 rounded text-sm font-semibold text-tone-accent hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">
           {source.label}<ExternalLink size={14} aria-hidden="true" />
         </a>
       )}

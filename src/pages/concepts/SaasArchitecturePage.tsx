@@ -41,7 +41,7 @@ export default function SaasArchitecturePage() {
       {/* What it is */}
       <section className="grid gap-4 md:grid-cols-3">
         {BENEFITS.map(({ key, Icon }) => (
-          <div key={key} className="rounded-2xl border border-border bg-bg-card p-5">
+          <div key={key} className="card">
             <Icon size={20} className="text-domain-idira" aria-hidden="true" />
             <h2 className="mt-3 text-base font-semibold text-text">{c(`benefits.${key}_title`)}</h2>
             <p className="mt-1.5 text-sm leading-relaxed text-text-2">{c(`benefits.${key}_desc`)}</p>
@@ -102,7 +102,7 @@ export default function SaasArchitecturePage() {
       {/* Load balancer, sizing, firewall */}
       <section className="grid gap-4 lg:grid-cols-3">
         {PANELS.map(({ key, Icon, items }) => (
-          <div key={key} className="rounded-2xl border border-border bg-bg-card p-5">
+          <div key={key} className="card">
             <h2 className="flex items-center gap-2 text-base font-semibold text-text">
               <Icon size={18} className="text-domain-idira" aria-hidden="true" />{c(`${key}.title`)}
             </h2>

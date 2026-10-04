@@ -34,7 +34,7 @@ export default function GitHubActionsSection() {
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.3 }}
           className="space-y-3"
         >
           <div className="flex flex-wrap items-center gap-3">
@@ -56,7 +56,7 @@ export default function GitHubActionsSection() {
         {/* Zero-credential highlight */}
         <motion.div
           initial={{ opacity: 0, scale: 0.97 }} animate={inView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.4, delay: 0.15 }}
+          transition={{ duration: 0.3, delay: 0.15 }}
           className="section-card border-gh/20 bg-gradient-to-r from-gh/5 to-bg-card"
         >
           <p className="text-center text-2xl font-bold">
@@ -77,7 +77,7 @@ export default function GitHubActionsSection() {
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, x: -16 }} animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.4, delay: 0.1 + i * 0.12 }}
+                  transition={{ duration: 0.3, delay: 0.1 + i * 0.12 }}
                   className="flex flex-col"
                 >
                   <div className={`section-card border ${borderCls}`}>
@@ -104,7 +104,7 @@ export default function GitHubActionsSection() {
             {/* Workshop stages. Live runner */}
             <motion.div
               initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.5 }}
+              transition={{ duration: 0.3, delay: 0.5 }}
             >
               <GhaLiveRunner stages={stages} />
             </motion.div>
@@ -115,7 +115,7 @@ export default function GitHubActionsSection() {
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, y: 12 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.4, delay: 1.0 + i * 0.08 }}
+                  transition={{ duration: 0.3, delay: 1.0 + i * 0.08 }}
                   className="section-card space-y-1"
                 >
                   <p className="text-sm font-semibold text-text">{f.title}</p>
@@ -127,7 +127,7 @@ export default function GitHubActionsSection() {
             {/* CTA */}
             <motion.div
               initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.4, delay: 1.2 }}
+              transition={{ duration: 0.3, delay: 1.2 }}
               className="flex flex-wrap gap-3"
             >
               <a

@@ -162,7 +162,7 @@ export default function GhaLiveRunner({ stages }: Props) {
         <div className="flex items-center gap-2 min-w-0">
           <h3 className="font-semibold text-text text-sm">{t('gha.runner.title')}</h3>
           {isLive && (
-            <span className={`badge text-[10px] ${
+            <span className={`badge text-xs ${
               data!.run.status === 'completed'
                 ? data!.run.conclusion === 'success'
                   ? 'bg-tone-success/10 text-tone-success border border-tone-success/30'
@@ -213,7 +213,7 @@ export default function GhaLiveRunner({ stages }: Props) {
             </span>
             <span className="text-xs text-text-2 leading-relaxed flex-1 truncate">{row.name}</span>
             {row.elapsed && (
-              <span className="text-[10px] font-mono text-text-muted flex-shrink-0">{row.elapsed}</span>
+              <span className="text-xs font-mono text-text-muted flex-shrink-0 tabular-nums">{row.elapsed}</span>
             )}
             {row.url && (
               <a href={row.url} target="_blank" rel="noopener" aria-label={`View ${row.name} on GitHub`} className="text-text-muted hover:text-gh flex-shrink-0">
@@ -224,7 +224,7 @@ export default function GhaLiveRunner({ stages }: Props) {
         ))}
       </div>
 
-      <p className="text-[10px] text-text-muted">{t('gha.runner.hint')}</p>
+      <p className="text-xs text-text-muted">{t('gha.runner.hint')}</p>
     </div>
   )
 }

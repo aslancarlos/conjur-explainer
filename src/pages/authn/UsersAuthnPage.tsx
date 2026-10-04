@@ -32,7 +32,7 @@ export default function UsersAuthnPage() {
           <SupportChips saas selfHosted />
         </div>
 
-        <aside className="flex gap-3 rounded-2xl border border-tone-accent/40 bg-tone-accent/10 p-5 text-base leading-relaxed text-text">
+        <aside className="callout-info rounded-2xl p-5 text-base text-text">
           <Info size={20} className="mt-0.5 shrink-0 text-tone-accent" aria-hidden="true" />
           <p>{p('people_note')}</p>
         </aside>

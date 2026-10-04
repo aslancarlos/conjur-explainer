@@ -26,13 +26,13 @@ export default function ConceptLayout({ title, subtitle, children }: {
 
   return (
     <article>
-      <header className="relative overflow-hidden bg-[#070c1c] text-white">
+      <header className="relative overflow-hidden hero-band">
         <img src={securityLayers} alt="" aria-hidden="true"
           className="pointer-events-none absolute right-0 top-0 w-[95%] sm:w-[46%] max-w-[620px] h-auto opacity-40 sm:opacity-60 mix-blend-screen select-none" />
         <div className="hero-grid pointer-events-none absolute inset-0" aria-hidden="true" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#070c1c] via-[#070c1c]/85 to-transparent" aria-hidden="true" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-idira-navy via-idira-navy/85 to-transparent" aria-hidden="true" />
         <div className="relative max-w-6xl mx-auto px-6 lg:px-10 pt-14 pb-14 md:pt-20 md:pb-16">
-          <p className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-[#4ad1f0]">
+          <p className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-idira-cyan">
             {Icon && <Icon size={14} aria-hidden="true" />}
             {t(group?.labelKey ?? 'nav.group_concepts')}{i >= 0 && items.length > 1 && <span className="text-slate-400">· {i + 1}/{items.length}</span>}
           </p>

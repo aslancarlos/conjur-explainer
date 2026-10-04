@@ -64,7 +64,7 @@ export default function SelfHostedArchitecturePage() {
       {/* The three roles, at a glance (same pattern as the SaaS page) */}
       <section className="grid gap-4 md:grid-cols-3">
         {ROLES.map(({ key, Icon }) => (
-          <div key={key} className="rounded-2xl border border-border bg-bg-card p-5">
+          <div key={key} className="card">
             <Icon size={20} className="text-domain-idira" aria-hidden="true" />
             <h2 className="mt-3 text-base font-semibold text-text">{p(`roles.${key}_title`)}</h2>
             <p className="mt-1.5 text-sm leading-relaxed text-text-2">{p(`roles.${key}_desc`)}</p>

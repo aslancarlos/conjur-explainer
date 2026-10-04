@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ChevronDown } from 'lucide-react'
-import { navBy, SECTIONS, type NavItem } from '../../lib/nav'
+import { navBy, SECTIONS, ZONES, type NavGroup, type NavItem } from '../../lib/nav'
+import NavGlyph from './NavGlyph'
 
 /** Split a group's flat items into runs: plain items, or a run sharing one `section` (submenu). */
 function segments(items: NavItem[]) {
@@ -15,31 +16,59 @@ function segments(items: NavItem[]) {
   return out
 }
 
+/** Product colour as a hairline ring around the group's icon tile (literal classes so Tailwind keeps them). */
+const RING: Record<string, string> = {
+  'text-domain-idira': 'ring-[1.5px] ring-domain-idira/70',
+  'text-tone-live': 'ring-[1.5px] ring-tone-live/70',
+  'text-domain-cp': 'ring-[1.5px] ring-domain-cp/70',
+  'text-domain-svc': 'ring-[1.5px] ring-domain-svc/70',
+}
+
+const chevron = (open: boolean) => (
+  <ChevronDown size={16} strokeWidth={2} aria-hidden="true"
+    className={`shrink-0 text-text-muted transition-transform duration-200 ${open ? '' : '-rotate-90'}`} />
+)
+
 /**
  * Grouped site navigation (sidebar + mobile drawer).
- * - Each group header is a disclosure button: show / hide its items. Every
- *   group and submenu starts collapsed on each visit (nothing is persisted);
- *   what the visitor opens stays open while they navigate. A collapsed group
- *   that holds the current page gets a tinted header.
+ * - Sections with an overline label (Start here · Products · Integrations ·
+ *   Resources, see ZONES in lib/nav). Resources are flat links.
+ * - Each other group header is a disclosure button. Every group and submenu
+ *   starts collapsed on each visit (nothing is persisted); what the visitor
+ *   opens stays open while they navigate. A collapsed group holding the
+ *   current page gets a tinted header.
+ * - Product colour: a thin ring around the group's icon tile (no bars, no counts).
  * - Current page: tinted row + left accent bar + aria-current.
- * - `collapsed` (icon rail): no headers, every item visible, labels kept for
- *   screen readers and as tooltips.
+ * - `collapsed` (icon rail): no labels or headers, every item visible, section
+ *   labels become thin separators; names stay for screen readers and tooltips.
  */
+/** Full product/component name; a trailing official acronym "(ASCP)" is shown
+ *  muted after it (never instead of it). Wraps to two lines when needed. */
+function NavLabel({ text, className = '' }: { text: string; className?: string }) {
+  const m = text.match(/^(.*\S)\s+\(([A-Z0-9/.-]{2,8})\)$/)
+  return (
+    <span className={`min-w-0 flex-1 text-sm leading-5 [overflow-wrap:anywhere] ${className}`}>
+      {m ? <>{m[1]} <span className="whitespace-nowrap font-normal text-text-muted">{m[2]}</span></> : text}
+    </span>
+  )
+}
+
 export default function SideNav({ collapsed = false, dense = false, idPrefix = 'nav' }: {
   collapsed?: boolean; dense?: boolean; idPrefix?: string
 }) {
   const { t } = useTranslation()
   const { pathname, search } = useLocation()
+  const groups = navBy('usecase')
   // Items may deep-link a page state (e.g. /secretshub?env=pamsh): such an item is
   // active only with its query; the plain path item yields when a sibling matches.
-  const all = navBy('usecase').flatMap(g => g.items)
+  const all = groups.flatMap(g => g.items)
   const isActive = (to: string) => {
     if (to.includes('?')) return pathname + search === to
     return pathname === to && !all.some(o => o.to.includes('?') && o.to === pathname + search)
   }
-  const groups = navBy('usecase')
   const [open, setOpen] = useState<Record<string, boolean>>({})
   const isOpen = (key: string) => open[key] === true    // default: collapsed
+  const rowH = dense ? 'min-h-9' : 'min-h-11'
 
   const toggle = (key: string) => {
     const opening = !isOpen(key)
@@ -52,25 +81,27 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
     }
   }
 
-  const row = (item: NavItem, nested = false) => {
+  const row = (item: NavItem) => {
     const active = isActive(item.to)
-    const label = t(nested && item.shortKey ? item.shortKey : item.labelKey)
+    const label = t(item.shortKey ?? item.labelKey)
     const cls =
-      'group relative flex items-center gap-3 rounded-lg transition-colors duration-150 ' +
-      (collapsed ? 'h-10 w-10 justify-center mx-auto ' : dense ? 'min-h-9 px-3 py-1.5 ' : 'min-h-11 px-3 py-2 ') +
+      'group relative flex items-start gap-3 rounded-lg transition-colors duration-150 ' +
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue ' +
+      (collapsed ? 'h-10 w-10 items-center justify-center mx-auto ' : `${rowH} px-3 py-1.5 `) +
       (active ? 'bg-bg-muted text-text font-semibold' : 'text-text-2 hover:bg-bg-muted/70 hover:text-text')
     const inner = (
       <>
         {active && (
           <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r bg-idira-blue" aria-hidden="true" />
         )}
-        <item.Icon size={18} strokeWidth={1.9} aria-hidden="true" className={`shrink-0 ${item.color ?? 'text-text-2'}`} />
-        <span className={collapsed ? 'sr-only' : 'text-sm leading-tight'}>{label}</span>
+        <NavGlyph logo={item.logo} Icon={item.Icon} className={item.color ?? 'text-text-2'} />
+        {collapsed ? <span className="sr-only">{label}</span> : <NavLabel text={label} />}
       </>
     )
+    const tip = t(item.labelKey) !== label ? t(item.labelKey) : item.subKey ? t(item.subKey) : undefined
     const common = {
       className: cls,
-      title: collapsed ? label : item.subKey ? t(item.subKey) : undefined,
+      title: collapsed ? label : tip,
       'aria-current': active ? ('page' as const) : undefined,
     }
     return (
@@ -82,84 +113,94 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
     )
   }
 
-  const withHeadings = (items: NavItem[], nested = false) => {
+  const withHeadings = (items: NavItem[]) => {
     let last: string | undefined
     return items.flatMap(it => {
       const out = []
       if (it.heading && it.heading !== last) {
         out.push(
-          <li key={`h-${it.heading}-${it.to}`}
-            className={`px-3 pb-1 text-[11px] font-medium uppercase tracking-[0.08em] text-text-muted ${nested ? 'pt-2' : 'pt-3'}`}>
+          <li key={`h-${it.heading}-${it.to}`} aria-hidden="true"
+            className="text-overline px-3 pb-1 pt-2.5 font-medium">
             {t(it.heading)}
           </li>,
         )
       }
       last = it.heading
-      out.push(row(it, Boolean(it.heading) || nested))
+      out.push(row(it))
       return out
     })
   }
 
-  return (
-    <div className="space-y-1">
-      {groups.map((group, gi) => {
-        const label = group.labelKey ? t(group.labelKey) : undefined
-        const expanded = collapsed || !group.labelKey || isOpen(group.key)
-        const listId = `${idPrefix}-grp-${group.key}`
-        const hasActive = group.items.some(i => isActive(i.to))
-        return (
-          <div key={group.key} className={gi === 0 ? '' : dense ? 'pt-2' : 'pt-3'}>
-            {label && (collapsed
-              ? <div className="mx-3 mb-2 h-px bg-border" aria-hidden="true" />
-              : (
-                <button type="button" onClick={() => toggle(group.key)}
-                  aria-expanded={expanded} aria-controls={listId}
-                  className={`flex w-full items-center gap-2.5 rounded-lg px-3 text-left transition-colors duration-150
-                    hover:bg-bg-muted/70 ${dense ? 'min-h-9' : 'min-h-11'} ${hasActive && !expanded ? 'bg-bg-muted/60' : ''}`}>
-                  {group.Icon && <group.Icon size={16} strokeWidth={2} aria-hidden="true" className="shrink-0 text-domain-idira" />}
-                  <span className={`flex-1 text-sm font-semibold leading-tight ${hasActive ? 'text-text' : 'text-text-2'}`}>{label}</span>
-                  {!expanded && (
-                    <span className="rounded-full bg-bg-muted px-1.5 font-mono text-[11px] text-text-muted tabular-nums">
-                      {group.items.length}
-                    </span>
-                  )}
-                  <ChevronDown size={16} strokeWidth={2} aria-hidden="true"
-                    className={`shrink-0 text-text-muted transition-transform duration-200 ${expanded ? '' : '-rotate-90'}`} />
+  const groupBlock = (group: NavGroup) => {
+    const label = group.labelKey ? t(group.labelKey) : undefined
+    // Plain groups (home) and flat groups (resources) list their items directly.
+    if (!label || group.flat || collapsed) {
+      return <ul key={group.key} className="space-y-0.5">{group.items.map(row)}</ul>
+    }
+    const expanded = isOpen(group.key)
+    const listId = `${idPrefix}-grp-${group.key}`
+    const hasActive = group.items.some(i => isActive(i.to))
+    return (
+      <div key={group.key}>
+        <button type="button" onClick={() => toggle(group.key)}
+          aria-expanded={expanded} aria-controls={listId}
+          className={`flex w-full items-center gap-3 rounded-lg px-3 text-left transition-colors duration-150
+            hover:bg-bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue
+            ${rowH} ${hasActive && !expanded ? 'bg-bg-muted/60' : ''}`}>
+          <NavGlyph logo={group.logo} Icon={group.Icon} iconSize={16} className={group.color ?? 'text-domain-idira'}
+            accent={RING[group.color ?? '']} />
+          <NavLabel text={label} className={`font-semibold ${hasActive ? 'text-text' : 'text-text-2'}`} />
+          {chevron(expanded)}
+        </button>
+        <ul id={listId} hidden={!expanded} aria-label={label}
+          className="mt-0.5 mb-1 ml-[21px] space-y-0.5 border-l border-border pl-2">
+          {segments(group.items).map(seg => {
+            if (!seg.section) return withHeadings(seg.items)
+            // Collapsible submenu: a sub-section header (not a link) with a chevron,
+            // children under a guide line.
+            const sec = SECTIONS[seg.section]
+            const key = `sec-${seg.section}`
+            const subActive = seg.items.some(i => isActive(i.to))
+            const subOpen = open[key] === true
+            const subId = `${idPrefix}-${key}`
+            return (
+              <li key={key}>
+                <button type="button" onClick={() => toggle(key)} aria-expanded={subOpen} aria-controls={subId}
+                  className={`flex w-full items-center gap-3 rounded-lg px-3 text-left transition-colors duration-150
+                    hover:bg-bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue
+                    ${rowH} ${subActive && !subOpen ? 'bg-bg-muted/60' : ''}`}>
+                  <NavGlyph logo={sec.logo} Icon={sec.Icon} iconSize={16} className={group.color ?? 'text-domain-idira'} />
+                  <NavLabel text={t(sec.labelKey)} className={`font-medium ${subActive ? 'text-text' : 'text-text-2'}`} />
+                  {chevron(subOpen)}
                 </button>
-              ))}
-            <ul id={listId} hidden={!expanded} className={`space-y-0.5 ${label && !collapsed ? 'mt-1 ml-[19px] border-l border-border pl-2.5' : ''}`}
-              aria-label={label}>
-              {segments(group.items).map(seg => {
-                if (collapsed) return seg.items.map(i => row(i))
-                if (!seg.section) return withHeadings(seg.items)
-                // Collapsible submenu: styled as a sub-section header (not a link), chevron
-                // down when open, item count when closed, children under a guide line.
-                const sec = SECTIONS[seg.section]
-                const key = `sec-${seg.section}`
-                const subActive = seg.items.some(i => isActive(i.to))
-                const subOpen = open[key] === true
-                const subId = `${idPrefix}-${key}`
-                return (
-                  <li key={key} className="pt-2">
-                    <button type="button" onClick={() => toggle(key)} aria-expanded={subOpen} aria-controls={subId}
-                      className={`flex w-full items-center gap-2.5 rounded-lg px-3 text-left transition-colors duration-150
-                        hover:bg-bg-muted/70
-                        ${dense ? 'min-h-9' : 'min-h-11'} ${subActive && !subOpen ? 'bg-bg-muted/60' : ''}`}>
-                      <sec.Icon size={16} strokeWidth={2} aria-hidden="true" className="shrink-0 text-domain-idira" />
-                      <span className={`flex-1 text-sm font-semibold leading-tight ${subActive ? 'text-text' : 'text-text-2'}`}>{t(sec.labelKey)}</span>
-                      {!subOpen && (
-                        <span className="rounded-full bg-bg-muted px-1.5 font-mono text-[11px] text-text-muted tabular-nums">{seg.items.length}</span>
-                      )}
-                      <ChevronDown size={16} strokeWidth={2} aria-hidden="true"
-                        className={`shrink-0 text-text-muted transition-transform duration-200 ${subOpen ? '' : '-rotate-90'}`} />
-                    </button>
-                    <ul id={subId} hidden={!subOpen} className="mt-1 ml-[15px] space-y-0.5 border-l border-border pl-2">
-                      {withHeadings(seg.items, true)}
-                    </ul>
-                  </li>
-                )
-              })}
-            </ul>
+                <ul id={subId} hidden={!subOpen} className="mt-0.5 ml-[21px] space-y-0.5 border-l border-border pl-2">
+                  {withHeadings(seg.items)}
+                </ul>
+              </li>
+            )
+          })}
+        </ul>
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      {ZONES.map((zone, zi) => {
+        const zg = groups.filter(g => g.zone === zone.key)
+        if (!zg.length) return null
+        const labelId = `${idPrefix}-zone-${zone.key}`
+        return (
+          <div key={zone.key} role="group" aria-labelledby={labelId} className={zi === 0 ? '' : 'pt-4'}>
+            {collapsed
+              ? <>
+                  {zi > 0 && <div className="mx-3 mb-3 h-px bg-border" aria-hidden="true" />}
+                  <span id={labelId} className="sr-only">{t(zone.labelKey)}</span>
+                </>
+              : <p id={labelId} className="text-overline px-3 pb-2">
+                  {t(zone.labelKey)}
+                </p>}
+            <div className="space-y-0.5">{zg.map(groupBlock)}</div>
           </div>
         )
       })}

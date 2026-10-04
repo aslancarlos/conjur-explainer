@@ -57,7 +57,7 @@ export function TargetsSummary() {
       <p className="mt-1 text-sm text-text-2">{s('sub')}</p>
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {TARGETS.map(({ k, name, Icon }) => (
-          <div key={k} className="rounded-2xl border border-border bg-bg-card p-5">
+          <div key={k} className="card">
             <p className="inline-flex items-center gap-2 font-semibold text-text">
               <Icon size={16} className="text-domain-svc shrink-0" aria-hidden="true" />{name}
             </p>
@@ -102,7 +102,7 @@ export function LimitsCallout({ env }: { env: ShubEnv }) {
   const { t } = useTranslation()
   const s = (k: string) => t(`secretshub.limits.${k}`)
   return (
-    <section aria-labelledby="shub-limits" className="rounded-2xl border-2 border-tone-warning/50 bg-tone-warning/[0.07] p-5 sm:p-6">
+    <section aria-labelledby="shub-limits" className="callout-warning callout-section border-2">
       <div className="flex items-start gap-3">
         <AlertTriangle size={22} strokeWidth={2.2} className="mt-0.5 shrink-0 text-tone-warning" aria-hidden="true" />
         <div>

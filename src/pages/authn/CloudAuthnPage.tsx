@@ -44,7 +44,7 @@ export default function CloudAuthnPage({ ns, Flow, saas, selfHosted, docs }: {
             <ul className="space-y-2.5">
               {list('when').map(it => (
                 <li key={it} className="flex gap-2.5 text-sm leading-relaxed text-text-2">
-                  <Check size={16} strokeWidth={2.2} className="mt-0.5 shrink-0 text-tone-success" aria-hidden="true" />
+                  <Check size={16} strokeWidth={2.2} className="mt-0.5 shrink-0 text-domain-idira" aria-hidden="true" />
                   <span>{it}</span>
                 </li>
               ))}

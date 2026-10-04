@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight } from 'lucide-react'
 import { demoGroups } from '../lib/nav'
+import NavGlyph from './shell/NavGlyph'
 
 // The catalogue mirrors the sidebar (lib/nav.ts): same use-case / product
 // grouping and shared toggle, same icon per concept (DESIGN.md §9).
@@ -32,14 +33,16 @@ export default function DemosShowcase() {
           transition={{ duration: 0.4, ease: [0.2, 0.7, 0.2, 1] }}
           className="mt-10 grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
           {groupsList.map(group => (
-            <div key={group.key}>
+            // Use cases hold most demos: give them the full row (4 columns) so
+            // the catalogue stays balanced instead of one long first column.
+            <div key={group.key} className={group.key === 'usecases' ? 'sm:col-span-2 lg:col-span-4' : undefined}>
               <h3 className="border-b border-border pb-2 text-sm font-semibold text-text">{t(group.labelKey!)}</h3>
-              <ul className="mt-2 space-y-0.5">
+              <ul className={`mt-2 ${group.key === 'usecases' ? 'grid gap-x-8 gap-y-0.5 sm:grid-cols-2 lg:grid-cols-4' : 'space-y-0.5'}`}>
                 {group.items.map(item => {
-                  const cls = 'group flex min-h-11 items-center gap-3 rounded-lg px-2 -mx-2 transition-colors hover:bg-bg-muted'
+                  const cls = 'group flex min-h-11 items-center gap-3 rounded-lg px-2 -mx-2 transition-colors duration-150 hover:bg-bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue'
                   const inner = (
                     <>
-                      <item.Icon size={17} strokeWidth={1.9} aria-hidden="true" className={`shrink-0 ${item.color ?? 'text-text-2'}`} />
+                      <NavGlyph logo={item.logo} Icon={item.Icon} iconSize={17} className={item.color ?? 'text-text-2'} />
                       <span className="min-w-0 flex-1">
                         <span className="block text-sm font-medium text-text leading-tight">{item.demo!.name}</span>
                         <span className="block font-mono text-xs text-text-muted">{item.demo!.secret}</span>
