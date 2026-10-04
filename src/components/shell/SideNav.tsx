@@ -87,7 +87,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
   }
 
   /** Disclosure header shared by every level (group, submenu, sub-submenu). */
-  const disclosure = (key: string, listId: string, label: string, glyph: ReactNode, active: boolean, weight: string) => {
+  const disclosure = (key: string, listId: string, label: string, glyph: ReactNode, active: boolean, weight: string, badge?: ReactNode) => {
     const expanded = isOpen(key)
     return (
       <button type="button" onClick={() => toggle(key, listId)} aria-expanded={expanded} aria-controls={listId}
@@ -96,6 +96,7 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
           ${rowH} ${active && !expanded ? 'bg-bg-muted/60' : ''}`}>
         {glyph}
         <NavLabel text={label} className={`${weight} ${active ? 'text-text' : 'text-text-2'}`} />
+        {badge}
         {chevron(expanded)}
       </button>
     )
@@ -196,7 +197,12 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
               <li key={key}>
                 {disclosure(key, subId, t(sec.labelKey),
                   <NavGlyph logo={sec.logo} Icon={sec.Icon} iconSize={16} className={group.color ?? 'text-domain-idira'} />,
-                  subActive, 'font-medium')}
+                  subActive, 'font-medium',
+                  sec.highlight && (
+                    <span className="shrink-0 rounded-full border border-domain-idira/50 bg-domain-idira/15 px-2 text-xs font-semibold leading-5 tabular-nums text-text">
+                      {seg.items.length}
+                    </span>
+                  ))}
                 <ul id={subId} hidden={!isOpen(key)} className="mt-0.5 ml-[21px] space-y-0.5 border-l border-border pl-2">
                   {byHeading(seg.section, seg.items, tint, true)}
                 </ul>

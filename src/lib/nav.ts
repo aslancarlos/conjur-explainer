@@ -41,9 +41,10 @@ export interface NavItem {
 
 export type SectionKey = 'authn' | 'usecases'
 /** Sidebar submenus inside a group (the flat list still drives trails, search and catalogue). */
-export const SECTIONS: Record<SectionKey, { labelKey: string; Icon: LucideIcon; logo?: string }> = {
+export const SECTIONS: Record<SectionKey, { labelKey: string; Icon: LucideIcon; logo?: string; highlight?: boolean }> = {
   authn:    { labelKey: 'nav.sec_authn', Icon: Fingerprint, logo: '/icons/nav/sec_authn.svg' },
-  usecases: { labelKey: 'nav.sec_usecases', Icon: Layers, logo: '/icons/nav/g_usecases.svg' },
+  // highlight: the one submenu that shows its item count as a product-coloured badge (DESIGN.md §6)
+  usecases: { labelKey: 'nav.sec_usecases', Icon: Layers, logo: '/icons/nav/g_usecases.svg', highlight: true },
 }
 
 /** Icons for sub-headings that render as a collapsible submenu directly inside a group. */
