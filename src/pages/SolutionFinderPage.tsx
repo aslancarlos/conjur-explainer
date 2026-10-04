@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { createPortal } from 'react-dom'
+import { useSearchParams } from 'react-router-dom'
+import { Link } from '../lib/router'
 import { useTranslation } from 'react-i18next'
 import { useToolsCopy } from '../lib/toolsCopy'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
@@ -375,7 +377,7 @@ function SolutionFinderPageView() {
     const notesFor = id ? infoNotes(id) : []
     const sectionTitle = 'text-xs font-semibold uppercase tracking-wider text-text-muted'
     return (
-      <AnimatePresence>
+      createPortal(<AnimatePresence>
         {id && item && (
           <div className="fixed inset-0 z-modal flex items-center justify-center p-4 print:hidden">
             <motion.div className="absolute inset-0 bg-black/55" aria-hidden="true" onClick={closeInfo}
@@ -483,7 +485,7 @@ function SolutionFinderPageView() {
             </motion.div>
           </div>
         )}
-      </AnimatePresence>
+      </AnimatePresence>, document.body)
     )
   }
 

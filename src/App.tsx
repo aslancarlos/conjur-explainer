@@ -1,80 +1,26 @@
-import { BrowserRouter, Routes, Route, Outlet, useLocation } from 'react-router-dom'
-import { lazy, Suspense, useEffect, useRef } from 'react'
+import { createBrowserRouter, matchRoutes, Outlet, RouterProvider, ScrollRestoration, useLocation, type RouteObject } from 'react-router-dom'
+import { type ComponentType, useEffect, useRef } from 'react'
 import AppShell from './components/shell/AppShell'
 import Footer from './components/Footer'
 import Loading from './components/Loading'
-import PageTransition from './components/PageTransition'
 // Home is the most-visited route: keep it eager so the landing paints instantly.
 import HomePage from './pages/HomePage'
 
-// Every other route is code-split: its JS chunk is fetched on demand, so the
-// initial download no longer carries all 14 pages.
-const SpringBootSection = lazy(() => import('./components/SpringBootSection'))
-const DotNetSection = lazy(() => import('./components/DotNetSection'))
-const GitHubActionsSection = lazy(() => import('./components/GitHubActionsSection'))
-const ESOShopSection = lazy(() => import('./components/ESOShopSection'))
-const ComparePage = lazy(() => import('./pages/ComparePage'))
-const LiveToolsSection = lazy(() => import('./components/LiveToolsSection'))
-const DualAccountsPage = lazy(() => import('./pages/DualAccountsPage'))
-const SaasArchitecturePage = lazy(() => import('./pages/concepts/SaasArchitecturePage'))
-const SelfHostedArchitecturePage = lazy(() => import('./pages/concepts/SelfHostedArchitecturePage'))
-const SwaArchitecturePage = lazy(() => import('./pages/concepts/SwaArchitecturePage'))
-const SecretZeroPage = lazy(() => import('./pages/concepts/SecretZeroPage'))
-const CpHubPage = lazy(() => import('./pages/cp/CpHubPage'))
-const CredentialProviderPage = lazy(() => import('./pages/cp/CredentialProviderPage'))
-const AscpPage = lazy(() => import('./pages/cp/AscpPage'))
-const CcpPage = lazy(() => import('./pages/cp/CcpPage'))
-const AuthnHubPage = lazy(() => import('./pages/authn/AuthnHubPage'))
-const ApiKeyAuthnPage = lazy(() => import('./pages/authn/ApiKeyAuthnPage'))
-const CertAuthnPage = lazy(() => import('./pages/authn/CertAuthnPage'))
-const AwsIamAuthnPage = lazy(() => import('./pages/authn/AwsIamAuthnPage'))
-const AzureAuthnPage = lazy(() => import('./pages/authn/AzureAuthnPage'))
-const GcpAuthnPage = lazy(() => import('./pages/authn/GcpAuthnPage'))
-const K8sAuthnPage = lazy(() => import('./pages/authn/K8sAuthnPage'))
-const UsersAuthnPage = lazy(() => import('./pages/authn/UsersAuthnPage'))
-const DynamicSecretsPage = lazy(() => import('./pages/sm/DynamicSecretsPage'))
-const CertificatesPage = lazy(() => import('./pages/sm/CertificatesPage'))
-const RotationPage = lazy(() => import('./pages/sm/RotationPage'))
-const AuditPage = lazy(() => import('./pages/sm/AuditPage'))
-const SummonPage = lazy(() => import('./pages/sm/SummonPage'))
-const McpServerPage = lazy(() => import('./pages/ai/McpServerPage'))
-const SwaAiAgentsPage = lazy(() => import('./pages/ai/SwaAiAgentsPage'))
-const SecretsProviderModesPage = lazy(() => import('./pages/k8s/SecretsProviderModesPage'))
-const SecretsReloaderPage = lazy(() => import('./pages/k8s/SecretsReloaderPage'))
-const SecretlessPage = lazy(() => import('./pages/k8s/SecretlessPage'))
-const TerraformPage = lazy(() => import('./pages/cicd/TerraformPage'))
-const GitLabPage = lazy(() => import('./pages/cicd/GitLabPage'))
-const AzureDevOpsPage = lazy(() => import('./pages/cicd/AzureDevOpsPage'))
-const BitbucketPage = lazy(() => import('./pages/cicd/BitbucketPage'))
-const CircleCiPage = lazy(() => import('./pages/cicd/CircleCiPage'))
-const OctopusPage = lazy(() => import('./pages/cicd/OctopusPage'))
-const PythonAwsPage = lazy(() => import('./pages/platforms/PythonAwsPage'))
-const CloudFoundryPage = lazy(() => import('./pages/platforms/CloudFoundryPage'))
-const PuppetPage = lazy(() => import('./pages/platforms/PuppetPage'))
-const MuleSoftPage = lazy(() => import('./pages/platforms/MuleSoftPage'))
-const ZosCpPage = lazy(() => import('./pages/cp/ZosCpPage'))
-const SolutionFinderPage = lazy(() => import('./pages/SolutionFinderPage'))
-const JwtPage = lazy(() => import('./pages/JwtPage'))
-const SecretsHubPage = lazy(() => import('./pages/SecretsHubPage'))
-const JenkinsPage = lazy(() => import('./pages/JenkinsPage'))
-const AnsiblePage = lazy(() => import('./pages/AnsiblePage'))
-const CsiDriverPage = lazy(() => import('./pages/CsiDriverPage'))
-const PolicyPage = lazy(() => import('./pages/PolicyPage'))
-const concept = (name: 'SecretsConcept' | 'IdentityConcept' | 'CompareConcept' | 'KubernetesConcept' | 'GlossaryConcept') =>
-  lazy(() => import('./pages/ConceptPages').then(m => ({ default: m[name] })))
-const SecretsConcept = concept('SecretsConcept')
-const IdentityConcept = concept('IdentityConcept')
-const CompareConcept = concept('CompareConcept')
-const KubernetesConcept = concept('KubernetesConcept')
-const GlossaryConcept = concept('GlossaryConcept')
+// Every other route is code-split through the router's `lazy`: the chunk is
+// fetched before the navigation commits, so the page swap happens once, with
+// the new page already rendered (no spinner flash, and the view transition
+// snapshots real content instead of the fallback).
+type Module = { default: ComponentType }
+const page = (load: () => Promise<Module>) => async () => ({ Component: (await load()).default })
+type ConceptName = 'SecretsConcept' | 'IdentityConcept' | 'CompareConcept' | 'KubernetesConcept' | 'GlossaryConcept'
+const concept = (name: ConceptName) => async () => ({ Component: (await import('./pages/ConceptPages'))[name] })
 
-function ScrollToTop() {
+/** WCAG focus-on-route-change: after an in-app navigation, move focus to the
+ *  main region so screen readers start at the new page (not on first load). */
+function FocusMain() {
   const { pathname } = useLocation()
   const first = useRef(true)
   useEffect(() => {
-    window.scrollTo(0, 0)
-    // WCAG focus-on-route-change: after an in-app navigation, move focus to the
-    // main region so screen readers start at the new page (not on first load).
     if (first.current) { first.current = false; return }
     document.getElementById('main')?.focus({ preventScroll: true })
   }, [pathname])
@@ -84,83 +30,96 @@ function ScrollToTop() {
 function Layout() {
   return (
     <AppShell>
-      <ScrollToTop />
-      <main id="main" tabIndex={-1} className="pt-14 outline-none">
-        <Suspense fallback={<Loading />}>
-          <PageTransition>
-            <Outlet />
-          </PageTransition>
-        </Suspense>
+      {/* Restores the scroll position on back/forward, top of page otherwise. */}
+      <ScrollRestoration />
+      <FocusMain />
+      <main id="main" tabIndex={-1} className="vt-page pt-14 outline-none">
+        <Outlet />
       </main>
       <Footer />
     </AppShell>
   )
 }
 
+const children: RouteObject[] = [
+  { index: true, Component: HomePage },
+  { path: 'spring-boot', lazy: page(() => import('./components/SpringBootSection')) },
+  { path: 'dotnet', lazy: page(() => import('./components/DotNetSection')) },
+  { path: 'github-actions', lazy: page(() => import('./components/GitHubActionsSection')) },
+  { path: 'eso-shop', lazy: page(() => import('./components/ESOShopSection')) },
+  { path: 'compare', lazy: page(() => import('./pages/ComparePage')) },
+  { path: 'tools', lazy: page(() => import('./components/LiveToolsSection')) },
+  { path: 'dualaccounts', lazy: page(() => import('./pages/DualAccountsPage')) },
+  { path: 'jwt', lazy: page(() => import('./pages/JwtPage')) },
+  { path: 'secretshub', lazy: page(() => import('./pages/SecretsHubPage')) },
+  { path: 'jenkins', lazy: page(() => import('./pages/JenkinsPage')) },
+  { path: 'ansible', lazy: page(() => import('./pages/AnsiblePage')) },
+  { path: 'csi', lazy: page(() => import('./pages/CsiDriverPage')) },
+  { path: 'policy', lazy: page(() => import('./pages/PolicyPage')) },
+  { path: 'concepts/secrets', lazy: concept('SecretsConcept') },
+  { path: 'concepts/machine-identity', lazy: concept('IdentityConcept') },
+  { path: 'concepts/secret-zero', lazy: page(() => import('./pages/concepts/SecretZeroPage')) },
+  { path: 'concepts/secret-vs-identity', lazy: concept('CompareConcept') },
+  { path: 'concepts/kubernetes', lazy: concept('KubernetesConcept') },
+  { path: 'concepts/saas-architecture', lazy: page(() => import('./pages/concepts/SaasArchitecturePage')) },
+  { path: 'concepts/self-hosted-architecture', lazy: page(() => import('./pages/concepts/SelfHostedArchitecturePage')) },
+  { path: 'concepts/swa-architecture', lazy: page(() => import('./pages/concepts/SwaArchitecturePage')) },
+  { path: 'cp', lazy: page(() => import('./pages/cp/CpHubPage')) },
+  { path: 'cp/credential-provider', lazy: page(() => import('./pages/cp/CredentialProviderPage')) },
+  { path: 'cp/ascp', lazy: page(() => import('./pages/cp/AscpPage')) },
+  { path: 'cp/ccp', lazy: page(() => import('./pages/cp/CcpPage')) },
+  { path: 'authn', lazy: page(() => import('./pages/authn/AuthnHubPage')) },
+  { path: 'authn/api-key', lazy: page(() => import('./pages/authn/ApiKeyAuthnPage')) },
+  { path: 'authn/certificate', lazy: page(() => import('./pages/authn/CertAuthnPage')) },
+  { path: 'authn/aws-iam', lazy: page(() => import('./pages/authn/AwsIamAuthnPage')) },
+  { path: 'authn/azure', lazy: page(() => import('./pages/authn/AzureAuthnPage')) },
+  { path: 'authn/gcp', lazy: page(() => import('./pages/authn/GcpAuthnPage')) },
+  { path: 'authn/kubernetes', lazy: page(() => import('./pages/authn/K8sAuthnPage')) },
+  { path: 'authn/users', lazy: page(() => import('./pages/authn/UsersAuthnPage')) },
+  { path: 'sm/dynamic-secrets', lazy: page(() => import('./pages/sm/DynamicSecretsPage')) },
+  { path: 'sm/certificates', lazy: page(() => import('./pages/sm/CertificatesPage')) },
+  { path: 'sm/rotation', lazy: page(() => import('./pages/sm/RotationPage')) },
+  { path: 'sm/audit', lazy: page(() => import('./pages/sm/AuditPage')) },
+  { path: 'sm/summon', lazy: page(() => import('./pages/sm/SummonPage')) },
+  { path: 'ai/mcp-server', lazy: page(() => import('./pages/ai/McpServerPage')) },
+  { path: 'ai/swa-agents', lazy: page(() => import('./pages/ai/SwaAiAgentsPage')) },
+  { path: 'k8s/secrets-provider-modes', lazy: page(() => import('./pages/k8s/SecretsProviderModesPage')) },
+  { path: 'k8s/reloader', lazy: page(() => import('./pages/k8s/SecretsReloaderPage')) },
+  { path: 'k8s/secretless', lazy: page(() => import('./pages/k8s/SecretlessPage')) },
+  { path: 'cicd/terraform', lazy: page(() => import('./pages/cicd/TerraformPage')) },
+  { path: 'cicd/gitlab', lazy: page(() => import('./pages/cicd/GitLabPage')) },
+  { path: 'cicd/azure-devops', lazy: page(() => import('./pages/cicd/AzureDevOpsPage')) },
+  { path: 'cicd/bitbucket', lazy: page(() => import('./pages/cicd/BitbucketPage')) },
+  { path: 'cicd/circleci', lazy: page(() => import('./pages/cicd/CircleCiPage')) },
+  { path: 'cicd/octopus', lazy: page(() => import('./pages/cicd/OctopusPage')) },
+  { path: 'platforms/python-aws', lazy: page(() => import('./pages/platforms/PythonAwsPage')) },
+  { path: 'platforms/cloud-foundry', lazy: page(() => import('./pages/platforms/CloudFoundryPage')) },
+  { path: 'platforms/puppet', lazy: page(() => import('./pages/platforms/PuppetPage')) },
+  { path: 'platforms/mulesoft', lazy: page(() => import('./pages/platforms/MuleSoftPage')) },
+  { path: 'cp/zos', lazy: page(() => import('./pages/cp/ZosCpPage')) },
+  { path: 'finder', lazy: page(() => import('./pages/SolutionFinderPage')) },
+  { path: 'concepts/glossary', lazy: concept('GlossaryConcept') },
+]
+
+const routes: RouteObject[] = [{ Component: Layout, hydrateFallbackElement: <Loading />, children }]
+
+/**
+ * Resolve the lazy route that matches the first URL before the router starts,
+ * so a deep link renders the shell and the page in one paint (React Router SPA
+ * guidance). Runs in parallel with the locale chunk in main.tsx.
+ */
+export async function preloadInitialRoute() {
+  const matches = matchRoutes(routes, window.location) ?? []
+  await Promise.all(matches.map(async m => {
+    const load = m.route.lazy
+    if (typeof load !== 'function') return
+    Object.assign(m.route, { ...(await load()), lazy: undefined })
+  }))
+}
+
+let router: ReturnType<typeof createBrowserRouter> | undefined
+
 export default function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/"               element={<HomePage />} />
-          <Route path="/spring-boot"    element={<SpringBootSection />} />
-          <Route path="/dotnet"         element={<DotNetSection />} />
-          <Route path="/github-actions" element={<GitHubActionsSection />} />
-          <Route path="/eso-shop"       element={<ESOShopSection />} />
-          <Route path="/compare"        element={<ComparePage />} />
-          <Route path="/tools"          element={<LiveToolsSection />} />
-          <Route path="/dualaccounts"   element={<DualAccountsPage />} />
-          <Route path="/jwt"            element={<JwtPage />} />
-          <Route path="/secretshub"     element={<SecretsHubPage />} />
-          <Route path="/jenkins"        element={<JenkinsPage />} />
-          <Route path="/ansible"        element={<AnsiblePage />} />
-          <Route path="/csi"            element={<CsiDriverPage />} />
-          <Route path="/policy"         element={<PolicyPage />} />
-          <Route path="/concepts/secrets"            element={<SecretsConcept />} />
-          <Route path="/concepts/machine-identity"   element={<IdentityConcept />} />
-          <Route path="/concepts/secret-zero"        element={<SecretZeroPage />} />
-          <Route path="/concepts/secret-vs-identity" element={<CompareConcept />} />
-          <Route path="/concepts/kubernetes"         element={<KubernetesConcept />} />
-          <Route path="/concepts/saas-architecture"  element={<SaasArchitecturePage />} />
-          <Route path="/concepts/self-hosted-architecture" element={<SelfHostedArchitecturePage />} />
-          <Route path="/concepts/swa-architecture"   element={<SwaArchitecturePage />} />
-          <Route path="/cp" element={<CpHubPage />} />
-          <Route path="/cp/credential-provider" element={<CredentialProviderPage />} />
-          <Route path="/cp/ascp" element={<AscpPage />} />
-          <Route path="/cp/ccp" element={<CcpPage />} />
-          <Route path="/authn" element={<AuthnHubPage />} />
-          <Route path="/authn/api-key" element={<ApiKeyAuthnPage />} />
-          <Route path="/authn/certificate" element={<CertAuthnPage />} />
-          <Route path="/authn/aws-iam" element={<AwsIamAuthnPage />} />
-          <Route path="/authn/azure" element={<AzureAuthnPage />} />
-          <Route path="/authn/gcp" element={<GcpAuthnPage />} />
-          <Route path="/authn/kubernetes" element={<K8sAuthnPage />} />
-          <Route path="/authn/users" element={<UsersAuthnPage />} />
-          <Route path="/sm/dynamic-secrets" element={<DynamicSecretsPage />} />
-          <Route path="/sm/certificates" element={<CertificatesPage />} />
-          <Route path="/sm/rotation" element={<RotationPage />} />
-          <Route path="/sm/audit" element={<AuditPage />} />
-          <Route path="/sm/summon" element={<SummonPage />} />
-          <Route path="/ai/mcp-server" element={<McpServerPage />} />
-          <Route path="/ai/swa-agents" element={<SwaAiAgentsPage />} />
-          <Route path="/k8s/secrets-provider-modes" element={<SecretsProviderModesPage />} />
-          <Route path="/k8s/reloader" element={<SecretsReloaderPage />} />
-          <Route path="/k8s/secretless" element={<SecretlessPage />} />
-          <Route path="/cicd/terraform" element={<TerraformPage />} />
-          <Route path="/cicd/gitlab" element={<GitLabPage />} />
-          <Route path="/cicd/azure-devops" element={<AzureDevOpsPage />} />
-          <Route path="/cicd/bitbucket" element={<BitbucketPage />} />
-          <Route path="/cicd/circleci" element={<CircleCiPage />} />
-          <Route path="/cicd/octopus" element={<OctopusPage />} />
-          <Route path="/platforms/python-aws" element={<PythonAwsPage />} />
-          <Route path="/platforms/cloud-foundry" element={<CloudFoundryPage />} />
-          <Route path="/platforms/puppet" element={<PuppetPage />} />
-          <Route path="/platforms/mulesoft" element={<MuleSoftPage />} />
-          <Route path="/cp/zos" element={<ZosCpPage />} />
-          <Route path="/finder" element={<SolutionFinderPage />} />
-          <Route path="/concepts/glossary"           element={<GlossaryConcept />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  )
+  router ??= createBrowserRouter(routes)
+  return <RouterProvider router={router} />
 }

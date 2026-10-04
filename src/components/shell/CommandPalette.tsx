@@ -75,7 +75,7 @@ export default function CommandPalette() {
   const go = useCallback((e: Entry) => {
     setOpen(false)
     if (e.external) { window.location.assign(e.to); return }
-    navigate(e.to)
+    navigate(e.to, { viewTransition: true })
     if (e.hash) {
       // The glossary page is lazy-loaded: retry until the anchor exists.
       let tries = 0

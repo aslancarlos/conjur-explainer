@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/router'
 import {
   ArrowRight, BadgeCheck, Check, Cloud, Container, FileCode2, Flame, GitBranch, HardDrive, KeyRound,
   RefreshCcwDot, ScrollText, ShieldAlert, ShieldCheck, ShipWheel, Terminal, Variable, X,

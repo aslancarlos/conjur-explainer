@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link } from '../lib/router'
 import { useTranslation } from 'react-i18next'
 import { ArrowDown, Fingerprint, KeyRound } from 'lucide-react'
 import securityLayers from '../assets/brand/security-layers-blue.png'

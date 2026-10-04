@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
+import { Link } from '../../lib/router'
 import { useTranslation } from 'react-i18next'
 import { ChevronDown } from 'lucide-react'
 import { navBy, SECTIONS, ZONES, type NavGroup, type NavItem } from '../../lib/nav'

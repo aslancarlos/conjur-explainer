@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../lib/router'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight } from 'lucide-react'
 import { NAV } from '../lib/nav'

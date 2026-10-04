@@ -1,5 +1,6 @@
 import { useRef } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
+import { Link } from '../lib/router'
 import { useTranslation } from 'react-i18next'
 import { useToolsCopy } from '../lib/toolsCopy'
 import type { LucideIcon } from 'lucide-react'

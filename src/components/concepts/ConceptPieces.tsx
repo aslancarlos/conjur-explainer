@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from '../../lib/router'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight, Check, ExternalLink, Fingerprint, KeyRound, ScrollText, ShieldCheck } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'

@@ -245,3 +245,42 @@
   /* Callout used as a full section (title + body + list), not an inline note. */
   .callout-section { flex-direction: column; align-items: flex-start; gap: 0; border-radius: 1rem; padding: 1.5rem; }
 }
+
+/* ─── Route change: native View Transition (React Router `viewTransition`) ───
+   Lateral navigation between sibling pages, so no directional slide: the page
+   area fades out quickly and the new page fades in with a short 8px rise (the
+   old framer-motion PageTransition, now without remounting work). The top bar
+   and the sidebar get their own names so they stay perfectly still instead of
+   joining the root cross-fade. Unsupported browsers just swap the page. */
+.vt-page { view-transition-name: page; }
+.vt-shell-header { view-transition-name: shell-header; }
+.vt-shell-nav { view-transition-name: shell-nav; }
+
+::view-transition-old(root),
+::view-transition-new(root),
+::view-transition-group(shell-header),
+::view-transition-group(shell-nav),
+::view-transition-old(shell-header),
+::view-transition-new(shell-header),
+::view-transition-old(shell-nav),
+::view-transition-new(shell-nav) { animation: none; }
+
+/* Pages differ in height: never morph the box, only fade the snapshots. */
+::view-transition-group(page) { animation-duration: 0s; }
+::view-transition-image-pair(page) { isolation: auto; }
+::view-transition-old(page) {
+  animation: 120ms cubic-bezier(0.4, 0, 1, 1) both vt-page-out;
+  height: 100%; object-fit: cover; object-position: top;
+}
+::view-transition-new(page) {
+  animation: 240ms cubic-bezier(0.2, 0.7, 0.2, 1) 60ms both vt-page-in;
+  height: 100%; object-fit: cover; object-position: top;
+}
+@keyframes vt-page-out { to { opacity: 0; } }
+@keyframes vt-page-in { from { opacity: 0; transform: translateY(8px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
+}
