@@ -43,7 +43,7 @@ export type SectionKey = 'authn' | 'usecases'
 /** Sidebar submenus inside a group (the flat list still drives trails, search and catalogue). */
 export const SECTIONS: Record<SectionKey, { labelKey: string; Icon: LucideIcon; logo?: string; highlight?: boolean }> = {
   authn:    { labelKey: 'nav.sec_authn', Icon: Fingerprint, logo: '/icons/nav/sec_authn.svg' },
-  // highlight: the one submenu that shows its item count as a product-coloured badge (DESIGN.md §6)
+  // highlight: Use cases submenus show their item count as a product-coloured badge (DESIGN.md §6)
   usecases: { labelKey: 'nav.sec_usecases', Icon: Layers, logo: '/icons/nav/g_usecases.svg', highlight: true },
 }
 
@@ -169,9 +169,9 @@ export const NAV: NavGroup[] = [
     descKey: 'demos.group_swa',
     items: [
       { to: '/concepts/swa-architecture', product: 'swa', labelKey: 'nav.c_swa', subKey: 'nav.c_swa_sub', logo: '/icons/nav/swa_arch.svg', Icon: ShieldCheck, color: 'text-tone-live' },
-      { to: '/svid', product: 'swa', href: '/svid', labelKey: 'nav.svid', subKey: 'nav.svid_sub', logo: '/icons/nav/svid.svg', Icon: FileBadge, color: 'text-tone-live',
+      { to: '/svid', product: 'swa', section: 'usecases', href: '/svid', labelKey: 'nav.svid', subKey: 'nav.svid_sub', logo: '/icons/nav/svid.svg', Icon: FileBadge, color: 'text-tone-live',
         demo: { name: 'SVID Explorer', secret: 'X.509-SVID + JWT-SVID', descKey: 'demos.svid' } },
-      { to: '/swa-s3', product: 'swa', href: '/swa-s3', labelKey: 'nav.swa', subKey: 'nav.swa_sub', logo: '/icons/nav/swa_s3.svg', Icon: Database, color: 'text-tone-live',
+      { to: '/swa-s3', product: 'swa', section: 'usecases', href: '/swa-s3', labelKey: 'nav.swa', subKey: 'nav.swa_sub', logo: '/icons/nav/swa_s3.svg', Icon: Database, color: 'text-tone-live',
         demo: { name: 'SWA → AWS S3', secret: 'SPIFFE/SVID → STS', descKey: 'demos.swa' } },
       { to: '/ai/swa-agents', product: 'swa', labelKey: 'nav.ai_swa', shortKey: 'nav.ai_swa_side', subKey: 'nav.ai_swa_sub', logo: '/icons/tech/ai_agents.svg', Icon: Bot, color: 'text-tone-live' },
     ],
