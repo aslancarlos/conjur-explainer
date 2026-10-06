@@ -290,11 +290,18 @@
       "shubSh": "Secrets Hub con PAM Self-Hosted"
     },
     "prereq_title": "Lista de requisitos previos",
-    "prereq_lead": "Lo que debe estar listo antes de cada integración. Tomado de los requisitos y límites documentados en cada página.",
+    "prereq_lead": "Lo que debe estar listo antes de cada integración: prerrequisitos, reglas de red (los números son los flujos del diagrama y de la tabla de red) y la documentación oficial de cada elemento.",
     "prereq_show": "Mostrar lista ({{count}} elementos)",
     "prereq_hide": "Ocultar lista",
     "prereq_general": "General: {{product}}",
-    "prereq_see_page": "Esta página aún no lista requisitos previos: vea la página para los detalles de configuración.",
+    "prereq_see_page": "Sin prerrequisitos adicionales además de los elementos generales del producto.",
+    "prereq_shared": "Elementos usados por más de una integración, listados una sola vez.",
+    "prereq_inferred": "inferido: confirme antes de abrir reglas",
+    "prereq_flow_local": "Local",
+    "prereq_flow": "Flujo {{no}}",
+    "prereq_docs": "Documentación de referencia",
+    "prereq_reqs": "Requisitos de los componentes",
+    "prereq_net": "Requisitos de red",
     "print": "Imprimir / Guardar como PDF",
     "copy_prereq": "Copiar requisitos",
     "copied_prereq": "Requisitos copiados",
@@ -307,7 +314,7 @@
     "report_main": "Producto principal",
     "report_complement": "Complemento",
     "report_notes": "Notas",
-    "report_sources": "Las recomendaciones son un punto de partida, no un dimensionamiento. Revise disponibilidad y limitaciones en cada página antes de planificar.",
+    "report_sources": "Las recomendaciones son un punto de partida, no un dimensionamiento. Verifique disponibilidad y limitaciones en la documentación oficial listada en cada elemento antes de planificar.",
     "prereq": {
       "general": {
         "sm": [

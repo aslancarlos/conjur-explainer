@@ -20,6 +20,8 @@ import NetworkTable, { FirewallRules, FlowsTable, type NetworkTableLabels } from
 import { ZONES, inputFromEvaluation, resolve, usesSecretsManager, type Edition } from '../lib/finder/netCatalog'
 import { buildDrawio, drawioOpenUrl } from '../lib/finder/drawio'
 import { toCsv, toMarkdown, type ExportLabels } from '../lib/finder/exports'
+import { nodeById } from '../lib/finder/netCatalog'
+import { prereqNetwork, type NetGroup, type NumberedFlow } from '../lib/finder/prereqNet'
 import { NAV } from '../lib/nav'
 import { APPS_ENVS, DETAIL_GROUPS, DETAILS, ENVS, GOALS, LOGO, PRODUCTS, RECS, STORES, evaluate, goalEnabled, effectiveDetails } from './finderModel'
 import type { GoalId, Prod } from './finderModel'
@@ -57,7 +59,6 @@ type View = StepKey | 'result'
 const VIEWS: View[] = ['s1', 's2', 's3', 'result']
 
 const CONTACT = 'asramos@paloaltonetworks.com'
-const SITE = 'https://demo.minha.cloud'
 const NAV_ITEMS = NAV.flatMap(g => g.items)
 /** Nav item by route (first one wins, as with find), for the lookups inside render loops. */
 const NAV_BY_TO = new Map<string, (typeof NAV_ITEMS)[number]>()
@@ -235,7 +236,6 @@ function SolutionFinderPageView() {
   const prereqOf = (r: string): string[] =>
     i18n.exists(`finder.prereq.rec.${r}`) ? (t(`finder.prereq.rec.${r}`, { returnObjects: true }) as string[]) : []
   const generalOf = (p: Prod) => t(`finder.prereq.general.${p}`, { returnObjects: true }) as string[]
-  const fullUrl = (r: string) => `${SITE}${RECS[r].to}`
   const today = new Date().toLocaleDateString(i18n.language, { year: 'numeric', month: 'long', day: 'numeric' })
   const noteLines = (): string[] => [
     ...ev.needsPam.map(p => `${f('needs_pam_title')} ${f(`needs_pam.${p}`)}`),
@@ -243,6 +243,22 @@ function SolutionFinderPageView() {
     ...(notes.has('stores') ? [`${t('cmp.shub_limits_title')}: ${(t('cmp.shub_limits', { returnObjects: true }) as string[]).join(' ')}`] : []),
     ...(notes.has('other') ? [`${f('other_title')} ${f('other_desc')} ${CONTACT}`] : []),
   ]
+  // Network prerequisites and official docs per recommendation (see lib/finder/prereqNet.ts).
+  const groupSize = (g?: NetGroup) => (g ? g.flows.length + g.reqs.length : 0)
+  const mainDoc = (r: string) => pn?.byRec[r]?.docs[0]?.url
+  const generalCards = (): Prod[] => [...ranked.map(p => p.key), ...((Object.keys(pn?.general ?? {}) as Prod[]).filter(p => !ranked.some(x => x.key === p)))]
+  const flowRoute = (fl: NumberedFlow) => `${nodeById(fl.from).label} → ${nodeById(fl.to).label}`
+  const flowWire = (fl: NumberedFlow) => [fl.port === 'n/a' ? fl.protocol : `${fl.protocol} ${fl.port}`, fl.endpoint].join(', ')
+  const flowHead = (fl: NumberedFlow) => `${fl.no ? f('prereq_flow', { no: fl.no }) : f('prereq_flow_local')} (${a(`short_${fl.direction}`)})`
+  const netText = (g?: NetGroup): string[] => {
+    if (!g) return []
+    const L: string[] = []
+    if (g.flows.length) L.push(`  ${f('prereq_net')}:`, ...g.flows.map(fl =>
+      `  [ ] ${flowHead(fl)}: ${flowRoute(fl)}, ${flowWire(fl)}. ${fl.purpose}${fl.confidence === 'inferred' ? ` [${f('prereq_inferred')}]` : ''}`))
+    if (g.reqs.length) L.push(`  ${f('prereq_reqs')}:`, ...g.reqs.map(q => `  [ ] ${q.text}${q.confidence === 'inferred' ? ` [${f('prereq_inferred')}]` : ''}`))
+    if (g.docs.length) L.push(`  ${f('prereq_docs')}:`, ...g.docs.map(d => `  - ${d.title}: ${d.url}`))
+    return L
+  }
   const buildText = () => {
     const L: string[] = []
     L.push(`${t('shell.site_name')} | ${f('report_title')}`, `${f('report_date')}: ${today}`, f('report_prepared'), '')
@@ -259,14 +275,16 @@ function SolutionFinderPageView() {
       return `- ${tileName(id)}: ${ps.length ? ps.map(prodName).join(', ') : id === 'other' ? f('coverage_other') : f('coverage_none')}`
     }), '')
     if (path.length) {
-      L.push(f('path_title').toUpperCase(), ...path.map((r, i) => `${i + 1}. ${recLabel(r)} (${prodName(RECS[r].product)}): ${fullUrl(r)}`), '')
-      L.push(f('prereq_title').toUpperCase())
-      ranked.forEach(p => { L.push(f('prereq_general', { product: prodName(p.key) }), ...generalOf(p.key).map(x => `  [ ] ${x}`)) })
+      L.push(f('path_title').toUpperCase(), ...path.map((r, i) => `${i + 1}. ${recLabel(r)} (${prodName(RECS[r].product)})${mainDoc(r) ? `: ${mainDoc(r)}` : ''}`), '')
+      L.push(f('prereq_title').toUpperCase(), '')
+      generalCards().forEach(p => {
+        L.push(f('prereq_general', { product: prodName(p) }), ...generalOf(p).map(x => `  [ ] ${x}`), ...netText(pn?.general[p]), '')
+      })
       path.forEach(r => {
         const items = prereqOf(r)
-        L.push(`${recLabel(r)} (${fullUrl(r)})`, ...(items.length ? items.map(x => `  [ ] ${x}`) : [`  ${f('prereq_see_page')}`]))
+        const g = pn?.byRec[r]
+        L.push(recLabel(r), ...(items.length ? items.map(x => `  [ ] ${x}`) : groupSize(g) ? [] : [`  ${f('prereq_see_page')}`]), ...netText(g), '')
       })
-      L.push('')
     }
     const nl = noteLines()
     if (nl.length) L.push(f('report_notes').toUpperCase(), ...nl.map(x => `- ${x}`), '')
@@ -331,6 +349,7 @@ function SolutionFinderPageView() {
     const xml = buildDrawio(r, { title: a('export_title'), date: isoDate, labels: exportLabels, selectedNames: names, goalNames })
     return { r, xml, names }
   }, [view, selKey, smEdition, i18n.language]) // eslint-disable-line react-hooks/exhaustive-deps
+  const pn = useMemo(() => (net ? prereqNetwork(net.r, path, ranked.map(p => p.key)) : null), [net]) // eslint-disable-line react-hooks/exhaustive-deps
   const [drawioUrl, setDrawioUrl] = useState<string | null>(null)
   useEffect(() => {
     let alive = true
@@ -528,6 +547,52 @@ function SolutionFinderPageView() {
     )
   }
 
+  const subHead = (text: string) => <p className="pt-1 text-xs font-semibold uppercase tracking-wider text-text-muted">{text}</p>
+  const inferredTag = <span className="inline-flex rounded border border-tone-warning/40 bg-tone-warning/10 px-1.5 text-xs font-medium text-tone-warning">{f('prereq_inferred')}</span>
+  const netBlock = (g?: NetGroup) => !g || (!g.flows.length && !g.reqs.length && !g.docs.length) ? null : (
+    <div className="space-y-2.5">
+      {g.flows.length > 0 && (<>
+        {subHead(f('prereq_net'))}
+        <ul className="space-y-2">
+          {g.flows.map(fl => (
+            <li key={fl.id} className="flex gap-2.5 text-sm leading-relaxed text-text-2">
+              <span aria-hidden="true" className="mt-1 h-3.5 w-3.5 shrink-0 rounded-[3px] border border-text-muted" />
+              <span className="block min-w-0 flex-1">
+                <span className="flex flex-wrap items-center gap-x-1.5 gap-y-1"><span className="font-semibold text-text">{flowHead(fl)}</span>{fl.confidence === 'inferred' && inferredTag}</span>
+                <span className="block text-text">{flowRoute(fl)}</span>
+                <span translate="no" className="block break-all font-mono text-xs text-text-2">{flowWire(fl)}</span>
+                <span className="block">{fl.purpose}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      </>)}
+      {g.reqs.length > 0 && (<>
+        {subHead(f('prereq_reqs'))}
+        <ul className="space-y-1.5">
+          {g.reqs.map(q => (
+            <li key={q.id} className="flex gap-2.5 text-sm leading-relaxed text-text-2">
+              <span aria-hidden="true" className="mt-1 h-3.5 w-3.5 shrink-0 rounded-[3px] border border-text-muted" />
+              <span className="block min-w-0 flex-1">{q.text}{q.confidence === 'inferred' && <> {inferredTag}</>}</span>
+            </li>
+          ))}
+        </ul>
+      </>)}
+      {g.docs.length > 0 && (<>
+        {subHead(f('prereq_docs'))}
+        <ul className="space-y-1">
+          {g.docs.map(d => (
+            <li key={d.url} className="text-sm leading-relaxed">
+              <a href={d.url} target="_blank" rel="noreferrer"
+                className="inline-flex items-start gap-1.5 rounded py-0.5 text-text-2 underline underline-offset-2 hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue">
+                <span>{d.title}</span><ExternalLink size={12} aria-hidden="true" className="mt-1 shrink-0" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </>)}
+    </div>
+  )
   const checklist = (items: string[]) => (
     <ul className="space-y-1.5">
       {items.map(x => (
@@ -983,22 +1048,26 @@ function SolutionFinderPageView() {
               </div>
               <button type="button" aria-expanded={showPrereq} aria-controls="finder-prereq-list" onClick={() => setShowPrereq(v => !v)} className={btnSecondary}>
                 <ListChecks size={16} aria-hidden="true" />
-                {showPrereq ? f('prereq_hide') : f('prereq_show', { count: ranked.reduce((n, p) => n + generalOf(p.key).length, 0) + path.reduce((n, r) => n + prereqOf(r).length, 0) })}
+                {showPrereq ? f('prereq_hide') : f('prereq_show', { count: generalCards().reduce((n, p) => n + generalOf(p).length + groupSize(pn?.general[p]), 0) + path.reduce((n, r) => n + prereqOf(r).length + groupSize(pn?.byRec[r]), 0) })}
               </button>
             </div>
-            <div id="finder-prereq-list" className={`${showPrereq ? 'grid' : 'hidden'} gap-3 md:grid-cols-2`}>
-              {ranked.map(p => (
-                <div key={p.key} className="space-y-2.5 rounded-xl border border-border bg-bg-base p-4">
-                  <p className="inline-flex items-center gap-2 text-sm font-semibold text-text">{ProdDot(p.key)}{f('prereq_general', { product: prodName(p.key) })}</p>
-                  {checklist(generalOf(p.key))}
+            <div id="finder-prereq-list" className={`${showPrereq ? 'grid' : 'hidden'} gap-3 xl:grid-cols-2`}>
+              {generalCards().map(p => (
+                <div key={p} className="space-y-2.5 rounded-xl border border-border bg-bg-base p-4">
+                  <p className="inline-flex items-center gap-2 text-sm font-semibold text-text">{ProdDot(p)}{f('prereq_general', { product: prodName(p) })}</p>
+                  {generalOf(p).length > 0 && checklist(generalOf(p))}
+                  {pn?.general[p] && <p className="text-xs text-text-muted">{f('prereq_shared')}</p>}
+                  {netBlock(pn?.general[p])}
                 </div>
               ))}
               {path.map(r => {
                 const items = prereqOf(r)
+                const g = pn?.byRec[r]
                 return (
                   <div key={r} className="space-y-2.5 rounded-xl border border-border bg-bg-base p-4">
                     <p className="inline-flex items-center gap-2 text-sm font-semibold text-text">{ProdDot(RECS[r].product)}{recLabel(r)}</p>
-                    {items.length ? checklist(items) : <p className="text-sm text-text-muted">{f('prereq_see_page')}</p>}
+                    {items.length ? checklist(items) : !groupSize(g) && <p className="text-sm text-text-muted">{f('prereq_see_page')}</p>}
+                    {netBlock(g)}
                   </div>
                 )
               })}
@@ -1025,6 +1094,29 @@ function SolutionFinderPageView() {
     if (view !== 'result' || (!items.length && !notes.has('other'))) return null
     const h = 'mt-6 mb-2 border-b border-black/30 pb-1 text-[13px] font-bold uppercase tracking-wider text-black'
     const box = <span aria-hidden="true" className="mt-[3px] inline-block h-3 w-3 shrink-0 border border-black" />
+    const sub = (text: string) => <p className="mt-2 text-[11px] font-semibold uppercase tracking-wider text-black/70">{text}</p>
+    const printNet = (g?: NetGroup) => !g ? null : (
+      <>
+        {g.flows.length > 0 && (<>
+          {sub(f('prereq_net'))}
+          <ul className="mt-1 space-y-1">{g.flows.map(fl => (
+            <li key={fl.id} className="flex break-inside-avoid gap-2">{box}<span>
+              <span className="font-semibold">{flowHead(fl)}: {flowRoute(fl)}</span>{fl.confidence === 'inferred' ? ` [${f('prereq_inferred')}]` : ''}
+              <span className="block break-all font-mono text-[10.5px]">{flowWire(fl)}</span>
+              <span className="block text-black/80">{fl.purpose}</span>
+            </span></li>
+          ))}</ul>
+        </>)}
+        {g.reqs.length > 0 && (<>
+          {sub(f('prereq_reqs'))}
+          <ul className="mt-1 space-y-1">{g.reqs.map(q => <li key={q.id} className="flex break-inside-avoid gap-2">{box}<span>{q.text}{q.confidence === 'inferred' ? ` [${f('prereq_inferred')}]` : ''}</span></li>)}</ul>
+        </>)}
+        {g.docs.length > 0 && (<>
+          {sub(f('prereq_docs'))}
+          <ul className="mt-1 space-y-0.5">{g.docs.map(d => <li key={d.url} className="break-inside-avoid">{d.title}: <span className="break-all font-mono text-[10.5px]">{d.url}</span></li>)}</ul>
+        </>)}
+      </>
+    )
     return (
       <div id="finder-report" className="hidden bg-white text-[12px] leading-relaxed text-black print:block">
         <div className="flex items-end justify-between border-b-2 border-black pb-3">
@@ -1085,7 +1177,7 @@ function SolutionFinderPageView() {
                 <li key={r} className="break-inside-avoid">
                   <span className="font-bold">{i + 1}. {recLabel(r)}</span> <span className="text-black/70">({prodName(RECS[r].product)})</span>
                   <span className="block">{f(`reason.${r}`)}</span>
-                  <span className="block font-mono text-[10.5px] text-black/80">{fullUrl(r)}</span>
+                  {mainDoc(r) && <span className="block break-all font-mono text-[10.5px] text-black/80">{mainDoc(r)}</span>}
                 </li>
               ))}
             </ol>
@@ -1106,20 +1198,23 @@ function SolutionFinderPageView() {
 
             <h2 className={h}>{f('prereq_title')}</h2>
             <p className="mb-2 text-black/80">{f('prereq_lead')}</p>
-            {ranked.map(p => (
-              <div key={p.key} className="mb-3 break-inside-avoid">
-                <p className="font-bold">{f('prereq_general', { product: prodName(p.key) })}</p>
-                <ul className="mt-1 space-y-1">{generalOf(p.key).map(x => <li key={x} className="flex gap-2">{box}<span>{x}</span></li>)}</ul>
+            {generalCards().map(p => (
+              <div key={p} className="mb-3">
+                <p className="font-bold">{f('prereq_general', { product: prodName(p) })}</p>
+                <ul className="mt-1 space-y-1">{generalOf(p).map(x => <li key={x} className="flex gap-2">{box}<span>{x}</span></li>)}</ul>
+                {printNet(pn?.general[p])}
               </div>
             ))}
             {path.map(r => {
               const items = prereqOf(r)
+              const g = pn?.byRec[r]
               return (
-                <div key={r} className="mb-3 break-inside-avoid">
-                  <p className="font-bold">{recLabel(r)} <span className="font-mono text-[10.5px] font-normal text-black/70">{fullUrl(r)}</span></p>
+                <div key={r} className="mb-3">
+                  <p className="font-bold">{recLabel(r)}</p>
                   {items.length
                     ? <ul className="mt-1 space-y-1">{items.map(x => <li key={x} className="flex gap-2">{box}<span>{x}</span></li>)}</ul>
-                    : <p className="mt-1 text-black/70">{f('prereq_see_page')}</p>}
+                    : !groupSize(g) && <p className="mt-1 text-black/70">{f('prereq_see_page')}</p>}
+                  {printNet(g)}
                 </div>
               )
             })}

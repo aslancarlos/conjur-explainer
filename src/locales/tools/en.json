@@ -290,11 +290,18 @@
       "shubSh": "Secrets Hub with PAM Self-Hosted"
     },
     "prereq_title": "Prerequisites checklist",
-    "prereq_lead": "What to have in place before each integration. Taken from the requirements and limits documented on each page.",
+    "prereq_lead": "What must be ready before each integration: prerequisites, network rules (numbers are the flows in the diagram and network table) and the official documentation for each item.",
     "prereq_show": "Show checklist ({{count}} items)",
     "prereq_hide": "Hide checklist",
     "prereq_general": "General: {{product}}",
-    "prereq_see_page": "No prerequisites listed on this page yet: see the page for setup details.",
+    "prereq_see_page": "No prerequisites beyond the general product items.",
+    "prereq_shared": "Items used by more than one integration, listed once.",
+    "prereq_inferred": "inferred: confirm before opening rules",
+    "prereq_flow_local": "Local",
+    "prereq_flow": "Flow {{no}}",
+    "prereq_docs": "Reference documentation",
+    "prereq_reqs": "Component requirements",
+    "prereq_net": "Network requirements",
     "print": "Print / Save as PDF",
     "copy_prereq": "Copy prerequisites",
     "copied_prereq": "Prerequisites copied",
@@ -307,7 +314,7 @@
     "report_main": "Main product",
     "report_complement": "Complement",
     "report_notes": "Notes",
-    "report_sources": "Recommendations are a starting point, not a sizing. Check availability and limitations on each page before planning.",
+    "report_sources": "Recommendations are a starting point, not sizing. Check availability and limitations in the official documentation listed under each item before planning.",
     "prereq": {
       "general": {
         "sm": [
