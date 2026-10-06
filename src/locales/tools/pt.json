@@ -290,11 +290,18 @@
       "shubSh": "Secrets Hub com PAM Self-Hosted"
     },
     "prereq_title": "Checklist de pré-requisitos",
-    "prereq_lead": "O que precisa estar pronto antes de cada integração. Retirado dos requisitos e limites documentados em cada página.",
+    "prereq_lead": "O que precisa estar pronto antes de cada integração: pré-requisitos, regras de rede (os números são os fluxos do diagrama e da tabela de rede) e a documentação oficial de cada item.",
     "prereq_show": "Mostrar checklist ({{count}} itens)",
     "prereq_hide": "Ocultar checklist",
     "prereq_general": "Geral: {{product}}",
-    "prereq_see_page": "Esta página ainda não lista pré-requisitos: veja a página para os detalhes de configuração.",
+    "prereq_see_page": "Sem pré-requisitos adicionais além dos itens gerais do produto.",
+    "prereq_shared": "Itens usados por mais de uma integração, listados uma vez só.",
+    "prereq_inferred": "inferido: confirme antes de abrir regras",
+    "prereq_flow_local": "Local",
+    "prereq_flow": "Fluxo {{no}}",
+    "prereq_docs": "Documentação de referência",
+    "prereq_reqs": "Requisitos dos componentes",
+    "prereq_net": "Requisitos de rede",
     "print": "Imprimir / Salvar em PDF",
     "copy_prereq": "Copiar pré-requisitos",
     "copied_prereq": "Pré-requisitos copiados",
@@ -307,7 +314,7 @@
     "report_main": "Produto principal",
     "report_complement": "Complemento",
     "report_notes": "Observações",
-    "report_sources": "As recomendações são um ponto de partida, não um dimensionamento. Confira disponibilidade e limitações em cada página antes de planejar.",
+    "report_sources": "As recomendações são um ponto de partida, não um dimensionamento. Confira disponibilidade e limitações na documentação oficial listada em cada item antes de planejar.",
     "prereq": {
       "general": {
         "sm": [
@@ -1110,6 +1117,7 @@
     "zone_idira": "IDIRA SaaS (Palo Alto Networks)",
     "products": "Produtos",
     "edition_hint": "Muda os componentes e fluxos do Secrets Manager no diagrama.",
+    "edition_swa_hint": "O Secure Workload Access existe só no Secrets Manager SaaS, por isso a edição fica fixa em SaaS.",
     "opening": "Abrindo…",
     "badge_documented": "Conexão numerada: porta e endpoint documentados",
     "badge_inferred": "Conexão numerada: inferida, confirme antes de abrir regras",
