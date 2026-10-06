@@ -19,9 +19,10 @@ import ArchitecturePreview, { type ArchitecturePreviewLabels } from '../componen
 import NetworkTable, { FirewallRules, FlowsTable, type NetworkTableLabels } from '../components/finder/NetworkTable'
 import { ZONES, inputFromEvaluation, resolve, usesSecretsManager, type Edition } from '../lib/finder/netCatalog'
 import { buildDrawio, drawioOpenUrl } from '../lib/finder/drawio'
-import { toCsv, toMarkdown, type ExportLabels } from '../lib/finder/exports'
+import { numberedFlows, toCsv, toMarkdown, type ExportLabels } from '../lib/finder/exports'
 import { nodeById } from '../lib/finder/netCatalog'
 import { prereqNetwork, type NetGroup, type NumberedFlow } from '../lib/finder/prereqNet'
+import { docHref, forEdition } from '../lib/finder/recDocs'
 import { NAV } from '../lib/nav'
 import { APPS_ENVS, DETAIL_GROUPS, DETAILS, ENVS, GOALS, LOGO, PRODUCTS, RECS, STORES, evaluate, goalEnabled, effectiveDetails } from './finderModel'
 import type { GoalId, Prod } from './finderModel'
@@ -284,6 +285,23 @@ function SolutionFinderPageView() {
         const items = prereqOf(r)
         const g = pn?.byRec[r]
         L.push(recLabel(r), ...(items.length ? items.map(x => `  [ ] ${x}`) : groupSize(g) ? [] : [`  ${f('prereq_see_page')}`]), ...netText(g), '')
+      })
+    }
+    if (net) {
+      const conf = (c: string) => (c === 'documented' ? a('documented') : a('inferred'))
+      L.push(a('flows_title').toUpperCase(), `${a('table_note')} ${a('inferred_note')}`, '')
+      numberedFlows(net.r).forEach(fl => L.push(
+        `${fl.no ? `${fl.no}.` : '-'} ${flowRoute(fl)} (${a(`dir_${fl.direction}`)})`,
+        `   ${a('col_protocol')} / ${a('col_port')}: ${fl.port === 'n/a' ? fl.protocol : `${fl.protocol} ${fl.port}`}`,
+        `   ${a('col_endpoint')}: ${fl.endpoint}`,
+        `   ${a('col_purpose')}: ${fl.purpose}`,
+        `   ${a('col_confidence')}: ${conf(fl.confidence)}${fl.note ? ` (${fl.note})` : ''}`,
+        `   ${a('col_doc')}: ${docHref(forEdition(fl.source.url, net.r.edition))}`, ''))
+      L.push(a('rules_title').toUpperCase(), '')
+      net.r.firewallRules.forEach(g => {
+        L.push(`${a(`dir_${g.direction}`)}: ${a('from')} ${exportLabels.zones?.[g.sourceZone] ?? g.sourceLabel}`)
+        g.rules.forEach(rule => L.push(`  [ ] ${rule.protocol} ${rule.port} → ${rule.endpoint} (${rule.destination}): ${rule.purpose}${rule.confidence === 'inferred' ? ` [${a('inferred')}]` : ''}`))
+        L.push('')
       })
     }
     const nl = noteLines()
