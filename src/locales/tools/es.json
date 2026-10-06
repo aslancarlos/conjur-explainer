@@ -1110,6 +1110,7 @@
     "zone_idira": "IDIRA SaaS (Palo Alto Networks)",
     "products": "Productos",
     "edition_hint": "Cambia los componentes y flujos de Secrets Manager en el diagrama.",
+    "edition_swa_hint": "Secure Workload Access solo existe en Secrets Manager SaaS, por eso la edición queda fija en SaaS.",
     "opening": "Abriendo…",
     "badge_documented": "Conexión numerada: puerto y endpoint documentados",
     "badge_inferred": "Conexión numerada: inferida, confírmela antes de abrir reglas",

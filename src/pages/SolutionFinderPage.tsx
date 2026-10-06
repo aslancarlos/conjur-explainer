@@ -287,7 +287,11 @@ function SolutionFinderPageView() {
   // ---------- architecture and network (draw.io, CSV, Markdown) ----------
   const a = (k: string, o?: Record<string, unknown>) => t(`finder_arch.${k}`, o) as string
   const [showNet, setShowNet] = useState(false)
-  const smUsed = usesSecretsManager(ev.recs)
+  // Secure Workload Access exists only on Secrets Manager SaaS: with SWA in the
+  // result the edition is locked to SaaS (the picked one is kept for later).
+  const swaUsed = ev.products.some(p => p.key === 'swa')
+  const smUsed = usesSecretsManager(ev.recs) || swaUsed
+  const smEdition: Edition = swaUsed ? 'saas' : edition
   const isoDate = new Date().toISOString().slice(0, 10)
   // Label objects only change with the language and the edition shown in the export.
   const { exportLabels, previewLabels, tableLabels } = useMemo(() => {
@@ -295,7 +299,7 @@ function SolutionFinderPageView() {
     const dirLabels = { outbound: a('dir_outbound'), inbound: a('dir_inbound'), internal: a('dir_internal'), external: a('dir_external') }
     const exportLabels: Partial<ExportLabels> = {
       title: a('export_title'), generatedBy: a('export_generated_by'), selected: a('export_selected'), goals: a('export_goals'),
-      edition: a('edition_label'), editionValue: smUsed ? a(edition === 'saas' ? 'edition_saas' : 'edition_sh') : '',
+      edition: a('edition_label'), editionValue: smUsed ? a(smEdition === 'saas' ? 'edition_saas' : 'edition_sh') : '',
       legend: a('export_legend'), outbound: a('export_outbound'), inbound: a('export_inbound'), internal: a('export_internal'), external: a('export_external'),
       badgeDocumented: a('badge_documented'), badgeInferred: a('badge_inferred'), tableNote: a('table_note'), inferredNote: a('inferred_note'), products: a('products'),
       zones: zoneLabels, number: a('col_number'), source: a('col_source'), destination: a('col_destination'), endpoint: a('col_endpoint'), port: a('col_port'),
@@ -317,16 +321,16 @@ function SolutionFinderPageView() {
       shortDirections: { outbound: a('short_outbound'), inbound: a('short_inbound'), internal: a('short_internal'), external: a('short_external') },
     }
     return { exportLabels, previewLabels, tableLabels }
-  }, [i18n.language, edition, smUsed]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [i18n.language, smEdition, smUsed]) // eslint-disable-line react-hooks/exhaustive-deps
   // routing runs a small optimisation: only on the result step, once per selection / edition / language
   const net = useMemo(() => {
     if (view !== 'result' || !ev.recs.length) return null
-    const r = resolve(inputFromEvaluation(ev, smUsed ? edition : 'saas'))
+    const r = resolve(inputFromEvaluation(ev, smUsed ? smEdition : 'saas'))
     if (!r.nodes.length) return null
     const names = ev.details.map(tileName)
     const xml = buildDrawio(r, { title: a('export_title'), date: isoDate, labels: exportLabels, selectedNames: names, goalNames })
     return { r, xml, names }
-  }, [view, selKey, edition, i18n.language]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [view, selKey, smEdition, i18n.language]) // eslint-disable-line react-hooks/exhaustive-deps
   const [drawioUrl, setDrawioUrl] = useState<string | null>(null)
   useEffect(() => {
     let alive = true
@@ -932,9 +936,10 @@ function SolutionFinderPageView() {
               </div>
               {smUsed && (
                 <div className="space-y-1">
-                  <Segmented<Edition> label={a('edition_label')} value={edition} onChange={setEdition}
-                    options={[{ v: 'saas', label: a('edition_saas') }, { v: 'selfhosted', label: a('edition_sh') }]} />
-                  <p className="text-xs text-text-muted">{a('edition_hint')}</p>
+                  <Segmented<Edition> label={a('edition_label')} value={smEdition} onChange={setEdition}
+                    options={swaUsed ? [{ v: 'saas', label: a('edition_saas') }]
+                      : [{ v: 'saas', label: a('edition_saas') }, { v: 'selfhosted', label: a('edition_sh') }]} />
+                  <p className="max-w-xs text-xs text-text-muted">{a(swaUsed ? 'edition_swa_hint' : 'edition_hint')}</p>
                 </div>
               )}
             </div>
