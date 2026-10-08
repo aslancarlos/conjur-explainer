@@ -214,6 +214,7 @@ All interactive targets ≥ 44×44 px with ≥ 8 px spacing. Icon-only buttons n
 - Decorative icons get `aria-hidden="true"`; meaning lives in the adjacent text.
 - In SVG, render lucide components as nested `<svg>` with `x/y/width/height`; colour via `currentColor` (`className="text-domain-k8s"`).
 - Diagram node icon = **edge chip**: 12 r circle on the card's top edge (right side), `fill-surface` + domain stroke. Never beside the title (it breaks narrow layouts).
+- Colour icons (the set in `public/icons/`, see `ICONS.json`, used by the sidebar and the solution finder) may replace the lucide icon: on a diagram node set `logo` on the `FlowNode` (16 r chip, `fill-white` + domain stroke, 22 px image); on cards use a light rounded slot (`bg-white ring-1 ring-black/5`) so dark strokes stay legible in the dark theme.
 - Keep one icon per concept across the site (ESO → `RefreshCw`, K8s Secret → `KeySquare`, IDIRA/Secrets Manager → `Fingerprint`, ESO Shop → `ShoppingCart`, CPM → `CalendarClock`, DB → `Database`, Vault → `Vault`).
 
 ---
@@ -375,6 +376,8 @@ Focus: every interactive element shows a 2px ring (`focus-visible:ring-2 ring-id
 ---
 
 ## Changelog
+
+- 2026-10-08: `FlowNode.logo` (colour icon chip) and colour icons on `/platform/overview`.
 
 - 2026-10-08: Platform overview group and `/platform/overview` page: star FlowSpec (`PlatformStarFlow`) with the PAM Vault in the center, sync products on the left, run-time providers on the right; one rotation reaches all six consumers.
 

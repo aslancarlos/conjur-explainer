@@ -29,7 +29,8 @@ export type FlowRow =
   | { label: string; value: string; tone?: Tone }
   | { label: string; k: string; states: Array<{ v: string; text: string; tone: Tone }> }
 
-export interface FlowNode { id: string; domain: Domain; Icon: LucideIcon; title: string; sub?: string; rows?: FlowRow[] }
+/** `logo`: optional colour SVG (public/icons, same set as the solution finder) drawn on a light chip instead of `Icon`. */
+export interface FlowNode { id: string; domain: Domain; Icon: LucideIcon; logo?: string; title: string; sub?: string; rows?: FlowRow[] }
 
 export interface FlowLayout {
   w: number; h: number
@@ -387,8 +388,14 @@ export default function FlowPlayer({ spec, className = '' }: { spec: FlowSpec; c
                 <rect x={b.x} y={b.y} width={b.w} height={b.h} rx={12} className="fill-bg-muted stroke-line" strokeWidth={1.25} />
                 {d.stripe && <rect x={b.x + 14} y={b.y - 1.5} width={b.w - 58} height={3} rx={1.5} className={d.stripe} aria-hidden="true" />}
                 <g aria-hidden="true">
-                  <circle cx={cx} cy={cy} r={12} className={`fill-surface ${d.chip}`} strokeWidth={1.5} />
-                  <n.Icon x={cx - 7.5} y={cy - 7.5} width={15} height={15} strokeWidth={1.9} className={d.icon} />
+                  {n.logo ? (<>
+                    {/* light slot in both themes keeps dark logo strokes legible (as in the solution finder) */}
+                    <circle cx={cx} cy={cy} r={16} className={`fill-white ${d.chip}`} strokeWidth={1.5} />
+                    <image href={n.logo} x={cx - 11} y={cy - 11} width={22} height={22} />
+                  </>) : (<>
+                    <circle cx={cx} cy={cy} r={12} className={`fill-surface ${d.chip}`} strokeWidth={1.5} />
+                    <n.Icon x={cx - 7.5} y={cy - 7.5} width={15} height={15} strokeWidth={1.9} className={d.icon} />
+                  </>)}
                 </g>
                 <text x={b.x + 14} y={b.y + 25} fontSize={ts} className="fill-text font-sans font-semibold">{n.title}</text>
                 {n.sub && <text x={b.x + 14} y={b.y + 43} fontSize={11} className="fill-text-muted font-sans">{n.sub}</text>}

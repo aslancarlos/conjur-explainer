@@ -1,23 +1,24 @@
 import { useTranslation } from 'react-i18next'
-import { ArrowRight, ExternalLink, Layers, RotateCw, Vault } from 'lucide-react'
+import { ArrowRight, ExternalLink } from 'lucide-react'
 import { Link } from '../../lib/router'
 import ConceptLayout from '../../components/concepts/ConceptLayout'
 import PlatformStarFlow from '../../components/flow/specs/PlatformStarFlow'
 
+/** Colour icons from public/icons (same set as the solution finder and the sidebar). */
 const BENEFITS = [
-  { key: 'one', Icon: Vault },
-  { key: 'rotate', Icon: RotateCw },
-  { key: 'choose', Icon: Layers },
+  { key: 'one', logo: '/icons/tech/pam.svg' },
+  { key: 'rotate', logo: '/icons/nav/rotation.svg' },
+  { key: 'choose', logo: '/icons/nav/g_usecases.svg' },
 ] as const
 
 /** Every consumer of the Vault, in diagram order, with the page that explains it. */
 const PRODUCTS = [
-  { key: 'smsaas', to: '/concepts/saas-architecture', domain: 'bg-domain-idira' },
-  { key: 'smsh',   to: '/concepts/self-hosted-architecture', domain: 'bg-domain-idira' },
-  { key: 'shub',   to: '/secretshub', domain: 'bg-domain-svc' },
-  { key: 'cp',     to: '/cp/credential-provider', domain: 'bg-domain-cp' },
-  { key: 'ascp',   to: '/cp/ascp', domain: 'bg-domain-cp' },
-  { key: 'ccp',    to: '/cp/ccp', domain: 'bg-domain-cp' },
+  { key: 'smsaas', to: '/concepts/saas-architecture', domain: 'bg-domain-idira', logo: '/icons/nav/c_saas.svg' },
+  { key: 'smsh',   to: '/concepts/self-hosted-architecture', domain: 'bg-domain-idira', logo: '/icons/nav/c_sh.svg' },
+  { key: 'shub',   to: '/secretshub', domain: 'bg-domain-svc', logo: '/icons/nav/g_shub.svg' },
+  { key: 'cp',     to: '/cp/credential-provider', domain: 'bg-domain-cp', logo: '/icons/nav/cp_cp.svg' },
+  { key: 'ascp',   to: '/cp/ascp', domain: 'bg-domain-cp', logo: '/icons/tech/op_appservers.svg' },
+  { key: 'ccp',    to: '/cp/ccp', domain: 'bg-domain-cp', logo: '/icons/nav/ccp.svg' },
 ] as const
 
 const COLS = ['how', 'who', 'when'] as const
@@ -31,6 +32,17 @@ const DOCS = [
   ['cache', 'https://docs.cyberark.com/credential-providers/latest/en/content/cp%20and%20ascp/configuring-caching.htm'],
 ] as const
 
+/** Colour logo on a light rounded slot, legible in both themes (as in the solution finder). */
+function LogoSlot({ src, size }: { src: string; size: number }) {
+  const pad = size >= 28 ? 6 : 4
+  return (
+    <span aria-hidden="true" className="inline-flex shrink-0 items-center justify-center rounded-lg bg-white ring-1 ring-black/5"
+      style={{ width: size + pad * 2, height: size + pad * 2 }}>
+      <img src={src} alt="" width={size} height={size} decoding="async" />
+    </span>
+  )
+}
+
 /**
  * Platform overview: one PAM Vault in the center, every Secrets Manager,
  * Secrets Hub and Credential Provider consumer around it, all reading the same
@@ -43,9 +55,9 @@ export default function PlatformOverviewPage() {
   return (
     <ConceptLayout title={p('title')} subtitle={p('subtitle')}>
       <section className="grid gap-4 md:grid-cols-3">
-        {BENEFITS.map(({ key, Icon }) => (
+        {BENEFITS.map(({ key, logo }) => (
           <div key={key} className="card">
-            <Icon size={20} className="text-domain-idira" aria-hidden="true" />
+            <LogoSlot src={logo} size={28} />
             <h2 className="mt-3 text-base font-semibold text-text">{p(`benefits.${key}_title`)}</h2>
             <p className="mt-1.5 text-sm leading-relaxed text-text-2">{p(`benefits.${key}_desc`)}</p>
           </div>
@@ -71,11 +83,14 @@ export default function PlatformOverviewPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {PRODUCTS.map(({ key, to, domain }) => (
+              {PRODUCTS.map(({ key, to, domain, logo }) => (
                 <tr key={key} className="align-top">
                   <th scope="row" className="px-5 py-4">
-                    <span className="flex items-start gap-2.5">
-                      <span className={`mt-1 h-3 w-1 shrink-0 rounded-full ${domain}`} aria-hidden="true" />
+                    <span className="flex items-start gap-3">
+                      <span className="relative">
+                        <LogoSlot src={logo} size={22} />
+                        <span className={`absolute -left-2 top-1.5 h-4 w-1 rounded-full ${domain}`} aria-hidden="true" />
+                      </span>
                       <span className="min-w-0">
                         <span className="block font-semibold text-text">{p(`products.${key}.name`)}</span>
                         <Link to={to} className="mt-1 inline-flex min-h-11 items-center gap-1 text-xs font-semibold text-tone-accent hover:underline">
