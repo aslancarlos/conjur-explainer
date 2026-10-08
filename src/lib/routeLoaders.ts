@@ -63,6 +63,7 @@ export const routeLoaders: Record<string, Loader> = {
   'platforms/puppet': () => import('../pages/platforms/PuppetPage').then(m => m.default),
   'platforms/mulesoft': () => import('../pages/platforms/MuleSoftPage').then(m => m.default),
   'cp/zos': () => import('../pages/cp/ZosCpPage').then(m => m.default),
+  'platform/overview': () => import('../pages/platform/PlatformOverviewPage').then(m => m.default),
   'finder': () => import('../pages/SolutionFinderPage').then(m => m.default),
   'concepts/glossary': () => import('../pages/ConceptPages').then(m => m.GlossaryConcept),
 }

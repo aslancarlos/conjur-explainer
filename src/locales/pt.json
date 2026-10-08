@@ -171,7 +171,10 @@
     "cp_hub_side": "Visão geral",
     "a_k8s_side": "Kubernetes",
     "k8s_spmodes_side": "Modos do Provider",
-    "ai_swa_side": "Agentes de IA"
+    "ai_swa_side": "Agentes de IA",
+    "group_overview": "Overview da plataforma",
+    "p_overview": "Arquitetura da plataforma",
+    "p_overview_sub": "Um Vault, todos os produtos consumindo o mesmo segredo"
   },
   "hero": {
     "eyebrow": "Identidade de máquina · Secrets · IDIRA by Palo Alto Networks",
@@ -7757,6 +7760,124 @@
       "s8_desc": "O Secrets Manager devolve um token de acesso de curta duração e a senha. A primeira credencial da aplicação foi atestada, não guardada.",
       "s9_title": "Nada para roubar em repouso",
       "s9_desc": "Nenhuma chave em config, env ou imagem. Um arquivo copiado não dá nada ao atacante, e não há nada para rotacionar do lado do workload."
+    }
+  },
+  "platform": {
+    "title": "Um Vault, todas as formas de consumir um segredo",
+    "subtitle": "O Vault do PAM fica no centro. Secrets Manager, Secrets Hub e os Credential Providers entregam a mesma conta para workloads diferentes: você rotaciona uma vez e todos os consumidores acompanham.",
+    "benefits": {
+      "one_title": "Uma única fonte da verdade",
+      "one_desc": "A conta é guardada uma vez, em um Safe do Vault do PAM (Privilege Cloud ou PAM Self-Hosted). Todos os produtos leem essa mesma conta; nada é copiado à mão.",
+      "rotate_title": "Rotaciona uma vez, todos acompanham",
+      "rotate_desc": "O CPM troca a senha no Vault. Cópias sincronizadas e caches dos providers recebem o novo valor no próprio ciclo, com uma única trilha de auditoria.",
+      "choose_title": "Um modelo de consumo por workload",
+      "choose_desc": "Kubernetes e CI/CD usam o Secrets Manager, apps cloud-native usam o Secrets Hub, servidores e apps legados usam os Credential Providers. Mesmo segredo, mesma política."
+    },
+    "flow_title": "Veja o mesmo segredo chegar a todos os produtos",
+    "flow_intro": "À esquerda: produtos que sincronizam a conta perto do workload. À direita: providers que a buscam em tempo de execução. Avance os passos para ver uma rotação chegar aos seis.",
+    "diagram_label": "Arquitetura em estrela: o Vault do PAM no centro com o CPM e a trilha de auditoria, Secrets Manager SaaS, Secrets Manager Self-Hosted e Secrets Hub à esquerda, Credential Provider, Application Server Credential Provider e Central Credential Provider à direita",
+    "lane_vault": "VAULT DO PAM",
+    "lane_sync": "SINCRONIZADO PERTO DO WORKLOAD",
+    "lane_runtime": "BUSCADO EM TEMPO DE EXECUÇÃO",
+    "st": {
+      "pending": "pendente"
+    },
+    "r": {
+      "secret": "db/password",
+      "how": "via",
+      "consumers": "consumidores",
+      "rotations": "rotações"
+    },
+    "p": {
+      "logged": "auditoria",
+      "rotate": "rotação"
+    },
+    "n": {
+      "vault": "Vault do PAM",
+      "vault_sub": "Privilege Cloud ou PAM Self-Hosted",
+      "cpm_sub": "rotaciona pela política da plataforma",
+      "smsaas_sub": "Kubernetes, CI/CD e workloads em nuvem",
+      "smsh_sub": "Workloads na rede do cliente",
+      "shub_sub": "Cofres nativos das nuvens",
+      "cp_sub": "Agente em cada servidor de aplicação",
+      "cp_how": "SDK · cache local",
+      "ascp": "Application Server Credential Provider",
+      "ascp_sub": "Tomcat, WebLogic, WebSphere, JBoss",
+      "ccp": "Central Credential Provider (CCP)",
+      "ccp_sub": "Apps e scripts remotos, sem agente",
+      "audit": "Trilha de auditoria",
+      "audit_sub": "um registro por mudança"
+    },
+    "s1_title": "Um Vault, todos os consumidores",
+    "s1_desc": "A conta existe uma vez, em um Safe do Vault do PAM. Em volta estão os produtos que sincronizam uma cópia perto do workload (esquerda) e os providers que a buscam em tempo de execução (direita).",
+    "s2_title": "O CPM define a senha",
+    "s2_desc": "O CPM define db/password no Safe conforme a política da plataforma. A mudança é registrada uma vez na auditoria do Vault.",
+    "s3_title": "Sincronizado onde os workloads rodam",
+    "s3_desc": "Secrets Manager SaaS (usuário Conjur Sync), Secrets Manager Self-Hosted (Vault Synchronizer) e Secrets Hub recebem o mesmo valor, porque os usuários de sincronização deles são membros do mesmo Safe.",
+    "s4_title": "Buscado em tempo de execução",
+    "s4_desc": "O Credential Provider, o Application Server Credential Provider e o Central Credential Provider buscam a mesma conta com um AppID autorizado no Safe. Seis consumidores, uma fonte.",
+    "s5_title": "Rotaciona uma vez",
+    "s5_desc": "O CPM rotaciona a senha para um novo valor. Ninguém edita arquivo de configuração, variável de pipeline ou segredo de nuvem à mão, e a rotação é auditada uma vez.",
+    "s6_title": "Todos os consumidores acompanham",
+    "s6_desc": "Os produtos sincronizados recebem o novo valor na próxima sincronização; os providers, no próximo refresh do cache. A mesma rotação chega aos seis.",
+    "s7_title": "Mesmo segredo, escolhido por workload",
+    "s7_desc": "Uma conta, uma política, uma trilha de auditoria. Cada time consome do jeito que serve ao workload, e a segurança mantém um único lugar para rotacionar e revogar.",
+    "table_title": "Como cada produto recebe o segredo",
+    "table_intro": "Com base na documentação de produto citada no fim da página. Abra a página de cada produto para ver o fluxo detalhado.",
+    "col_product": "Produto",
+    "col_how": "Como recebe a conta",
+    "col_who": "Quem consome",
+    "col_when": "Quando a rotação chega",
+    "open_page": "Abrir a página",
+    "products": {
+      "smsaas": {
+        "name": "Secrets Manager SaaS",
+        "how": "O usuário Conjur Sync é membro do Safe; cada conta vira variáveis em data/vault/<safe>/.",
+        "who": "Workloads de Kubernetes, CI/CD e nuvem que autenticam com a identidade da própria plataforma.",
+        "when": "Sincronização contínua; os workloads leem o novo valor na próxima busca."
+      },
+      "smsh": {
+        "name": "Secrets Manager Self-Hosted",
+        "how": "O usuário Line of Business do Vault Synchronizer é membro do Safe; as mesmas variáveis data/vault/<safe>/.",
+        "who": "Workloads na rede do cliente, atendidos pelo Leader e pelos Followers.",
+        "when": "No próximo ciclo do Vault Synchronizer (1 minuto nesta demo) e depois na próxima busca."
+      },
+      "shub": {
+        "name": "Secrets Hub",
+        "how": "O usuário SecretsHub é membro do Safe; uma política de sincronização envia a conta ao cofre de destino.",
+        "who": "Apps cloud-native que já leem AWS Secrets Manager, Azure Key Vault, GCP Secret Manager ou HashiCorp Vault.",
+        "when": "Na próxima sincronização do Secrets Hub; os apps continuam usando o SDK nativo do cofre."
+      },
+      "cp": {
+        "name": "Credential Provider (CP)",
+        "how": "Um agente no servidor de aplicação com cache local criptografado; o app chama o Application Password SDK com um AppID.",
+        "who": "Aplicações em servidores com o agente instalado (Java, .NET, C/C++, CLI).",
+        "when": "No próximo refresh do cache (CacheRefreshInterval) ou quando o valor não está em cache."
+      },
+      "ascp": {
+        "name": "Application Server Credential Provider (ASCP)",
+        "how": "Roda sobre o Credential Provider local e entrega a senha aos data sources do servidor de aplicação.",
+        "who": "Data sources de Tomcat, WebLogic, WebSphere e JBoss, com mudança de configuração e sem mudança de código.",
+        "when": "Pelo Credential Provider local, com as mesmas regras de cache."
+      },
+      "ccp": {
+        "name": "Central Credential Provider (CCP)",
+        "how": "AIMWebService no IIS; o app envia AppID, Safe e Object por HTTPS (REST).",
+        "who": "Aplicações e scripts remotos, sem nada instalado na máquina da aplicação.",
+        "when": "Na próxima chamada REST, atendida pelo cache do Credential Provider do próprio CCP."
+      }
+    },
+    "dual_title": "Precisa de zero downtime na rotação?",
+    "dual_desc": "Com uma única conta, um consumidor pode ficar por um instante com a senha antiga entre a rotação e o próximo refresh. Dual Accounts rotaciona duas contas alternadamente, então todo consumidor sempre tem uma senha válida.",
+    "dual_link": "Ver Dual Accounts",
+    "docs_title": "Documentação oficial",
+    "docs": {
+      "smsaas": "Secrets Manager SaaS: sincronizar contas do Privilege Cloud",
+      "vsync": "Secrets Manager Self-Hosted: Vault Synchronizer",
+      "shub_pc": "Secrets Hub com Privilege Cloud",
+      "shub_sh": "Secrets Hub com PAM Self-Hosted",
+      "cp": "Credential Providers: ofertas",
+      "cache": "Credential Provider: configurar o cache"
     }
   }
 }

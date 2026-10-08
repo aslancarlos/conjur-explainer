@@ -171,7 +171,10 @@
     "cp_hub_side": "Overview",
     "a_k8s_side": "Kubernetes",
     "k8s_spmodes_side": "Secrets Provider modes",
-    "ai_swa_side": "AI agents"
+    "ai_swa_side": "AI agents",
+    "group_overview": "Platform overview",
+    "p_overview": "Platform architecture",
+    "p_overview_sub": "One Vault, every product consuming the same secret"
   },
   "hero": {
     "eyebrow": "Machine identity · Secrets · IDIRA by Palo Alto Networks",
@@ -7757,6 +7760,124 @@
       "s8_desc": "Secrets Manager returns a short-lived access token and the password. The app's first credential was attested, not stored.",
       "s9_title": "Nothing to steal at rest",
       "s9_desc": "No key in config, env or image. A copied file gives the attacker nothing, and there is nothing to rotate on the workload side."
+    }
+  },
+  "platform": {
+    "title": "One Vault, every way to consume a secret",
+    "subtitle": "The PAM Vault sits at the center. Secrets Manager, Secrets Hub and the Credential Providers all deliver the same account to different workloads, so you rotate it once and every consumer follows.",
+    "benefits": {
+      "one_title": "One source of truth",
+      "one_desc": "The account is stored once, in a Safe of the PAM Vault (Privilege Cloud or PAM Self-Hosted). Every product reads that same account; nothing is copied by hand.",
+      "rotate_title": "Rotate once, everyone follows",
+      "rotate_desc": "The CPM changes the password in the Vault. Synced copies and provider caches pick up the new value on their own cycle, with a single audit trail.",
+      "choose_title": "A consumption model per workload",
+      "choose_desc": "Kubernetes and CI/CD use Secrets Manager, cloud-native apps use Secrets Hub, servers and legacy apps use the Credential Providers. Same secret, same policy."
+    },
+    "flow_title": "See the same secret reach every product",
+    "flow_intro": "Left: products that sync the account close to the workload. Right: providers that retrieve it at run time. Play the steps to watch one rotation reach all six.",
+    "diagram_label": "Star architecture: the PAM Vault in the center with the CPM and the audit trail, Secrets Manager SaaS, Secrets Manager Self-Hosted and Secrets Hub on the left, Credential Provider, Application Server Credential Provider and Central Credential Provider on the right",
+    "lane_vault": "PAM VAULT",
+    "lane_sync": "SYNCED TO THE WORKLOAD",
+    "lane_runtime": "RETRIEVED AT RUN TIME",
+    "st": {
+      "pending": "pending"
+    },
+    "r": {
+      "secret": "db/password",
+      "how": "via",
+      "consumers": "consumers",
+      "rotations": "rotations"
+    },
+    "p": {
+      "logged": "audit",
+      "rotate": "rotate"
+    },
+    "n": {
+      "vault": "PAM Vault",
+      "vault_sub": "Privilege Cloud or PAM Self-Hosted",
+      "cpm_sub": "rotates by platform policy",
+      "smsaas_sub": "Kubernetes, CI/CD and cloud workloads",
+      "smsh_sub": "Workloads in the customer network",
+      "shub_sub": "Cloud-native secret stores",
+      "cp_sub": "Agent on each application server",
+      "cp_how": "SDK · local cache",
+      "ascp": "Application Server Credential Provider",
+      "ascp_sub": "Tomcat, WebLogic, WebSphere, JBoss",
+      "ccp": "Central Credential Provider (CCP)",
+      "ccp_sub": "Remote apps and scripts, no agent",
+      "audit": "Audit trail",
+      "audit_sub": "one record per change"
+    },
+    "s1_title": "One Vault, every consumer",
+    "s1_desc": "The account lives once, in a Safe of the PAM Vault. Around it are the products that sync a copy close to the workload (left) and the providers that retrieve it at run time (right).",
+    "s2_title": "The CPM sets the password",
+    "s2_desc": "The CPM sets db/password in the Safe according to the platform policy. The change is recorded once in the Vault audit.",
+    "s3_title": "Synced to where workloads run",
+    "s3_desc": "Secrets Manager SaaS (Conjur Sync user), Secrets Manager Self-Hosted (Vault Synchronizer) and Secrets Hub receive the same value, because their sync users are members of the same Safe.",
+    "s4_title": "Retrieved at run time",
+    "s4_desc": "The Credential Provider, the Application Server Credential Provider and the Central Credential Provider retrieve the same account with an AppID authorized on the Safe. Six consumers, one source.",
+    "s5_title": "Rotate once",
+    "s5_desc": "The CPM rotates the password to a new value. Nobody edits a configuration file, a pipeline variable or a cloud secret by hand, and the rotation is audited once.",
+    "s6_title": "Every consumer follows",
+    "s6_desc": "Synced products receive the new value on their next sync; the providers on their next cache refresh. The same rotation reaches all six.",
+    "s7_title": "Same secret, chosen per workload",
+    "s7_desc": "One account, one policy, one audit trail. Each team consumes it in the way that fits the workload, and security keeps a single place to rotate and revoke.",
+    "table_title": "How each product gets the secret",
+    "table_intro": "From the product documentation linked at the end of the page. Open each product page for the detailed flow.",
+    "col_product": "Product",
+    "col_how": "How it gets the account",
+    "col_who": "Who consumes it",
+    "col_when": "When a rotation arrives",
+    "open_page": "Open the page",
+    "products": {
+      "smsaas": {
+        "name": "Secrets Manager SaaS",
+        "how": "The Conjur Sync user is a member of the Safe; each account becomes variables under data/vault/<safe>/.",
+        "who": "Kubernetes, CI/CD and cloud workloads that authenticate with their own platform identity.",
+        "when": "Synced continuously; workloads read the new value on their next fetch."
+      },
+      "smsh": {
+        "name": "Secrets Manager Self-Hosted",
+        "how": "The Vault Synchronizer Line of Business user is a member of the Safe; the same data/vault/<safe>/ variables.",
+        "who": "Workloads in the customer network served by the Leader and Followers.",
+        "when": "On the next Vault Synchronizer cycle (1 minute in this demo), then the next fetch."
+      },
+      "shub": {
+        "name": "Secrets Hub",
+        "how": "The SecretsHub user is a member of the Safe; a sync policy pushes the account to the target store.",
+        "who": "Cloud-native apps that already read AWS Secrets Manager, Azure Key Vault, GCP Secret Manager or HashiCorp Vault.",
+        "when": "On the next Secrets Hub sync; apps keep using the native SDK of their store."
+      },
+      "cp": {
+        "name": "Credential Provider (CP)",
+        "how": "An agent on the application server with an encrypted local cache; the app calls the Application Password SDK with an AppID.",
+        "who": "Applications on servers where the agent is installed (Java, .NET, C/C++, CLI).",
+        "when": "On the next cache refresh (CacheRefreshInterval) or when the cached value is missing."
+      },
+      "ascp": {
+        "name": "Application Server Credential Provider (ASCP)",
+        "how": "Runs on top of the local Credential Provider and supplies the password to the application server data sources.",
+        "who": "Tomcat, WebLogic, WebSphere and JBoss data sources, with a configuration change and no code change.",
+        "when": "Through the local Credential Provider, with the same cache rules."
+      },
+      "ccp": {
+        "name": "Central Credential Provider (CCP)",
+        "how": "AIMWebService on IIS; the app sends AppID, Safe and Object over HTTPS (REST).",
+        "who": "Remote applications and scripts, with nothing installed on the application machine.",
+        "when": "On the next REST call, served through the CCP's own Credential Provider cache."
+      }
+    },
+    "dual_title": "Need zero downtime during rotation?",
+    "dual_desc": "With a single account, a consumer can briefly hold the old password between the rotation and its next refresh. Dual Accounts rotates two accounts in turns, so every consumer always has a valid password.",
+    "dual_link": "See Dual Accounts",
+    "docs_title": "Official documentation",
+    "docs": {
+      "smsaas": "Secrets Manager SaaS: sync accounts from Privilege Cloud",
+      "vsync": "Secrets Manager Self-Hosted: Vault Synchronizer",
+      "shub_pc": "Secrets Hub with Privilege Cloud",
+      "shub_sh": "Secrets Hub with PAM Self-Hosted",
+      "cp": "Credential Providers: offerings",
+      "cache": "Credential Provider: configuring the cache"
     }
   }
 }
