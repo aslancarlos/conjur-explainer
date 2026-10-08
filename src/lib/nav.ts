@@ -2,7 +2,7 @@ import {
   ShieldAlert, Home, Compass, BookOpen, ArrowLeftRight, Container, Fingerprint, FileBadge, RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
   Leaf, Hexagon, Github, ShoppingCart, Database,
   GitCompareArrows, Wrench, LayoutDashboard, CloudCog, Network, ShieldCheck, Layers, GraduationCap, Vault, KeySquare, BadgeCheck, Cloud, Users, AppWindow, LayoutGrid, HardDrive, Globe,
-  Timer, FileKey2, RotateCw, ClipboardList, Terminal, Bot, Columns3, RefreshCcw, EyeOff, Blocks, GitBranch, Infinity as InfinityIcon, GitPullRequest, CircleDot, Rocket, Code, CloudUpload, Cog, Workflow, Cpu,
+  Timer, FileKey2, Orbit, RotateCw, ClipboardList, Terminal, Bot, Columns3, RefreshCcw, EyeOff, Blocks, GitBranch, Infinity as InfinityIcon, GitPullRequest, CircleDot, Rocket, Code, CloudUpload, Cog, Workflow, Cpu,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -81,6 +81,18 @@ export const NAV: NavGroup[] = [
     items: [
       { to: '/', labelKey: 'nav.home', logo: '/icons/nav/home.svg', Icon: Home, color: 'text-domain-idira' },
       { to: '/finder', labelKey: 'nav.finder', subKey: 'nav.finder_sub', logo: '/icons/nav/finder.svg', Icon: Compass, color: 'text-domain-idira' },
+    ],
+  },
+  {
+    // Platform overview: one PAM Vault, every product that consumes it (separate menu, right under Home).
+    key: 'overview',
+    zone: 'start',
+    color: 'text-domain-idira',
+    labelKey: 'nav.group_overview',
+    logo: '/icons/nav/g_overview.svg',
+    Icon: Orbit,
+    items: [
+      { to: '/platform/overview', labelKey: 'nav.p_overview', subKey: 'nav.p_overview_sub', logo: '/icons/nav/g_overview.svg', Icon: Orbit, color: 'text-domain-idira' },
     ],
   },
   {
@@ -244,10 +256,12 @@ export function navBy(view: NavView): NavGroup[] {
   if (view === 'usecase') return NAV
   const all = NAV.flatMap(g => g.items)
   const home = NAV.find(g => g.key === 'home')!
+  const overview = NAV.find(g => g.key === 'overview')!
   const concepts = NAV.find(g => g.key === 'concepts')!
   const tools = NAV.find(g => g.key === 'tools')!
   return [
     home,
+    overview,
     concepts,
     ...PRODUCTS.map(p => ({
       key: `p-${p.key}`, labelKey: p.labelKey, descKey: p.descKey,

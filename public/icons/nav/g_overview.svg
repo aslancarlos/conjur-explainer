@@ -1,0 +1,14 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g stroke="url(#ovw_l)" stroke-width="1.6" stroke-linecap="round">
+<path d="M12 12L12 3.6"/><path d="M12 12L19.3 7.8"/><path d="M12 12L19.3 16.2"/><path d="M12 12L12 20.4"/><path d="M12 12L4.7 16.2"/><path d="M12 12L4.7 7.8"/>
+</g>
+<circle cx="12" cy="3.6" r="2" fill="url(#ovw_s)"/><circle cx="19.3" cy="7.8" r="2" fill="url(#ovw_s)"/><circle cx="19.3" cy="16.2" r="2" fill="url(#ovw_s)"/>
+<circle cx="12" cy="20.4" r="2" fill="url(#ovw_s)"/><circle cx="4.7" cy="16.2" r="2" fill="url(#ovw_s)"/><circle cx="4.7" cy="7.8" r="2" fill="url(#ovw_s)"/>
+<circle cx="12" cy="12" r="4.2" fill="url(#ovw_c)"/>
+<path d="M12 10.3a1.1 1.1 0 0 1 .6 2v1.1h-1.2v-1.1a1.1 1.1 0 0 1 .6-2z" fill="#fff"/>
+<defs>
+<linearGradient id="ovw_l" x1="4" y1="3" x2="20" y2="21" gradientUnits="userSpaceOnUse"><stop stop-color="#4AD1F0"/><stop offset="1" stop-color="#265BFF"/></linearGradient>
+<linearGradient id="ovw_s" x1="3" y1="2" x2="21" y2="22" gradientUnits="userSpaceOnUse"><stop stop-color="#0FAFFF"/><stop offset="1" stop-color="#367AF2"/></linearGradient>
+<linearGradient id="ovw_c" x1="8" y1="8" x2="16" y2="16" gradientUnits="userSpaceOnUse"><stop stop-color="#265BFF"/><stop offset="1" stop-color="#091D58"/></linearGradient>
+</defs>
+</svg>

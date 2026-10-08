@@ -127,7 +127,7 @@ Console-style shell, aligned with sinfonia.minha.cloud (`src/components/shell/`)
 | Top bar | Fixed, `h-14`, theme-aware (`bg-bg-card/90` + blur + `.nav-iridescent` line), like sinfonia.minha.cloud. Left: sidebar toggle (≥ lg collapses, < lg opens drawer) · official logo (36 px tall). Right: `/api` status · EN/PT/ES · theme. (`tone="dark"` variants of `ApiStatus`/`ThemeToggle`/`LanguageSwitcher` exist for always-dark surfaces) |
 | Sidebar (≥ 1024 px) | Left, fixed under the top bar, `w-60` (240 px) or `w-16` icons-only, choice persisted in `localStorage('idira-sidebar-collapsed')`. Theme-aware (`bg-bg-card`, `border-r border-border`). Rows 36 px (mouse) |
 | Drawer (< 1024 px) | Same navigation, slides from the left (`w-[min(20rem,85vw)]`), 55 % scrim, focus moves to Close, Esc / scrim / navigation close it, focus returns to the menu button, page scroll locked. Rows 44 px (touch); language switch in its footer |
-| Groups | Organised like the CyberArk docs: by **how a workload gets its secret**: Home · **Identity & access** (authn-jwt, policy, SWA) · **Kubernetes** (Spring Boot, Secrets Provider, ESO, CSI) · **CI/CD & automation** (GitHub Actions, Jenkins, Ansible) · **Credential lifecycle** (Dual Accounts, Secrets Hub) · Tools. Single source: `src/lib/nav.ts` (also feeds the home catalogue via `DEMO_GROUPS`) |
+| Groups | Organised like the CyberArk docs: by **how a workload gets its secret**: Home · **Platform overview** (`/platform/overview`, its own group under Start here: the PAM Vault in the center and every Secrets Manager, Secrets Hub and Credential Provider consumer around it) · **Identity & access** (authn-jwt, policy, SWA) · **Kubernetes** (Spring Boot, Secrets Provider, ESO, CSI) · **CI/CD & automation** (GitHub Actions, Jenkins, Ansible) · **Credential lifecycle** (Dual Accounts, Secrets Hub) · Tools. Single source: `src/lib/nav.ts` (also feeds the home catalogue via `DEMO_GROUPS`) |
 | Group by | Segmented **Use case \| Product** switch at the top of the sidebar/drawer and in the home catalogue. One shared preference (`useNavView`, `localStorage('idira-nav-view')`). Product view: Secrets Manager · Secure Workload Access · Secrets Hub · PAM & Credential Providers (each item's `product` in `lib/nav.ts`), Tools stay last. Long product names wrap, never truncate |
 | Group disclosure | Each group header is a button (chevron + label, `aria-expanded`/`aria-controls`) that shows/hides its items; hidden groups show their item count. State persisted in `localStorage('idira-nav-groups')`; the group holding the current page always opens. Icon rail shows every item, no headers |
 | Current page | Tinted row + 3 px `idira-blue` left bar + `aria-current="page"` |
@@ -375,6 +375,8 @@ Focus: every interactive element shows a 2px ring (`focus-visible:ring-2 ring-id
 ---
 
 ## Changelog
+
+- 2026-10-08: Platform overview group and `/platform/overview` page: star FlowSpec (`PlatformStarFlow`) with the PAM Vault in the center, sync products on the left, run-time providers on the right; one rotation reaches all six consumers.
 
 - 2026-10-03: design system reference (15): type scale roles, spacing tiers, radius/elevation, motion and z-index tokens, component primitives (`.btn-*`, `.chip`, `.card`, `.callout-*`, `.text-overline`); palette aligned with paloaltonetworks.com/idira; all token pairs re-verified AA.
 

@@ -3,5 +3,5 @@
  * image tag (aslancarlos/conjur-explainer:design2026rNN) on every deploy; the
  * date comes from the build itself, so it is always the day the image was made.
  */
-export const RELEASE = 'r31'
+export const RELEASE = 'r32'
 export const BUILD_DATE = __BUILD_DATE__
