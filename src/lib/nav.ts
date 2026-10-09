@@ -232,6 +232,7 @@ export const NAV: NavGroup[] = [
       { to: '/compare',       labelKey: 'nav.compare',      subKey: 'nav.compare_sub',      logo: '/icons/nav/compare.svg', Icon: GitCompareArrows, color: 'text-text-2' },
       { to: '/tools',         labelKey: 'nav.livetools',    subKey: 'nav.livetools_sub',    logo: '/icons/nav/livetools.svg', Icon: Wrench,           color: 'text-text-2' },
       { to: '/controller', href: '/controller', labelKey: 'nav.controller', subKey: 'nav.controller_sub', logo: '/icons/nav/controller.svg', Icon: LayoutDashboard, color: 'text-text-2' },
+      { to: '/vault',         labelKey: 'nav.vaultinfo',    subKey: 'nav.vaultinfo_sub',    logo: '/icons/nav/vault.svg', Icon: Vault,            color: 'text-text-2' },
     ],
   },
 ]

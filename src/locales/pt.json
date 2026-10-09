@@ -174,7 +174,9 @@
     "ai_swa_side": "Agentes de IA",
     "group_overview": "Overview da plataforma",
     "p_overview": "Arquitetura da plataforma",
-    "p_overview_sub": "Um Vault, todos os produtos consumindo o mesmo segredo"
+    "p_overview_sub": "Um Vault, todos os produtos consumindo o mesmo segredo",
+    "vaultinfo": "Cofre Info",
+    "vaultinfo_sub": "Contas do cofre, rotação e histórico"
   },
   "hero": {
     "eyebrow": "Identidade de máquina · Secrets · IDIRA by Palo Alto Networks",

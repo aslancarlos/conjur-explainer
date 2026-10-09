@@ -1,0 +1,119 @@
+# Cofre Info backend (/api/vault). Identity = this service account's JWT
+# (audience conjur) against a Conjur authn-jwt authenticator; no API key.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vault-control
+  namespace: conjur
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vault-control
+  namespace: conjur
+  labels:
+    app: vault-control
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vault-control
+  template:
+    metadata:
+      labels:
+        app: vault-control
+    spec:
+      serviceAccountName: vault-control
+      automountServiceAccountToken: false
+      imagePullSecrets:
+        - name: dockerhub-pull
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532   # distroless nonroot (numeric, required by runAsNonRoot)
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: vault-control
+          image: aslancarlos/vault-control:1.0.2
+          ports:
+            - containerPort: 8080
+          # tenant, Safe and credential: ConfigMap vault-control-config, applied
+          # from outside Git (see vault-control-config.example.yaml)
+          envFrom:
+            - configMapRef:
+                name: vault-control-config
+          volumeMounts:
+            - name: conjur-jwt
+              mountPath: /var/run/secrets/tokens
+              readOnly: true
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "20m"
+            limits:
+              memory: "96Mi"
+              cpu: "200m"
+          readinessProbe:
+            httpGet:
+              path: /api/vault/healthz
+              port: 8080
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/vault/healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 30
+      volumes:
+        - name: conjur-jwt
+          projected:
+            sources:
+              - serviceAccountToken:
+                  audience: conjur
+                  expirationSeconds: 3600
+                  path: jwt
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-control
+  namespace: conjur
+  labels:
+    app: vault-control
+spec:
+  selector:
+    app: vault-control
+  ports:
+    - port: 80
+      targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vault-control
+  namespace: conjur
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: nginx-internal
+  tls:
+    - hosts:
+        - demo.minha.cloud
+      secretName: k8scert
+  rules:
+    - host: demo.minha.cloud
+      http:
+        paths:
+          - path: /api/vault
+            pathType: Prefix
+            backend:
+              service:
+                name: vault-control
+                port:
+                  number: 80
