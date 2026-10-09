@@ -1698,7 +1698,8 @@
     "kind_secret": "Secret / credencial",
     "kind_access": "Acesso ao serviço",
     "kind_control": "Policy / controle",
-    "kind_leak": "Vazamento / risco"
+    "kind_leak": "Vazamento / risco",
+    "open_node": "Abrir a página de {{name}}"
   },
   "sharch": {
     "title": "Arquitetura do Secrets Manager Self‑Hosted",
@@ -7774,7 +7775,7 @@
       "choose_desc": "Kubernetes e CI/CD usam o Secrets Manager, apps cloud-native usam o Secrets Hub, servidores e apps legados usam os Credential Providers. Mesmo segredo, mesma política."
     },
     "flow_title": "Veja o mesmo segredo chegar a todos os produtos",
-    "flow_intro": "À esquerda: produtos que sincronizam a conta perto do workload. À direita: providers que a buscam em tempo de execução. Avance os passos para ver uma rotação chegar aos seis.",
+    "flow_intro": "À esquerda: produtos que sincronizam a conta perto do workload. À direita: providers que a buscam em tempo de execução. Avance os passos para ver uma rotação chegar aos seis. Clique em um produto para abrir a página com o fluxo detalhado.",
     "diagram_label": "Arquitetura em estrela: o Vault do PAM no centro com o CPM e a trilha de auditoria, Secrets Manager SaaS, Secrets Manager Self-Hosted e Secrets Hub à esquerda, Credential Provider, Application Server Credential Provider e Central Credential Provider à direita",
     "lane_vault": "VAULT DO PAM",
     "lane_sync": "SINCRONIZADO PERTO DO WORKLOAD",

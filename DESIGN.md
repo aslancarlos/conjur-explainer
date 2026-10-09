@@ -221,7 +221,7 @@ All interactive targets ≥ 44×44 px with ≥ 8 px spacing. Icon-only buttons n
 
 ## 10. Animated diagrams (the pattern)
 
-**Use the engine, don't hand-roll it.** Every step-by-step diagram is a `FlowSpec` (data) rendered by `src/components/flow/FlowPlayer.tsx`: nodes (`domain`, lucide `Icon`, title, sub, rows with cross-faded states), trust `zones`, `lanes`, typed edges (`identity`, `secret`, `access`, `control`), steps (`focus`, `fx`: `packet` / `set`), and a `wide` (980) plus `narrow` (360, vertical) layout. The player provides the timeline, controls, stepper, keyboard, narration, reduced motion and legend. Reference spec: `src/components/IdentityFlows.tsx`; page specs in `src/components/flow/specs/` or inline in the page. Give each spec a unique `id`. Card text must fit in en/pt/es at both layouts (≥14 px inner padding, label and value of a row never touching). `DualAccountsPage.tsx` is the original hand-built version the engine was extracted from.
+**Use the engine, don't hand-roll it.** Every step-by-step diagram is a `FlowSpec` (data) rendered by `src/components/flow/FlowPlayer.tsx`: nodes (`domain`, lucide `Icon`, title, sub, rows with cross-faded states), trust `zones`, `lanes`, typed edges (`identity`, `secret`, `access`, `control`), steps (`focus`, `fx`: `packet` / `set`), and a `wide` (980) plus `narrow` (360, vertical) layout. The player provides the timeline, controls, stepper, keyboard, narration, reduced motion and legend. A node may set `href` (in-app page that explains it): the card becomes a router link with a `tone-accent` hover/focus ring, an `ArrowUpRight` corner mark and an aria-label/tooltip from `player.open_node`; the SVG then switches from `role="img"` to a labelled `role="group"`, and Space on a node link does not toggle play. Reference spec: `src/components/IdentityFlows.tsx`; page specs in `src/components/flow/specs/` or inline in the page. Give each spec a unique `id`. Card text must fit in en/pt/es at both layouts (≥14 px inner padding, label and value of a row never touching). `DualAccountsPage.tsx` is the original hand-built version the engine was extracted from.
 
 **Ambient diagrams** (no step controls): no GSAP, no infinite loops. One journey at a time driven by a `requestAnimationFrame` token on `getPointAtLength`, a visible **Pause** button (WCAG 2.2.2), auto-pause on hover/focus, off-screen (IntersectionObserver) and hidden tabs, static under reduced motion, nodes link to their page, and a vertical chip/stepper variant below 640 px instead of sideways scrolling.
 
@@ -376,6 +376,8 @@ Focus: every interactive element shows a 2px ring (`focus-visible:ring-2 ring-id
 ---
 
 ## Changelog
+
+- 2026-10-08: `FlowNode.href` (clickable diagram nodes) on the Platform overview star.
 
 - 2026-10-08: `FlowNode.logo` (colour icon chip) and colour icons on `/platform/overview`.
 

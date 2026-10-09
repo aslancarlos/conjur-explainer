@@ -2,10 +2,11 @@ import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ChevronLeft, ChevronRight, Fingerprint, KeyRound, Pause, Play, Plug, RotateCcw, ScrollText, TriangleAlert } from 'lucide-react'
+import { ArrowUpRight, ChevronLeft, ChevronRight, Fingerprint, KeyRound, Pause, Play, Plug, RotateCcw, ScrollText, TriangleAlert } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { gsap } from 'gsap'
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
+import { Link } from '../../lib/router'
 
 gsap.registerPlugin(MotionPathPlugin)
 
@@ -29,8 +30,11 @@ export type FlowRow =
   | { label: string; value: string; tone?: Tone }
   | { label: string; k: string; states: Array<{ v: string; text: string; tone: Tone }> }
 
-/** `logo`: optional colour SVG (public/icons, same set as the solution finder) drawn on a light chip instead of `Icon`. */
-export interface FlowNode { id: string; domain: Domain; Icon: LucideIcon; logo?: string; title: string; sub?: string; rows?: FlowRow[] }
+/**
+ * `logo`: optional colour SVG (public/icons, same set as the solution finder) drawn on a light chip instead of `Icon`.
+ * `href`: optional in-app page that explains the node; the card becomes a link (hover/focus ring + arrow).
+ */
+export interface FlowNode { id: string; domain: Domain; Icon: LucideIcon; logo?: string; href?: string; title: string; sub?: string; rows?: FlowRow[] }
 
 export interface FlowLayout {
   w: number; h: number
@@ -108,6 +112,7 @@ export default function FlowPlayer({ spec, className = '' }: { spec: FlowSpec; c
   const steps = spec.steps
   const TOTAL = steps.length
   const initial = useMemo(() => spec.initial ?? {}, [spec.initial])
+  const hasLinks = spec.nodes.some(n => n.href)
 
   const [step, setStep] = useState(0)
   const [playing, setPlaying] = useState(false)
@@ -251,7 +256,8 @@ export default function FlowPlayer({ spec, className = '' }: { spec: FlowSpec; c
   }, [playing, reduce, step, steps, sync, TOTAL])
 
   const onKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
-    const onButton = (e.target as HTMLElement).tagName === 'BUTTON'
+    // Space on a control or on a diagram node link keeps its native meaning.
+    const onButton = (e.target as HTMLElement).tagName === 'BUTTON' || !!(e.target as Element).closest?.('a')
     switch (e.key) {
       case 'ArrowRight': e.preventDefault(); go(stepRef.current + 1); break
       case 'ArrowLeft': e.preventDefault(); go(stepRef.current - 1); break
@@ -341,7 +347,8 @@ export default function FlowPlayer({ spec, className = '' }: { spec: FlowSpec; c
 
       {/* diagram */}
       <div className="px-3 sm:px-6 pt-2 pb-2">
-        <svg ref={svgRef} viewBox={`0 0 ${L.w} ${L.h}`} className="w-full h-auto" role="img"
+        {/* with node links the diagram holds interactive children, so it is a labelled group, not an image */}
+        <svg ref={svgRef} viewBox={`0 0 ${L.w} ${L.h}`} className="w-full h-auto" role={hasLinks ? 'group' : 'img'}
           aria-label={`${spec.ariaLabel}. ${cur?.title ?? ''}`}>
           <defs>
             <marker id={marker} markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
@@ -381,8 +388,8 @@ export default function FlowPlayer({ spec, className = '' }: { spec: FlowSpec; c
             const b = L.boxes[n.id]
             const d = DOM[n.domain]
             const cx = b.x + b.w - 24, cy = b.y - 2
-            return (
-              <g key={n.id}>
+            const card = (
+              <g>
                 <rect data-ring={n.id} x={b.x - 5} y={b.y - 5} width={b.w + 10} height={b.h + 10} rx={16}
                   className="fill-none stroke-text-2/60" strokeWidth={2} style={{ opacity: 0 }} />
                 <rect x={b.x} y={b.y} width={b.w} height={b.h} rx={12} className="fill-bg-muted stroke-line" strokeWidth={1.25} />
@@ -415,6 +422,18 @@ export default function FlowPlayer({ spec, className = '' }: { spec: FlowSpec; c
                   )
                 })}
               </g>
+            )
+            if (!n.href) return <g key={n.id}>{card}</g>
+            const label = t('player.open_node', { name: n.title })
+            return (
+              <Link key={n.id} to={n.href} aria-label={label} className="group/node cursor-pointer focus:outline-none">
+                <title>{label}</title>
+                {card}
+                <rect x={b.x - 3} y={b.y - 3} width={b.w + 6} height={b.h + 6} rx={14} strokeWidth={2}
+                  className="fill-none stroke-tone-accent opacity-0 transition-opacity duration-fast group-hover/node:opacity-100 group-focus-visible/node:opacity-100" />
+                <ArrowUpRight x={b.x + b.w - 26} y={b.y + b.h - 22} width={14} height={14} strokeWidth={2.2}
+                  className="text-tone-accent opacity-70 transition-opacity duration-fast group-hover/node:opacity-100" aria-hidden="true" />
+              </Link>
             )
           })}
 

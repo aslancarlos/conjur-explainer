@@ -41,12 +41,12 @@ export function usePlatformStarSpec(): FlowSpec {
           { v: '0', text: '0', tone: 'muted' }, { v: '3', text: '3', tone: 'ok' }, { v: '6', text: '6', tone: 'ok' }] },
       ] },
       { id: 'cpm', domain: 'idira', Icon: CalendarClock, logo: '/icons/nav/rotation.svg', title: 'CPM', sub: p('n.cpm_sub') },
-      { id: 'smsaas', domain: 'idira', Icon: CloudCog, logo: '/icons/nav/c_saas.svg', title: 'Secrets Manager SaaS', sub: p('n.smsaas_sub'), rows: [how('Conjur Sync'), ver('smsaas')] },
-      { id: 'smsh', domain: 'idira', Icon: Network, logo: '/icons/nav/c_sh.svg', title: 'Secrets Manager Self-Hosted', sub: p('n.smsh_sub'), rows: [how('Vault Synchronizer'), ver('smsh')] },
-      { id: 'shub', domain: 'svc', Icon: Combine, logo: '/icons/nav/g_shub.svg', title: 'Secrets Hub', sub: p('n.shub_sub'), rows: [how('AWS · Azure · GCP · HashiCorp'), ver('shub')] },
-      { id: 'cp', domain: 'cp', Icon: HardDrive, logo: '/icons/nav/cp_cp.svg', title: 'Credential Provider', sub: p('n.cp_sub'), rows: [how(p('n.cp_how')), ver('cp')] },
-      { id: 'ascp', domain: 'cp', Icon: Database, logo: '/icons/tech/op_appservers.svg', title: p('n.ascp'), sub: p('n.ascp_sub'), rows: [how('JDBC'), ver('ascp')] },
-      { id: 'ccp', domain: 'cp', Icon: Globe, logo: '/icons/nav/ccp.svg', title: p('n.ccp'), sub: p('n.ccp_sub'), rows: [how('REST · AIMWebService'), ver('ccp')] },
+      { id: 'smsaas', href: '/concepts/saas-architecture', domain: 'idira', Icon: CloudCog, logo: '/icons/nav/c_saas.svg', title: 'Secrets Manager SaaS', sub: p('n.smsaas_sub'), rows: [how('Conjur Sync'), ver('smsaas')] },
+      { id: 'smsh', href: '/concepts/self-hosted-architecture', domain: 'idira', Icon: Network, logo: '/icons/nav/c_sh.svg', title: 'Secrets Manager Self-Hosted', sub: p('n.smsh_sub'), rows: [how('Vault Synchronizer'), ver('smsh')] },
+      { id: 'shub', href: '/secretshub', domain: 'svc', Icon: Combine, logo: '/icons/nav/g_shub.svg', title: 'Secrets Hub', sub: p('n.shub_sub'), rows: [how('AWS · Azure · GCP · HashiCorp'), ver('shub')] },
+      { id: 'cp', href: '/cp/credential-provider', domain: 'cp', Icon: HardDrive, logo: '/icons/nav/cp_cp.svg', title: 'Credential Provider', sub: p('n.cp_sub'), rows: [how(p('n.cp_how')), ver('cp')] },
+      { id: 'ascp', href: '/cp/ascp', domain: 'cp', Icon: Database, logo: '/icons/tech/op_appservers.svg', title: p('n.ascp'), sub: p('n.ascp_sub'), rows: [how('JDBC'), ver('ascp')] },
+      { id: 'ccp', href: '/cp/ccp', domain: 'cp', Icon: Globe, logo: '/icons/nav/ccp.svg', title: p('n.ccp'), sub: p('n.ccp_sub'), rows: [how('REST · AIMWebService'), ver('ccp')] },
       { id: 'audit', domain: 'neutral', Icon: ClipboardList, logo: '/icons/nav/audit.svg', title: p('n.audit'), sub: p('n.audit_sub'), rows: [
         { label: p('r.rotations'), k: 'rot', states: [
           { v: '0', text: '0', tone: 'muted' }, { v: '1', text: '1', tone: 'ok' }, { v: '2', text: '2', tone: 'ok' }] },
