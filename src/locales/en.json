@@ -174,7 +174,9 @@
     "ai_swa_side": "AI agents",
     "group_overview": "Platform overview",
     "p_overview": "Platform architecture",
-    "p_overview_sub": "One Vault, every product consuming the same secret"
+    "p_overview_sub": "One Vault, every product consuming the same secret",
+    "vaultinfo": "Vault Info",
+    "vaultinfo_sub": "Vault accounts, rotation and history"
   },
   "hero": {
     "eyebrow": "Machine identity · Secrets · IDIRA by Palo Alto Networks",

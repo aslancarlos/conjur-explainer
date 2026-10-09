@@ -1,0 +1,16 @@
+# Example only. The real ConfigMap is applied from outside Git:
+#   kubectl apply -f <private path>/vault-control-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-control-config
+  namespace: conjur
+data:
+  CONJUR_APPLIANCE_URL: https://<subdomain>.secretsmgr.cyberark.cloud/api
+  CONJUR_AUTHN_URL: https://<subdomain>.secretsmgr.cyberark.cloud/api/authn-jwt/<service-id>
+  CONJUR_JWT_TOKEN_FILE: /var/run/secrets/tokens/jwt
+  CRED_PATH: data/vault/<safe>/<api-account>
+  IDENTITY_URL: https://<identity-tenant-host>
+  PCLOUD_URL: https://<subdomain>.privilegecloud.cyberark.cloud/PasswordVault/API
+  SAFE: <safe>
+  ALLOWED_ORIGIN: https://demo.minha.cloud
