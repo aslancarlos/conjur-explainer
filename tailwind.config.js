@@ -87,6 +87,8 @@ export default {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'fade-up':    'fadeUp 0.6s ease forwards',
         'shimmer':    'shimmer 14s linear infinite',
+        // indeterminate progress bar (e.g. the Azure VM booting on /eso-bench)
+        'indeterminate': 'indeterminate 1.6s cubic-bezier(0.2, 0.7, 0.2, 1) infinite',
       },
       keyframes: {
         fadeUp: {
@@ -94,6 +96,10 @@ export default {
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
         shimmer: { to: { backgroundPosition: '200% 0' } },
+        indeterminate: {
+          '0%':   { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(250%)' },
+        },
       },
       boxShadow: {
         'idira-blue': '0 12px 40px -8px rgba(38, 91, 255, 0.35)',

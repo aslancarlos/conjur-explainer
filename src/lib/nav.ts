@@ -1,6 +1,6 @@
 import {
   ShieldAlert, Home, Compass, BookOpen, ArrowLeftRight, Container, Fingerprint, FileBadge, RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
-  Leaf, Hexagon, Github, ShoppingCart, Database,
+  Leaf, Hexagon, Github, ShoppingCart, Database, Gauge,
   GitCompareArrows, Wrench, LayoutDashboard, CloudCog, Network, ShieldCheck, Layers, GraduationCap, Vault, KeySquare, BadgeCheck, Cloud, Users, AppWindow, LayoutGrid, HardDrive, Globe,
   Timer, FileKey2, Orbit, RotateCw, ClipboardList, Terminal, Bot, Columns3, RefreshCcw, EyeOff, Blocks, GitBranch, Infinity as InfinityIcon, GitPullRequest, CircleDot, Rocket, Code, CloudUpload, Cog, Workflow, Cpu,
 } from 'lucide-react'
@@ -16,7 +16,10 @@ import type { LucideIcon } from 'lucide-react'
  *                          Secrets Provider, External Secrets Operator, CSI)
  *   CI/CD & automation   → GitHub Actions, Jenkins, Ansible
  *   Credential lifecycle → PAM side: Dual Accounts rotation, Secrets Hub sync
- *   Tools                → explorers and live dashboards
+ *   Demo                 → live demos acting on the real environment (a
+ *                          collapsible top-level section, opens by itself on
+ *                          one of its pages)
+ *   Resources            → reference tools (Compare)
  *
  * `href` marks sibling services outside the SPA, rendered as <a>, not <Link>.
  * `color` is the icon accent; it must reach 3:1 in both themes (DESIGN.md §6).
@@ -37,6 +40,7 @@ export interface NavItem {
   heading?: string      // i18n key of a small non-interactive sub-heading shown when it changes
   shortKey?: string     // shorter label used under a heading / inside a submenu (sidebar only)
   logo?: string         // colour logo/icon SVG (public/icons/tech|nav, free licences, see THIRD_PARTY_NOTICES.md) shown instead of Icon
+  mirror?: boolean      // a second entry (Demo menu) for a page whose home is another group
 }
 
 export type SectionKey = 'authn' | 'usecases'
@@ -63,14 +67,18 @@ export interface NavGroup {
   shortKey?: string     // shorter sidebar label for the group header (full name stays in the tooltip)
   zone?: NavZone        // sidebar section the group sits under (overline label)
   flat?: boolean        // sidebar: render items directly under the zone label (no disclosure)
+  caption?: boolean     // flat group: show labelKey as a small caption above its items (Demo subgroups)
   items: NavItem[]
 }
 
 /** Sidebar sections, in display order, each with an overline label. */
-export type NavZone = 'start' | 'products' | 'resources'
-export const ZONES: Array<{ key: NavZone; labelKey: string }> = [
+export type NavZone = 'start' | 'products' | 'demo' | 'resources'
+/** `collapsible`: the zone label is a disclosure (collapsed on a first visit,
+ *  open whenever the current page is inside it). */
+export const ZONES: Array<{ key: NavZone; labelKey: string; collapsible?: boolean }> = [
   { key: 'start',        labelKey: 'nav.zone_start' },
   { key: 'products',     labelKey: 'nav.zone_products' },
+  { key: 'demo',         labelKey: 'nav.zone_demo', collapsible: true },
   { key: 'resources',    labelKey: 'nav.zone_resources' },
 ]
 
@@ -230,12 +238,51 @@ export const NAV: NavGroup[] = [
     Icon: Wrench,
     items: [
       { to: '/compare',       labelKey: 'nav.compare',      subKey: 'nav.compare_sub',      logo: '/icons/nav/compare.svg', Icon: GitCompareArrows, color: 'text-text-2' },
-      { to: '/tools',         labelKey: 'nav.livetools',    subKey: 'nav.livetools_sub',    logo: '/icons/nav/livetools.svg', Icon: Wrench,           color: 'text-text-2' },
-      { to: '/controller', href: '/controller', labelKey: 'nav.controller', subKey: 'nav.controller_sub', logo: '/icons/nav/controller.svg', Icon: LayoutDashboard, color: 'text-text-2' },
-      { to: '/vault',         labelKey: 'nav.vaultinfo',    subKey: 'nav.vaultinfo_sub',    logo: '/icons/nav/vault.svg', Icon: Vault,            color: 'text-text-2' },
     ],
   },
 ]
+
+/**
+ * Demo menu: everything with a live app in the demo environment. The tools
+ * live only here; the use cases with a running app keep their home in their
+ * product group and are repeated here (same route, icon and label: `mirror`,
+ * without `demo` so the home catalogue does not list them twice).
+ * Live app per use case: SDK /springboot, Sidecar /dotnet, External Secrets
+ * Operator /k8s-eso, CSI Driver /csidriver, GitHub Actions /api/gha (live
+ * workflow run), SVID Explorer /svid, SWA to AWS S3 /swa-s3.
+ */
+const mirror = (to: string): NavItem => {
+  const it = NAV.flatMap(g => g.items).find(i => i.to === to)
+  if (!it) throw new Error(`nav: no item for ${to}`)
+  return { ...it, demo: undefined, section: undefined, heading: undefined, mirror: true }
+}
+
+NAV.splice(NAV.findIndex(g => g.key === 'tools'), 0,
+  {
+    key: 'demo-tools',
+    zone: 'demo',
+    flat: true,
+    caption: true,
+    color: 'text-text-2',
+    labelKey: 'nav.demo_h_tools',
+    Icon: Wrench,
+    items: [
+      { to: '/tools',         labelKey: 'nav.livetools',    subKey: 'nav.livetools_sub',    logo: '/icons/nav/livetools.svg', Icon: Wrench,           color: 'text-text-2' },
+      { to: '/vault',         labelKey: 'nav.vaultinfo',    subKey: 'nav.vaultinfo_sub',    logo: '/icons/nav/vault.svg', Icon: Vault,            color: 'text-text-2' },
+      { to: '/eso-bench',     labelKey: 'nav.esobench',     subKey: 'nav.esobench_sub',     logo: '/icons/nav/bench.svg', Icon: Gauge,            color: 'text-text-2' },
+      { to: '/controller', href: '/controller', labelKey: 'nav.controller', subKey: 'nav.controller_sub', logo: '/icons/nav/controller.svg', Icon: LayoutDashboard, color: 'text-text-2' },
+    ],
+  },
+  { key: 'demo-k8s', zone: 'demo', flat: true, caption: true, labelKey: 'nav.h_k8s', Icon: Container,
+    items: ['/spring-boot', '/dotnet', '/eso-shop', '/csi'].map(mirror) },
+  { key: 'demo-cicd', zone: 'demo', flat: true, caption: true, labelKey: 'nav.h_cicd', Icon: GitPullRequest,
+    items: ['/github-actions'].map(mirror) },
+  { key: 'demo-swa', zone: 'demo', flat: true, caption: true, labelKey: 'nav.group_swa', Icon: ShieldCheck,
+    items: ['/svid', '/swa-s3'].map(mirror) },
+)
+
+/** Routes that are repeated in the Demo menu (search shows them once, tagged "Demo"). */
+export const DEMO_ROUTES = new Set(NAV.filter(g => g.zone === 'demo').flatMap(g => g.items.map(i => i.to)))
 
 /**
  * Products, as named in the CyberArk / IDIRA docs spaces. Secure Workload
@@ -259,6 +306,7 @@ export function navBy(view: NavView): NavGroup[] {
   const home = NAV.find(g => g.key === 'home')!
   const overview = NAV.find(g => g.key === 'overview')!
   const concepts = NAV.find(g => g.key === 'concepts')!
+  const demo = NAV.filter(g => g.zone === 'demo')
   const tools = NAV.find(g => g.key === 'tools')!
   return [
     home,
@@ -268,6 +316,7 @@ export function navBy(view: NavView): NavGroup[] {
       key: `p-${p.key}`, labelKey: p.labelKey, descKey: p.descKey,
       items: all.filter(i => i.product === p.key),
     })),
+    ...demo,
     tools,
   ]
 }

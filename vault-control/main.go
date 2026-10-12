@@ -9,6 +9,9 @@
 //
 // No secret value of the Safe is ever retrieved: the history shows version
 // metadata only. The one credential read is the API account, from Conjur.
+//
+// Dual Accounts rotate as a pair (dual.go): the Inactive member gets the new
+// password, then it is promoted to Active and the other member demoted.
 package main
 
 import (
@@ -22,28 +25,32 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"sort"
 	"strings"
 	"sync"
 	"time"
 )
 
 // Tenant, Safe and credential come from the environment (a ConfigMap kept out
-// of Git); only generic defaults live here.
+// of Git); only generic defaults live here. loadConfig fills them in main, so
+// the tests can set them directly.
 var (
-	conjurURL     = mustEnv("CONJUR_APPLIANCE_URL")
-	conjurAccount = getEnv("CONJUR_ACCOUNT", "conjur")
-	authnURL      = mustEnv("CONJUR_AUTHN_URL")
-	jwtFile       = getEnv("CONJUR_JWT_TOKEN_FILE", "/var/run/secrets/tokens/jwt")
-	credPath      = mustEnv("CRED_PATH") // data/vault/<safe>/<account>
-	identityURL   = mustEnv("IDENTITY_URL")
-	pcloudURL     = mustEnv("PCLOUD_URL")
-	safe          = mustEnv("SAFE")
-	selfAccount   = credPath[strings.LastIndex(credPath, "/")+1:]
-	allowedOrigin = mustEnv("ALLOWED_ORIGIN")
-	devOrigins    = os.Getenv("DEV_ORIGINS") // e.g. "http://localhost:5173" for local QA only
+	conjurURL     string
+	conjurAccount string
+	authnURL      string
+	jwtFile       string
+	credPath      string // data/vault/<safe>/<account>
+	identityURL   string
+	pcloudURL     string
+	safe          string
+	selfAccount   string
+	allowedOrigin string
+	devOrigins    string // e.g. "http://localhost:5173" for local QA only
 
 	httpClient = &http.Client{Timeout: 20 * time.Second}
+
+	// tokenSource returns the Privilege Cloud bearer token (platformToken in
+	// production, a fixed value in the tests).
+	tokenSource = platformToken
 
 	// platform token, refreshed before it expires or on a 401
 	tokMu  sync.Mutex
@@ -61,20 +68,45 @@ var (
 	rotCount int
 )
 
+func loadConfig() {
+	conjurURL = mustEnv("CONJUR_APPLIANCE_URL")
+	conjurAccount = getEnv("CONJUR_ACCOUNT", "conjur")
+	authnURL = mustEnv("CONJUR_AUTHN_URL")
+	jwtFile = getEnv("CONJUR_JWT_TOKEN_FILE", "/var/run/secrets/tokens/jwt")
+	credPath = mustEnv("CRED_PATH")
+	identityURL = mustEnv("IDENTITY_URL")
+	pcloudURL = mustEnv("PCLOUD_URL")
+	safe = mustEnv("SAFE")
+	selfAccount = credPath[strings.LastIndex(credPath, "/")+1:]
+	allowedOrigin = mustEnv("ALLOWED_ORIGIN")
+	devOrigins = os.Getenv("DEV_ORIGINS")
+	if v := os.Getenv("CPM_TIMEOUT"); v != "" {
+		if d, err := time.ParseDuration(v); err == nil && d > 0 {
+			cpmTimeout = d
+		}
+	}
+}
+
 type cached struct {
 	at   time.Time
 	body []byte
 }
 
 func main() {
+	loadConfig()
+	log.Fatal(http.ListenAndServe(getEnv("ADDR", ":8080"), newMux()))
+}
+
+func newMux() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/vault/healthz", func(w http.ResponseWriter, _ *http.Request) { w.Write([]byte("ok")) })
 	mux.HandleFunc("/api/vault/chain", chain)
 	mux.HandleFunc("/api/vault/accounts", accounts)
 	mux.HandleFunc("/api/vault/accounts/", account)
-	addr := getEnv("ADDR", ":8080")
-	log.Printf("vault-control listening on %s safe=%s cred=%s", addr, safe, credPath)
-	log.Fatal(http.ListenAndServe(addr, mux))
+	mux.HandleFunc("/api/vault/rotations/", rotationStatus)
+	mux.HandleFunc("/api/vault/presence", presence)
+	log.Printf("vault-control safe=%s cred=%s cpmTimeout=%s", safe, credPath, cpmTimeout)
+	return mux
 }
 
 // ---------------------------------------------------------------------------
@@ -151,7 +183,7 @@ func platformToken(force bool) (string, error) {
 // pcloud calls the Privilege Cloud API, retrying once with a fresh token on 401.
 func pcloud(method, path string, body any) ([]byte, int, error) {
 	for attempt := 0; attempt < 2; attempt++ {
-		t, err := platformToken(attempt > 0)
+		t, err := tokenSource(attempt > 0)
 		if err != nil {
 			return nil, 0, err
 		}
@@ -213,17 +245,13 @@ func accounts(w http.ResponseWriter, r *http.Request) {
 		writeRaw(w, b)
 		return
 	}
-	b, code, err := pcloud("GET", "/Accounts?limit=1000&filter="+url.QueryEscape("safeName eq "+safe), nil)
-	if err != nil || code != 200 {
-		writeErr(w, code, err, b)
+	list, code, body, err := safeAccounts()
+	if err != nil {
+		writeErr(w, code, err, body)
 		return
 	}
-	var list struct {
-		Value []map[string]any `json:"value"`
-	}
-	json.Unmarshal(b, &list)
-	out := make([]map[string]any, 0, len(list.Value))
-	for _, a := range list.Value {
+	out := make([]map[string]any, 0, len(list))
+	for _, a := range list {
 		out = append(out, summarize(a))
 	}
 	resp, _ := json.Marshal(map[string]any{"safe": safe, "credential": selfAccount, "accounts": out, "fetchedAt": time.Now().UTC()})
@@ -231,12 +259,51 @@ func accounts(w http.ResponseWriter, r *http.Request) {
 	writeRaw(w, resp)
 }
 
-// account serves /api/vault/accounts/{id} (GET: details + masked history)
-// and /api/vault/accounts/{id}/rotate (POST: CPM change now).
+// safeAccounts lists the accounts of the Safe (metadata only, never a value).
+func safeAccounts() ([]map[string]any, int, []byte, error) {
+	b, code, err := pcloud("GET", "/Accounts?limit=1000&filter="+url.QueryEscape("safeName eq "+safe), nil)
+	if err != nil || code != 200 {
+		if err == nil {
+			err = fmt.Errorf("accounts: HTTP %d", code)
+		}
+		return nil, code, b, err
+	}
+	var list struct {
+		Value []map[string]any `json:"value"`
+	}
+	if err := json.Unmarshal(b, &list); err != nil {
+		return nil, code, nil, fmt.Errorf("accounts: %w", err)
+	}
+	return list.Value, code, nil, nil
+}
+
+// getAccount reads one account and refuses anything outside the Safe.
+func getAccount(id string) (map[string]any, int, []byte, error) {
+	b, code, err := pcloud("GET", "/Accounts/"+id+"/", nil)
+	if err != nil || code != 200 {
+		if err == nil {
+			err = fmt.Errorf("account %s: HTTP %d", id, code)
+		}
+		return nil, code, b, err
+	}
+	var a map[string]any
+	if err := json.Unmarshal(b, &a); err != nil {
+		return nil, code, nil, fmt.Errorf("account %s: %w", id, err)
+	}
+	if a["safeName"] != safe {
+		return nil, http.StatusForbidden, nil, errOutsideSafe
+	}
+	return a, code, nil, nil
+}
+
+var errOutsideSafe = errors.New("account outside the Safe")
+
+// account serves /api/vault/accounts/{id} (GET: details + history)
+// and /api/vault/accounts/{id}/rotate (POST: rotation now).
 func account(w http.ResponseWriter, r *http.Request) {
 	rest := strings.TrimPrefix(r.URL.Path, "/api/vault/accounts/")
 	id, action, _ := strings.Cut(rest, "/")
-	if id == "" || strings.ContainsAny(id, "?&%/.") {
+	if !validID(id) {
 		http.Error(w, "bad account id", http.StatusBadRequest)
 		return
 	}
@@ -250,61 +317,32 @@ func account(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func details(w http.ResponseWriter, id string) {
-	b, code, err := pcloud("GET", "/Accounts/"+id+"/", nil)
-	if err != nil || code != 200 {
-		writeErr(w, code, err, b)
-		return
-	}
-	var a map[string]any
-	json.Unmarshal(b, &a)
-	if a["safeName"] != safe {
-		http.Error(w, "account outside the Safe", http.StatusForbidden)
-		return
-	}
-	hist, herr := history(id)
-	resp := map[string]any{"account": summarize(a), "history": hist}
-	if herr != nil {
-		resp["historyError"] = herr.Error()
-	}
-	writeJSON(w, 200, resp)
+func validID(id string) bool {
+	return id != "" && len(id) <= 64 && !strings.ContainsAny(id, "?&%/.")
 }
 
-// history returns the current version and the two before it (metadata only).
-func history(id string) ([]map[string]any, error) {
-	key := "hist:" + id
-	if b, ok := fromCache(key, 30*time.Second); ok {
-		var h []map[string]any
-		json.Unmarshal(b, &h)
-		return h, nil
+func details(w http.ResponseWriter, id string) {
+	a, code, body, err := getAccount(id)
+	if err == errOutsideSafe {
+		http.Error(w, err.Error(), http.StatusForbidden)
+		return
 	}
-	b, code, err := pcloud("GET", "/Accounts/"+id+"/Secret/Versions/", nil)
-	if err != nil || code != 200 {
-		return nil, fmt.Errorf("versions: HTTP %d %v", code, err)
+	if err != nil {
+		writeErr(w, code, err, body)
+		return
 	}
-	var v struct {
-		Versions []struct {
-			VersionID        int    `json:"versionID"`
-			ModifiedBy       string `json:"modifiedBy"`
-			ModificationDate any    `json:"modificationDate"`
-			IsTemporary      bool   `json:"isTemporary"`
-		} `json:"versions"`
+	resp := map[string]any{"account": summarize(a)}
+	vs, herr := versions(id)
+	if herr != nil {
+		resp["historyError"] = herr.Error()
+		resp["history"] = []histEntry{}
+	} else {
+		resp["history"] = limit(buildHistory(id, str(a["userName"]), vs), 6)
 	}
-	json.Unmarshal(b, &v)
-	vs := v.Versions
-	sort.Slice(vs, func(i, j int) bool { return vs[i].VersionID > vs[j].VersionID }) // newest first
-	out := []map[string]any{}
-	for i, ver := range vs {
-		if i == 3 {
-			break
-		}
-		// metadata only: the value is never retrieved, the page shows a fixed mask
-		out = append(out, map[string]any{"label": []string{"atual", "atual-1", "atual-2"}[i], "version": ver.VersionID,
-			"modifiedBy": ver.ModifiedBy, "modifiedAt": ver.ModificationDate, "temporary": ver.IsTemporary})
+	if isDual(a) {
+		addPair(resp, a)
 	}
-	j, _ := json.Marshal(out)
-	toCache(key, j)
-	return out, nil
+	writeJSON(w, 200, resp)
 }
 
 func rotate(w http.ResponseWriter, r *http.Request, id string) {
@@ -319,32 +357,31 @@ func rotate(w http.ResponseWriter, r *http.Request, id string) {
 		writeJSON(w, http.StatusTooManyRequests, map[string]string{"error": msg})
 		return
 	}
-	b, code, err := pcloud("GET", "/Accounts/"+id+"/", nil)
-	if err != nil || code != 200 {
-		writeErr(w, code, err, b)
+	a, code, body, err := getAccount(id)
+	if err == errOutsideSafe {
+		http.Error(w, err.Error(), http.StatusForbidden)
 		return
 	}
-	var a map[string]any
-	json.Unmarshal(b, &a)
-	if a["safeName"] != safe {
-		http.Error(w, "account outside the Safe", http.StatusForbidden)
+	if err != nil {
+		writeErr(w, code, err, body)
 		return
 	}
 	if a["name"] == selfAccount {
 		writeJSON(w, http.StatusConflict, map[string]string{"error": "self"})
 		return
 	}
-	b, code, err = pcloud("POST", "/Accounts/"+id+"/Change/", map[string]any{})
+	if isDual(a) {
+		rotateDual(w, a, ip)
+		return
+	}
+	b, code, err := pcloud("POST", "/Accounts/"+id+"/Change/", map[string]any{})
 	if err != nil || (code != 200 && code != 204) {
 		writeErr(w, code, err, b)
 		return
 	}
 	log.Printf("rotate requested account=%s name=%v ip=%s", id, a["name"], ip)
-	cacheMu.Lock()
-	delete(cache, "accounts")
-	delete(cache, "hist:"+id)
-	cacheMu.Unlock()
-	writeJSON(w, http.StatusAccepted, map[string]any{"requested": true, "account": id})
+	invalidate(id)
+	writeJSON(w, http.StatusAccepted, map[string]any{"requested": true, "account": id, "dual": false})
 }
 
 // ---------------------------------------------------------------------------
@@ -355,23 +392,41 @@ func rotate(w http.ResponseWriter, r *http.Request, id string) {
 func summarize(a map[string]any) map[string]any {
 	props, _ := a["platformAccountProperties"].(map[string]any)
 	sm, _ := a["secretManagement"].(map[string]any)
-	name, _ := a["name"].(string)
-	// Dual Accounts carry the pair's virtual user name and the "current" flag (CurrInd).
-	dual := false
-	for _, k := range []string{"VirtualUserName", "CurrInd", "DualAccountStatus"} {
-		if v, ok := props[k]; ok && v != "" {
-			dual = true
-		}
+	name := str(a["name"])
+	dual := isDual(a)
+	conjurPath := "data/vault/" + safe + "/" + name
+	virtual := virtualUser(a)
+	if dual && virtual != "" {
+		// the Secrets Manager sync publishes the pair under its virtual user name
+		conjurPath = "data/vault/" + safe + "/" + virtual
 	}
 	return map[string]any{
 		"id": a["id"], "name": name, "userName": a["userName"], "address": a["address"],
 		"platformId": a["platformId"], "secretType": a["secretType"], "createdTime": a["createdTime"],
-		"properties": props,
-		"management": sm,
-		"dual":       dual,
-		"self":       name == selfAccount,
-		"conjurPath": "data/vault/" + safe + "/" + name,
+		"properties":      props,
+		"management":      sm,
+		"dual":            dual,
+		"virtualUserName": virtual,
+		"dualStatus":      dualStatus(a),
+		"self":            name == selfAccount,
+		"conjurPath":      conjurPath,
 	}
+}
+
+// invalidate drops the cached list and the cached history of the given accounts.
+func invalidate(ids ...string) {
+	cacheMu.Lock()
+	delete(cache, "accounts")
+	for _, id := range ids {
+		delete(cache, "hist:"+id)
+		delete(cache, "act:"+id)
+	}
+	cacheMu.Unlock()
+}
+
+func str(v any) string {
+	s, _ := v.(string)
+	return s
 }
 
 func rotateAllowed(ip string) string {
@@ -451,18 +506,26 @@ func writeRaw(w http.ResponseWriter, b []byte) {
 	w.Write(b)
 }
 
+// upstreamMsg extracts the Privilege Cloud error text (never a secret).
+func upstreamMsg(body []byte) string {
+	var e struct {
+		ErrorCode    string `json:"ErrorCode"`
+		ErrorMessage string `json:"ErrorMessage"`
+	}
+	if json.Unmarshal(body, &e) == nil && e.ErrorMessage != "" {
+		return e.ErrorCode + ": " + e.ErrorMessage
+	}
+	return ""
+}
+
 // writeErr reports upstream failures without echoing tokens or secrets.
 func writeErr(w http.ResponseWriter, code int, err error, body []byte) {
 	msg := ""
 	if err != nil {
 		msg = err.Error()
 	}
-	var e struct {
-		ErrorCode    string `json:"ErrorCode"`
-		ErrorMessage string `json:"ErrorMessage"`
-	}
-	if json.Unmarshal(body, &e) == nil && e.ErrorMessage != "" {
-		msg = e.ErrorCode + ": " + e.ErrorMessage
+	if m := upstreamMsg(body); m != "" {
+		msg = m
 	}
 	if code == 0 {
 		code = http.StatusBadGateway

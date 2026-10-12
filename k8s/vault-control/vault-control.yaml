@@ -35,7 +35,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: vault-control
-          image: aslancarlos/vault-control:1.0.2
+          image: aslancarlos/vault-control:1.1.0
           ports:
             - containerPort: 8080
           # tenant, Safe and credential: ConfigMap vault-control-config, applied

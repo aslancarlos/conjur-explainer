@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { BookOpen, CornerDownLeft, Search } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-import { NAV } from '../../lib/nav'
+import { DEMO_ROUTES, NAV } from '../../lib/nav'
 import NavGlyph from './NavGlyph'
 
 const TERMS = ['workload', 'host', 'authenticator', 'token', 'policy', 'variable', 'fetchers', 'dynamic', 'rotation', 'secretzero', 'spiffe', 'nhi']
@@ -40,7 +40,10 @@ export default function CommandPalette() {
       seen.add(it.to); return true
     }).map(({ g, it }) => ({
       id: `p-${it.to}`, label: t(it.labelKey), sub: it.subKey ? t(it.subKey) : undefined,
-      group: g.labelKey ? t(g.labelKey) : t('nav.home'), to: it.to, external: Boolean(it.href), Icon: it.Icon, logo: it.logo, color: it.color,
+      // pages also listed in the Demo menu appear once, tagged "Demo"
+      group: g.zone === 'demo' ? `${t('nav.zone_demo')} · ${t(g.labelKey!)}`
+        : `${g.labelKey ? t(g.labelKey) : t('nav.home')}${DEMO_ROUTES.has(it.to) ? ` · ${t('nav.zone_demo')}` : ''}`,
+      to: it.to, external: Boolean(it.href), Icon: it.Icon, logo: it.logo, color: it.color,
     }))
     const terms = TERMS.map(k => ({
       id: `t-${k}`, label: t(`glossary.terms.${k}.term`), sub: t(`glossary.terms.${k}.def`),
