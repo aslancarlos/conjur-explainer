@@ -56,6 +56,7 @@ npx tsc --noEmit
 | `/dotnet` | `DotNetSection` |
 | `/github-actions` | `GitHubActionsSection` |
 | `/eso-shop` | `ESOShopSection` |
+| `/eso-bench` | `EsoBenchPage` (load test of the ESO Shop from an Azure Spot VM via `/api/bench`; local mock: `BENCH_MOCK=1 npm run dev`, see `dev/benchMock.ts`) |
 | `/compare` | `ComparisonTable` |
 | `/tools` | `LiveToolsSection` |
 | `/dualaccounts` | `DualAccountsPage` |

@@ -1,6 +1,6 @@
 import {
   ShieldAlert, Home, Compass, BookOpen, ArrowLeftRight, Container, Fingerprint, FileBadge, RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
-  Leaf, Hexagon, Github, ShoppingCart, Database,
+  Leaf, Hexagon, Github, ShoppingCart, Database, Gauge,
   GitCompareArrows, Wrench, LayoutDashboard, CloudCog, Network, ShieldCheck, Layers, GraduationCap, Vault, KeySquare, BadgeCheck, Cloud, Users, AppWindow, LayoutGrid, HardDrive, Globe,
   Timer, FileKey2, Orbit, RotateCw, ClipboardList, Terminal, Bot, Columns3, RefreshCcw, EyeOff, Blocks, GitBranch, Infinity as InfinityIcon, GitPullRequest, CircleDot, Rocket, Code, CloudUpload, Cog, Workflow, Cpu,
 } from 'lucide-react'
@@ -148,6 +148,7 @@ export const NAV: NavGroup[] = [
         demo: { name: 'Sidecar', secret: 'Secrets Provider', descKey: 'demos.dotnet' } },
       { to: '/eso-shop', section: 'usecases', product: 'secretsmanager', labelKey: 'nav.esoshop', subKey: 'nav.esoshop_sub', logo: '/icons/nav/eso.svg', Icon: ShoppingCart, color: 'text-eso', heading: 'nav.h_k8s',
         demo: { name: 'External Secrets Operator', secret: 'Kubernetes Secret', descKey: 'demos.eso' } },
+      { to: '/eso-bench', section: 'usecases', product: 'secretsmanager', labelKey: 'nav.esobench', subKey: 'nav.esobench_sub', logo: '/icons/nav/bench.svg', Icon: Gauge, color: 'text-eso', heading: 'nav.h_k8s' },
       { to: '/csi', section: 'usecases', product: 'secretsmanager', labelKey: 'nav.csidriver', subKey: 'nav.csidriver_sub', logo: '/icons/nav/csi.svg', Icon: ShipWheel, color: 'text-csi', heading: 'nav.h_k8s',
         demo: { name: 'CSI Driver', secret: 'tmpfs volume', descKey: 'demos.csi' } },
       { to: '/k8s/secrets-provider-modes', section: 'usecases', product: 'secretsmanager', labelKey: 'nav.k8s_spmodes', shortKey: 'nav.k8s_spmodes_side', subKey: 'nav.k8s_spmodes_sub', logo: '/icons/nav/spmodes.svg', Icon: Columns3, color: 'text-domain-idira', heading: 'nav.h_k8s' },

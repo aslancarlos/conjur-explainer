@@ -1,7 +1,8 @@
 import { m, useInView } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ExternalLink, RefreshCw, ShoppingCart, BarChart2, TriangleAlert } from 'lucide-react'
+import { ExternalLink, RefreshCw, ShoppingCart, BarChart2, TriangleAlert, Gauge } from 'lucide-react'
+import { Link } from '../lib/router'
 import EsoFlow from './flow/specs/EsoFlow'
 
 interface HealthResponse {
@@ -74,7 +75,7 @@ export default function ESOShopSection() {
           </h1>
           <p className="text-text-muted leading-relaxed max-w-2xl">{t('esoshop.desc')}</p>
           {/* Primary action up front: the live shop is what visitors come for. */}
-          <div className="pt-2">
+          <div className="flex flex-wrap items-center gap-3 pt-2">
             <a
               href="/k8s-eso/"
               target="_blank"
@@ -84,6 +85,10 @@ export default function ESOShopSection() {
               <ShoppingCart size={16} aria-hidden="true" /> {t('esoshop.cta_shop')}
               <ExternalLink size={14} aria-hidden="true" className="opacity-80" />
             </a>
+            {/* Load test from a client on Azure, watched live (/eso-bench) */}
+            <Link to="/eso-bench" className="btn-secondary">
+              <Gauge size={16} aria-hidden="true" className="text-eso" /> {t('esoshop.cta_bench')}
+            </Link>
           </div>
         </m.div>
 
