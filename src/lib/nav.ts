@@ -148,7 +148,6 @@ export const NAV: NavGroup[] = [
         demo: { name: 'Sidecar', secret: 'Secrets Provider', descKey: 'demos.dotnet' } },
       { to: '/eso-shop', section: 'usecases', product: 'secretsmanager', labelKey: 'nav.esoshop', subKey: 'nav.esoshop_sub', logo: '/icons/nav/eso.svg', Icon: ShoppingCart, color: 'text-eso', heading: 'nav.h_k8s',
         demo: { name: 'External Secrets Operator', secret: 'Kubernetes Secret', descKey: 'demos.eso' } },
-      { to: '/eso-bench', section: 'usecases', product: 'secretsmanager', labelKey: 'nav.esobench', subKey: 'nav.esobench_sub', logo: '/icons/nav/bench.svg', Icon: Gauge, color: 'text-eso', heading: 'nav.h_k8s' },
       { to: '/csi', section: 'usecases', product: 'secretsmanager', labelKey: 'nav.csidriver', subKey: 'nav.csidriver_sub', logo: '/icons/nav/csi.svg', Icon: ShipWheel, color: 'text-csi', heading: 'nav.h_k8s',
         demo: { name: 'CSI Driver', secret: 'tmpfs volume', descKey: 'demos.csi' } },
       { to: '/k8s/secrets-provider-modes', section: 'usecases', product: 'secretsmanager', labelKey: 'nav.k8s_spmodes', shortKey: 'nav.k8s_spmodes_side', subKey: 'nav.k8s_spmodes_sub', logo: '/icons/nav/spmodes.svg', Icon: Columns3, color: 'text-domain-idira', heading: 'nav.h_k8s' },
@@ -234,6 +233,7 @@ export const NAV: NavGroup[] = [
       { to: '/tools',         labelKey: 'nav.livetools',    subKey: 'nav.livetools_sub',    logo: '/icons/nav/livetools.svg', Icon: Wrench,           color: 'text-text-2' },
       { to: '/controller', href: '/controller', labelKey: 'nav.controller', subKey: 'nav.controller_sub', logo: '/icons/nav/controller.svg', Icon: LayoutDashboard, color: 'text-text-2' },
       { to: '/vault',         labelKey: 'nav.vaultinfo',    subKey: 'nav.vaultinfo_sub',    logo: '/icons/nav/vault.svg', Icon: Vault,            color: 'text-text-2' },
+      { to: '/eso-bench',     labelKey: 'nav.esobench',     subKey: 'nav.esobench_sub',     logo: '/icons/nav/bench.svg', Icon: Gauge,            color: 'text-text-2' },
     ],
   },
 ]
