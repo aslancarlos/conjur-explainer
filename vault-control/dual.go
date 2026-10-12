@@ -392,6 +392,17 @@ const permHint = `a credencial do vault-control não tem a permissão "Update ac
 
 func runDualRotation(id string, target, other rotMember, baseLMT time.Time, baseStatus string) {
 	defer invalidate(target.ID, other.ID)
+	// Preflight: rewrite the Inactive member's status with the value it already has. Nothing
+	// changes, but it proves the "Update account properties" permission before the password is
+	// touched; otherwise a 403 at promotion time would leave the pair mixed in Conjur.
+	if code, err := patchStatus(target.ID, "Inactive"); err != nil {
+		if code == http.StatusForbidden {
+			failRotation(id, "permission_missing", fmt.Sprintf("%s %s: nenhuma senha foi trocada", permHint, safe))
+		} else {
+			failRotation(id, "permission_check_failed", fmt.Sprintf("teste de permissão falhou (HTTP %d): nenhuma senha foi trocada", code))
+		}
+		return
+	}
 	setStep(id, stepChanging)
 	rotStoreMu.Lock()
 	deadline := *rotations[id].Deadline

@@ -1761,6 +1761,8 @@
     "rot_err_cpm_failure": "El Central Policy Manager informó un fallo al cambiar la contraseña de {{target}}. Los estados del par no se modificaron.",
     "rot_err_change_request_failed": "Privilege Cloud rechazó el pedido de cambio de {{target}}. No se modificó nada.",
     "rot_err_promote_forbidden": "La contraseña de {{target}} se cambió, pero la credencial de vault-control no tiene el permiso \"Update account properties\" en el Safe {{safe}}, así que los estados del par no se invirtieron. Pida a un administrador del Safe que conceda ese permiso o que invierta DualAccountStatus en la bóveda.",
+    "rot_err_permission_missing": "La credencial de vault-control no tiene el permiso \"Update account properties\" en el Safe {{safe}}. La rotación se detuvo antes de cambiar cualquier contraseña: el par sigue igual y la aplicación no se vio afectada. Pida a un administrador del Safe que conceda ese permiso.",
+    "rot_err_permission_check_failed": "No fue posible probar el permiso para actualizar el par en el Safe {{safe}}. No se cambió ninguna contraseña.",
     "rot_err_promote_failed": "La contraseña de {{target}} se cambió, pero la promoción a Activa falló. Revise DualAccountStatus en la bóveda.",
     "rot_err_demote_forbidden": "La credencial de vault-control no tiene el permiso \"Update account properties\" en el Safe {{safe}} para degradar {{other}}.",
     "rot_err_demote_failed": "No se pudo degradar {{other}} a Inactiva. Revise DualAccountStatus en la bóveda.",

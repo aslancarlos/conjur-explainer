@@ -1614,6 +1614,8 @@
     "rt_err_cpm_failure": "O Central Policy Manager informou falha. Os status do par não foram alterados.",
     "rt_err_change_request_failed": "O Privilege Cloud recusou o pedido de troca. Nada foi alterado.",
     "rt_err_promote_forbidden": "A senha foi trocada, mas falta a permissão \"Update account properties\" no Safe para promover {{to}}.",
+    "rt_err_permission_missing": "Falta a permissão \"Update account properties\" no Safe. Nenhuma senha foi trocada.",
+    "rt_err_permission_check_failed": "Não foi possível testar a permissão no Safe. Nenhuma senha foi trocada.",
     "rt_err_promote_failed": "A senha foi trocada, mas a promoção de {{to}} falhou.",
     "rt_err_demote_forbidden": "Falta a permissão \"Update account properties\" no Safe para concluir a troca de papéis.",
     "rt_err_demote_failed": "Não foi possível concluir a troca de papéis do par.",

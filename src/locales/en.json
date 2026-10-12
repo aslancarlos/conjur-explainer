@@ -1614,6 +1614,8 @@
     "rt_err_cpm_failure": "The Central Policy Manager reported a failure. The pair statuses were not changed.",
     "rt_err_change_request_failed": "Privilege Cloud refused the change request. Nothing was changed.",
     "rt_err_promote_forbidden": "The password was changed, but the \"Update account properties\" Safe permission is missing to promote {{to}}.",
+    "rt_err_permission_missing": "The \"Update account properties\" Safe permission is missing. No password was changed.",
+    "rt_err_permission_check_failed": "Could not test the Safe permission. No password was changed.",
     "rt_err_promote_failed": "The password was changed, but promoting {{to}} failed.",
     "rt_err_demote_forbidden": "The \"Update account properties\" Safe permission is missing to finish swapping the roles.",
     "rt_err_demote_failed": "Could not finish swapping the pair roles.",

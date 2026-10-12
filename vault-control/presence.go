@@ -11,6 +11,7 @@ package main
 import (
 	"encoding/json"
 	"io"
+	"net"
 	"net/http"
 	"regexp"
 	"sort"
@@ -24,6 +25,10 @@ var (
 	presenceMinEvery = 10 * time.Second // one counted heartbeat per id per 10 s
 	presenceIPNewMax = 30               // new ids per IP per minute
 	presenceIPMax    = 120              // heartbeats per IP per minute
+	// The demo NLB does not preserve the client IP, so every visitor arrives from a private
+	// address of the VPC. For those, the window is shared by everybody: use a site-wide ceiling.
+	presenceSharedNewMax = 600
+	presenceSharedMax    = 3000
 
 	presMu   sync.Mutex
 	presSeen = map[string]time.Time{}
@@ -77,8 +82,12 @@ func heartbeat(id, ip string, now time.Time) bool {
 		win = &ipWindow{start: now}
 		presIP[ip] = win
 	}
+	maxBeats, maxNew := presenceIPMax, presenceIPNewMax
+	if a := net.ParseIP(ip); a != nil && (a.IsPrivate() || a.IsLoopback()) {
+		maxBeats, maxNew = presenceSharedMax, presenceSharedNewMax
+	}
 	win.beats++
-	if win.beats > presenceIPMax {
+	if win.beats > maxBeats {
 		return false
 	}
 	last, known := presSeen[id]
@@ -87,7 +96,7 @@ func heartbeat(id, ip string, now time.Time) bool {
 	}
 	if !known || now.Sub(last) >= presenceTTL {
 		win.newIDs++
-		if win.newIDs > presenceIPNewMax {
+		if win.newIDs > maxNew {
 			return false
 		}
 	}

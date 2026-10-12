@@ -1761,6 +1761,8 @@
     "rot_err_cpm_failure": "O Central Policy Manager informou falha ao trocar a senha de {{target}}. Os status do par não foram alterados.",
     "rot_err_change_request_failed": "O Privilege Cloud recusou o pedido de troca de {{target}}. Nada foi alterado.",
     "rot_err_promote_forbidden": "A senha de {{target}} foi trocada, mas a credencial do vault-control não tem a permissão \"Update account properties\" no Safe {{safe}}, então os status do par não foram invertidos. Peça a um administrador do Safe para conceder essa permissão ou inverter DualAccountStatus no cofre.",
+    "rot_err_permission_missing": "A credencial do vault-control não tem a permissão \"Update account properties\" no Safe {{safe}}. A rotação parou antes de trocar qualquer senha: o par continua como estava e a aplicação não foi afetada. Peça a um administrador do Safe para conceder essa permissão.",
+    "rot_err_permission_check_failed": "Não foi possível testar a permissão de atualizar o par no Safe {{safe}}. Nenhuma senha foi trocada.",
     "rot_err_promote_failed": "A senha de {{target}} foi trocada, mas a promoção a Ativa falhou. Confira DualAccountStatus no cofre.",
     "rot_err_demote_forbidden": "A credencial do vault-control não tem a permissão \"Update account properties\" no Safe {{safe}} para rebaixar {{other}}.",
     "rot_err_demote_failed": "Não foi possível rebaixar {{other}} a Inativa. Confira DualAccountStatus no cofre.",

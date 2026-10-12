@@ -116,7 +116,7 @@ function tick(r: Rot) {
   target.lmt = t; target.status = 'success'
   push('promovendo', 8)
   if (r.outcome === 'forbidden') {
-    fail('promote_forbidden', `a credencial do vault-control não tem a permissão "Update account properties" no Safe ${SAFE}: a senha de ${target.userName} foi trocada, mas o par não foi promovido`, 9)
+    fail('permission_missing', `a credencial do vault-control não tem a permissão "Update account properties" no Safe ${SAFE}: nenhuma senha foi trocada`, 9)
     return
   }
   target.props.DualAccountStatus = 'Active'; other.props.DualAccountStatus = 'Inactive'

@@ -1761,6 +1761,8 @@
     "rot_err_cpm_failure": "The Central Policy Manager reported a failure changing the password of {{target}}. The pair statuses were not changed.",
     "rot_err_change_request_failed": "Privilege Cloud refused the change request for {{target}}. Nothing was changed.",
     "rot_err_promote_forbidden": "The password of {{target}} was changed, but the vault-control credential lacks the \"Update account properties\" permission in the {{safe}} Safe, so the pair statuses were not swapped. Ask a Safe administrator to grant that permission or to swap DualAccountStatus in the Vault.",
+    "rot_err_permission_missing": "The vault-control credential lacks the \"Update account properties\" permission in the {{safe}} Safe. The rotation stopped before changing any password: the pair is unchanged and the application was not affected. Ask a Safe administrator to grant that permission.",
+    "rot_err_permission_check_failed": "Could not test the permission to update the pair in the {{safe}} Safe. No password was changed.",
     "rot_err_promote_failed": "The password of {{target}} was changed, but promoting it to Active failed. Check DualAccountStatus in the Vault.",
     "rot_err_demote_forbidden": "The vault-control credential lacks the \"Update account properties\" permission in the {{safe}} Safe to demote {{other}}.",
     "rot_err_demote_failed": "Could not demote {{other}} to Inactive. Check DualAccountStatus in the Vault.",

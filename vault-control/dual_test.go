@@ -232,8 +232,8 @@ func TestDualRotationChangesInactiveThenPromotes(t *testing.T) {
 	if len(f.changes) != 1 || f.changes[0] != "116_27" {
 		t.Fatalf("Change must hit only the Inactive member, got %v", f.changes)
 	}
-	if strings.Join(f.patches, ",") != "116_27=Active,116_3=Inactive" {
-		t.Fatalf("promote first, then demote: %v", f.patches)
+	if strings.Join(f.patches, ",") != "116_27=Inactive,116_27=Active,116_3=Inactive" {
+		t.Fatalf("permission preflight (no-op), promote, then demote: %v", f.patches)
 	}
 	if end["target"].(map[string]any)["userName"] != "appuser_db_02" {
 		t.Fatalf("target %v", end["target"])
@@ -248,8 +248,8 @@ func TestDualRotationCPMFailureKeepsStatuses(t *testing.T) {
 	if end["step"] != stepFailed || end["errorCode"] != "cpm_failure" {
 		t.Fatalf("got %v %v", end["step"], end["errorCode"])
 	}
-	if len(f.patches) != 0 {
-		t.Fatalf("no status change on failure, got %v", f.patches)
+	if strings.Join(f.patches, ",") != "116_27=Inactive" {
+		t.Fatalf("only the no-op preflight on failure, got %v", f.patches)
 	}
 }
 
@@ -274,8 +274,8 @@ func TestDualRotationTimeout(t *testing.T) {
 	if end["deadline"] == nil {
 		t.Fatal("deadline missing")
 	}
-	if len(f.patches) != 0 {
-		t.Fatalf("no status change on timeout, got %v", f.patches)
+	if strings.Join(f.patches, ",") != "116_27=Inactive" {
+		t.Fatalf("only the no-op preflight on timeout, got %v", f.patches)
 	}
 }
 
@@ -294,7 +294,7 @@ func TestDualRotationPatchForbidden(t *testing.T) {
 	f.patch = func(string) int { return 403 }
 	_, m := post(t, h, "/api/vault/accounts/116_3/rotate")
 	end := waitEnd(t, h, m["rotationId"].(string))
-	if end["errorCode"] != "promote_forbidden" {
+	if end["errorCode"] != "permission_missing" {
 		t.Fatalf("got %v", end["errorCode"])
 	}
 	if !strings.Contains(end["reason"].(string), "Update account properties") {
@@ -302,6 +302,14 @@ func TestDualRotationPatchForbidden(t *testing.T) {
 	}
 	if f.accts["116_3"].props["DualAccountStatus"] != "Active" || f.accts["116_27"].props["DualAccountStatus"] != "Inactive" {
 		t.Fatal("statuses must not change")
+	}
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	if len(f.changes) != 0 {
+		t.Fatalf("no password may change without the permission, got %v", f.changes)
+	}
+	if !strings.Contains(end["reason"].(string), "nenhuma senha foi trocada") {
+		t.Fatalf("reason must say nothing changed: %v", end["reason"])
 	}
 }
 
