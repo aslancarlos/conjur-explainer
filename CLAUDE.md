@@ -57,6 +57,7 @@ npx tsc --noEmit
 | `/github-actions` | `GitHubActionsSection` |
 | `/eso-shop` | `ESOShopSection` |
 | `/eso-bench` | `EsoBenchPage` (load test of the ESO Shop from an Azure Spot VM via `/api/bench`; local mock: `BENCH_MOCK=1 npm run dev`, see `dev/benchMock.ts`) |
+| `/vault` | `CofreInfoPage` (Cofre Info: Safe accounts, Dual Account pair, validity history, pair rotation via `/api/vault`, backend `vault-control/`; local mock: `VAULT_MOCK=1 npm run dev`, see `dev/vaultMock.ts`) |
 | `/compare` | `ComparisonTable` |
 | `/tools` | `LiveToolsSection` |
 | `/dualaccounts` | `DualAccountsPage` |

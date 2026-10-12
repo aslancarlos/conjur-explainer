@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import { readFileSync } from 'node:fs'
 import type { Plugin } from 'vite'
 import { devBench } from './dev/benchMock'
+import { devVault } from './dev/vaultMock'
 
 // Local dev only: serve a sample of the access counter that production
 // publishes at /stats/visits.json (see k8s/site-stats/) and a fake like counter.
@@ -60,8 +61,9 @@ const localeCore = (): Plugin => ({
 })
 
 export default defineConfig({
-  // devBench: in-memory /api/bench for local dev, only with BENCH_MOCK=1 (dev/benchMock.ts)
-  plugins: [react(), devVisits(), devBench(), localeCore()],
+  // devBench / devVault: in-memory /api/bench and /api/vault for local dev, only
+  // with BENCH_MOCK=1 / VAULT_MOCK=1 (dev/benchMock.ts, dev/vaultMock.ts)
+  plugins: [react(), devVisits(), devBench(), devVault(), localeCore()],
   base: '/',
   // Build timestamp for the sidebar "last updated" line (src/lib/release.ts).
   define: { __BUILD_DATE__: JSON.stringify(new Date().toISOString()) },

@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Link } from '../../lib/router'
 import { useTranslation } from 'react-i18next'
@@ -41,8 +41,10 @@ const chevron = (open: boolean) => (
 
 /**
  * Grouped site navigation (sidebar + mobile drawer).
- * - Sections with an overline label (Start here · Products · Resources, see
- *   ZONES in lib/nav). Resources are flat links.
+ * - Sections with an overline label (Start here · Products · Demo · Resources,
+ *   see ZONES in lib/nav). Demo and Resources are flat links. A `collapsible`
+ *   section (Demo) has a disclosure label: collapsed on a first visit, opened
+ *   automatically when the current page is one of its items.
  * - Each other group header is a disclosure button; sub-heading runs of two or
  *   more items are submenus (third level inside a submenu). Every level starts collapsed on each visit (nothing is persisted); what the visitor
  *   opens stays open while they navigate. A collapsed group holding the
@@ -83,6 +85,21 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
   const [open, setOpen] = useState<Record<string, boolean>>({})
   const isOpen = (key: string) => open[key] === true    // default: collapsed
   const rowH = dense ? 'min-h-9' : 'min-h-11'
+
+  // Collapsible sections (Demo): undefined = not touched yet, so the section
+  // follows the current page; a visitor's click wins until they navigate into it again.
+  // A page repeated in Demo (mirror) keeps its home group: on a deep link only
+  // pages that live in the section open it; clicking inside it keeps it open.
+  const zoneHolds = (zone: string, own: boolean) =>
+    groups.some(g => g.zone === zone && g.items.some(i => (!own || !i.mirror) && isActive(i.to)))
+  const zoneActive = (zone: string) => zoneHolds(zone, true)
+  const [zoneOpen, setZoneOpen] = useState<Record<string, boolean>>({})
+  useEffect(() => {
+    for (const z of ZONES) {
+      if (z.collapsible && zoneActive(z.key)) setZoneOpen(o => (o[z.key] ? o : { ...o, [z.key]: true }))
+    }
+  }, [pathname, search]) // eslint-disable-line react-hooks/exhaustive-deps
+  const isZoneOpen = (zone: string) => zoneOpen[zone] ?? zoneActive(zone)
 
   const toggle = (key: string, listId: string) => {
     const opening = !isOpen(key)
@@ -177,9 +194,21 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
 
   const groupBlock = (group: NavGroup) => {
     const label = group.labelKey ? t(group.labelKey) : undefined
-    // Plain groups (home) and flat groups (resources) list their items directly.
+    // Plain groups (home) and flat groups (resources) list their items directly;
+    // Demo subgroups add a small caption above their items.
+    if (group.caption && label && !collapsed) {
+      const capId = `${idPrefix}-cap-${group.key}`
+      return (
+        <div key={group.key} className="pb-1">
+          <p id={capId} className="px-3 pb-0.5 pt-1.5 text-xs font-medium text-text-muted">{label}</p>
+          <ul aria-labelledby={capId} className="space-y-0.5">{group.items.map(row)}</ul>
+        </div>
+      )
+    }
     if (!label || group.flat || collapsed) {
-      return <ul key={group.key} className="space-y-0.5">{group.items.map(row)}</ul>
+      // the icon rail lists each page once: repeated Demo entries are skipped
+      const items = collapsed ? group.items.filter(i => !i.mirror) : group.items
+      return items.length ? <ul key={group.key} className="space-y-0.5">{items.map(row)}</ul> : null
     }
     const expanded = isOpen(group.key)
     const listId = `${idPrefix}-grp-${group.key}`
@@ -229,6 +258,29 @@ export default function SideNav({ collapsed = false, dense = false, idPrefix = '
         const zg = groups.filter(g => g.zone === zone.key)
         if (!zg.length) return null
         const labelId = `${idPrefix}-zone-${zone.key}`
+        if (zone.collapsible && !collapsed) {
+          const expanded = isZoneOpen(zone.key)
+          const listId = `${idPrefix}-zone-${zone.key}-list`
+          const count = zg.reduce((n, g) => n + g.items.length, 0)
+          const active = zoneHolds(zone.key, false)
+          return (
+            <div key={zone.key} role="group" aria-labelledby={labelId} className={zi === 0 ? '' : 'pt-4'}>
+              <button type="button" id={labelId} aria-expanded={expanded} aria-controls={listId}
+                onClick={() => {
+                  setZoneOpen(o => ({ ...o, [zone.key]: !expanded }))
+                  if (!expanded) requestAnimationFrame(() => document.getElementById(listId)?.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' }))
+                }}
+                className={`mb-1 flex ${rowH} w-full items-center gap-2 rounded-lg px-3 text-left transition-colors duration-150
+                  hover:bg-bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-idira-blue
+                  ${active && !expanded ? 'bg-bg-muted/60' : ''}`}>
+                <span className={`text-overline flex-1 ${active ? 'text-text' : ''}`}>{t(zone.labelKey)}</span>
+                {!expanded && <span className="text-xs font-semibold tabular-nums text-text-muted" aria-hidden="true">{count}</span>}
+                {chevron(expanded)}
+              </button>
+              <div id={listId} hidden={!expanded} className="space-y-0.5">{zg.map(groupBlock)}</div>
+            </div>
+          )
+        }
         return (
           <div key={zone.key} role="group" aria-labelledby={labelId} className={zi === 0 ? '' : 'pt-4'}>
             {collapsed

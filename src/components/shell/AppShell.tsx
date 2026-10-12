@@ -9,6 +9,8 @@ import EnvStatus from './EnvStatus'
 import CommandPalette from './CommandPalette'
 import VisitCounter from './VisitCounter'
 import LikeButton from './LikeButton'
+import OnlineCount from './OnlineCount'
+import RotationToast from './RotationToast'
 import LanguageSwitcher from './LanguageSwitcher'
 import SideNav from './SideNav'
 import ReleaseInfo from './ReleaseInfo'
@@ -95,6 +97,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
           <span className="hidden xl:block whitespace-nowrap text-sm font-semibold leading-tight text-text">{t('shell.site_name')}</span>
           <VisitCounter className="hidden md:flex ml-1" />
           <LikeButton className="hidden md:inline-flex" />
+          <OnlineCount className="hidden md:block" />
 
           <div className="ml-auto flex items-center gap-2">
             <CommandPalette />
@@ -150,6 +153,9 @@ export default function AppShell({ children }: { children: ReactNode }) {
       <div className={pad}>
         {children}
       </div>
+
+      {/* Pair rotation notice, for every visitor on any page (lib/presence) */}
+      <RotationToast />
     </div>
   )
 }
