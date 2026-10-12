@@ -13,6 +13,7 @@ export const routeLoaders: Record<string, Loader> = {
   'dotnet': () => import('../components/DotNetSection').then(m => m.default),
   'github-actions': () => import('../components/GitHubActionsSection').then(m => m.default),
   'eso-shop': () => import('../components/ESOShopSection').then(m => m.default),
+  'eso-bench': () => import('../pages/EsoBenchPage').then(m => m.default),
   'compare': () => import('../pages/ComparePage').then(m => m.default),
   'tools': () => import('../components/LiveToolsSection').then(m => m.default),
   'dualaccounts': () => import('../pages/DualAccountsPage').then(m => m.default),

@@ -10,6 +10,8 @@
     "gha_sub": "OIDC / Zero stored credentials",
     "esoshop": "External Secrets Operator",
     "esoshop_sub": "Syncs secrets into Kubernetes Secrets",
+    "esobench": "ESO Shop benchmark",
+    "esobench_sub": "Load the ESO Shop and watch it live",
     "compare": "Compare",
     "compare_sub": "Products, use cases and technologies",
     "livetools": "Live Dashboards",
@@ -677,6 +679,7 @@
       }
     ],
     "cta_shop": "Open ESO Shop",
+    "cta_bench": "Generate load (benchmark)",
     "cta_dashboard": "Live Dashboard",
     "cta_grafana": "Grafana",
     "operator_badge": "Kubernetes Operator",

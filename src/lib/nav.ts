@@ -1,6 +1,6 @@
 import {
   ShieldAlert, Home, Compass, BookOpen, ArrowLeftRight, Container, Fingerprint, FileBadge, RefreshCw, KeyRound, ScrollText, Combine, Server, Boxes, ShipWheel,
-  Leaf, Hexagon, Github, ShoppingCart, Database,
+  Leaf, Hexagon, Github, ShoppingCart, Database, Gauge,
   GitCompareArrows, Wrench, LayoutDashboard, CloudCog, Network, ShieldCheck, Layers, GraduationCap, Vault, KeySquare, BadgeCheck, Cloud, Users, AppWindow, LayoutGrid, HardDrive, Globe,
   Timer, FileKey2, Orbit, RotateCw, ClipboardList, Terminal, Bot, Columns3, RefreshCcw, EyeOff, Blocks, GitBranch, Infinity as InfinityIcon, GitPullRequest, CircleDot, Rocket, Code, CloudUpload, Cog, Workflow, Cpu,
 } from 'lucide-react'
@@ -233,6 +233,7 @@ export const NAV: NavGroup[] = [
       { to: '/tools',         labelKey: 'nav.livetools',    subKey: 'nav.livetools_sub',    logo: '/icons/nav/livetools.svg', Icon: Wrench,           color: 'text-text-2' },
       { to: '/controller', href: '/controller', labelKey: 'nav.controller', subKey: 'nav.controller_sub', logo: '/icons/nav/controller.svg', Icon: LayoutDashboard, color: 'text-text-2' },
       { to: '/vault',         labelKey: 'nav.vaultinfo',    subKey: 'nav.vaultinfo_sub',    logo: '/icons/nav/vault.svg', Icon: Vault,            color: 'text-text-2' },
+      { to: '/eso-bench',     labelKey: 'nav.esobench',     subKey: 'nav.esobench_sub',     logo: '/icons/nav/bench.svg', Icon: Gauge,            color: 'text-text-2' },
     ],
   },
 ]
